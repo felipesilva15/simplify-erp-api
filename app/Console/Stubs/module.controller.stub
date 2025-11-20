@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Modules\{{module}}\Http\Controllers;
+
+use App\Modules\{{module}}\Services\{{entity}}Service;
+use App\Modules\{{module}}\Http\Resources\{{entity}}Resource;
+
+class {{entity}}Controller
+{
+    public function index({{entity}}Service $service)
+    {
+        return {{entity}}Resource::collection($service->list());
+    }
+}

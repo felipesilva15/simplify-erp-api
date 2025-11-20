@@ -1,0 +1,11 @@
+<?php
+
+namespace App\Modules\{{module}}\DTO;
+
+class {{entity}}DTO
+{
+    public function __construct(
+        public string $name,
+        public string $status = 'active'
+    ) {}
+}

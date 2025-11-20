@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Modules\{{module}}\Services;
+
+use App\Modules\{{module}}\Repositories\{{entity}}RepositoryInterface;
+
+class {{entity}}Service
+{
+    public function __construct(
+        protected {{entity}}RepositoryInterface $repo
+    ) {}
+
+    public function list(int $perPage = 15)
+    {
+        return $this->repo->paginate($perPage);
+    }
+}

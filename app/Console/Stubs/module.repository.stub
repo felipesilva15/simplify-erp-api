@@ -1,0 +1,13 @@
+<?php
+
+namespace App\Modules\{{module}}\Repositories;
+
+use App\Modules\{{module}}\Models\{{entity}};
+
+class {{entity}}Repository implements {{entity}}RepositoryInterface
+{
+    public function list(int $perPage = 15)
+    {
+        return {{entity}}::paginate($perPage);
+    }
+}

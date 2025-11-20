@@ -1,0 +1,16 @@
+<?php
+
+namespace App\Modules\{{module}}\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class Store{{entity}}Request extends FormRequest
+{
+    public function rules(): array
+    {
+        return [
+            'name' => 'required|string',
+            'status' => 'nullable|string'
+        ];
+    }
+}
