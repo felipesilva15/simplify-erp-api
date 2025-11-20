@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('scopes', function (Blueprint $table) {
+        Schema::create('permitions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('module_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->string('group', 60);
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('scopes');
+        Schema::dropIfExists('permitions');
     }
 };
