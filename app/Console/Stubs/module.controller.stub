@@ -21,7 +21,7 @@ class {{entity}}Controller
 {
     /**
      * @OA\Get(
-     *      path="/api/{{lower_module}}/{{lower_entity}}",
+     *      path="/api/{{lower_module}}/{{lower_entity}}s",
      *      tags={"{{entity}}"},
      *      summary="List all rows",
      *      @OA\Response(
@@ -44,12 +44,12 @@ class {{entity}}Controller
         ]);
         ${{lower_entity}}List = $action->execute($filters);
 
-        return response()->json({{entity}}Resource::collection(${{lower_entity}}List), 200);
+        return response()->json(${{lower_entity}}List, 200);
     }
 
     /**
      * @OA\Get(
-     *      path="/api/{{lower_module}}/{{lower_entity}}/{id}",
+     *      path="/api/{{lower_module}}/{{lower_entity}}s/{id}",
      *      tags={"{{entity}}"},
      *      summary="List a {{lower_entity}} by ID",
      *      @OA\Parameter(
@@ -71,7 +71,7 @@ class {{entity}}Controller
      *      )
      * )
      */
-    public function show(int $id, , Show{{entity}}Action $action): JsonResponse {
+    public function show(int $id, Show{{entity}}Action $action): JsonResponse {
         ${{lower_entity}} = $action->execute($id);
 
         return response()->json(new {{entity}}Resource(${{lower_entity}}), 200);
@@ -79,13 +79,13 @@ class {{entity}}Controller
 
     /**
      * @OA\Post(
-     *      path="/api/{{lower_module}}/{{lower_entity}}",
+     *      path="/api/{{lower_module}}/{{lower_entity}}s",
      *      tags={"{{entity}}"},
      *      summary="Registers a {{lower_entity}}",
      *      @OA\RequestBody(
      *         required=true,
      *         description="Data for creating a new {{lower_entity}}",
-     *         @OA\JsonContent(ref="#/components/schemas/{{entity}}Request")
+     *         @OA\JsonContent(ref="#/components/schemas/Store{{entity}}Request")
      *      ),
      *      @OA\Response(
      *          response="201", 
@@ -94,10 +94,10 @@ class {{entity}}Controller
      *      ),
      *      @OA\Response(
      *          response="401", 
-     *          description="Unauthorized",
+     *          description="Un{{lower_module}}orized",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
      *      ),
-     *      security={{"bearerAuth":{}}}
+     *      security={{"bearer{{module}}":{}}}
      * )
      */
     public function store(Store{{entity}}Request $request, Store{{entity}}Action $action): JsonResponse {
@@ -109,7 +109,7 @@ class {{entity}}Controller
 
     /**
      * @OA\Put(
-     *      path="/api/{{lower_module}}/{{lower_entity}}/{id}",
+     *      path="/api/{{lower_module}}/{{lower_entity}}s/{id}",
      *      tags={"{{entity}}"},
      *      summary="Update a {{lower_entity}}",
      *      @OA\Parameter(
@@ -122,7 +122,7 @@ class {{entity}}Controller
      *      @OA\RequestBody(
      *         required=true,
      *         description="Data for update {{lower_entity}}",
-     *         @OA\JsonContent(ref="#/components/schemas/{{entity}}Request")
+     *         @OA\JsonContent(ref="#/components/schemas/Update{{entity}}Request")
      *      ),
      *      @OA\Response(
      *          response="200", 
@@ -131,7 +131,7 @@ class {{entity}}Controller
      *      ),
      *      @OA\Response(
      *          response="401", 
-     *          description="Unauthorized",
+     *          description="Un{{lower_module}}orized",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
      *      ),
      *      @OA\Response(
@@ -139,7 +139,7 @@ class {{entity}}Controller
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
      *      ),
-     *      security={{"bearerAuth":{}}}
+     *      security={{"bearer{{module}}":{}}}
      * )
      */
     public function update(int $id, Update{{entity}}Request $request, Update{{entity}}Action $action): JsonResponse {
@@ -151,7 +151,7 @@ class {{entity}}Controller
 
     /**
      * @OA\Delete(
-     *      path="/api/{{lower_module}}/{{lower_entity}}/{id}",
+     *      path="/api/{{lower_module}}/{{lower_entity}}s/{id}",
      *      tags={"{{entity}}"},
      *      summary="Delete a {{lower_entity}}",
      *      @OA\Parameter(
@@ -167,7 +167,7 @@ class {{entity}}Controller
      *      ),
      *      @OA\Response(
      *          response="401", 
-     *          description="Unauthorized",
+     *          description="Un{{lower_module}}orized",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
      *      ),
      *      @OA\Response(
@@ -175,7 +175,7 @@ class {{entity}}Controller
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
      *      ),
-     *      security={{"bearerAuth":{}}}
+     *      security={{"bearer{{module}}":{}}}
      * )
      */
     public function destroy(int $id, Delete{{entity}}Action $action): Response {

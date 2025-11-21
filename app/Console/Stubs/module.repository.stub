@@ -2,12 +2,68 @@
 
 namespace App\Modules\{{module}}\Repositories\Eloquent;
 
+use App\Modules\{{module}}\DTO\{{entity}}DTO;
 use App\Modules\{{module}}\Models\{{entity}};
+use App\Modules\{{module}}\Repositories\Interfaces\{{entity}}RepositoryInterface;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class {{entity}}Repository implements {{entity}}RepositoryInterface
 {
-    public function list(int $perPage = 15)
-    {
-        return {{entity}}::paginate($perPage);
+    public function store({{entity}}DTO $data): {{entity}} {
+        $arrayData = $data->toArray();
+        unset($arrayData["id"]);
+
+        return {{entity}}::create($arrayData);
+    }
+
+    public function update(int $id, {{entity}}DTO $data): ?{{entity}} {
+        ${{lower_entity}} = $this->findById($id);
+
+        if (!${{lower_entity}}) {
+            return null;
+        }
+
+        $arrayData = $data->toArray();
+        unset($arrayData["id"]);
+
+        ${{lower_entity}}->update($arrayData);
+
+        return ${{lower_entity}}->fresh();
+    }
+
+    public function delete(int $id): bool {
+        ${{lower_entity}} = $this->findById($id);
+
+        if (!${{lower_entity}}) {
+            return false;
+        }
+
+        return (bool) ${{lower_entity}}->delete();
+    }
+
+    public function findById(int $id): ?{{entity}} {
+        return {{entity}}::find($id);
+    }
+
+    public function list(array $filters = []): LengthAwarePaginator {
+        $query = {{entity}}::query();
+
+        if (isset($filters['name'])) {
+            $query->where('name', 'like', '%' . $filters['name'] . '%');
+        }
+
+        // Sorting
+        $sortBy = $filters['sort_by'] ?? 'id';
+        $sortDir = strtolower($filters['sort_dir'] ?? 'desc');
+        if (!in_array($sortDir, ['asc', 'desc'])) {
+            $sortDir = 'asc';
+        }
+        $query->orderBy($sortBy, $sortDir);
+
+        // Pagination
+        $perPage = isset($filters['per_page']) ? (int) $filters['per_page'] : 15;
+        $page = isset($filters['page']) ? (int) $filters['page'] : 1;
+
+        return $query->paginate(perPage: $perPage, page: $page);
     }
 }

@@ -10,6 +10,6 @@ class Show{{entity}}Action
     public function __construct(protected {{entity}}Service $service) { }
 
     public function execute(int $id): {{entity}} {
-        return $this->service->find($id);
+        return $this->service->findById($id);
     }
 }

@@ -3,13 +3,13 @@
 namespace App\Modules\{{module}}\Actions\{{entity}};
 
 use App\Modules\{{module}}\Services\{{entity}}Service;
-use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
-class Delete{{entity}}Action
+class List{{entity}}Action
 {
     public function __construct(protected {{entity}}Service $service) {}
 
-    public function execute(array $filters): Collection {
-        return $this->service->list($id);
+    public function execute(array $filters): LengthAwarePaginator {
+        return $this->service->list($filters);
     }
 }

@@ -1,16 +1,22 @@
 <?php
 
-namespace App\Modules\{{module}}\Http\Requests;
+namespace App\Modules\{{module}}\Http\Requests\{{entity}};
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @OA\Schema(
+ *      schema="Store{{entity}}Request",
+ *      required={"name"},
+ *      @OA\Property(property="name", type="string", example="API", minLength=1, maxLength=80)
+ * )
+ */
 class Store{{entity}}Request extends FormRequest
 {
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
-            'status' => 'nullable|string'
+            {{rules_definitions}}
         ];
     }
 }
