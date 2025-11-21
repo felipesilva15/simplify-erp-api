@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Modules\{{module}}\Actions\{{entity}};
+
+use App\Modules\{{module}}\Services\{{entity}}Service;
+
+class Delete{{entity}}Action
+{
+    public function __construct(protected {{entity}}Service $service) {}
+
+    public function execute(int $id): bool {
+        return $this->service->delete($id);
+    }
+}

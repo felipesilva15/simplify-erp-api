@@ -1,0 +1,16 @@
+<?php
+
+namespace App\Modules\{{module}}\Actions\{{entity}};
+
+use App\Modules\{{module}}\DTO\{{entity}}DTO;
+use App\Modules\{{module}}\Services\{{entity}}Service;
+use App\Modules\{{module}}\Models\{{entity}};
+
+class Update{{entity}}Action
+{
+    public function __construct(protected {{entity}}Service $service) { }
+
+    public function execute(int $id, {{entity}}DTO $data): {{entity}} {
+        return $this->service->update($data);
+    }
+}

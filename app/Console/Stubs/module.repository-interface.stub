@@ -1,8 +1,22 @@
 <?php
 
-namespace App\Modules\{{module}}\Repositories;
+namespace App\Modules\{{module}}\Repositories\Interfaces;
+use App\Modules\{{module}}\DTO\{{entity}}DTO;
+use App\Modules\{{module}}\Models\{{entity}};
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface {{entity}}RepositoryInterface
 {
-    public function list(int $perPage = 15);
+    public function create({{entity}}DTO $data): {{entity}};
+
+    public function update(int $id, {{entity}}DTO $data): {{entity}};
+
+    public function delete(int $id): bool;
+
+    public function findById(int $id): ?{{entity}};
+
+    /**
+     * @param array $filters keys: id, sort_by, sort_dir, per_page, page
+     */
+    public function list(array $filters = []): LengthAwarePaginator;
 }

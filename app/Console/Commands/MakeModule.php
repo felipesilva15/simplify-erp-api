@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -30,6 +31,8 @@ class MakeModule extends Command
         $this->createDto();
         $this->createController();
         $this->createRequests();
+        $this->createResource();
+        $this->createActions();
 
         $this->info("Module [{$this->rootPath}] created successfully for {$this->entity} Entity!");
     }
@@ -67,11 +70,15 @@ class MakeModule extends Command
         return str_replace(
             [
                 '{{entity}}',
-                '{{module}}'
+                '{{lower_entity}}',
+                '{{module}}',
+                '{{lower_module}}'
             ],
             [
                 $this->entity,
-                $this->module
+                strtolower($this->entity),
+                $this->module,
+                strtolower($this->module)
             ],
             $stub
         );
@@ -139,10 +146,68 @@ class MakeModule extends Command
     }
 
     private function createUpdateRequest(): void {
-        $stub = $this->getStubContent('module.request-store.stub');
+        $stub = $this->getStubContent('module.request-update.stub');
         $content = $this->replaceDefaultStubPlaceholders($stub);
-        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Requests' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . 'Store' . $this->entity . 'Request.php';
+        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Requests' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . 'Update' . $this->entity . 'Request.php';
 
         File::put($path, $content);
+    }
+
+    private function createResource(): void {
+        $stub = $this->getStubContent('module.resource.stub');
+        $content = $this->replaceDefaultStubPlaceholders($stub);
+        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . $this->entity . 'Resource.php';
+
+        File::put($path, $content);
+    }
+
+    private function createActions(): void {
+        $this->createStoreAction();
+        $this->createUpdateAction();
+        $this->createDeleteAction();
+        $this->createShowAction();
+        $this->createListAction();
+    }
+
+    private function createStoreAction(): void {
+        $stub = $this->getStubContent('module.action-store.stub');
+        $content = $this->replaceDefaultStubPlaceholders($stub);
+        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Actions' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . 'Store' . $this->entity . 'Action.php';
+
+        File::put($path, $content);
+    }
+
+    private function createUpdateAction(): void {
+        $stub = $this->getStubContent('module.action-update.stub');
+        $content = $this->replaceDefaultStubPlaceholders($stub);
+        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Actions' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . 'Update' . $this->entity . 'Action.php';
+
+        File::put($path, $content);
+    }
+
+    private function createDeleteAction(): void {
+        $stub = $this->getStubContent('module.action-delete.stub');
+        $content = $this->replaceDefaultStubPlaceholders($stub);
+        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Actions' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . 'Delete' . $this->entity . 'Action.php';
+
+        File::put($path, $content);
+    }
+
+    private function createShowAction(): void {
+        $stub = $this->getStubContent('module.action-show.stub');
+        $content = $this->replaceDefaultStubPlaceholders($stub);
+        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Actions' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . 'Show' . $this->entity . 'Action.php';
+
+        File::put($path, $content);
+    }
+
+    private function createListAction(): void {
+        $stub = $this->getStubContent('module.action-list.stub');
+        $content = $this->replaceDefaultStubPlaceholders($stub);
+        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Actions' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . 'List' . $this->entity . 'Action.php';
+
+        File::put($path, $content);
+
+        Carbon::now();
     }
 }

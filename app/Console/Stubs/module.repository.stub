@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\{{module}}\Repositories;
+namespace App\Modules\{{module}}\Repositories\Eloquent;
 
 use App\Modules\{{module}}\Models\{{entity}};
 

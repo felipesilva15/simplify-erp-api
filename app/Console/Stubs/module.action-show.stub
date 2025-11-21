@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Modules\{{module}}\Actions\{{entity}};
+
+use App\Modules\{{module}}\Services\{{entity}}Service;
+use App\Modules\{{module}}\Models\{{entity}};
+
+class Show{{entity}}Action
+{
+    public function __construct(protected {{entity}}Service $service) { }
+
+    public function execute(int $id): {{entity}} {
+        return $this->service->find($id);
+    }
+}

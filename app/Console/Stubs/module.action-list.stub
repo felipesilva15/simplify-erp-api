@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Modules\{{module}}\Actions\{{entity}};
+
+use App\Modules\{{module}}\Services\{{entity}}Service;
+use Illuminate\Support\Collection;
+
+class Delete{{entity}}Action
+{
+    public function __construct(protected {{entity}}Service $service) {}
+
+    public function execute(array $filters): Collection {
+        return $this->service->list($id);
+    }
+}
