@@ -16,6 +16,16 @@ class {{entity}}Service
         return $this->repository->store($data);
     }
 
+    public function edit(int $id): ?{{entity}} {
+        ${{lower_entity}} = $this->repository->findById($id);
+
+        if (!${{lower_entity}}) {
+            throw new NotFoundHttpException();
+        }
+
+        return ${{lower_entity}};
+    }
+
     public function update(int $id, {{entity}}DTO $data): ?{{entity}} {
         ${{lower_entity}} = $this->repository->update($id, $data);
 

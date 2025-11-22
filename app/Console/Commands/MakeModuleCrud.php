@@ -11,13 +11,25 @@ use Illuminate\Support\Str;
 
 class MakeModuleCrud extends Command
 {
-    protected $signature = 'make:module-crud {module} {entity}';
-    protected $description = 'Create a new Domain Module Files (Repository, Service, Actions, DTO, etc)';
-    
+    protected $signature = 'make:module-crud 
+                            {module : Name of module} 
+                            {entity : Name of entity} 
+                            {--all : Whether all files should be created} 
+                            {--model : Whether the model should be created} 
+                            {--service : Whether the service should be created} 
+                            {--repository : Whether the repository should be created} 
+                            {--dto : Whether the DTO should be created} 
+                            {--controller : Whether the controller should be created} 
+                            {--request : Whether the requests should be created} 
+                            {--resource : Whether the resources should be created}
+                            {--action : Whether the actions should be created}';
+    protected $description = 'Create a new domain module files (Repository, Service, Actions, DTO, etc)';
+
     private $rootPath = '';
     private $module = '';
     private $entity = '';
-    private $modelFields = [];
+    private $entityFields = [];
+    private $commomFields = ['id', 'created_at', 'updated_at', 'deleted_at'];
 
     public function handle()
     {
@@ -26,18 +38,40 @@ class MakeModuleCrud extends Command
         $this->rootPath = app_path("Modules/{$this->module}");
 
         $this->makeFolders();
+        $this->loadEntityFields();
 
-        $this->loadModelAttributes();
+        if ($this->option('all') || $this->option('model')) {
+            $this->createModel();
+        } 
+        
+        if ($this->option('all') || $this->option('service')) {
+            $this->createService();
+        }
 
-        $this->createModel();
-        $this->createService();
-        $this->createRepository();
-        $this->createRepositoryInterface();
-        $this->createDto();
-        $this->createController();
-        $this->createRequests();
-        $this->createResource();
-        $this->createActions();
+        if ($this->option('all') || $this->option('repository')) {
+            $this->createRepository();
+            $this->createRepositoryInterface();
+        }
+
+        if ($this->option('all') || $this->option('dto')) {
+            $this->createDto();
+        }
+
+        if ($this->option('all') || $this->option('controller')) {
+            $this->createController();
+        }
+
+        if ($this->option('all') || $this->option('request')) {
+            $this->createRequests();
+        }
+
+        if ($this->option('all') || $this->option('resource')) {
+            $this->createResource();
+        }
+
+        if ($this->option('all') || $this->option('action')) {
+            $this->createActions();
+        }
 
         $this->info("Module [{$this->rootPath}] created successfully for {$this->entity} Entity!");
     }
@@ -97,9 +131,11 @@ class MakeModuleCrud extends Command
         $content = str_replace(
             [
                 '{{fillable_fields}}',
+                '{{swagger_properties}}',
             ],
             [
                 $dynamicReplacements['fillable_fields'],
+                $dynamicReplacements['swagger_properties'],
             ],
             $content
         );
@@ -109,7 +145,7 @@ class MakeModuleCrud extends Command
         File::put($path, $content);
     }
 
-    private function loadModelAttributes(): void {
+    private function loadEntityFields(): void {
         $entity = trim(strtolower($this->entity));
         $tableName = '';
 
@@ -121,7 +157,7 @@ class MakeModuleCrud extends Command
             $tableName = $entity . 's';
         }
 
-        $this->modelFields = ModelHelpers::getTableColumnsFromTable($tableName);
+        $this->entityFields = ModelHelpers::getTableColumnsFromTable($tableName);
     }
 
     private function createRepository(): void {
@@ -193,9 +229,13 @@ class MakeModuleCrud extends Command
         $content = str_replace(
             [
                 '{{rules_definitions}}',
+                '{{swagger_required}}',
+                '{{swagger_properties}}',
             ],
             [
                 $dynamicReplacements['rules_definitions'],
+                $dynamicReplacements['swagger_required'],
+                $dynamicReplacements['swagger_properties'],
             ],
             $content
         );
@@ -213,9 +253,13 @@ class MakeModuleCrud extends Command
         $content = str_replace(
             [
                 '{{rules_definitions}}',
+                '{{swagger_required}}',
+                '{{swagger_properties}}',
             ],
             [
                 $dynamicReplacements['rules_definitions'],
+                $dynamicReplacements['swagger_required'],
+                $dynamicReplacements['swagger_properties'],
             ],
             $content
         );
@@ -227,7 +271,21 @@ class MakeModuleCrud extends Command
 
     private function createResource(): void {
         $stub = $this->getStubContent('module.resource.stub');
+        
+        $dynamicReplacements = $this->getResourceDynamicReplacements();
         $content = $this->replaceDefaultStubPlaceholders($stub);
+        $content = str_replace(
+            [
+                '{{array_fields}}',
+                '{{swagger_properties}}',
+            ],
+            [
+                $dynamicReplacements['array_fields'],
+                $dynamicReplacements['swagger_properties'],
+            ],
+            $content
+        );
+
         $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . $this->entity . 'Resource.php';
 
         File::put($path, $content);
@@ -235,6 +293,7 @@ class MakeModuleCrud extends Command
 
     private function createActions(): void {
         $this->createStoreAction();
+        $this->createEditAction();
         $this->createUpdateAction();
         $this->createDeleteAction();
         $this->createShowAction();
@@ -245,6 +304,14 @@ class MakeModuleCrud extends Command
         $stub = $this->getStubContent('module.action-store.stub');
         $content = $this->replaceDefaultStubPlaceholders($stub);
         $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Actions' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . 'Store' . $this->entity . 'Action.php';
+
+        File::put($path, $content);
+    }
+
+    private function createEditAction(): void {
+        $stub = $this->getStubContent('module.action-edit.stub');
+        $content = $this->replaceDefaultStubPlaceholders($stub);
+        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Actions' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . 'Edit' . $this->entity . 'Action.php';
 
         File::put($path, $content);
     }
@@ -288,15 +355,15 @@ class MakeModuleCrud extends Command
         $constructorParams = '';
         $arrayFields = '';
 
-        foreach ($this->modelFields as $index => $field) {
+        foreach ($this->entityFields as $index => $field) {
             $constructorProperties = $index == 0 ? $constructorProperties : $constructorProperties . str_pad('', 4 * 2, ' ');
             $constructorParams = $index == 0 ? $constructorParams : $constructorParams . str_pad('', 4 * 3, ' ');
             $arrayFields = $index == 0 ? $arrayFields : $arrayFields . str_pad('', 4 * 3, ' ');
             $literalDefaultValue = StringHelpers::toStringLiteral($field['default']);
 
-            $constructorProperties = $constructorProperties . 'public ' . ($field['nullable'] ? '?' : '') .  $field['type'] . ' $' . $field['name'] . ' = ' . $literalDefaultValue . ',' . ($index + 1 < count($this->modelFields) ? PHP_EOL : '');
-            $constructorParams = $constructorParams . $field['name'] . ": \$data['" . $field['name'] . "'] ?? " . $literalDefaultValue . ',' . ($index + 1 < count($this->modelFields) ? PHP_EOL : '');
-            $arrayFields = $arrayFields . "'" . $field['name'] . "' => \$this->" . $field['name'] . ',' . ($index + 1 < count($this->modelFields) ? PHP_EOL : '');
+            $constructorProperties = $constructorProperties . 'public ' . ($field['nullable'] ? '?' : '') .  $field['type'] . ' $' . $field['name'] . ' = ' . $literalDefaultValue . ',' . ($index + 1 < count($this->entityFields) ? PHP_EOL : '');
+            $constructorParams = $constructorParams . $field['name'] . ": \$data['" . $field['name'] . "'] ?? " . $literalDefaultValue . ',' . ($index + 1 < count($this->entityFields) ? PHP_EOL : '');
+            $arrayFields = $arrayFields . "'" . $field['name'] . "' => \$this->" . $field['name'] . ',' . ($index + 1 < count($this->entityFields) ? PHP_EOL : '');
         }
 
         return [
@@ -317,8 +384,10 @@ class MakeModuleCrud extends Command
             'bool' => 'boolean',
         ];
 
-        foreach ($this->modelFields as $index => $field) {
-            if (in_array($field['name'], ['id', 'created_at', 'updated_at', 'deleted_at'])) {
+        $swaggerReplacements = $this->getSwaggerFieldsAnnotation(setCommomProperties: false, setValidationAttributes: true);
+
+        foreach ($this->entityFields as $index => $field) {
+            if (in_array($field['name'], $this->commomFields)) {
                 continue;
             }
 
@@ -328,7 +397,7 @@ class MakeModuleCrud extends Command
             $definition .= $field['max_length'] && $field['type'] == 'string' ? 'min:1|max:' . (string) $field['max_length'] . '|' : '';
             $definition .= str_contains($field['name'], 'mail') ? 'email|' : ''; 
             $definition .= "',";
-            $definition .= ($index + 1 < count($this->modelFields) ? PHP_EOL : '');
+            $definition .= ($index + 1 < count($this->entityFields) ? PHP_EOL : '');
 
             $rulesDefinitions .= $rulesDefinitions == '' ? '' : str_pad('', 4 * 3, ' ');
             $rulesDefinitions .= $definition;
@@ -336,23 +405,129 @@ class MakeModuleCrud extends Command
 
         return [
             'rules_definitions' => $rulesDefinitions,
+            'swagger_required' => $swaggerReplacements['required'],
+            'swagger_properties' => $swaggerReplacements['properties'],
         ];
     }
 
     private function getModelDynamicReplacements(): array {
         $fillableFields = '';
 
-        foreach ($this->modelFields as $index => $field) {
-            if (in_array($field['name'], ['id', 'created_at', 'updated_at', 'deleted_at'])) {
+        $swaggerReplacements = $this->getSwaggerFieldsAnnotation(setCommomProperties: true, setValidationAttributes: false);
+
+        foreach ($this->entityFields as $index => $field) {
+            if (in_array($field['name'], $this->commomFields)) {
                 continue;
             }
 
             $fillableFields .= $fillableFields == '' ? '' : str_pad('', 4 * 2, ' ');
-            $fillableFields .= "'{$field['name']}'," . ($index + 1 < count($this->modelFields) ? PHP_EOL : '');
+            $fillableFields .= "'{$field['name']}'," . ($index + 1 < count($this->entityFields) ? PHP_EOL : '');
         }
 
         return [
             'fillable_fields' => $fillableFields,
+            'swagger_properties' => $swaggerReplacements['properties'],
+        ];
+    }
+
+    private function getResourceDynamicReplacements(): array {
+        $arrayFields = '';
+
+        $swaggerReplacements = $this->getSwaggerFieldsAnnotation(setCommomProperties: true, setValidationAttributes: true);
+
+        foreach ($this->entityFields as $index => $field) {
+            $arrayFields = $index == 0 ? $arrayFields : $arrayFields . str_pad('', 4 * 3, ' ');
+
+            $arrayFields = $arrayFields . "'" . $field['name'] . "' => \$this->" . $field['name'] . ',' . ($index + 1 < count($this->entityFields) ? PHP_EOL : '');
+        }
+
+        return [
+            'array_fields' => $arrayFields,
+            'swagger_properties' => $swaggerReplacements['properties'],
+        ];
+    }
+
+    private function getSwaggerFieldsAnnotation(bool $setCommomProperties, bool $setValidationAttributes): array {
+        $required = '';
+        $properties = '';
+
+        $typeMap = [
+            'string' => [
+                'type' => 'string',
+                'format' => '', 
+                'example' => '"Sample"'
+            ],
+            'float' => [
+                'type' => 'number', 
+                'format' => 'float', 
+                'example' => '20.99'
+            ],
+            'int' => [
+                'type' => 'integer', 
+                'format' => '', 
+                'example' => '1'
+            ],
+            'Carbon' => [
+                'type' => 'string', 
+                'format' => 'date-time', 
+                'example' => '"' . Carbon::now()->toISOString(). '"'
+            ],
+            'bool' => [
+                'type' => 'boolean', 
+                'format' => '', 
+                'example' => 'false'
+            ],
+        ];
+
+
+        foreach ($this->entityFields as $field) {
+            if (!$setCommomProperties && in_array($field['name'], $this->commomFields)) {
+                continue;
+            }
+
+            $property = '';
+
+            if ($properties != '')
+                $property .= ' *  ' . str_pad('', 4 * 1, ' ');
+
+            $type = $typeMap[$field['type']];
+
+            $property .= "@OA\Property(property=\"{$field['name']}\", type=\"{$type['type']}\"";
+
+            if ($type['format'] ?? '')
+                $property .= ", format=\"{$type['format']}\"";
+
+            $property .= ', example=' . $type['example'];
+
+            if ($setValidationAttributes) {
+                if (!$field['nullable'])
+                    $required .= ',"'. $field['name'] .'"';
+
+                switch ($field['type']) {
+                    case 'string':
+                        $property .= ', minLength=1, maxLength=' . $field['max_length'];
+                        break;
+
+                    case 'float':
+                        $property .= ', minimum=0.' . str_pad('', $field['precision'] - 1, '0') . '1';
+                        $property .= ', maximum=' . str_pad('', $field['max_length'] - $field['precision'], '9') . '.' . str_pad('', $field['precision'], '9');
+                        break;
+                }
+            }
+
+            if ($field['nullable'])
+                $property .= ', nullable=true';
+
+            $property .= '),' . PHP_EOL;
+            $properties .= $property;
+        }
+
+        $required = substr($required, 1);
+        $properties = substr($properties, 0, strlen($properties) - (1 + strlen(PHP_EOL)));
+
+        return [
+            'required' => $required,
+            'properties' => $properties
         ];
     }
 }

@@ -7,8 +7,8 @@ use Illuminate\Foundation\Http\FormRequest;
 /**
  * @OA\Schema(
  *      schema="Store{{entity}}Request",
- *      required={"name"},
- *      @OA\Property(property="name", type="string", example="API", minLength=1, maxLength=80)
+ *      required={{{swagger_required}}},
+ *      {{swagger_properties}}
  * )
  */
 class Store{{entity}}Request extends FormRequest
