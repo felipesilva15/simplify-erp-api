@@ -4,19 +4,19 @@ namespace App\Core\Enums;
 
 /**
  * @OA\Schema(
- *   schema="RequestQueryOperators",
+ *   schema="RequestQueryOperatorsEnum",
  *   type="string",
  *   description="Request query operators:
- *              - Equal: 
- *              - Less than: lt
- *              - Less than equal: lte
- *              - Greater than: gt
- *              - Greater than equal: gte
- *              - Not equal: ne",
+ *      Equal = ''
+ *      Less than = 'lt'
+ *      Less than equal = 'lte'
+ *      Greater than = 'gt'
+ *      Greater than equal = 'gte'
+ *      Not equal = 'ne'",
  *   enum={"", "lt", "lte", "gt", "gte", "ne"}
  * )
  */
-enum RequestQueryOperators: string
+enum RequestQueryOperatorsEnum: string
 {
     case Equal = '';
     case LessThan = 'lt';

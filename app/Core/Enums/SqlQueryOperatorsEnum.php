@@ -4,19 +4,19 @@ namespace App\Core\Enums;
 
 /**
  * @OA\Schema(
- *   schema="SqlQueryOperators",
+ *   schema="SqlQueryOperatorsEnum",
  *   type="string",
  *   description="SQL query operators:
- *              - Equal: =
- *              - Less than: <
- *              - Less than equal: <=
- *              - Greater than: >
- *              - Greater than equal: >=
- *              - Not equal: !=",
+ *      Equal = '='
+ *      Less than = '<'
+ *      Less than equal = '<='
+ *      Greater than = '>'
+ *      Greater than equal = '>='
+ *      Not equal = '!='",
  *   enum={"=", "<", "<=", ">", ">=", "!="}
  * )
  */
-enum SqlQueryOperators: string
+enum SqlQueryOperatorsEnum: string
 {
     case Equal = '=';
     case LessThan = '<';

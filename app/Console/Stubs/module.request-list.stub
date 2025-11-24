@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Modules\{{module}}\Http\Requests\{{entity}};
+
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
+use App\Core\Enums\SqlOrderDirectionEnum;
+
+/**
+ * @OA\Schema(
+ *      schema="List{{entity}}Request",
+ *      required={{{swagger_required}}},
+ *      {{swagger_properties}}
+ * )
+ */
+class List{{entity}}Request extends FormRequest
+{
+    public function rules(): array
+    {
+        return [
+            {{rules_definitions}},
+            'sort_by' => 'nullable|array',
+            'sort_by.*' => 'string',
+            'sort_dir' => 'nullable|array',
+            'sort_dir.*' => [Rule::enum(SqlOrderDirectionEnum::class)],
+            'per_page' => 'nullable|integer|max:100',
+            'page' => 'nullable|integer|min:0'
+        ];
+    }
+}

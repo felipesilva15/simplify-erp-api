@@ -219,6 +219,7 @@ class MakeModuleCrud extends Command
     private function createRequests(): void {
         $this->createStoreRequest();
         $this->createUpdateRequest();
+        $this->createListRequest();
     }
 
     private function createStoreRequest(): void {
@@ -265,6 +266,30 @@ class MakeModuleCrud extends Command
         );
 
         $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Requests' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . 'Update' . $this->entity . 'Request.php';
+
+        File::put($path, $content);
+    }
+
+    private function createListRequest(): void {
+        $stub = $this->getStubContent('module.request-list.stub');
+        
+        $dynamicReplacements = $this->getRequestDynamicReplacements();
+        $content = $this->replaceDefaultStubPlaceholders($stub);
+        $content = str_replace(
+            [
+                '{{rules_definitions}}',
+                '{{swagger_required}}',
+                '{{swagger_properties}}',
+            ],
+            [
+                $dynamicReplacements['rules_definitions'],
+                $dynamicReplacements['swagger_required'],
+                $dynamicReplacements['swagger_properties'],
+            ],
+            $content
+        );
+
+        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Requests' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . 'List' . $this->entity . 'Request.php';
 
         File::put($path, $content);
     }

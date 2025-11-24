@@ -25,6 +25,10 @@ class {{entity}}Controller
      *      path="/api/{{lower_module}}/{{lower_entity}}s",
      *      tags={"{{entity}}"},
      *      summary="List all rows",
+     *      @OA\Parameter(name="sort_by[]", in="query", description="Fields name's to sort", required=false, @OA\Schema(type="array", @OA\Items(type="string", example="id"))),
+     *      @OA\Parameter(name="sort_dir[]", in="query", description="Directions to sort: Ascending = 'asc'; Descending = 'desc'", required=false, @OA\Schema(type="array", @OA\Items(type="string", example="desc"))),
+     *      @OA\Parameter(name="per_page", in="query", description="Items per page", required=false, @OA\Schema(type="integer")),
+     *      @OA\Parameter(name="page", in="query", description="Page number", required=false, @OA\Schema(type="integer")),
      *      @OA\Response(
      *          response="200", 
      *          description="{{entity}} list",
@@ -35,14 +39,8 @@ class {{entity}}Controller
      *      )
      * )
      */
-    public function index(Request $request, List{{entity}}Action $action): JsonResponse {
-        $filters = $request->only([
-            'id',
-            'sort_by',
-            'sort_dir',
-            'per_page',
-            'page'
-        ]);
+    public function index(List{{entity}}Request $request, List{{entity}}Action $action): JsonResponse {
+        $filters = $request->validated()
         ${{lower_entity}}List = $action->execute($filters);
 
         return response()->json(${{lower_entity}}List, 200);
