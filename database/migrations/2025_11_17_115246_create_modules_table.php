@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('modules', function (Blueprint $table) {
             $table->id();
             $table->string('name', 80);
-            $table->string('description', 512);
-            $table->boolean('is_active')->default(true);
+            $table->string('description', 512)->nullable();
+            $table->boolean('is_active')->default(true)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

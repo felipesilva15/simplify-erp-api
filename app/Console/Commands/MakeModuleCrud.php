@@ -417,7 +417,7 @@ class MakeModuleCrud extends Command
             }
 
             $definition = "'{$field['name']}' => '";
-            $definition .= $field['nullable'] ? 'nullable' : 'required|';
+            $definition .= $field['nullable'] ? 'nullable|' : 'required|';
             $definition .= $field['type'] == 'float' ? $typeRules[$field['type']] . ':' . (string) $field['precision'] : $typeRules[$field['type']] . '|';
             $definition .= $field['max_length'] && $field['type'] == 'string' ? 'min:1|max:' . (string) $field['max_length'] . '|' : '';
             $definition .= str_contains($field['name'], 'mail') ? 'email|' : ''; 

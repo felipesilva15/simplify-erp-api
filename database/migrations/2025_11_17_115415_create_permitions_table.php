@@ -16,9 +16,9 @@ return new class extends Migration
             $table->foreignId('module_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->string('group', 60);
             $table->string('action', 120);
-            $table->string('description', 512);
-            $table->boolean('has_access_free');
-            $table->boolean('is_active')->default(true);
+            $table->string('description', 512)->nullable();
+            $table->boolean('has_access_free')->default(false)->nullable();
+            $table->boolean('is_active')->default(true)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
