@@ -6,6 +6,7 @@ use App\Modules\{{module}}\DTO\{{entity}}DTO;
 use App\Modules\{{module}}\Models\{{entity}};
 use App\Modules\{{module}}\Repositories\Interfaces\{{entity}}RepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
+use App\Core\Helpers\ModelHelpers;
 
 class {{entity}}Repository implements {{entity}}RepositoryInterface
 {
@@ -48,17 +49,11 @@ class {{entity}}Repository implements {{entity}}RepositoryInterface
     public function list(array $filters = []): LengthAwarePaginator {
         $query = {{entity}}::query();
 
-        if (isset($filters['name'])) {
-            $query->where('name', 'like', '%' . $filters['name'] . '%');
-        }
+        // Filtering
+        $query = ModelHelpers::setFiltersOnQuery($query, $filters);
 
         // Sorting
-        $sortBy = $filters['sort_by'] ?? 'id';
-        $sortDir = strtolower($filters['sort_dir'] ?? 'desc');
-        if (!in_array($sortDir, ['asc', 'desc'])) {
-            $sortDir = 'asc';
-        }
-        $query->orderBy($sortBy, $sortDir);
+        $query = ModelHelpers::setSortsOnQuery($query, $filters['sort_by'] ?? [], $filters['sort_dir'] ?? []);
 
         // Pagination
         $perPage = isset($filters['per_page']) ? (int) $filters['per_page'] : 15;

@@ -19,7 +19,7 @@ class List{{entity}}Request extends FormRequest
     public function rules(): array
     {
         return [
-            {{rules_definitions}},
+            {{rules_definitions}}
             'sort_by' => 'nullable|array',
             'sort_by.*' => 'string',
             'sort_dir' => 'nullable|array',

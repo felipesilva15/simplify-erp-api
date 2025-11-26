@@ -2,7 +2,8 @@
 
 namespace App\Core\Helpers;
 
-use Illuminate\Container\Attributes\DB;
+use App\Core\Enums\SqlOrderDirectionEnum;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Schema;
 
 class ModelHelpers
@@ -48,5 +49,61 @@ class ModelHelpers
         }
 
         return $fields;
+    }
+
+    public static function setFiltersOnQuery(Builder $query, array $filters = [], array $columnsToFilter = []): Builder {
+        $columns = ModelHelpers::getTableColumnsFromTable($query->getModel()->getTable());
+        $columns = collect($columns);
+
+        foreach ($filters as $columnName => $value) {
+            if (count($columnsToFilter) > 0 && !in_array($columnName, $columnsToFilter)) {
+                continue;
+            }
+
+            $column = $columns->firstWhere('name', '=', $columnName);
+
+            if (!$column) {
+                continue;
+            }
+
+            switch ($column['type']) {
+                case 'string':
+                    $query->where($columnName, 'like', '%'.trim($value).'%');
+                    break;
+                
+                default:
+                    $query->where($columnName, $value);
+                    break;
+            }
+        }
+        
+        return $query;
+    }
+
+    public static function setSortsOnQuery(Builder $query, array $sortBy, array $sortDir): Builder {
+        $columns = ModelHelpers::getTableColumnsFromTable($query->getModel()->getTable());
+        $columns = collect($columns);
+
+        foreach ($sortBy as $index => $columnName) {
+            if (!isset($sortDir[$index])) {
+                continue;
+            }
+
+            $sortDirection = SqlOrderDirectionEnum::tryFrom($sortDir[$index]);
+
+            if (!$sortDirection) {
+                continue;
+            }
+
+            $column = $columns->firstWhere('name', '=', $columnName);
+
+            if (!$column) {
+                continue;
+            }
+
+            $query->orderBy($column['name'], $sortDirection->value);
+        }
+
+        return $query;
     }
 }

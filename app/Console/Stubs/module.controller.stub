@@ -14,6 +14,7 @@ use App\Modules\{{module}}\Actions\{{entity}}\Show{{entity}}Action;
 use App\Modules\{{module}}\Actions\{{entity}}\List{{entity}}Action;
 use App\Modules\{{module}}\Http\Requests\{{entity}}\Store{{entity}}Request;
 use App\Modules\{{module}}\Http\Requests\{{entity}}\Update{{entity}}Request;
+use App\Modules\{{module}}\Http\Requests\{{entity}}\List{{entity}}Request;
 use App\Modules\{{module}}\Http\Resources\{{entity}}Resource;
 use App\Modules\{{module}}\DTO\{{entity}}DTO;
 use App\Modules\{{module}}\Models\{{entity}};
@@ -40,8 +41,7 @@ class {{entity}}Controller
      * )
      */
     public function index(List{{entity}}Request $request, List{{entity}}Action $action): JsonResponse {
-        $filters = $request->validated()
-        ${{lower_entity}}List = $action->execute($filters);
+        ${{lower_entity}}List = $action->execute($request->all());
 
         return response()->json(${{lower_entity}}List, 200);
     }
