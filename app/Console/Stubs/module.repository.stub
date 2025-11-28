@@ -50,10 +50,12 @@ class {{entity}}Repository implements {{entity}}RepositoryInterface
         $query = {{entity}}::query();
 
         // Filtering
-        $query = ModelHelpers::setFiltersOnQuery($query, $filters);
+        if (count($filters) > 0)
+            $query = ModelHelpers::setFiltersOnQuery($query, $filters);
 
         // Sorting
-        $query = ModelHelpers::setSortsOnQuery($query, $filters['sort_by'] ?? [], $filters['sort_dir'] ?? []);
+        if (count($filters['sort_by'] ?? []) > 0 && count($filters['sort_dir'] ?? []) > 0)
+            $query = ModelHelpers::setSortsOnQuery($query, $filters['sort_by'], $filters['sort_dir']);
 
         // Pagination
         $perPage = isset($filters['per_page']) ? (int) $filters['per_page'] : 15;

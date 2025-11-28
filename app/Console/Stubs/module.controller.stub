@@ -26,6 +26,7 @@ class {{entity}}Controller
      *      path="/api/{{lower_module}}/{{lower_entity}}s",
      *      tags={"{{entity}}"},
      *      summary="List all rows",
+     *      {{swagger_query_parameters}},
      *      @OA\Parameter(name="sort_by[]", in="query", description="Fields name's to sort", required=false, @OA\Schema(type="array", @OA\Items(type="string", example="id"))),
      *      @OA\Parameter(name="sort_dir[]", in="query", description="Directions to sort: Ascending = 'asc'; Descending = 'desc'", required=false, @OA\Schema(type="array", @OA\Items(type="string", example="desc"))),
      *      @OA\Parameter(name="per_page", in="query", description="Items per page", required=false, @OA\Schema(type="integer")),

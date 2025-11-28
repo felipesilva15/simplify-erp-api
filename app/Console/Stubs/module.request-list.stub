@@ -10,7 +10,6 @@ use App\Core\Enums\SqlOrderDirectionEnum;
 /**
  * @OA\Schema(
  *      schema="List{{entity}}Request",
- *      required={{{swagger_required}}},
  *      {{swagger_properties}}
  * )
  */
@@ -19,7 +18,7 @@ class List{{entity}}Request extends FormRequest
     public function rules(): array
     {
         return [
-            {{rules_definitions}}
+            {{rules_definitions}},
             'sort_by' => 'nullable|array',
             'sort_by.*' => 'string',
             'sort_dir' => 'nullable|array',

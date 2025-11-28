@@ -16,8 +16,5 @@ interface {{entity}}RepositoryInterface
 
     public function findById(int $id): ?{{entity}};
 
-    /**
-     * @param array $filters keys: id, name, sort_by, sort_dir, per_page, page
-     */
     public function list(array $filters = []): LengthAwarePaginator;
 }

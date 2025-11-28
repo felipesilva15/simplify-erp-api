@@ -210,10 +210,30 @@ class MakeModuleCrud extends Command
 
     private function createController(): void {
         $stub = $this->getStubContent('module.controller.stub');
+        
+        $dynamicReplacements = $this->getControllerDynamicReplacements();
         $content = $this->replaceDefaultStubPlaceholders($stub);
+        $content = str_replace(
+            [
+                '{{swagger_query_parameters}}',
+            ],
+            [
+                $dynamicReplacements['swagger_query_parameters'],
+            ],
+            $content
+        );
+
         $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR . $this->entity . 'Controller.php';
 
         File::put($path, $content);
+    }
+
+    private function getControllerDynamicReplacements(): array {
+        $swaggerReplacements = $this->getSwaggerFieldsAnnotation(setCommomProperties: true, setValidationAttributes: false);
+
+        return [
+            'swagger_query_parameters' => $swaggerReplacements['query_parameters']
+        ];
     }
 
     private function createRequests(): void {
@@ -273,17 +293,15 @@ class MakeModuleCrud extends Command
     private function createListRequest(): void {
         $stub = $this->getStubContent('module.request-list.stub');
         
-        $dynamicReplacements = $this->getRequestDynamicReplacements();
+        $dynamicReplacements = $this->getListRequestDynamicReplacements();
         $content = $this->replaceDefaultStubPlaceholders($stub);
         $content = str_replace(
             [
                 '{{rules_definitions}}',
-                '{{swagger_required}}',
                 '{{swagger_properties}}',
             ],
             [
                 $dynamicReplacements['rules_definitions'],
-                $dynamicReplacements['swagger_required'],
                 $dynamicReplacements['swagger_properties'],
             ],
             $content
@@ -386,10 +404,14 @@ class MakeModuleCrud extends Command
             $arrayFields = $index == 0 ? $arrayFields : $arrayFields . str_pad('', 4 * 3, ' ');
             $literalDefaultValue = StringHelpers::toStringLiteral($field['default']);
 
-            $constructorProperties = $constructorProperties . 'public ' . ($field['nullable'] ? '?' : '') .  $field['type'] . ' $' . $field['name'] . ' = ' . $literalDefaultValue . ',' . ($index + 1 < count($this->entityFields) ? PHP_EOL : '');
-            $constructorParams = $constructorParams . $field['name'] . ": \$data['" . $field['name'] . "'] ?? " . $literalDefaultValue . ',' . ($index + 1 < count($this->entityFields) ? PHP_EOL : '');
-            $arrayFields = $arrayFields . "'" . $field['name'] . "' => \$this->" . $field['name'] . ',' . ($index + 1 < count($this->entityFields) ? PHP_EOL : '');
+            $constructorProperties = $constructorProperties . 'public ' . ($field['nullable'] ? '?' : '') .  $field['type'] . ' $' . $field['name'] . ' = ' . $literalDefaultValue . ',' . PHP_EOL;
+            $constructorParams = $constructorParams . $field['name'] . ": \$data['" . $field['name'] . "'] ?? " . $literalDefaultValue . ',' . PHP_EOL;
+            $arrayFields = $arrayFields . "'" . $field['name'] . "' => \$this->" . $field['name'] . ',' . PHP_EOL;
         }
+
+        $constructorProperties = substr($constructorProperties, 0, strlen($constructorProperties) - (1 + strlen(PHP_EOL)));
+        $constructorParams = substr($constructorParams, 0, strlen($constructorParams) - (1 + strlen(PHP_EOL)));
+        $arrayFields = substr($arrayFields, 0, strlen($arrayFields) - (1 + strlen(PHP_EOL)));
 
         return [
             'constructor_properties' => $constructorProperties,
@@ -421,16 +443,55 @@ class MakeModuleCrud extends Command
             $definition .= $field['type'] == 'float' ? $typeRules[$field['type']] . ':' . (string) $field['precision'] : $typeRules[$field['type']] . '|';
             $definition .= $field['max_length'] && $field['type'] == 'string' ? 'min:1|max:' . (string) $field['max_length'] . '|' : '';
             $definition .= str_contains($field['name'], 'mail') ? 'email|' : ''; 
+            $definition = substr($definition, 0, strlen($definition) - 1);
             $definition .= "',";
-            $definition .= ($index + 1 < count($this->entityFields) ? PHP_EOL : '');
+            $definition .= PHP_EOL;
 
             $rulesDefinitions .= $rulesDefinitions == '' ? '' : str_pad('', 4 * 3, ' ');
             $rulesDefinitions .= $definition;
         }
 
+        $rulesDefinitions = substr($rulesDefinitions, 0, strlen($rulesDefinitions) - (1 + strlen(PHP_EOL)));
+
         return [
             'rules_definitions' => $rulesDefinitions,
             'swagger_required' => $swaggerReplacements['required'],
+            'swagger_properties' => $swaggerReplacements['properties'],
+        ];
+    }
+
+    private function getListRequestDynamicReplacements(): array {
+        $rulesDefinitions = '';
+
+        $typeRules = [
+            'string' => 'string',
+            'float' => 'decimal',
+            'int' => 'integer',
+            'Carbon' => 'datetime',
+            'bool' => 'boolean',
+        ];
+
+        $swaggerReplacements = $this->getSwaggerFieldsAnnotation(setCommomProperties: true, setValidationAttributes: false);
+
+        foreach ($this->entityFields as $index => $field) {
+            if (in_array($field['name'], $this->commomFields)) {
+                continue;
+            }
+
+            $definition = "'{$field['name']}' => 'nullable|";
+            $definition .= $field['type'] == 'float' ? $typeRules[$field['type']] . ':' . (string) $field['precision'] : $typeRules[$field['type']] . '|';
+            $definition = substr($definition, 0, strlen($definition) - 1);
+            $definition .= "',";
+            $definition .= PHP_EOL;
+
+            $rulesDefinitions .= $rulesDefinitions == '' ? '' : str_pad('', 4 * 3, ' ');
+            $rulesDefinitions .= $definition;
+        }
+
+        $rulesDefinitions = substr($rulesDefinitions, 0, strlen($rulesDefinitions) - (1 + strlen(PHP_EOL)));
+
+        return [
+            'rules_definitions' => $rulesDefinitions,
             'swagger_properties' => $swaggerReplacements['properties'],
         ];
     }
@@ -446,8 +507,11 @@ class MakeModuleCrud extends Command
             }
 
             $fillableFields .= $fillableFields == '' ? '' : str_pad('', 4 * 2, ' ');
-            $fillableFields .= "'{$field['name']}'," . ($index + 1 < count($this->entityFields) ? PHP_EOL : '');
+            $fillableFields .= "'{$field['name']}',";
+            $fillableFields .= PHP_EOL;
         }
+
+        $fillableFields = substr($fillableFields, 0, strlen($fillableFields) - (1 + strlen(PHP_EOL)));
 
         return [
             'fillable_fields' => $fillableFields,
@@ -463,8 +527,10 @@ class MakeModuleCrud extends Command
         foreach ($this->entityFields as $index => $field) {
             $arrayFields = $index == 0 ? $arrayFields : $arrayFields . str_pad('', 4 * 3, ' ');
 
-            $arrayFields = $arrayFields . "'" . $field['name'] . "' => \$this->" . $field['name'] . ',' . ($index + 1 < count($this->entityFields) ? PHP_EOL : '');
+            $arrayFields = $arrayFields . "'" . $field['name'] . "' => \$this->" . $field['name'] . ',' . PHP_EOL;
         }
+        
+        $arrayFields = substr($arrayFields, 0, strlen($arrayFields) - (1 + strlen(PHP_EOL)));
 
         return [
             'array_fields' => $arrayFields,
@@ -472,9 +538,10 @@ class MakeModuleCrud extends Command
         ];
     }
 
-    private function getSwaggerFieldsAnnotation(bool $setCommomProperties, bool $setValidationAttributes): array {
+    private function getSwaggerFieldsAnnotation(bool $setCommomProperties = true, bool $setValidationAttributes = false): array {
         $required = '';
         $properties = '';
+        $queryParameters = '';
 
         $typeMap = [
             'string' => [
@@ -510,14 +577,19 @@ class MakeModuleCrud extends Command
                 continue;
             }
 
+            $queryParameter = '';
             $property = '';
 
             if ($properties != '')
                 $property .= ' *  ' . str_pad('', 4 * 1, ' ');
 
+            if ($queryParameters != '')
+                $queryParameter .= '     *  ' . str_pad('', 4 * 1, ' ');
+
             $type = $typeMap[$field['type']];
 
             $property .= "@OA\Property(property=\"{$field['name']}\", type=\"{$type['type']}\"";
+            $queryParameter .= "@OA\Parameter(name=\"{$field['name']}\", in=\"query\", required=false, @OA\Schema(type=\"{$type['type']}\")";
 
             if ($type['format'] ?? '')
                 $property .= ", format=\"{$type['format']}\"";
@@ -544,15 +616,20 @@ class MakeModuleCrud extends Command
                 $property .= ', nullable=true';
 
             $property .= '),' . PHP_EOL;
+            $queryParameter .= '),' . PHP_EOL;
+
             $properties .= $property;
+            $queryParameters .= $queryParameter;
         }
 
         $required = substr($required, 1);
         $properties = substr($properties, 0, strlen($properties) - (1 + strlen(PHP_EOL)));
+        $queryParameters = substr($queryParameters, 0, strlen($queryParameters) - (1 + strlen(PHP_EOL)));
 
         return [
             'required' => $required,
-            'properties' => $properties
+            'properties' => $properties,
+            'query_parameters' => $queryParameters
         ];
     }
 }
