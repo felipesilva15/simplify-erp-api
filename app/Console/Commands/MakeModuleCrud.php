@@ -66,7 +66,7 @@ class MakeModuleCrud extends Command
         }
 
         if ($this->option('all') || $this->option('resource')) {
-            $this->createResource();
+            $this->createResources();
         }
 
         if ($this->option('all') || $this->option('action')) {
@@ -312,6 +312,11 @@ class MakeModuleCrud extends Command
         File::put($path, $content);
     }
 
+    private function createResources(): void {
+        $this->createResource();
+        $this->createCollection();
+    }
+
     private function createResource(): void {
         $stub = $this->getStubContent('module.resource.stub');
         
@@ -330,6 +335,14 @@ class MakeModuleCrud extends Command
         );
 
         $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . $this->entity . 'Resource.php';
+
+        File::put($path, $content);
+    }
+
+    private function createCollection(): void {
+        $stub = $this->getStubContent('module.resource-collection.stub');
+        $content = $this->replaceDefaultStubPlaceholders($stub);
+        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . $this->entity . 'Collection.php';
 
         File::put($path, $content);
     }

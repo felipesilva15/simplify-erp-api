@@ -16,8 +16,8 @@ use App\Modules\{{module}}\Http\Requests\{{entity}}\Store{{entity}}Request;
 use App\Modules\{{module}}\Http\Requests\{{entity}}\Update{{entity}}Request;
 use App\Modules\{{module}}\Http\Requests\{{entity}}\List{{entity}}Request;
 use App\Modules\{{module}}\Http\Resources\{{entity}}Resource;
+use App\Modules\{{module}}\Http\Resources\{{entity}}Collection;
 use App\Modules\{{module}}\DTO\{{entity}}DTO;
-use App\Modules\{{module}}\Models\{{entity}};
 
 class {{entity}}Controller
 {
@@ -34,17 +34,14 @@ class {{entity}}Controller
      *      @OA\Response(
      *          response="200", 
      *          description="{{entity}} list",
-     *          @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/{{entity}}")
-     *         )
+     *          @OA\JsonContent(ref="#/components/schemas/{{entity}}Collection")
      *      )
      * )
      */
     public function index(List{{entity}}Request $request, List{{entity}}Action $action): JsonResponse {
         ${{lower_entity}}List = $action->execute($request->all());
 
-        return response()->json(${{lower_entity}}List, 200);
+        return response()->json(new {{entity}}Collection(${{lower_entity}}List), 200);
     }
 
     /**

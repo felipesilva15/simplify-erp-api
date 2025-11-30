@@ -61,6 +61,6 @@ class {{entity}}Repository implements {{entity}}RepositoryInterface
         $perPage = isset($filters['per_page']) ? (int) $filters['per_page'] : 15;
         $page = isset($filters['page']) ? (int) $filters['page'] : 1;
 
-        return $query->paginate(perPage: $perPage, page: $page);
+        return $query->paginate(perPage: $perPage, page: $page)->withQueryString();
     }
 }
