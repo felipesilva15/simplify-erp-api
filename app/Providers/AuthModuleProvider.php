@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
-use App\Modules\Auth\Repositories\Eloquent\ModuleRepository;
+use App\Modules\Auth\Repositories\Eloquent\PermitionRepository;
 use App\Modules\Auth\Repositories\Eloquent\RoleRepository;
-use App\Modules\Auth\Repositories\Interfaces\ModuleRepositoryInterface;
+use App\Modules\Auth\Repositories\Interfaces\PermitionRepositoryInterface;
 use App\Modules\Auth\Repositories\Interfaces\RoleRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
@@ -16,5 +16,6 @@ class AuthModuleProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
+        $this->app->bind(PermitionRepositoryInterface::class, PermitionRepository::class);
     }
 }
