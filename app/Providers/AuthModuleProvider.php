@@ -15,6 +15,6 @@ class AuthModuleProvider extends ServiceProvider
      */
     public function register(): void
     {
-        
+        $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
     }
 }

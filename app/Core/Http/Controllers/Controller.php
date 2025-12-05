@@ -12,9 +12,21 @@ namespace App\Core\Http\Controllers;
  *          name="Felipe Silva"
  *      ),
  *      @OA\License(
- *          name="Licença API",
+ *          name="Licença MIT",
  *          url="https://github.com/felipesilva15/simplify-erp-api/blob/main/LICENSE"
  *      )
+ * )
+ * @OA\Server(
+ *     description="Local",
+ *     url="http://localhost:8000"
+ * )
+ * @OA\Server(
+ *     description="Sandbox",
+ *     url="https://sandbox.simplify-erp.felipesilva15.com.br"
+ * )
+ * @OA\Server(
+ *     description="Production",
+ *     url="https://api.simplify-erp.felipesilva15.com.br"
  * )
  */
 abstract class Controller
