@@ -15,8 +15,8 @@ use App\Modules\{{module}}\Actions\{{entity}}\List{{entity}}Action;
 use App\Modules\{{module}}\Http\Requests\{{entity}}\Store{{entity}}Request;
 use App\Modules\{{module}}\Http\Requests\{{entity}}\Update{{entity}}Request;
 use App\Modules\{{module}}\Http\Requests\{{entity}}\List{{entity}}Request;
-use App\Modules\{{module}}\Http\Resources\{{entity}}Resource;
-use App\Modules\{{module}}\Http\Resources\{{entity}}Collection;
+use App\Modules\{{module}}\Http\Resources\{{entity}}\{{entity}}Resource;
+use App\Modules\{{module}}\Http\Resources\{{entity}}\{{entity}}Collection;
 use App\Modules\{{module}}\DTO\{{entity}}DTO;
 
 class {{entity}}Controller

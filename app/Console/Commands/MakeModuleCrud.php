@@ -87,7 +87,7 @@ class MakeModuleCrud extends Command
             "{$this->rootPath}/DTO",
             "{$this->rootPath}/Http/Controllers",
             "{$this->rootPath}/Http/Requests/{$this->entity}",
-            "{$this->rootPath}/Http/Resources",
+            "{$this->rootPath}/Http/Resources/{$this->entity}",
         ];
 
         foreach ($folders as $folder) {
@@ -334,7 +334,7 @@ class MakeModuleCrud extends Command
             $content
         );
 
-        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . $this->entity . 'Resource.php';
+        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . $this->entity . 'Resource.php';
 
         File::put($path, $content);
     }
@@ -342,7 +342,7 @@ class MakeModuleCrud extends Command
     private function createCollection(): void {
         $stub = $this->getStubContent('module.resource-collection.stub');
         $content = $this->replaceDefaultStubPlaceholders($stub);
-        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . $this->entity . 'Collection.php';
+        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . $this->entity . 'Collection.php';
 
         File::put($path, $content);
     }
