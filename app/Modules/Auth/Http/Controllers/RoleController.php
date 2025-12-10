@@ -15,8 +15,8 @@ use App\Modules\Auth\Actions\Role\ListRoleAction;
 use App\Modules\Auth\Http\Requests\Role\StoreRoleRequest;
 use App\Modules\Auth\Http\Requests\Role\UpdateRoleRequest;
 use App\Modules\Auth\Http\Requests\Role\ListRoleRequest;
-use App\Modules\Auth\Http\Resources\RoleResource;
-use App\Modules\Auth\Http\Resources\RoleCollection;
+use App\Modules\Auth\Http\Resources\Role\RoleResource;
+use App\Modules\Auth\Http\Resources\Role\RoleCollection;
 use App\Modules\Auth\DTO\RoleDTO;
 
 class RoleController

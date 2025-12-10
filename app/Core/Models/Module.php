@@ -2,7 +2,9 @@
 
 namespace App\Core\Models;
 
+use App\Modules\Auth\Models\Permition;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -28,6 +30,10 @@ class Module extends Model
     ];
 
     protected $casts = [
-        
+        'is_active' => 'boolean'
     ];
+
+    public function permitions(): HasMany {
+        return $this->hasMany(Permition::class);
+    }
 }

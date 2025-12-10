@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Auth\Http\Resources;
+namespace App\Modules\Auth\Http\Resources\Permition;
 
 use App\Core\Helpers\PaginatorHelpers;
 use Illuminate\Http\Request;

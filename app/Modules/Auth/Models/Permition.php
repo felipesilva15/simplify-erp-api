@@ -36,7 +36,8 @@ class Permition extends Model
     ];
 
     protected $casts = [
-        
+        'has_access_free' => 'boolean',
+        'is_active' => 'boolean'
     ];
 
     public function module(): BelongsTo {

@@ -24,6 +24,15 @@ use App\Core\Enums\SqlOrderDirectionEnum;
  */
 class ListPermitionRequest extends FormRequest
 {
+    protected function prepareForValidation(): void
+    {
+        if (isset($this->has_access_free))
+            $this->merge(['has_access_free' => filter_var($this->has_access_free, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE)]);
+
+        if (isset($this->is_active))
+            $this->merge(['is_active' => filter_var($this->is_active, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE)]);
+    }
+
     public function rules(): array
     {
         return [

@@ -15,8 +15,8 @@ use App\Core\Actions\Module\ListModuleAction;
 use App\Core\Http\Requests\Module\StoreModuleRequest;
 use App\Core\Http\Requests\Module\UpdateModuleRequest;
 use App\Core\Http\Requests\Module\ListModuleRequest;
-use App\Core\Http\Resources\ModuleResource;
-use App\Core\Http\Resources\ModuleCollection;
+use App\Core\Http\Resources\Module\ModuleResource;
+use App\Core\Http\Resources\Module\ModuleCollection;
 use App\Core\DTO\ModuleDTO;
 
 class ModuleController

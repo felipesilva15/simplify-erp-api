@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Http\Resources;
+namespace App\Modules\Auth\Http\Resources\Role;
 
 use App\Core\Helpers\PaginatorHelpers;
 use Illuminate\Http\Request;
@@ -8,24 +8,24 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 /**
  * @OA\Schema(
- *     schema="ModuleCollection",
+ *     schema="RoleCollection",
  *     type="object",
  *     allOf={
  *         @OA\Schema(
- *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/ModuleResource")),
+ *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/RoleResource")),
  *         ),
  *         @OA\Schema(ref="#/components/schemas/PaginatorInfo"),
  *     }
  * )
  */
-class ModuleCollection extends ResourceCollection
+class RoleCollection extends ResourceCollection
 {
     public function toArray(Request $request): array
     {
         $info = PaginatorHelpers::getInfoFromPaginator($this->resource)->toArray();
 
         return [
-            'data' => ModuleResource::collection($this->collection),
+            'data' => RoleResource::collection($this->collection),
             ...$info
         ];
     }

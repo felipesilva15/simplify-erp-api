@@ -15,8 +15,8 @@ use App\Modules\Auth\Actions\Permition\ListPermitionAction;
 use App\Modules\Auth\Http\Requests\Permition\StorePermitionRequest;
 use App\Modules\Auth\Http\Requests\Permition\UpdatePermitionRequest;
 use App\Modules\Auth\Http\Requests\Permition\ListPermitionRequest;
-use App\Modules\Auth\Http\Resources\PermitionResource;
-use App\Modules\Auth\Http\Resources\PermitionCollection;
+use App\Modules\Auth\Http\Resources\Permition\PermitionResource;
+use App\Modules\Auth\Http\Resources\Permition\PermitionCollection;
 use App\Modules\Auth\DTO\PermitionDTO;
 
 class PermitionController

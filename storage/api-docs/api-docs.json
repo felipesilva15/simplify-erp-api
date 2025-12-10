@@ -1382,6 +1382,44 @@
                     }
                 ]
             },
+            "ModulePermitionResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "group": {
+                        "type": "string",
+                        "maxLength": 60,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "action": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "description": {
+                        "type": "string",
+                        "maxLength": 512,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "has_access_free": {
+                        "type": "boolean",
+                        "example": false,
+                        "nullable": true
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": false,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "ModuleResource": {
                 "properties": {
                     "id": {
@@ -1405,6 +1443,12 @@
                         "type": "boolean",
                         "example": false,
                         "nullable": true
+                    },
+                    "permitions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ModulePermitionResource"
+                        }
                     },
                     "created_at": {
                         "type": "string",
@@ -1705,13 +1749,24 @@
                     }
                 ]
             },
-            "PermitionResource": {
+            "PermitionModuleResource": {
                 "properties": {
                     "id": {
                         "type": "integer",
                         "example": 1
                     },
-                    "module_id": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample"
+                    }
+                },
+                "type": "object"
+            },
+            "PermitionResource": {
+                "properties": {
+                    "id": {
                         "type": "integer",
                         "example": 1
                     },
@@ -1743,6 +1798,9 @@
                         "type": "boolean",
                         "example": false,
                         "nullable": true
+                    },
+                    "module": {
+                        "$ref": "#/components/schemas/PermitionModuleResource"
                     },
                     "created_at": {
                         "type": "string",
