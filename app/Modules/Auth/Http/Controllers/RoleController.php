@@ -2,6 +2,7 @@
 
 namespace App\Modules\Auth\Http\Controllers;
 
+use App\Modules\Auth\Actions\Role\DefineRolePermitionsAction;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -18,6 +19,7 @@ use App\Modules\Auth\Http\Requests\Role\ListRoleRequest;
 use App\Modules\Auth\Http\Resources\Role\RoleResource;
 use App\Modules\Auth\Http\Resources\Role\RoleCollection;
 use App\Modules\Auth\DTO\RoleDTO;
+use App\Modules\Auth\Http\Requests\Role\RolePermitionsRequest;
 
 class RoleController
 {
@@ -213,5 +215,45 @@ class RoleController
     public function destroy(int $id, DeleteRoleAction $action): Response {
         $action->execute($id);
         return response()->noContent();
+    }
+
+    /**
+     * @OA\Patch(
+     *      path="/api/auth/roles/{id}/permitions",
+     *      tags={"Role"},
+     *      summary="Define role permitions",
+     *      @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Role ID",
+     *         @OA\Schema(type="integer")
+     *      ),
+     *      @OA\RequestBody(
+     *         required=true,
+     *         description="Data for set role",
+     *         @OA\JsonContent(ref="#/components/schemas/RolePermitionsRequest")
+     *      ),
+     *      @OA\Response(
+     *          response="200", 
+     *          description="Updated role data",
+     *          @OA\JsonContent(ref="#/components/schemas/RoleResource")
+     *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *      ),
+     *      @OA\Response(
+     *          response="404", 
+     *          description="Record not found",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *      ),
+     *      security={{"bearerAuth":{}}}
+     * )
+     */
+    public function definePermitions(int $id, RolePermitionsRequest $request, DefineRolePermitionsAction $action): JsonResponse {
+        $role = $action->execute($id, $request->validated('ids'));
+        return response()->json(new RoleResource($role), 200);
     }
 }

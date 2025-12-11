@@ -11,6 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *      @OA\Property(property="id", type="integer", example=1),
  *      @OA\Property(property="name", type="string", example="Sample", minLength=1, maxLength=80),
  *      @OA\Property(property="description", type="string", example="Sample", minLength=1, maxLength=512, nullable=true),
+ *      @OA\Property(property="permitions", type="array", @OA\Items(ref="#/components/schemas/RolePermitionResource")),
  *      @OA\Property(property="created_at", type="string", format="date-time", example="2025-12-01T11:21:13.562558Z", nullable=true),
  *      @OA\Property(property="updated_at", type="string", format="date-time", example="2025-12-01T11:21:13.562558Z", nullable=true),
  *      @OA\Property(property="deleted_at", type="string", format="date-time", example="2025-12-01T11:21:13.562558Z", nullable=true)
@@ -23,6 +24,7 @@ class RoleResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
+            'permitions' => RolePermitionResource::collection($this->permitions),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at

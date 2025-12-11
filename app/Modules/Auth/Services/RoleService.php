@@ -53,4 +53,8 @@ class RoleService
     public function list(array $filters = []): LengthAwarePaginator {
         return $this->repository->list($filters);
     }
+
+    public function definePermitions(int $id, array $permitionIds = []): ?Role {
+        return $this->repository->syncPermitions($id, $permitionIds);
+    }
 }

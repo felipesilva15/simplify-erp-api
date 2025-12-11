@@ -17,4 +17,6 @@ interface RoleRepositoryInterface
     public function findById(int $id): ?Role;
 
     public function list(array $filters = []): LengthAwarePaginator;
+
+    public function syncPermitions(int $id, array $permitionIds): ?Role;
 }

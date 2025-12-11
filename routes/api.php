@@ -16,5 +16,6 @@ Route::prefix('core')->group(function() {
 
 Route::prefix('auth')->group(function() {
     Route::apiResource('roles', RoleController::class);
+    Route::patch('roles/{id}/permitions', [RoleController::class, 'definePermitions']);
     Route::apiResource('permitions', PermitionController::class);
 });

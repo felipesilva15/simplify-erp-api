@@ -1141,6 +1141,74 @@
                     }
                 }
             }
+        },
+        "/api/auth/roles/{id}/permitions": {
+            "patch": {
+                "tags": [
+                    "Role"
+                ],
+                "summary": "Define role permitions",
+                "operationId": "e30e13a03e70d6b2bdfc9911ecfffd82",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Role ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Data for set role permitions",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RolePermitionsRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated role data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RoleResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -1688,6 +1756,17 @@
                 },
                 "type": "object"
             },
+            "RolePermitionsRequest": {
+                "properties": {
+                    "ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "StoreRoleRequest": {
                 "required": [
                     "name"
@@ -1842,6 +1921,44 @@
                     }
                 ]
             },
+            "RolePermitionResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "group": {
+                        "type": "string",
+                        "maxLength": 60,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "action": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "description": {
+                        "type": "string",
+                        "maxLength": 512,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "has_access_free": {
+                        "type": "boolean",
+                        "example": false,
+                        "nullable": true
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": false,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "RoleResource": {
                 "properties": {
                     "id": {
@@ -1860,6 +1977,12 @@
                         "minLength": 1,
                         "example": "Sample",
                         "nullable": true
+                    },
+                    "permitions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RolePermitionResource"
+                        }
                     },
                     "created_at": {
                         "type": "string",

@@ -63,4 +63,16 @@ class RoleRepository implements RoleRepositoryInterface
 
         return $query->paginate(perPage: $perPage, page: $page)->withQueryString();
     }
+
+    public function syncPermitions(int $id, array $permitionIds = []): ?Role {
+        $role = $this->findById($id);
+
+        if (!$role) {
+            return null;
+        }
+        
+        $role->permitions()->sync($permitionIds);
+
+        return $role->fresh();
+    }
 }
