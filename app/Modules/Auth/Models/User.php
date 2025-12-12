@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
  * @OA\Schema(
@@ -23,7 +24,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *      @OA\Property(property="deleted_at", type="string", format="date-time", example="2025-12-11T11:13:03.678895Z", nullable=true)
  * )
  */
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use SoftDeletes, HasFactory, Notifiable;
@@ -46,5 +47,17 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getJWTIdentifier() {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims() {
+        return [];
+    }
+
+    public function getAuthPassword() {
+        return $this->password;
     }
 }

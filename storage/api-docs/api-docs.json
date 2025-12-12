@@ -394,6 +394,149 @@
                 }
             }
         },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Log in",
+                "operationId": "0e6f8baff8c7ee1fd88ab8f0d2f6b72d",
+                "requestBody": {
+                    "description": "Credentials to log in",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Token details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TokenDetailsResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/me": {
+            "get": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Logged in user data",
+                "operationId": "b1f767213fd924cc0a48d167b6566894",
+                "responses": {
+                    "200": {
+                        "description": "User data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Logout",
+                "operationId": "4d7d83dc6ddb49bad1c8c42d8d7ea90a",
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/refresh": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Refresh the access token",
+                "operationId": "ae0618886dcaf07a3cd2b9cde813cd23",
+                "responses": {
+                    "200": {
+                        "description": "Token details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TokenDetailsResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/auth/permitions": {
             "get": {
                 "tags": [
@@ -1978,6 +2121,23 @@
                 },
                 "type": "object"
             },
+            "LoginRequest": {
+                "required": [
+                    "username",
+                    "password"
+                ],
+                "properties": {
+                    "username": {
+                        "type": "string",
+                        "example": "felipe.silva"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "123"
+                    }
+                },
+                "type": "object"
+            },
             "ListPermitionRequest": {
                 "properties": {
                     "id": {
@@ -2321,12 +2481,6 @@
                         "minLength": 1,
                         "example": "Sample"
                     },
-                    "password": {
-                        "type": "string",
-                        "maxLength": 255,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
                     "username": {
                         "type": "string",
                         "maxLength": 80,
@@ -2340,6 +2494,23 @@
                         "minLength": 1,
                         "example": "Sample",
                         "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "TokenDetailsResource": {
+                "properties": {
+                    "access_token": {
+                        "type": "string",
+                        "example": "token123"
+                    },
+                    "token_type": {
+                        "type": "string",
+                        "example": "bearer"
+                    },
+                    "expires_in": {
+                        "type": "number",
+                        "example": 3600
                     }
                 },
                 "type": "object"
@@ -2767,6 +2938,31 @@
                     }
                 },
                 "type": "object"
+            },
+            "AccessTokenDTO": {
+                "properties": {
+                    "access_token": {
+                        "type": "string",
+                        "example": "token123"
+                    },
+                    "token_type": {
+                        "type": "string",
+                        "example": "bearer"
+                    },
+                    "expires_in": {
+                        "type": "number",
+                        "example": 3600
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "apiKey",
+                "description": "Insira o token JWT no formato: Bearer {token}",
+                "name": "Authorization",
+                "in": "header"
             }
         }
     },
@@ -2774,6 +2970,10 @@
         {
             "name": "Module",
             "description": "Module"
+        },
+        {
+            "name": "Authentication",
+            "description": "Authentication"
         },
         {
             "name": "Permition",
