@@ -35,7 +35,8 @@ class {{entity}}Controller
      *          response="200", 
      *          description="{{entity}} list",
      *          @OA\JsonContent(ref="#/components/schemas/{{entity}}Collection")
-     *      )
+     *      ),
+     *      security={{"bearerAuth":{}}}
      * )
      */
     public function index(List{{entity}}Request $request, List{{entity}}Action $action): JsonResponse {
@@ -65,7 +66,8 @@ class {{entity}}Controller
      *          response="404", 
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
-     *      )
+     *      ),
+     *      security={{"bearerAuth":{}}}
      * )
      */
     public function show(int $id, Show{{entity}}Action $action): JsonResponse {
