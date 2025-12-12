@@ -215,6 +215,12 @@ return [
                     'in' => 'header', // The location of the API key. Valid values are "query" or "header".
                 ],
                 */
+                'bearerAuth' => [
+                    'type' => 'apiKey',
+                    'description' => 'Insira o token JWT no formato: Bearer {token}',
+                    'name' => 'Authorization',
+                    'in' => 'header'
+                ],
             ],
             'security' => [
                 /*
