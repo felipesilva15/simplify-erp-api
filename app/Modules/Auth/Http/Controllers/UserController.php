@@ -45,7 +45,8 @@ class UserController
      *          response="200", 
      *          description="User list",
      *          @OA\JsonContent(ref="#/components/schemas/UserCollection")
-     *      )
+     *      ),
+     *      security={{"bearerAuth":{}}}
      * )
      */
     public function index(ListUserRequest $request, ListUserAction $action): JsonResponse {
@@ -75,7 +76,8 @@ class UserController
      *          response="404", 
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
-     *      )
+     *      ),
+     *      security={{"bearerAuth":{}}}
      * )
      */
     public function show(int $id, ShowUserAction $action): JsonResponse {

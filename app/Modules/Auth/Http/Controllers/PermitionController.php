@@ -44,7 +44,8 @@ class PermitionController
      *          response="200", 
      *          description="Permition list",
      *          @OA\JsonContent(ref="#/components/schemas/PermitionCollection")
-     *      )
+     *      ),
+     *      security={{"bearerAuth":{}}}
      * )
      */
     public function index(ListPermitionRequest $request, ListPermitionAction $action): JsonResponse {
@@ -74,7 +75,8 @@ class PermitionController
      *          response="404", 
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
-     *      )
+     *      ),
+     *      security={{"bearerAuth":{}}}
      * )
      */
     public function show(int $id, ShowPermitionAction $action): JsonResponse {

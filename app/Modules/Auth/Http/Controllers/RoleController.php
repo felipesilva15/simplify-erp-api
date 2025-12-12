@@ -42,7 +42,8 @@ class RoleController
      *          response="200", 
      *          description="Role list",
      *          @OA\JsonContent(ref="#/components/schemas/RoleCollection")
-     *      )
+     *      ),
+     *      security={{"bearerAuth":{}}}
      * )
      */
     public function index(ListRoleRequest $request, ListRoleAction $action): JsonResponse {
@@ -72,7 +73,8 @@ class RoleController
      *          response="404", 
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
-     *      )
+     *      ),
+     *      security={{"bearerAuth":{}}}
      * )
      */
     public function show(int $id, ShowRoleAction $action): JsonResponse {

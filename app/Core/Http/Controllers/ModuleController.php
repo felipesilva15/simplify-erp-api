@@ -41,7 +41,8 @@ class ModuleController
      *          response="200", 
      *          description="Module list",
      *          @OA\JsonContent(ref="#/components/schemas/ModuleCollection")
-     *      )
+     *      ),
+     *      security={{"bearerAuth":{}}}
      * )
      */
     public function index(ListModuleRequest $request, ListModuleAction $action): JsonResponse {
@@ -71,7 +72,8 @@ class ModuleController
      *          response="404", 
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
-     *      )
+     *      ),
+     *      security={{"bearerAuth":{}}}
      * )
      */
     public function show(int $id, ShowModuleAction $action): JsonResponse {
