@@ -1161,7 +1161,7 @@
                     }
                 ],
                 "requestBody": {
-                    "description": "Data for set role permitions",
+                    "description": "Data for set role",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -1208,6 +1208,404 @@
                         "bearerAuth": []
                     }
                 ]
+            }
+        },
+        "/api/auth/users": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "List all rows",
+                "operationId": "44ff21a02b02d5b3cb2914d5cc72436a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "email_verified_at",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "remember_token",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "created_at",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "updated_at",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "username",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "phone_number",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "deleted_at",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort_by[]",
+                        "in": "query",
+                        "description": "Fields name's to sort",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "example": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "sort_dir[]",
+                        "in": "query",
+                        "description": "Directions to sort: Ascending = 'asc'; Descending = 'desc'",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "example": "desc"
+                            }
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserCollection"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Registers a user",
+                "operationId": "a014da36e0a44944a4ef9ce686ed3483",
+                "requestBody": {
+                    "description": "Data for creating a new user",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreUserRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Registered user data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/users/{id}": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "List a user by ID",
+                "operationId": "227f64759c90d72601ce5b1e140617ee",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update a user",
+                "operationId": "950e6f1fbbef47c1da52d611131424ac",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Data for update user",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateUserRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated user data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Delete a user",
+                "operationId": "a3b56e8b4b34d6256ca1fbf77dfbfb97",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/users/{id}/edit": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get data to edit a user",
+                "operationId": "ed123b49995ae94293a4364811c2f1cc",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     },
@@ -1809,6 +2207,143 @@
                 },
                 "type": "object"
             },
+            "ListUserRequest": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "email_verified_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-11T11:13:04.482174Z",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-11T11:13:04.482174Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-11T11:13:04.482174Z",
+                        "nullable": true
+                    },
+                    "username": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "phone_number": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-11T11:13:04.482174Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "StoreUserRequest": {
+                "required": [
+                    "name",
+                    "email",
+                    "password",
+                    "username"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "email": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "password": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "username": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "phone_number": {
+                        "type": "string",
+                        "maxLength": 14,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateUserRequest": {
+                "required": [
+                    "name",
+                    "email",
+                    "password",
+                    "required"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "email": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "password": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "username": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "phone_number": {
+                        "type": "string",
+                        "maxLength": 14,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "PermitionCollection": {
                 "type": "object",
                 "allOf": [
@@ -2005,6 +2540,84 @@
                 },
                 "type": "object"
             },
+            "UserCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "UserResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "email": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "email_verified_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-11T11:13:04.516675Z",
+                        "nullable": true
+                    },
+                    "username": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "phone_number": {
+                        "type": "string",
+                        "maxLength": 14,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-11T11:13:04.516675Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-11T11:13:04.516675Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-11T11:13:04.516675Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "Permition": {
                 "properties": {
                     "id": {
@@ -2094,6 +2707,66 @@
                     }
                 },
                 "type": "object"
+            },
+            "User": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "email_verified_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-11T11:13:03.678895Z",
+                        "nullable": true
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "remember_token": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-11T11:13:03.678895Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-11T11:13:03.678895Z",
+                        "nullable": true
+                    },
+                    "username": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "phone_number": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-11T11:13:03.678895Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
             }
         }
     },
@@ -2109,6 +2782,10 @@
         {
             "name": "Role",
             "description": "Role"
+        },
+        {
+            "name": "User",
+            "description": "User"
         }
     ]
 }

@@ -1,0 +1,54 @@
+<?php
+
+namespace App\Modules\Auth\DTO;
+
+use Carbon\Carbon;
+
+class UserDTO
+{
+    public function __construct(
+        public int $id = 0,
+        public string $name = '',
+        public string $email = '',
+        public ?Carbon $email_verified_at = null,
+        public string $password = '',
+        public ?string $remember_token = '',
+        public ?Carbon $created_at = null,
+        public ?Carbon $updated_at = null,
+        public ?string $username = '',
+        public ?string $phone_number = '',
+        public ?Carbon $deleted_at = null
+    ) { }
+
+    public static function fromArray(array $data): self {
+        return new self(
+            id: $data['id'] ?? 0,
+            name: $data['name'] ?? '',
+            email: $data['email'] ?? '',
+            email_verified_at: $data['email_verified_at'] ?? null,
+            password: $data['password'] ?? '',
+            remember_token: $data['remember_token'] ?? '',
+            created_at: $data['created_at'] ?? null,
+            updated_at: $data['updated_at'] ?? null,
+            username: $data['username'] ?? '',
+            phone_number: $data['phone_number'] ?? '',
+            deleted_at: $data['deleted_at'] ?? null
+        );
+    }
+
+    public function toArray(): array {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'email' => $this->email,
+            'email_verified_at' => $this->email_verified_at,
+            'password' => $this->password,
+            'remember_token' => $this->remember_token,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'username' => $this->username,
+            'phone_number' => $this->phone_number,
+            'deleted_at' => $this->deleted_at
+        ];
+    }
+}
