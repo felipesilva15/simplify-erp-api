@@ -572,7 +572,7 @@
                         }
                     },
                     {
-                        "name": "group",
+                        "name": "resource",
                         "in": "query",
                         "required": false,
                         "schema": {
@@ -581,6 +581,14 @@
                     },
                     {
                         "name": "action",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "name",
                         "in": "query",
                         "required": false,
                         "schema": {
@@ -2037,7 +2045,7 @@
                         "type": "integer",
                         "example": 1
                     },
-                    "group": {
+                    "resource": {
                         "type": "string",
                         "maxLength": 60,
                         "minLength": 1,
@@ -2046,6 +2054,12 @@
                     "action": {
                         "type": "string",
                         "maxLength": 120,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 180,
                         "minLength": 1,
                         "example": "Sample"
                     },
@@ -2188,11 +2202,15 @@
                         "type": "integer",
                         "example": 1
                     },
-                    "group": {
+                    "resource": {
                         "type": "string",
                         "example": "Sample"
                     },
                     "action": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "name": {
                         "type": "string",
                         "example": "Sample"
                     },
@@ -2235,7 +2253,7 @@
             "StorePermissionRequest": {
                 "required": [
                     "module_id",
-                    "group",
+                    "resource",
                     "action"
                 ],
                 "properties": {
@@ -2243,7 +2261,7 @@
                         "type": "integer",
                         "example": 1
                     },
-                    "group": {
+                    "resource": {
                         "type": "string",
                         "maxLength": 60,
                         "minLength": 1,
@@ -2278,7 +2296,7 @@
             "UpdatePermissionRequest": {
                 "required": [
                     "module_id",
-                    "group",
+                    "resource",
                     "action"
                 ],
                 "properties": {
@@ -2286,7 +2304,7 @@
                         "type": "integer",
                         "example": 1
                     },
-                    "group": {
+                    "resource": {
                         "type": "string",
                         "maxLength": 60,
                         "minLength": 1,
@@ -2625,7 +2643,7 @@
                         "type": "integer",
                         "example": 1
                     },
-                    "group": {
+                    "resource": {
                         "type": "string",
                         "maxLength": 60,
                         "minLength": 1,
@@ -2634,6 +2652,12 @@
                     "action": {
                         "type": "string",
                         "maxLength": 120,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 180,
                         "minLength": 1,
                         "example": "Sample"
                     },
@@ -2703,7 +2727,7 @@
                         "type": "integer",
                         "example": 1
                     },
-                    "group": {
+                    "resource": {
                         "type": "string",
                         "maxLength": 60,
                         "minLength": 1,
@@ -2712,6 +2736,12 @@
                     "action": {
                         "type": "string",
                         "maxLength": 120,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 180,
                         "minLength": 1,
                         "example": "Sample"
                     },
@@ -2890,11 +2920,15 @@
                         "type": "integer",
                         "example": 1
                     },
-                    "group": {
+                    "resource": {
                         "type": "string",
                         "example": "Sample"
                     },
                     "action": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "name": {
                         "type": "string",
                         "example": "Sample"
                     },

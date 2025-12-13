@@ -9,8 +9,9 @@ class PermissionDTO
     public function __construct(
         public int $id = 0,
         public int $module_id = 0,
-        public string $group = '',
+        public string $resource = '',
         public string $action = '',
+        public string $name = '',
         public ?string $description = '',
         public ?bool $has_access_free = false,
         public ?bool $is_active = false,
@@ -23,8 +24,9 @@ class PermissionDTO
         return new self(
             id: $data['id'] ?? 0,
             module_id: $data['module_id'] ?? 0,
-            group: $data['group'] ?? '',
+            resource: $data['resource'] ?? '',
             action: $data['action'] ?? '',
+            name: $data['name'] ?? '',
             description: $data['description'] ?? '',
             has_access_free: $data['has_access_free'] ?? false,
             is_active: $data['is_active'] ?? false,
@@ -38,8 +40,9 @@ class PermissionDTO
         return [
             'id' => $this->id,
             'module_id' => $this->module_id,
-            'group' => $this->group,
+            'resource' => $this->resource,
             'action' => $this->action,
+            'name' => $this->name,
             'description' => $this->description,
             'has_access_free' => $this->has_access_free,
             'is_active' => $this->is_active,

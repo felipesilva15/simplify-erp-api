@@ -12,8 +12,9 @@ use App\Core\Enums\SqlOrderDirectionEnum;
  *      schema="ListPermissionRequest",
  *      @OA\Property(property="id", type="integer", example=1),
  *      @OA\Property(property="module_id", type="integer", example=1),
- *      @OA\Property(property="group", type="string", example="Sample"),
+ *      @OA\Property(property="resource", type="string", example="Sample"),
  *      @OA\Property(property="action", type="string", example="Sample"),
+ *      @OA\Property(property="name", type="string", example="Sample"),
  *      @OA\Property(property="description", type="string", example="Sample", nullable=true),
  *      @OA\Property(property="has_access_free", type="boolean", example=false, nullable=true),
  *      @OA\Property(property="is_active", type="boolean", example=false, nullable=true),
@@ -37,8 +38,9 @@ class ListPermissionRequest extends FormRequest
     {
         return [
             'module_id' => 'nullable|integer',
-            'group' => 'nullable|string',
+            'resource' => 'nullable|string',
             'action' => 'nullable|string',
+            'name' => 'nullable|string',
             'description' => 'nullable|string',
             'has_access_free' => 'nullable|boolean',
             'is_active' => 'nullable|boolean',

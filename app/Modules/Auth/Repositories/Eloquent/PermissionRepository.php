@@ -65,9 +65,9 @@ class PermissionRepository implements PermissionRepositoryInterface
         return $query->paginate(perPage: $perPage, page: $page)->withQueryString();
     }
 
-    public function findByGroupAndAction(string $group, string $action): ?Permission
+    public function findByResourceAndAction(string $resource, string $action): ?Permission
     {
-        return Permission::where('group', $group)
+        return Permission::where('resource', $resource)
                         ->where('action', $action)
                         ->first();
     }

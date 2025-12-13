@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('permissions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('module_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
-            $table->string('group', 60);
+            $table->string('resource', 60);
             $table->string('action', 120);
+            $table->string('name', 180);
             $table->string('description', 512)->nullable();
             $table->boolean('has_access_free')->default(false)->nullable();
             $table->boolean('is_active')->default(true)->nullable();

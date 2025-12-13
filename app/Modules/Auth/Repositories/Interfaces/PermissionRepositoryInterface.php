@@ -19,5 +19,5 @@ interface PermissionRepositoryInterface
 
     public function list(array $filters = []): LengthAwarePaginator;
 
-    public function findByGroupAndAction(string $group, string $action): ?Permission;
+    public function findByResourceAndAction(string $resource, string $action): ?Permission;
 }
