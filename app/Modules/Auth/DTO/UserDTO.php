@@ -13,10 +13,11 @@ class UserDTO
         public ?Carbon $email_verified_at = null,
         public string $password = '',
         public ?string $remember_token = '',
-        public ?Carbon $created_at = null,
-        public ?Carbon $updated_at = null,
         public ?string $username = '',
         public ?string $phone_number = '',
+        public array $roles = [],
+        public ?Carbon $created_at = null,
+        public ?Carbon $updated_at = null,
         public ?Carbon $deleted_at = null
     ) { }
 
@@ -28,10 +29,11 @@ class UserDTO
             email_verified_at: $data['email_verified_at'] ?? null,
             password: $data['password'] ?? '',
             remember_token: $data['remember_token'] ?? '',
-            created_at: $data['created_at'] ?? null,
-            updated_at: $data['updated_at'] ?? null,
             username: $data['username'] ?? '',
             phone_number: $data['phone_number'] ?? '',
+            roles: $data['roles'] ?? [],
+            created_at: $data['created_at'] ?? null,
+            updated_at: $data['updated_at'] ?? null,
             deleted_at: $data['deleted_at'] ?? null
         );
     }
@@ -44,10 +46,11 @@ class UserDTO
             'email_verified_at' => $this->email_verified_at,
             'password' => $this->password,
             'remember_token' => $this->remember_token,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
             'username' => $this->username,
             'phone_number' => $this->phone_number,
+            'roles' => $this->roles,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at
         ];
     }

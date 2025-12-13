@@ -2497,6 +2497,21 @@
                         "minLength": 1,
                         "example": "Sample",
                         "nullable": true
+                    },
+                    "roles": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "id"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 1
+                                }
+                            },
+                            "type": "object"
+                        }
                     }
                 },
                 "type": "object"
@@ -2534,6 +2549,21 @@
                         "minLength": 1,
                         "example": "Sample",
                         "nullable": true
+                    },
+                    "roles": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "id"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 1
+                                }
+                            },
+                            "type": "object"
+                        }
                     }
                 },
                 "type": "object"
@@ -2808,6 +2838,12 @@
                         "example": "Sample",
                         "nullable": true
                     },
+                    "roles": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserRoleResource"
+                        }
+                    },
                     "created_at": {
                         "type": "string",
                         "format": "date-time",
@@ -2825,6 +2861,21 @@
                         "format": "date-time",
                         "example": "2025-12-11T11:13:04.516675Z",
                         "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UserRoleResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample"
                     }
                 },
                 "type": "object"

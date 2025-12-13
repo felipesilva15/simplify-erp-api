@@ -63,4 +63,16 @@ class UserRepository implements UserRepositoryInterface
 
         return $query->paginate(perPage: $perPage, page: $page)->withQueryString();
     }
+
+    public function syncRoles(int $id, array $roleIds = []): ?User {
+        $user = $this->findById($id);
+
+        if (!$user) {
+            return null;
+        }
+        
+        $user->roles()->sync($roleIds);
+
+        return $user->fresh();
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Modules\Auth\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -49,15 +50,21 @@ class User extends Authenticatable implements JWTSubject
         ];
     }
 
-    public function getJWTIdentifier() {
+    public function getJWTIdentifier(): mixed {
         return $this->getKey();
     }
 
-    public function getJWTCustomClaims() {
+    public function getJWTCustomClaims(): array {
         return [];
     }
 
-    public function getAuthPassword() {
+    public function getAuthPassword(): string {
         return $this->password;
+    }
+
+    public function roles(): BelongsToMany {
+        return $this->belongsToMany(Role::class)
+                    ->using(RoleUser::class)
+                    ->withTimestamps();
     }
 }

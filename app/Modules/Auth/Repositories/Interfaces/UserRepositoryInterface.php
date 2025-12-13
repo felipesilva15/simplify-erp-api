@@ -17,4 +17,6 @@ interface UserRepositoryInterface
     public function findById(int $id): ?User;
 
     public function list(array $filters = []): LengthAwarePaginator;
+
+    public function syncRoles(int $id, array $roleIds): ?User;
 }
