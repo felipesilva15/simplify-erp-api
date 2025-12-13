@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Modules\Auth\Http\Resources\Permition;
+namespace App\Modules\Auth\Http\Resources\Permission;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @OA\Schema(
- *      schema="PermitionModuleResource",
+ *      schema="PermissionModuleResource",
  *      @OA\Property(property="id", type="integer", example=1),
  *      @OA\Property(property="name", type="string", example="Sample", minLength=1, maxLength=80),
  * )
  */
-class PermitionModuleResource extends JsonResource
+class PermissionModuleResource extends JsonResource
 {
     public function toArray(Request $request): array {
         return [

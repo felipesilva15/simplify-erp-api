@@ -2,7 +2,7 @@
 
 use App\Core\Http\Controllers\ModuleController;
 use App\Modules\Auth\Http\Controllers\AuthController;
-use App\Modules\Auth\Http\Controllers\PermitionController;
+use App\Modules\Auth\Http\Controllers\PermissionController;
 use App\Modules\Auth\Http\Controllers\RoleController;
 use App\Modules\Auth\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -22,9 +22,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::apiResource('users', UserController::class);
 
         Route::apiResource('roles', RoleController::class);
-        Route::patch('roles/{id}/permitions', [RoleController::class, 'definePermitions']);
+        Route::patch('roles/{id}/permissions', [RoleController::class, 'definePermissions']);
         
-        Route::apiResource('permitions', PermitionController::class);
+        Route::apiResource('permissions', PermissionController::class);
     });
 });
 

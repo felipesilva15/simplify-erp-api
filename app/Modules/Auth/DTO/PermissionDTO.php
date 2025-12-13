@@ -4,7 +4,7 @@ namespace App\Modules\Auth\DTO;
 
 use Carbon\Carbon;
 
-class PermitionDTO
+class PermissionDTO
 {
     public function __construct(
         public int $id = 0,

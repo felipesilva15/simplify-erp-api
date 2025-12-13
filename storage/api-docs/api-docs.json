@@ -547,13 +547,13 @@
                 ]
             }
         },
-        "/api/auth/permitions": {
+        "/api/auth/permissions": {
             "get": {
                 "tags": [
-                    "Permition"
+                    "Permission"
                 ],
                 "summary": "List all rows",
-                "operationId": "a1164e9dc41ef19758ddf954f51855cd",
+                "operationId": "cff445635d3c6ecc5717fea93a63dee6",
                 "parameters": [
                     {
                         "name": "id",
@@ -682,11 +682,11 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Permition list",
+                        "description": "Permission list",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/PermitionCollection"
+                                    "$ref": "#/components/schemas/PermissionCollection"
                                 }
                             }
                         }
@@ -700,28 +700,28 @@
             },
             "post": {
                 "tags": [
-                    "Permition"
+                    "Permission"
                 ],
-                "summary": "Registers a permition",
-                "operationId": "895501c32eafc7e99924fedfac5ff7ff",
+                "summary": "Registers a permission",
+                "operationId": "e7f8d5bd6312c7dc30cf76732ddef3ca",
                 "requestBody": {
-                    "description": "Data for creating a new permition",
+                    "description": "Data for creating a new permission",
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/StorePermitionRequest"
+                                "$ref": "#/components/schemas/StorePermissionRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "201": {
-                        "description": "Registered permition data",
+                        "description": "Registered permission data",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/PermitionResource"
+                                    "$ref": "#/components/schemas/PermissionResource"
                                 }
                             }
                         }
@@ -744,18 +744,18 @@
                 ]
             }
         },
-        "/api/auth/permitions/{id}": {
+        "/api/auth/permissions/{id}": {
             "get": {
                 "tags": [
-                    "Permition"
+                    "Permission"
                 ],
-                "summary": "List a permition by ID",
-                "operationId": "4b1df74103721652bd744b0b0ea1852d",
+                "summary": "List a permission by ID",
+                "operationId": "d3bf88705b261a3f4dca9d1f3a893418",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "Permition ID",
+                        "description": "Permission ID",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -764,11 +764,11 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Permition data",
+                        "description": "Permission data",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/PermitionResource"
+                                    "$ref": "#/components/schemas/PermissionResource"
                                 }
                             }
                         }
@@ -792,15 +792,15 @@
             },
             "put": {
                 "tags": [
-                    "Permition"
+                    "Permission"
                 ],
-                "summary": "Update a permition",
-                "operationId": "23ac483826c3382e8d3e3a9771f7d58e",
+                "summary": "Update a permission",
+                "operationId": "22faae5b0cafa3227f174190228a99e3",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "Permition ID",
+                        "description": "Permission ID",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -808,23 +808,23 @@
                     }
                 ],
                 "requestBody": {
-                    "description": "Data for update permition",
+                    "description": "Data for update permission",
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/UpdatePermitionRequest"
+                                "$ref": "#/components/schemas/UpdatePermissionRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "description": "Updated permition data",
+                        "description": "Updated permission data",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/PermitionResource"
+                                    "$ref": "#/components/schemas/PermissionResource"
                                 }
                             }
                         }
@@ -858,15 +858,15 @@
             },
             "delete": {
                 "tags": [
-                    "Permition"
+                    "Permission"
                 ],
-                "summary": "Delete a permition",
-                "operationId": "988c0bafc1fd7ef18f3e2a1565cedb1e",
+                "summary": "Delete a permission",
+                "operationId": "07da53b7161faa87955304e177abc7d5",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "Permition ID",
+                        "description": "Permission ID",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -905,18 +905,18 @@
                 ]
             }
         },
-        "/api/auth/permitions/{id}/edit": {
+        "/api/auth/permissions/{id}/edit": {
             "get": {
                 "tags": [
-                    "Permition"
+                    "Permission"
                 ],
-                "summary": "Get data to edit a permition",
-                "operationId": "3139e8cd88b5e7d86f153e09e819a28b",
+                "summary": "Get data to edit a permission",
+                "operationId": "ff800f0980ca79a4116af982e4cbf627",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "Permition ID",
+                        "description": "Permission ID",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -925,11 +925,11 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Permition data",
+                        "description": "Permission data",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/PermitionResource"
+                                    "$ref": "#/components/schemas/PermissionResource"
                                 }
                             }
                         }
@@ -1315,13 +1315,13 @@
                 }
             }
         },
-        "/api/auth/roles/{id}/permitions": {
+        "/api/auth/roles/{id}/permissions": {
             "patch": {
                 "tags": [
                     "Role"
                 ],
-                "summary": "Define role permitions",
-                "operationId": "e30e13a03e70d6b2bdfc9911ecfffd82",
+                "summary": "Define role permissions",
+                "operationId": "88a08171e429496d1abd348e8bd75ff6",
                 "parameters": [
                     {
                         "name": "id",
@@ -1339,7 +1339,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/RolePermitionsRequest"
+                                "$ref": "#/components/schemas/RolePermissionsRequest"
                             }
                         }
                     }
@@ -2031,7 +2031,7 @@
                     }
                 ]
             },
-            "ModulePermitionResource": {
+            "ModulePermissionResource": {
                 "properties": {
                     "id": {
                         "type": "integer",
@@ -2093,10 +2093,10 @@
                         "example": false,
                         "nullable": true
                     },
-                    "permitions": {
+                    "permissions": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/ModulePermitionResource"
+                            "$ref": "#/components/schemas/ModulePermissionResource"
                         }
                     },
                     "created_at": {
@@ -2178,7 +2178,7 @@
                 },
                 "type": "object"
             },
-            "ListPermitionRequest": {
+            "ListPermissionRequest": {
                 "properties": {
                     "id": {
                         "type": "integer",
@@ -2232,7 +2232,7 @@
                 },
                 "type": "object"
             },
-            "StorePermitionRequest": {
+            "StorePermissionRequest": {
                 "required": [
                     "module_id",
                     "group",
@@ -2275,7 +2275,7 @@
                 },
                 "type": "object"
             },
-            "UpdatePermitionRequest": {
+            "UpdatePermissionRequest": {
                 "required": [
                     "module_id",
                     "group",
@@ -2354,7 +2354,7 @@
                 },
                 "type": "object"
             },
-            "RolePermitionsRequest": {
+            "RolePermissionsRequest": {
                 "properties": {
                     "ids": {
                         "type": "array",
@@ -2585,7 +2585,7 @@
                 },
                 "type": "object"
             },
-            "PermitionCollection": {
+            "PermissionCollection": {
                 "type": "object",
                 "allOf": [
                     {
@@ -2593,7 +2593,7 @@
                             "data": {
                                 "type": "array",
                                 "items": {
-                                    "$ref": "#/components/schemas/PermitionResource"
+                                    "$ref": "#/components/schemas/PermissionResource"
                                 }
                             }
                         },
@@ -2604,7 +2604,7 @@
                     }
                 ]
             },
-            "PermitionModuleResource": {
+            "PermissionModuleResource": {
                 "properties": {
                     "id": {
                         "type": "integer",
@@ -2619,7 +2619,7 @@
                 },
                 "type": "object"
             },
-            "PermitionResource": {
+            "PermissionResource": {
                 "properties": {
                     "id": {
                         "type": "integer",
@@ -2655,7 +2655,7 @@
                         "nullable": true
                     },
                     "module": {
-                        "$ref": "#/components/schemas/PermitionModuleResource"
+                        "$ref": "#/components/schemas/PermissionModuleResource"
                     },
                     "created_at": {
                         "type": "string",
@@ -2697,7 +2697,7 @@
                     }
                 ]
             },
-            "RolePermitionResource": {
+            "RolePermissionResource": {
                 "properties": {
                     "id": {
                         "type": "integer",
@@ -2754,10 +2754,10 @@
                         "example": "Sample",
                         "nullable": true
                     },
-                    "permitions": {
+                    "permissions": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/RolePermitionResource"
+                            "$ref": "#/components/schemas/RolePermissionResource"
                         }
                     },
                     "created_at": {
@@ -2880,7 +2880,7 @@
                 },
                 "type": "object"
             },
-            "Permition": {
+            "Permission": {
                 "properties": {
                     "id": {
                         "type": "integer",
@@ -3067,8 +3067,8 @@
             "description": "Authentication"
         },
         {
-            "name": "Permition",
-            "description": "Permition"
+            "name": "Permission",
+            "description": "Permission"
         },
         {
             "name": "Role",

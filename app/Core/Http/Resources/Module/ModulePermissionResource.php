@@ -7,7 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @OA\Schema(
- *      schema="ModulePermitionResource",
+ *      schema="ModulePermissionResource",
  *      @OA\Property(property="id", type="integer", example=1),
  *      @OA\Property(property="group", type="string", example="Sample", minLength=1, maxLength=60),
  *      @OA\Property(property="action", type="string", example="Sample", minLength=1, maxLength=120),
@@ -16,7 +16,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *      @OA\Property(property="is_active", type="boolean", example=false, nullable=true)
  * )
  */
-class ModulePermitionResource extends JsonResource
+class ModulePermissionResource extends JsonResource
 {
     public function toArray(Request $request): array {
         return [

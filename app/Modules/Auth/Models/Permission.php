@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @OA\Schema(
- *      schema="Permition",
+ *      schema="Permission",
  *      @OA\Property(property="id", type="integer", example=1),
  *      @OA\Property(property="module_id", type="integer", example=1),
  *      @OA\Property(property="group", type="string", example="Sample"),
@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *      @OA\Property(property="deleted_at", type="string", format="date-time", example="2025-12-05T00:27:48.633261Z", nullable=true)
  * )
  */
-class Permition extends Model
+class Permission extends Model
 {
     use SoftDeletes;
 
@@ -47,6 +47,6 @@ class Permition extends Model
 
     public function roles(): BelongsToMany {
         return $this->belongsToMany(Role::class)
-                    ->using(PermitionRole::class);
+                    ->using(PermissionRole::class);
     }
 }

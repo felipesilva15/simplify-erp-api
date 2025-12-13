@@ -6,11 +6,11 @@ use App\Modules\Auth\DTO\RoleDTO;
 use App\Modules\Auth\Services\RoleService;
 use App\Modules\Auth\Models\Role;
 
-class DefineRolePermitionsAction
+class DefineRolePermissionsAction
 {
     public function __construct(protected RoleService $service) { }
 
-    public function execute(int $id, array $permitionIds): Role {
-        return $this->service->definePermitions($id, $permitionIds);
+    public function execute(int $id, array $permissionIds): Role {
+        return $this->service->definePermissions($id, $permissionIds);
     }
 }

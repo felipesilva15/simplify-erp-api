@@ -2,7 +2,7 @@
 
 namespace App\Modules\Auth\Http\Controllers;
 
-use App\Modules\Auth\Actions\Role\DefineRolePermitionsAction;
+use App\Modules\Auth\Actions\Role\DefineRolePermissionsAction;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -19,7 +19,7 @@ use App\Modules\Auth\Http\Requests\Role\ListRoleRequest;
 use App\Modules\Auth\Http\Resources\Role\RoleResource;
 use App\Modules\Auth\Http\Resources\Role\RoleCollection;
 use App\Modules\Auth\DTO\RoleDTO;
-use App\Modules\Auth\Http\Requests\Role\RolePermitionsRequest;
+use App\Modules\Auth\Http\Requests\Role\RolePermissionsRequest;
 
 class RoleController
 {
@@ -221,9 +221,9 @@ class RoleController
 
     /**
      * @OA\Patch(
-     *      path="/api/auth/roles/{id}/permitions",
+     *      path="/api/auth/roles/{id}/permissions",
      *      tags={"Role"},
-     *      summary="Define role permitions",
+     *      summary="Define role permissions",
      *      @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -234,7 +234,7 @@ class RoleController
      *      @OA\RequestBody(
      *         required=true,
      *         description="Data for set role",
-     *         @OA\JsonContent(ref="#/components/schemas/RolePermitionsRequest")
+     *         @OA\JsonContent(ref="#/components/schemas/RolePermissionsRequest")
      *      ),
      *      @OA\Response(
      *          response="200", 
@@ -254,7 +254,7 @@ class RoleController
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function definePermitions(int $id, RolePermitionsRequest $request, DefineRolePermitionsAction $action): JsonResponse {
+    public function definePermissions(int $id, RolePermissionsRequest $request, DefineRolePermissionsAction $action): JsonResponse {
         $role = $action->execute($id, $request->validated('ids'));
         return response()->json(new RoleResource($role), 200);
     }

@@ -6,25 +6,25 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
-use App\Modules\Auth\Actions\Permition\StorePermitionAction;
-use App\Modules\Auth\Actions\Permition\UpdatePermitionAction;
-use App\Modules\Auth\Actions\Permition\DeletePermitionAction;
-use App\Modules\Auth\Actions\Permition\EditPermitionAction;
-use App\Modules\Auth\Actions\Permition\ShowPermitionAction;
-use App\Modules\Auth\Actions\Permition\ListPermitionAction;
-use App\Modules\Auth\Http\Requests\Permition\StorePermitionRequest;
-use App\Modules\Auth\Http\Requests\Permition\UpdatePermitionRequest;
-use App\Modules\Auth\Http\Requests\Permition\ListPermitionRequest;
-use App\Modules\Auth\Http\Resources\Permition\PermitionResource;
-use App\Modules\Auth\Http\Resources\Permition\PermitionCollection;
-use App\Modules\Auth\DTO\PermitionDTO;
+use App\Modules\Auth\Actions\Permission\StorePermissionAction;
+use App\Modules\Auth\Actions\Permission\UpdatePermissionAction;
+use App\Modules\Auth\Actions\Permission\DeletePermissionAction;
+use App\Modules\Auth\Actions\Permission\EditPermissionAction;
+use App\Modules\Auth\Actions\Permission\ShowPermissionAction;
+use App\Modules\Auth\Actions\Permission\ListPermissionAction;
+use App\Modules\Auth\Http\Requests\Permission\StorePermissionRequest;
+use App\Modules\Auth\Http\Requests\Permission\UpdatePermissionRequest;
+use App\Modules\Auth\Http\Requests\Permission\ListPermissionRequest;
+use App\Modules\Auth\Http\Resources\Permission\PermissionResource;
+use App\Modules\Auth\Http\Resources\Permission\PermissionCollection;
+use App\Modules\Auth\DTO\PermissionDTO;
 
-class PermitionController
+class PermissionController
 {
     /**
      * @OA\Get(
-     *      path="/api/auth/permitions",
-     *      tags={"Permition"},
+     *      path="/api/auth/permissions",
+     *      tags={"Permission"},
      *      summary="List all rows",
      *      @OA\Parameter(name="id", in="query", required=false, @OA\Schema(type="integer")),
      *      @OA\Parameter(name="module_id", in="query", required=false, @OA\Schema(type="integer")),
@@ -42,34 +42,34 @@ class PermitionController
      *      @OA\Parameter(name="page", in="query", description="Page number", required=false, @OA\Schema(type="integer")),
      *      @OA\Response(
      *          response="200", 
-     *          description="Permition list",
-     *          @OA\JsonContent(ref="#/components/schemas/PermitionCollection")
+     *          description="Permission list",
+     *          @OA\JsonContent(ref="#/components/schemas/PermissionCollection")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function index(ListPermitionRequest $request, ListPermitionAction $action): JsonResponse {
-        $permitionList = $action->execute($request->all());
+    public function index(ListPermissionRequest $request, ListPermissionAction $action): JsonResponse {
+        $permissionList = $action->execute($request->all());
 
-        return response()->json(new PermitionCollection($permitionList), 200);
+        return response()->json(new PermissionCollection($permissionList), 200);
     }
 
     /**
      * @OA\Get(
-     *      path="/api/auth/permitions/{id}",
-     *      tags={"Permition"},
-     *      summary="List a permition by ID",
+     *      path="/api/auth/permissions/{id}",
+     *      tags={"Permission"},
+     *      summary="List a permission by ID",
      *      @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="Permition ID",
+     *         description="Permission ID",
      *         @OA\Schema(type="integer")
      *      ),
      *      @OA\Response(
      *          response="200", 
-     *          description="Permition data",
-     *          @OA\JsonContent(ref="#/components/schemas/PermitionResource")
+     *          description="Permission data",
+     *          @OA\JsonContent(ref="#/components/schemas/PermissionResource")
      *      ),
      *      @OA\Response(
      *          response="404", 
@@ -79,26 +79,26 @@ class PermitionController
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function show(int $id, ShowPermitionAction $action): JsonResponse {
-        $permition = $action->execute($id);
+    public function show(int $id, ShowPermissionAction $action): JsonResponse {
+        $permission = $action->execute($id);
 
-        return response()->json(new PermitionResource($permition), 200);
+        return response()->json(new PermissionResource($permission), 200);
     }
 
     /**
      * @OA\Post(
-     *      path="/api/auth/permitions",
-     *      tags={"Permition"},
-     *      summary="Registers a permition",
+     *      path="/api/auth/permissions",
+     *      tags={"Permission"},
+     *      summary="Registers a permission",
      *      @OA\RequestBody(
      *         required=true,
-     *         description="Data for creating a new permition",
-     *         @OA\JsonContent(ref="#/components/schemas/StorePermitionRequest")
+     *         description="Data for creating a new permission",
+     *         @OA\JsonContent(ref="#/components/schemas/StorePermissionRequest")
      *      ),
      *      @OA\Response(
      *          response="201", 
-     *          description="Registered permition data",
-     *          @OA\JsonContent(ref="#/components/schemas/PermitionResource")
+     *          description="Registered permission data",
+     *          @OA\JsonContent(ref="#/components/schemas/PermissionResource")
      *      ),
      *      @OA\Response(
      *          response="401", 
@@ -108,29 +108,29 @@ class PermitionController
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function store(StorePermitionRequest $request, StorePermitionAction $action): JsonResponse {
-        $dto = PermitionDTO::fromArray($request->validated());
-        $permition = $action->execute($dto);
+    public function store(StorePermissionRequest $request, StorePermissionAction $action): JsonResponse {
+        $dto = PermissionDTO::fromArray($request->validated());
+        $permission = $action->execute($dto);
 
-        return response()->json(new PermitionResource($permition), 201);
+        return response()->json(new PermissionResource($permission), 201);
     }
 
     /**
      * @OA\Get(
-     *      path="/api/auth/permitions/{id}/edit",
-     *      tags={"Permition"},
-     *      summary="Get data to edit a permition",
+     *      path="/api/auth/permissions/{id}/edit",
+     *      tags={"Permission"},
+     *      summary="Get data to edit a permission",
      *      @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="Permition ID",
+     *         description="Permission ID",
      *         @OA\Schema(type="integer")
      *      ),
      *      @OA\Response(
      *          response="200", 
-     *          description="Permition data",
-     *          @OA\JsonContent(ref="#/components/schemas/PermitionResource")
+     *          description="Permission data",
+     *          @OA\JsonContent(ref="#/components/schemas/PermissionResource")
      *      ),
      *      @OA\Response(
      *          response="404", 
@@ -139,33 +139,33 @@ class PermitionController
      *      )
      * )
      */
-    public function edit(int $id, EditPermitionAction $action): JsonResponse {
-        $permition = $action->execute($id);
+    public function edit(int $id, EditPermissionAction $action): JsonResponse {
+        $permission = $action->execute($id);
 
-        return response()->json(new PermitionResource($permition), 200);
+        return response()->json(new PermissionResource($permission), 200);
     }
 
     /**
      * @OA\Put(
-     *      path="/api/auth/permitions/{id}",
-     *      tags={"Permition"},
-     *      summary="Update a permition",
+     *      path="/api/auth/permissions/{id}",
+     *      tags={"Permission"},
+     *      summary="Update a permission",
      *      @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="Permition ID",
+     *         description="Permission ID",
      *         @OA\Schema(type="integer")
      *      ),
      *      @OA\RequestBody(
      *         required=true,
-     *         description="Data for update permition",
-     *         @OA\JsonContent(ref="#/components/schemas/UpdatePermitionRequest")
+     *         description="Data for update permission",
+     *         @OA\JsonContent(ref="#/components/schemas/UpdatePermissionRequest")
      *      ),
      *      @OA\Response(
      *          response="200", 
-     *          description="Updated permition data",
-     *          @OA\JsonContent(ref="#/components/schemas/PermitionResource")
+     *          description="Updated permission data",
+     *          @OA\JsonContent(ref="#/components/schemas/PermissionResource")
      *      ),
      *      @OA\Response(
      *          response="401", 
@@ -180,23 +180,23 @@ class PermitionController
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function update(int $id, UpdatePermitionRequest $request, UpdatePermitionAction $action): JsonResponse {
-        $dto = PermitionDTO::fromArray($request->validated());
-        $permition = $action->execute($id, $dto);
+    public function update(int $id, UpdatePermissionRequest $request, UpdatePermissionAction $action): JsonResponse {
+        $dto = PermissionDTO::fromArray($request->validated());
+        $permission = $action->execute($id, $dto);
 
-        return response()->json(new PermitionResource($permition), 200);
+        return response()->json(new PermissionResource($permission), 200);
     }
 
     /**
      * @OA\Delete(
-     *      path="/api/auth/permitions/{id}",
-     *      tags={"Permition"},
-     *      summary="Delete a permition",
+     *      path="/api/auth/permissions/{id}",
+     *      tags={"Permission"},
+     *      summary="Delete a permission",
      *      @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="Permition ID",
+     *         description="Permission ID",
      *         @OA\Schema(type="integer")
      *      ),
      *      @OA\Response(
@@ -216,7 +216,7 @@ class PermitionController
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function destroy(int $id, DeletePermitionAction $action): Response {
+    public function destroy(int $id, DeletePermissionAction $action): Response {
         $action->execute($id);
         return response()->noContent();
     }

@@ -2,7 +2,7 @@
 
 namespace App\Modules\Auth\Http\Resources\User;
 
-use App\Modules\Auth\Http\Resources\Role\RolePermitionResource;
+use App\Modules\Auth\Http\Resources\Role\RolePermissionResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

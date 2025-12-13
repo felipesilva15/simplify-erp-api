@@ -4,7 +4,7 @@ namespace App\Modules\Auth\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class PermitionRole extends Pivot
+class PermissionRole extends Pivot
 {
-    protected $table = 'permition_role';
+    protected $table = 'permission_role';
 }

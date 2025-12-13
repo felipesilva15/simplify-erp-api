@@ -70,7 +70,7 @@ class User extends Authenticatable implements JWTSubject
     }
 
     public function permissions(): Builder {
-        return Permition::query()
+        return Permission::query()
                         ->whereHas('roles.users', fn ($query) =>
                             $query->where('users.id', $this->id)
                         )

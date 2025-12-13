@@ -9,17 +9,17 @@ use App\Core\Enums\SqlOrderDirectionEnum;
 
 /**
  * @OA\Schema(
- *      schema="RolePermitionsRequest",
+ *      schema="RolePermissionsRequest",
  *      @OA\Property(property="ids", type="array", @OA\Items(type="integer")),
  * )
  */
-class RolePermitionsRequest extends FormRequest
+class RolePermissionsRequest extends FormRequest
 {
     public function rules(): array
     {
         return [
             'ids' => ['array'],
-            'ids.*' => 'integer|exists:permitions,id'
+            'ids.*' => 'integer|exists:permissions,id'
         ];
     }
 }

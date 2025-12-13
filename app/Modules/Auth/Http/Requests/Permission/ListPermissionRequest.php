@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Auth\Http\Requests\Permition;
+namespace App\Modules\Auth\Http\Requests\Permission;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -9,7 +9,7 @@ use App\Core\Enums\SqlOrderDirectionEnum;
 
 /**
  * @OA\Schema(
- *      schema="ListPermitionRequest",
+ *      schema="ListPermissionRequest",
  *      @OA\Property(property="id", type="integer", example=1),
  *      @OA\Property(property="module_id", type="integer", example=1),
  *      @OA\Property(property="group", type="string", example="Sample"),
@@ -22,7 +22,7 @@ use App\Core\Enums\SqlOrderDirectionEnum;
  *      @OA\Property(property="deleted_at", type="string", format="date-time", example="2025-12-05T00:27:48.907847Z", nullable=true)
  * )
  */
-class ListPermitionRequest extends FormRequest
+class ListPermissionRequest extends FormRequest
 {
     protected function prepareForValidation(): void
     {

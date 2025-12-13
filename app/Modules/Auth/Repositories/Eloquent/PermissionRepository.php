@@ -2,53 +2,53 @@
 
 namespace App\Modules\Auth\Repositories\Eloquent;
 
-use App\Modules\Auth\DTO\PermitionDTO;
-use App\Modules\Auth\Models\Permition;
-use App\Modules\Auth\Repositories\Interfaces\PermitionRepositoryInterface;
+use App\Modules\Auth\DTO\PermissionDTO;
+use App\Modules\Auth\Models\Permission;
+use App\Modules\Auth\Repositories\Interfaces\PermissionRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Core\Helpers\ModelHelpers;
 use Illuminate\Support\Collection;
 
-class PermitionRepository implements PermitionRepositoryInterface
+class PermissionRepository implements PermissionRepositoryInterface
 {
-    public function store(PermitionDTO $data): Permition {
+    public function store(PermissionDTO $data): Permission {
         $arrayData = $data->toArray();
         unset($arrayData["id"]);
 
-        return Permition::create($arrayData);
+        return Permission::create($arrayData);
     }
 
-    public function update(int $id, PermitionDTO $data): ?Permition {
-        $permition = $this->findById($id);
+    public function update(int $id, PermissionDTO $data): ?Permission {
+        $permission = $this->findById($id);
 
-        if (!$permition) {
+        if (!$permission) {
             return null;
         }
 
         $arrayData = $data->toArray();
         unset($arrayData["id"]);
 
-        $permition->update($arrayData);
+        $permission->update($arrayData);
 
-        return $permition->fresh();
+        return $permission->fresh();
     }
 
     public function delete(int $id): bool {
-        $permition = $this->findById($id);
+        $permission = $this->findById($id);
 
-        if (!$permition) {
+        if (!$permission) {
             return false;
         }
 
-        return (bool) $permition->delete();
+        return (bool) $permission->delete();
     }
 
-    public function findById(int $id): ?Permition {
-        return Permition::find($id);
+    public function findById(int $id): ?Permission {
+        return Permission::find($id);
     }
 
     public function list(array $filters = []): LengthAwarePaginator {
-        $query = Permition::query();
+        $query = Permission::query();
 
         // Filtering
         if (count($filters) > 0)
@@ -65,9 +65,9 @@ class PermitionRepository implements PermitionRepositoryInterface
         return $query->paginate(perPage: $perPage, page: $page)->withQueryString();
     }
 
-    public function findByGroupAndAction(string $group, string $action): ?Permition
+    public function findByGroupAndAction(string $group, string $action): ?Permission
     {
-        return Permition::where('group', $group)
+        return Permission::where('group', $group)
                         ->where('action', $action)
                         ->first();
     }

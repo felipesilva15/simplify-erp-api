@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Modules\Auth\Http\Requests\Permition;
+namespace App\Modules\Auth\Http\Requests\Permission;
 
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * @OA\Schema(
- *      schema="StorePermitionRequest",
+ *      schema="StorePermissionRequest",
  *      required={"module_id","group","action"},
  *      @OA\Property(property="module_id", type="integer", example=1),
  *      @OA\Property(property="group", type="string", example="Sample", minLength=1, maxLength=60),
@@ -16,7 +16,7 @@ use Illuminate\Foundation\Http\FormRequest;
  *      @OA\Property(property="is_active", type="boolean", example=false, nullable=true)
  * )
  */
-class StorePermitionRequest extends FormRequest
+class StorePermissionRequest extends FormRequest
 {
     public function rules(): array
     {

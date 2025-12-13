@@ -54,7 +54,7 @@ class RoleService
         return $this->repository->list($filters);
     }
 
-    public function definePermitions(int $id, array $permitionIds = []): ?Role {
-        return $this->repository->syncPermitions($id, $permitionIds);
+    public function definePermissions(int $id, array $permissionIds = []): ?Role {
+        return $this->repository->syncPermissions($id, $permissionIds);
     }
 }
