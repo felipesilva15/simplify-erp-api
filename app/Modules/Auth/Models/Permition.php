@@ -5,6 +5,7 @@ namespace App\Modules\Auth\Models;
 use App\Core\Models\Module;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -42,5 +43,10 @@ class Permition extends Model
 
     public function module(): BelongsTo {
         return $this->belongsTo(Module::class);
+    }
+
+    public function roles(): BelongsToMany {
+        return $this->belongsToMany(Role::class)
+                    ->using(PermitionRole::class);
     }
 }

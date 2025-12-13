@@ -7,6 +7,7 @@ use App\Modules\Auth\Models\Permition;
 use App\Modules\Auth\Repositories\Interfaces\PermitionRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Core\Helpers\ModelHelpers;
+use Illuminate\Support\Collection;
 
 class PermitionRepository implements PermitionRepositoryInterface
 {
@@ -62,5 +63,12 @@ class PermitionRepository implements PermitionRepositoryInterface
         $page = isset($filters['page']) ? (int) $filters['page'] : 1;
 
         return $query->paginate(perPage: $perPage, page: $page)->withQueryString();
+    }
+
+    public function findByGroupAndAction(string $group, string $action): ?Permition
+    {
+        return Permition::where('group', $group)
+                        ->where('action', $action)
+                        ->first();
     }
 }

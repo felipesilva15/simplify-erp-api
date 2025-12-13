@@ -35,4 +35,10 @@ class Role extends Model
                     ->using(PermitionRole::class)
                     ->withTimestamps();
     }
+
+    public function users(): BelongsToMany {
+        return $this->belongsToMany(User::class)
+                    ->using(PermitionRole::class)
+                    ->withTimestamps();
+    }
 }

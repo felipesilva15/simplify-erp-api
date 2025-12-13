@@ -2,6 +2,7 @@
 
 namespace App\Modules\Auth\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -66,5 +67,19 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Role::class)
                     ->using(RoleUser::class)
                     ->withTimestamps();
+    }
+
+    public function permissions(): Builder {
+        return Permition::query()
+                        ->whereHas('roles.users', fn ($query) =>
+                            $query->where('users.id', $this->id)
+                        )
+                        ->where('is_active', true);
+    }
+
+    public function hasPermission(int $id): bool {
+        return $this->permissions()
+                        ->where('id', $id)
+                        ->exists();
     }
 }

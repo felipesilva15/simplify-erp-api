@@ -5,6 +5,7 @@ namespace App\Modules\Auth\Repositories\Interfaces;
 use App\Modules\Auth\DTO\PermitionDTO;
 use App\Modules\Auth\Models\Permition;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 interface PermitionRepositoryInterface
 {
@@ -17,4 +18,6 @@ interface PermitionRepositoryInterface
     public function findById(int $id): ?Permition;
 
     public function list(array $filters = []): LengthAwarePaginator;
+
+    public function findByGroupAndAction(string $group, string $action): ?Permition;
 }
