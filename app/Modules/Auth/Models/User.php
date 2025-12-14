@@ -77,9 +77,9 @@ class User extends Authenticatable implements JWTSubject
                         ->where('is_active', true);
     }
 
-    public function hasPermission(int $id): bool {
+    public function hasPermission(string $name): bool {
         return $this->permissions()
-                        ->where('id', $id)
+                        ->where('name', $name)
                         ->exists();
     }
 }

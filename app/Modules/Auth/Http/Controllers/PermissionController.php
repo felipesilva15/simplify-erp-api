@@ -2,6 +2,7 @@
 
 namespace App\Modules\Auth\Http\Controllers;
 
+use App\Core\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -18,9 +19,14 @@ use App\Modules\Auth\Http\Requests\Permission\ListPermissionRequest;
 use App\Modules\Auth\Http\Resources\Permission\PermissionResource;
 use App\Modules\Auth\Http\Resources\Permission\PermissionCollection;
 use App\Modules\Auth\DTO\PermissionDTO;
+use App\Modules\Auth\Models\Permission;
 
-class PermissionController
+class PermissionController extends Controller
 {
+    public function __construct() {
+        $this->authorizeResource(Permission::class, 'permission');
+    }
+
     /**
      * @OA\Get(
      *      path="/api/auth/permissions",

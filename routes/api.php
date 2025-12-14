@@ -5,6 +5,9 @@ use App\Modules\Auth\Http\Controllers\AuthController;
 use App\Modules\Auth\Http\Controllers\PermissionController;
 use App\Modules\Auth\Http\Controllers\RoleController;
 use App\Modules\Auth\Http\Controllers\UserController;
+use App\Modules\Auth\Services\AuthService;
+use Illuminate\Container\Attributes\Auth;
+use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Illuminate\Support\Facades\Route;
 
 Route::post('auth/login', [AuthController::class, 'login']);
@@ -26,5 +29,9 @@ Route::group(['middleware' => 'auth'], function () {
         
         Route::apiResource('permissions', PermissionController::class);
     });
-});
 
+    Route::get('test', function(AuthService $authService) {
+        // return response()->json($authService->getLoggedInUser()->permissions()->get(), 200);
+        return response()->json($authService->getLoggedInUser()->can('permissions.view'), 200);
+    });
+});
