@@ -4,41 +4,44 @@ namespace App\Policies;
 
 use App\Modules\Auth\Models\Permission;
 use App\Modules\Auth\Models\User;
+use App\Modules\Auth\Services\AuthService;
 
 class PermissionPolicy
 {
+    public function __construct(protected AuthService $authService) { }
+
     public function viewAny(User $user)
     {
-        return $user->hasPermission('permissions.viewAny');
+        return $this->authService->hasAuthorized($user, 'permissions.viewAny');
     }
 
-    public function view(User $user, User $model)
+    public function view(User $user, Permission $model)
     {
-        return $user->hasPermission('permissions.view');
+        return $this->authService->hasAuthorized($user, 'permissions.view');
     }
 
     public function create(User $user)
     {
-        return $user->hasPermission('permissions.create');
+        return $this->authService->hasAuthorized($user, 'permissions.create');
     }
 
-    public function update(User $user, User $model)
+    public function update(User $user, Permission $model)
     {
-        return $user->hasPermission('permissions.update');
+        return $this->authService->hasAuthorized($user, 'permissions.update');
     }
 
-    public function delete(User $user, User $model)
+    public function delete(User $user, Permission $model)
     {
-        return $user->hasPermission('permissions.delete');
+        return $this->authService->hasAuthorized($user, 'permissions.delete');
     }
 
     public function restore(User $user, Permission $model): bool
     {
-        return $user->hasPermission('permissions.restore');
+        return $this->authService->hasAuthorized($user, 'permissions.restore');
     }
 
     public function forceDelete(User $user, Permission $model): bool
     {
-        return $user->hasPermission('permissions.forceDelete');
+        return $this->authService->hasAuthorized($user, 'permissions.forceDelete');
     }
 }

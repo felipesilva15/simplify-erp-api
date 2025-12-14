@@ -7,6 +7,7 @@ use App\Modules\Auth\DTO\AuthCredentialsDTO;
 use App\Modules\Auth\DTO\TokenDetailsDTO;
 use App\Modules\Auth\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 /**
@@ -47,5 +48,9 @@ class AuthService {
             type: 'bearer',
             expiresIn: Auth::factory()->getTTL() * 60
         );
+    }
+
+    public function hasAuthorized(User $user, string $permission): bool {
+        return $user->hasPermission($permission);
     }
 }
