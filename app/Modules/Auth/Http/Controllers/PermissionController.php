@@ -38,8 +38,6 @@ class PermissionController extends Controller
      *      @OA\Parameter(name="action", in="query", required=false, @OA\Schema(type="string")),
      *      @OA\Parameter(name="name", in="query", required=false, @OA\Schema(type="string")),
      *      @OA\Parameter(name="description", in="query", required=false, @OA\Schema(type="string")),
-     *      @OA\Parameter(name="has_access_free", in="query", required=false, @OA\Schema(type="boolean")),
-     *      @OA\Parameter(name="is_active", in="query", required=false, @OA\Schema(type="boolean")),
      *      @OA\Parameter(name="created_at", in="query", required=false, @OA\Schema(type="string")),
      *      @OA\Parameter(name="updated_at", in="query", required=false, @OA\Schema(type="string")),
      *      @OA\Parameter(name="deleted_at", in="query", required=false, @OA\Schema(type="string")),

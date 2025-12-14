@@ -604,22 +604,6 @@
                         }
                     },
                     {
-                        "name": "has_access_free",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean"
-                        }
-                    },
-                    {
-                        "name": "is_active",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean"
-                        }
-                    },
-                    {
                         "name": "created_at",
                         "in": "query",
                         "required": false,
@@ -2069,16 +2053,6 @@
                         "minLength": 1,
                         "example": "Sample",
                         "nullable": true
-                    },
-                    "has_access_free": {
-                        "type": "boolean",
-                        "example": false,
-                        "nullable": true
-                    },
-                    "is_active": {
-                        "type": "boolean",
-                        "example": false,
-                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -2219,16 +2193,6 @@
                         "example": "Sample",
                         "nullable": true
                     },
-                    "has_access_free": {
-                        "type": "boolean",
-                        "example": false,
-                        "nullable": true
-                    },
-                    "is_active": {
-                        "type": "boolean",
-                        "example": false,
-                        "nullable": true
-                    },
                     "created_at": {
                         "type": "string",
                         "format": "date-time",
@@ -2279,16 +2243,6 @@
                         "minLength": 1,
                         "example": "Sample",
                         "nullable": true
-                    },
-                    "has_access_free": {
-                        "type": "boolean",
-                        "example": false,
-                        "nullable": true
-                    },
-                    "is_active": {
-                        "type": "boolean",
-                        "example": false,
-                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -2321,16 +2275,6 @@
                         "maxLength": 512,
                         "minLength": 1,
                         "example": "Sample",
-                        "nullable": true
-                    },
-                    "has_access_free": {
-                        "type": "boolean",
-                        "example": false,
-                        "nullable": true
-                    },
-                    "is_active": {
-                        "type": "boolean",
-                        "example": false,
                         "nullable": true
                     }
                 },
@@ -2676,16 +2620,6 @@
                         "example": "Sample",
                         "nullable": true
                     },
-                    "has_access_free": {
-                        "type": "boolean",
-                        "example": false,
-                        "nullable": true
-                    },
-                    "is_active": {
-                        "type": "boolean",
-                        "example": false,
-                        "nullable": true
-                    },
                     "module": {
                         "$ref": "#/components/schemas/PermissionModuleResource"
                     },
@@ -2758,16 +2692,6 @@
                         "maxLength": 512,
                         "minLength": 1,
                         "example": "Sample",
-                        "nullable": true
-                    },
-                    "has_access_free": {
-                        "type": "boolean",
-                        "example": false,
-                        "nullable": true
-                    },
-                    "is_active": {
-                        "type": "boolean",
-                        "example": false,
                         "nullable": true
                     }
                 },
@@ -2954,16 +2878,6 @@
                     "description": {
                         "type": "string",
                         "example": "Sample",
-                        "nullable": true
-                    },
-                    "has_access_free": {
-                        "type": "boolean",
-                        "example": false,
-                        "nullable": true
-                    },
-                    "is_active": {
-                        "type": "boolean",
-                        "example": false,
                         "nullable": true
                     },
                     "created_at": {
