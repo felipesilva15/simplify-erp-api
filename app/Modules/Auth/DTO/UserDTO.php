@@ -6,6 +6,8 @@ use Carbon\Carbon;
 
 class UserDTO
 {
+    public array $fieldsToUse = [];
+
     public function __construct(
         public int $id = 0,
         public string $name = '',
@@ -15,6 +17,7 @@ class UserDTO
         public ?string $remember_token = '',
         public ?string $username = '',
         public ?string $phone_number = '',
+        public bool $is_admin = false,
         public array $roles = [],
         public ?Carbon $created_at = null,
         public ?Carbon $updated_at = null,
@@ -31,6 +34,7 @@ class UserDTO
             remember_token: $data['remember_token'] ?? '',
             username: $data['username'] ?? '',
             phone_number: $data['phone_number'] ?? '',
+            is_admin: $data['is_admin'] ?? false,
             roles: $data['roles'] ?? [],
             created_at: $data['created_at'] ?? null,
             updated_at: $data['updated_at'] ?? null,
@@ -39,7 +43,7 @@ class UserDTO
     }
 
     public function toArray(): array {
-        return [
+        $data = [
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
@@ -48,10 +52,17 @@ class UserDTO
             'remember_token' => $this->remember_token,
             'username' => $this->username,
             'phone_number' => $this->phone_number,
+            'is_admin' => $this->is_admin,
             'roles' => $this->roles,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at
         ];
+
+        return array_filter(
+            $data,
+            fn ($value, $key) => empty($this->fieldsToUse) || in_array($key, $this->fieldsToUse),
+            ARRAY_FILTER_USE_BOTH
+        );
     }
 }

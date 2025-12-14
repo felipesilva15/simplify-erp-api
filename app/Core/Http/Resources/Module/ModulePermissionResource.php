@@ -22,7 +22,7 @@ class ModulePermissionResource extends JsonResource
     public function toArray(Request $request): array {
         return [
             'id' => $this->id,
-            'resource' => $this->resource,
+            'resource' => $this->getAttribute('resource'),
             'action' => $this->action,
             'name' => $this->name,
             'description' => $this->description,

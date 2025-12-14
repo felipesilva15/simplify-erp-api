@@ -2516,6 +2516,10 @@
                         "example": "Sample",
                         "nullable": true
                     },
+                    "is_admin": {
+                        "type": "boolean",
+                        "example": false
+                    },
                     "roles": {
                         "type": "array",
                         "items": {
@@ -2567,6 +2571,10 @@
                         "minLength": 1,
                         "example": "Sample",
                         "nullable": true
+                    },
+                    "is_admin": {
+                        "type": "boolean",
+                        "example": false
                     },
                     "roles": {
                         "type": "array",
@@ -2868,10 +2876,21 @@
                         "example": "Sample",
                         "nullable": true
                     },
+                    "is_admin": {
+                        "type": "boolean",
+                        "example": false
+                    },
                     "roles": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/UserRoleResource"
+                        }
+                    },
+                    "permissions": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "example": "users.viewAny"
                         }
                     },
                     "created_at": {
@@ -3033,6 +3052,16 @@
                         "example": "Sample",
                         "nullable": true
                     },
+                    "username": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "phone_number": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
                     "created_at": {
                         "type": "string",
                         "format": "date-time",
@@ -3043,16 +3072,6 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2025-12-11T11:13:03.678895Z",
-                        "nullable": true
-                    },
-                    "username": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true
-                    },
-                    "phone_number": {
-                        "type": "string",
-                        "example": "Sample",
                         "nullable": true
                     },
                     "deleted_at": {

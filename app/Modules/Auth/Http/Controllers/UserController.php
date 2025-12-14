@@ -183,6 +183,7 @@ class UserController
      */
     public function update(int $id, UpdateUserRequest $request, UpdateUserAction $action): JsonResponse {
         $dto = UserDTO::fromArray($request->validated());
+        $dto->fieldsToUse = array_keys($request->validated());
         $user = $action->execute($id, $dto);
 
         return response()->json(new UserResource($user), 200);

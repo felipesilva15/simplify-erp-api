@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
@@ -19,10 +20,10 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  *      @OA\Property(property="email_verified_at", type="string", format="date-time", example="2025-12-11T11:13:03.678895Z", nullable=true),
  *      @OA\Property(property="password", type="string", example="Sample"),
  *      @OA\Property(property="remember_token", type="string", example="Sample", nullable=true),
- *      @OA\Property(property="created_at", type="string", format="date-time", example="2025-12-11T11:13:03.678895Z", nullable=true),
- *      @OA\Property(property="updated_at", type="string", format="date-time", example="2025-12-11T11:13:03.678895Z", nullable=true),
  *      @OA\Property(property="username", type="string", example="Sample", nullable=true),
  *      @OA\Property(property="phone_number", type="string", example="Sample", nullable=true),
+ *      @OA\Property(property="created_at", type="string", format="date-time", example="2025-12-11T11:13:03.678895Z", nullable=true),
+ *      @OA\Property(property="updated_at", type="string", format="date-time", example="2025-12-11T11:13:03.678895Z", nullable=true),
  *      @OA\Property(property="deleted_at", type="string", format="date-time", example="2025-12-11T11:13:03.678895Z", nullable=true)
  * )
  */
@@ -36,7 +37,8 @@ class User extends Authenticatable implements JWTSubject
         'email',
         'password',
         'username',
-        'phone_number'
+        'phone_number',
+        'is_admin'
     ];
 
     protected $hidden = [
@@ -48,6 +50,7 @@ class User extends Authenticatable implements JWTSubject
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'boolean'
         ];
     }
 
@@ -75,6 +78,10 @@ class User extends Authenticatable implements JWTSubject
                             $query->where('users.id', $this->id)
                         )
                         ->where('is_active', true);
+    }
+
+    public function permissionsList(): Collection {
+        return $this->permissions()->select('name')->pluck('name');
     }
 
     public function hasPermission(string $name): bool {

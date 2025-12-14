@@ -14,6 +14,7 @@ use Illuminate\Validation\Rules\Password;
  *      @OA\Property(property="password", type="string", example="Sample", minLength=1, maxLength=255),
  *      @OA\Property(property="username", type="string", example="Sample", minLength=1, maxLength=80, nullable=true),
  *      @OA\Property(property="phone_number", type="string", example="Sample", minLength=1, maxLength=14, nullable=true),
+ *      @OA\Property(property="is_admin", type="boolean", example=false),
  *      @OA\Property(
  *          property="roles", 
  *          type="array", 
@@ -34,6 +35,7 @@ class StoreUserRequest extends FormRequest
             'password' => ['required', Password::defaults()],
             'username' => 'required|string|min:2|max:80|unique:users,username',
             'phone_number' => 'nullable|string|min:1|max:14',
+            'is_admin' => 'required|boolean',
             'roles' => 'array',
             'roles.*.id' => 'required|integer|exists:roles,id'
         ];
