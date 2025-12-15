@@ -185,9 +185,9 @@ class PermissionController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function update(int $id, UpdatePermissionRequest $request, UpdatePermissionAction $action): JsonResponse {
+    public function update(Permission $permission, UpdatePermissionRequest $request, UpdatePermissionAction $action): JsonResponse {
         $dto = PermissionDTO::fromArray($request->validated());
-        $permission = $action->execute($id, $dto);
+        $permission = $action->execute($permission->id, $dto);
 
         return response()->json(new PermissionResource($permission), 200);
     }

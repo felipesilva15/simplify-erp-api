@@ -2,10 +2,10 @@
 
 namespace App\Modules\Auth\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
+use App\Core\Http\Controllers\Controller;
 use App\Modules\Auth\Actions\User\StoreUserAction;
 use App\Modules\Auth\Actions\User\UpdateUserAction;
 use App\Modules\Auth\Actions\User\DeleteUserAction;
@@ -18,9 +18,14 @@ use App\Modules\Auth\Http\Requests\User\ListUserRequest;
 use App\Modules\Auth\Http\Resources\User\UserResource;
 use App\Modules\Auth\Http\Resources\User\UserCollection;
 use App\Modules\Auth\DTO\UserDTO;
+use App\Modules\Auth\Models\User;
 
-class UserController
+class UserController extends Controller
 {
+    public function __construct() {
+        $this->authorizeResource(User::class, 'user');
+    }
+
     /**
      * @OA\Get(
      *      path="/api/auth/users",

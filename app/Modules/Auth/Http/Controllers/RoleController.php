@@ -3,10 +3,10 @@
 namespace App\Modules\Auth\Http\Controllers;
 
 use App\Modules\Auth\Actions\Role\DefineRolePermissionsAction;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
+use App\Core\Http\Controllers\Controller;
 use App\Modules\Auth\Actions\Role\StoreRoleAction;
 use App\Modules\Auth\Actions\Role\UpdateRoleAction;
 use App\Modules\Auth\Actions\Role\DeleteRoleAction;
@@ -20,9 +20,15 @@ use App\Modules\Auth\Http\Resources\Role\RoleResource;
 use App\Modules\Auth\Http\Resources\Role\RoleCollection;
 use App\Modules\Auth\DTO\RoleDTO;
 use App\Modules\Auth\Http\Requests\Role\RolePermissionsRequest;
+use App\Modules\Auth\Models\Role;
 
-class RoleController
+class RoleController extends Controller
 {
+    public function __construct() {
+        $this->authorizeResource(Role::class, 'role');
+        $this->middleware('can:definePermissions,role')->only(['definePermissions']);
+    }
+
     /**
      * @OA\Get(
      *      path="/api/auth/roles",
@@ -254,8 +260,8 @@ class RoleController
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function definePermissions(int $id, RolePermissionsRequest $request, DefineRolePermissionsAction $action): JsonResponse {
-        $role = $action->execute($id, $request->validated('ids'));
+    public function definePermissions(Role $role, RolePermissionsRequest $request, DefineRolePermissionsAction $action): JsonResponse {
+        $role = $action->execute($role->id, $request->validated('ids'));
         return response()->json(new RoleResource($role), 200);
     }
 }

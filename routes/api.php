@@ -25,7 +25,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::apiResource('users', UserController::class);
 
         Route::apiResource('roles', RoleController::class);
-        Route::patch('roles/{id}/permissions', [RoleController::class, 'definePermissions']);
+        Route::patch('roles/{role}/permissions', [RoleController::class, 'definePermissions']);
         
         Route::apiResource('permissions', PermissionController::class);
     });

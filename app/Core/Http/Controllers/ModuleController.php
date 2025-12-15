@@ -18,9 +18,14 @@ use App\Core\Http\Requests\Module\ListModuleRequest;
 use App\Core\Http\Resources\Module\ModuleResource;
 use App\Core\Http\Resources\Module\ModuleCollection;
 use App\Core\DTO\ModuleDTO;
+use App\Core\Models\Module;
 
-class ModuleController
+class ModuleController extends Controller
 {
+    public function __construct() {
+        $this->authorizeResource(Module::class, 'module');
+    }
+
     /**
      * @OA\Get(
      *      path="/api/core/modules",

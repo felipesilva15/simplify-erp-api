@@ -2,10 +2,11 @@
 
 namespace App\Modules\{{module}}\Http\Controllers;
 
-use Illuminate\Http\Request;
+
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
+use App\Core\Http\Controllers\Controller;
 use App\Modules\{{module}}\Actions\{{entity}}\Store{{entity}}Action;
 use App\Modules\{{module}}\Actions\{{entity}}\Update{{entity}}Action;
 use App\Modules\{{module}}\Actions\{{entity}}\Delete{{entity}}Action;
@@ -19,8 +20,12 @@ use App\Modules\{{module}}\Http\Resources\{{entity}}\{{entity}}Resource;
 use App\Modules\{{module}}\Http\Resources\{{entity}}\{{entity}}Collection;
 use App\Modules\{{module}}\DTO\{{entity}}DTO;
 
-class {{entity}}Controller
+class {{entity}}Controller extends Controller
 {
+    public function __construct() {
+        $this->authorizeResource({{entity}}::class, '{{lower_entity}}');
+    }
+
     /**
      * @OA\Get(
      *      path="/api/{{lower_module}}/{{lower_entity}}s",
