@@ -81,8 +81,8 @@ class ModuleController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function show(int $id, ShowModuleAction $action): JsonResponse {
-        $module = $action->execute($id);
+    public function show(Module $module, ShowModuleAction $action): JsonResponse {
+        $module = $action->execute($module);
 
         return response()->json(new ModuleResource($module), 200);
     }
@@ -141,8 +141,8 @@ class ModuleController extends Controller
      *      )
      * )
      */
-    public function edit(int $id, EditModuleAction $action): JsonResponse {
-        $module = $action->execute($id);
+    public function edit(Module $module, EditModuleAction $action): JsonResponse {
+        $module = $action->execute($module);
 
         return response()->json(new ModuleResource($module), 200);
     }
@@ -182,9 +182,9 @@ class ModuleController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function update(int $id, UpdateModuleRequest $request, UpdateModuleAction $action): JsonResponse {
+    public function update(Module $module, UpdateModuleRequest $request, UpdateModuleAction $action): JsonResponse {
         $dto = ModuleDTO::fromArray($request->validated());
-        $module = $action->execute($id, $dto);
+        $module = $action->execute($module, $dto);
 
         return response()->json(new ModuleResource($module), 200);
     }
@@ -218,8 +218,8 @@ class ModuleController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function destroy(int $id, DeleteModuleAction $action): Response {
-        $action->execute($id);
+    public function destroy(Module $module, DeleteModuleAction $action): Response {
+        $action->execute($module);
         return response()->noContent();
     }
 }

@@ -10,7 +10,7 @@ class EditModuleAction
 {
     public function __construct(protected ModuleService $service) { }
 
-    public function execute(int $id): Module {
-        return $this->service->edit($id);
+    public function execute(Module $module): Module {
+        return $this->service->edit($module);
     }
 }

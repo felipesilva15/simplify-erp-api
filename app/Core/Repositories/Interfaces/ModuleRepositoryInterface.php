@@ -10,9 +10,9 @@ interface ModuleRepositoryInterface
 {
     public function store(ModuleDTO $data): Module;
 
-    public function update(int $id, ModuleDTO $data): ?Module;
+    public function update(Module $module, ModuleDTO $data): ?Module;
 
-    public function delete(int $id): bool;
+    public function delete(Module $module): bool;
 
     public function findById(int $id): ?Module;
 

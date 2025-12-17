@@ -9,7 +9,7 @@ class ShowModuleAction
 {
     public function __construct(protected ModuleService $service) { }
 
-    public function execute(int $id): Module {
-        return $this->service->findById($id);
+    public function execute(Module $module): Module {
+        return $this->service->show($module);
     }
 }

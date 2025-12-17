@@ -17,13 +17,7 @@ class ModuleRepository implements ModuleRepositoryInterface
         return Module::create($arrayData);
     }
 
-    public function update(int $id, ModuleDTO $data): ?Module {
-        $module = $this->findById($id);
-
-        if (!$module) {
-            return null;
-        }
-
+    public function update(Module $module, ModuleDTO $data): ?Module {
         $arrayData = $data->toArray();
         unset($arrayData["id"]);
 
@@ -32,13 +26,7 @@ class ModuleRepository implements ModuleRepositoryInterface
         return $module->fresh();
     }
 
-    public function delete(int $id): bool {
-        $module = $this->findById($id);
-
-        if (!$module) {
-            return false;
-        }
-
+    public function delete(Module $module): bool {
         return (bool) $module->delete();
     }
 

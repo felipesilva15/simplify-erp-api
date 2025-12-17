@@ -16,31 +16,25 @@ class ModuleService
         return $this->repository->store($data);
     }
 
-    public function edit(int $id): ?Module {
-        $module = $this->repository->findById($id);
+    public function edit(Module $module): Module {
+        return $module;
+    }
 
-        if (!$module) {
-            throw new NotFoundHttpException();
-        }
+    public function update(Module $module, ModuleDTO $data): Module {
+        $module = $this->repository->update($module, $data);
 
         return $module;
     }
 
-    public function update(int $id, ModuleDTO $data): ?Module {
-        $module = $this->repository->update($id, $data);
+    public function delete(Module $module): bool {
+        return $this->repository->delete($module);
+    }
 
-        if (!$module) {
-            throw new NotFoundHttpException();
-        }
-
+    public function show(Module $module): Module {
         return $module;
     }
 
-    public function delete(int $id): bool {
-        return $this->repository->delete($id);
-    }
-
-    public function findById(int $id): ?Module {
+    public function findById(int $id): Module {
         $module = $this->repository->findById($id);
 
         if (!$module) {
