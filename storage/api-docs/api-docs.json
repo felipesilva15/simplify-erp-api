@@ -1786,6 +1786,42 @@
     },
     "components": {
         "schemas": {
+            "ApiResponse": {
+                "required": [
+                    "success",
+                    "message",
+                    "data",
+                    "errors",
+                    "meta"
+                ],
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Operação realizada com sucesso"
+                    },
+                    "warnings": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "example": "Este recurso não pode ser editado."
+                        },
+                        "nullable": true
+                    },
+                    "errors": {
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "meta": {
+                        "type": "object",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "PaginatorInfo": {
                 "properties": {
                     "links": {
