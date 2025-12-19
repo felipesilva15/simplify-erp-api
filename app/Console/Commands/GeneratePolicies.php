@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Modules\Auth\Models\Permission;
+use App\Modules\Security\Models\Permission;
 use Illuminate\Console\Command;
 
 class GeneratePolicies extends Command

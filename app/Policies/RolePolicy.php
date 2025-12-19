@@ -3,9 +3,9 @@
 namespace App\Policies;
 
 use App\Core\Exceptions\NotFoundHttpException;
-use App\Modules\Auth\Models\Role;
-use App\Modules\Auth\Models\User;
-use App\Modules\Auth\Services\AuthService;
+use App\Modules\Security\Models\Role;
+use App\Modules\Security\Models\User;
+use App\Modules\Security\Services\AuthService;
 use Illuminate\Support\Facades\Log;
 
 class RolePolicy

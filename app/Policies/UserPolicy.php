@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Modules\Auth\Models\User;
-use App\Modules\Auth\Services\AuthService;
+use App\Modules\Security\Models\User;
+use App\Modules\Security\Services\AuthService;
 
 class UserPolicy
 {

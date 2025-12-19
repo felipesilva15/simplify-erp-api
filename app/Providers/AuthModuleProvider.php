@@ -2,12 +2,12 @@
 
 namespace App\Providers;
 
-use App\Modules\Auth\Repositories\Eloquent\PermissionRepository;
-use App\Modules\Auth\Repositories\Eloquent\RoleRepository;
-use App\Modules\Auth\Repositories\Eloquent\UserRepository;
-use App\Modules\Auth\Repositories\Interfaces\PermissionRepositoryInterface;
-use App\Modules\Auth\Repositories\Interfaces\RoleRepositoryInterface;
-use App\Modules\Auth\Repositories\Interfaces\UserRepositoryInterface;
+use App\Modules\Security\Repositories\Eloquent\PermissionRepository;
+use App\Modules\Security\Repositories\Eloquent\RoleRepository;
+use App\Modules\Security\Repositories\Eloquent\UserRepository;
+use App\Modules\Security\Repositories\Interfaces\PermissionRepositoryInterface;
+use App\Modules\Security\Repositories\Interfaces\RoleRepositoryInterface;
+use App\Modules\Security\Repositories\Interfaces\UserRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AuthModuleProvider extends ServiceProvider

@@ -3,8 +3,8 @@
 namespace App\Policies;
 
 use App\Core\Models\Module;
-use App\Modules\Auth\Models\User;
-use App\Modules\Auth\Services\AuthService;
+use App\Modules\Security\Models\User;
+use App\Modules\Security\Services\AuthService;
 
 class ModulePolicy
 {

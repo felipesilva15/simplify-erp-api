@@ -16,8 +16,8 @@ namespace App\Core\DTO;
  */
 class ApiResponseDTO {
     public function __construct(
-        public bool $success = false,
-        public string $message = '',
+        public bool $success,
+        public string $message,
         public mixed $data,
         public ?array $warnings,
         public mixed $errors,

@@ -404,13 +404,13 @@
                 }
             }
         },
-        "/api/auth/login": {
+        "/api/security/auth/login": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Log in",
-                "operationId": "0e6f8baff8c7ee1fd88ab8f0d2f6b72d",
+                "operationId": "5a92507687bf1a8c53fa8dd7adce0f9c",
                 "requestBody": {
                     "description": "Credentials to log in",
                     "required": true,
@@ -446,13 +446,13 @@
                 }
             }
         },
-        "/api/auth/me": {
+        "/api/security/auth/me": {
             "get": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Logged in user data",
-                "operationId": "b1f767213fd924cc0a48d167b6566894",
+                "operationId": "968ff49d9618ff1c2e3b03fec93da72d",
                 "responses": {
                     "200": {
                         "description": "User data",
@@ -482,13 +482,13 @@
                 ]
             }
         },
-        "/api/auth/logout": {
+        "/api/security/auth/logout": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Logout",
-                "operationId": "4d7d83dc6ddb49bad1c8c42d8d7ea90a",
+                "operationId": "8beb71cacfeed1349496957b4b4b3716",
                 "responses": {
                     "204": {
                         "description": "No content"
@@ -511,13 +511,13 @@
                 ]
             }
         },
-        "/api/auth/refresh": {
+        "/api/security/auth/refresh": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Refresh the access token",
-                "operationId": "ae0618886dcaf07a3cd2b9cde813cd23",
+                "operationId": "a5753816af0ee33f3be0ac47d142b846",
                 "responses": {
                     "200": {
                         "description": "Token details",
@@ -547,13 +547,13 @@
                 ]
             }
         },
-        "/api/auth/permissions": {
+        "/api/security/permissions": {
             "get": {
                 "tags": [
                     "Permission"
                 ],
                 "summary": "List all rows",
-                "operationId": "cff445635d3c6ecc5717fea93a63dee6",
+                "operationId": "188e1be9e29834321d9184877d048f19",
                 "parameters": [
                     {
                         "name": "id",
@@ -695,7 +695,7 @@
                     "Permission"
                 ],
                 "summary": "Registers a permission",
-                "operationId": "e7f8d5bd6312c7dc30cf76732ddef3ca",
+                "operationId": "419439155057b862050782748050885b",
                 "requestBody": {
                     "description": "Data for creating a new permission",
                     "required": true,
@@ -736,13 +736,13 @@
                 ]
             }
         },
-        "/api/auth/permissions/{id}": {
+        "/api/security/permissions/{id}": {
             "get": {
                 "tags": [
                     "Permission"
                 ],
                 "summary": "List a permission by ID",
-                "operationId": "d3bf88705b261a3f4dca9d1f3a893418",
+                "operationId": "5264b7d54cce5989654797f7d485be50",
                 "parameters": [
                     {
                         "name": "id",
@@ -787,7 +787,7 @@
                     "Permission"
                 ],
                 "summary": "Update a permission",
-                "operationId": "22faae5b0cafa3227f174190228a99e3",
+                "operationId": "7c21f07778e88a084953c0ed03be4709",
                 "parameters": [
                     {
                         "name": "id",
@@ -853,7 +853,7 @@
                     "Permission"
                 ],
                 "summary": "Delete a permission",
-                "operationId": "07da53b7161faa87955304e177abc7d5",
+                "operationId": "34990225e1070c948e2442974a61b84a",
                 "parameters": [
                     {
                         "name": "id",
@@ -897,13 +897,13 @@
                 ]
             }
         },
-        "/api/auth/permissions/{id}/edit": {
+        "/api/security/permissions/{id}/edit": {
             "get": {
                 "tags": [
                     "Permission"
                 ],
                 "summary": "Get data to edit a permission",
-                "operationId": "ff800f0980ca79a4116af982e4cbf627",
+                "operationId": "5d117208bd6b83951dd651102373de00",
                 "parameters": [
                     {
                         "name": "id",
@@ -939,13 +939,13 @@
                 }
             }
         },
-        "/api/auth/roles": {
+        "/api/security/roles": {
             "get": {
                 "tags": [
                     "Role"
                 ],
                 "summary": "List all rows",
-                "operationId": "ae3acc0753cc34b566a9aee04d921587",
+                "operationId": "353ba6ecbb20948929f177d9931b3ef9",
                 "parameters": [
                     {
                         "name": "id",
@@ -1063,7 +1063,7 @@
                     "Role"
                 ],
                 "summary": "Registers a role",
-                "operationId": "4de67c40fc511419b4a8c9c89ab0d377",
+                "operationId": "9c43b88da0ae4cdf61aa196ce5688d5a",
                 "requestBody": {
                     "description": "Data for creating a new role",
                     "required": true,
@@ -1104,13 +1104,13 @@
                 ]
             }
         },
-        "/api/auth/roles/{id}": {
+        "/api/security/roles/{id}": {
             "get": {
                 "tags": [
                     "Role"
                 ],
                 "summary": "List a role by ID",
-                "operationId": "64c5c856562a037aeb692b10f1e6738d",
+                "operationId": "f381ab825a6063e13f6c68c43df89e58",
                 "parameters": [
                     {
                         "name": "id",
@@ -1155,7 +1155,7 @@
                     "Role"
                 ],
                 "summary": "Update a role",
-                "operationId": "a2e0e3de95cc9d794eb375cf0586b5ac",
+                "operationId": "6adaeda7fe871380284cd26f86489a00",
                 "parameters": [
                     {
                         "name": "id",
@@ -1221,7 +1221,7 @@
                     "Role"
                 ],
                 "summary": "Delete a role",
-                "operationId": "d26bff9e94449c33ca522b3d3bfb98b7",
+                "operationId": "37bbb12155a3e7a7d47e797f81e2c40b",
                 "parameters": [
                     {
                         "name": "id",
@@ -1265,13 +1265,13 @@
                 ]
             }
         },
-        "/api/auth/roles/{id}/edit": {
+        "/api/security/roles/{id}/edit": {
             "get": {
                 "tags": [
                     "Role"
                 ],
                 "summary": "Get data to edit a role",
-                "operationId": "0abf18f96044b749f10cf009bb82b735",
+                "operationId": "6b8569404d53713ef5b0acedbcc97efd",
                 "parameters": [
                     {
                         "name": "id",
@@ -1307,13 +1307,13 @@
                 }
             }
         },
-        "/api/auth/roles/{id}/permissions": {
+        "/api/security/roles/{id}/permissions": {
             "patch": {
                 "tags": [
                     "Role"
                 ],
                 "summary": "Define role permissions",
-                "operationId": "88a08171e429496d1abd348e8bd75ff6",
+                "operationId": "5b50fb1469abb23814da7fd3c95dc2ef",
                 "parameters": [
                     {
                         "name": "id",
@@ -1375,13 +1375,13 @@
                 ]
             }
         },
-        "/api/auth/users": {
+        "/api/security/users": {
             "get": {
                 "tags": [
                     "User"
                 ],
                 "summary": "List all rows",
-                "operationId": "44ff21a02b02d5b3cb2914d5cc72436a",
+                "operationId": "98882bc68558a3b40840254f24b97206",
                 "parameters": [
                     {
                         "name": "id",
@@ -1539,7 +1539,7 @@
                     "User"
                 ],
                 "summary": "Registers a user",
-                "operationId": "a014da36e0a44944a4ef9ce686ed3483",
+                "operationId": "02fb7ff51d1c6fef9b55a2e7fb245046",
                 "requestBody": {
                     "description": "Data for creating a new user",
                     "required": true,
@@ -1580,13 +1580,13 @@
                 ]
             }
         },
-        "/api/auth/users/{id}": {
+        "/api/security/users/{id}": {
             "get": {
                 "tags": [
                     "User"
                 ],
                 "summary": "List a user by ID",
-                "operationId": "227f64759c90d72601ce5b1e140617ee",
+                "operationId": "693aa897acc65bb130411d16bed53b4c",
                 "parameters": [
                     {
                         "name": "id",
@@ -1631,7 +1631,7 @@
                     "User"
                 ],
                 "summary": "Update a user",
-                "operationId": "950e6f1fbbef47c1da52d611131424ac",
+                "operationId": "c82c12cf8929069c07fa535ee8824b5b",
                 "parameters": [
                     {
                         "name": "id",
@@ -1697,7 +1697,7 @@
                     "User"
                 ],
                 "summary": "Delete a user",
-                "operationId": "a3b56e8b4b34d6256ca1fbf77dfbfb97",
+                "operationId": "15cbfacf68e3eb0c3d8f83fe63e5037c",
                 "parameters": [
                     {
                         "name": "id",
@@ -1741,13 +1741,13 @@
                 ]
             }
         },
-        "/api/auth/users/{id}/edit": {
+        "/api/security/users/{id}/edit": {
             "get": {
                 "tags": [
                     "User"
                 ],
                 "summary": "Get data to edit a user",
-                "operationId": "ed123b49995ae94293a4364811c2f1cc",
+                "operationId": "bfb19ee00166a92478a7c52b44ac908f",
                 "parameters": [
                     {
                         "name": "id",
