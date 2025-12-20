@@ -1,5 +1,6 @@
 <?php
 
+use App\Core\Exceptions\AccessDeniedHttpException as CustomAccessDeniedHttpException;
 use App\Core\Exceptions\NotFoundHttpException as CustomNotFoundHttpException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -20,11 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (AccessDeniedHttpException $e, Request $request) {
-            return response()->json([
-                'path' => $request->path(),
-                'code' => 403,
-                'message' => 'Você não possui permissão para acessar este recurso.'
-            ], 403);
+            throw new CustomAccessDeniedHttpException();
         });
 
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {

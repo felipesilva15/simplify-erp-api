@@ -15,12 +15,12 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  *      @OA\Property(property="message", type="string", example="Error ocurried")
  * )
  */
-class NotFoundHttpException extends HttpException
+class AccessDeniedHttpException extends HttpException
 {
     use ApiResponse;
 
-    public function __construct(string $message = 'Registro não encontrado.', \Throwable $previous = null, int $code = 404, array $headers = []) {
-        parent::__construct(404, $message, $previous, $headers, $code);
+    public function __construct(string $message = 'Você não possui permissão para acessar este recurso.', \Throwable $previous = null, int $code = 403, array $headers = []) {
+        parent::__construct(403, $message, $previous, $headers, $code);
     }
 
     public function render(Request $request): JsonResponse {

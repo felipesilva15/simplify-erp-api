@@ -10,6 +10,7 @@ trait ApiResponse
     protected function success(
         string $message = 'Operação realizada com sucesso.',
         mixed $data = null,
+        mixed $links = null,
         mixed $warnings = null,
         mixed $meta = null,
         int $httpStatus = 200
@@ -18,6 +19,7 @@ trait ApiResponse
             success: true,
             message: $message,
             data: $data,
+            links: $links,
             warnings: $warnings,
             errors: null,
             meta: $meta
@@ -36,7 +38,7 @@ trait ApiResponse
             'message' => $message,
             'data'    => null,
             'errors'  => $errors,
-            'meta'    => []
+            'meta'    => null
         ];
 
         return response()->json($response, $httpStatus);
