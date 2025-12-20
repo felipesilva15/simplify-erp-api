@@ -14,7 +14,7 @@ Route::post('security/auth/login', [AuthController::class, 'login']);
 
 Route::group(['middleware' => 'auth'], function () {
     Route::prefix('core')->group(function() {
-        Route::apiResource('modules', ModuleController::class);
+        Route::resource('modules', ModuleController::class);
     });
 
     Route::prefix('security')->group(function() {

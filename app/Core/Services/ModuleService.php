@@ -4,6 +4,7 @@ namespace App\Core\Services;
 
 use App\Core\Exceptions\NotFoundHttpException;
 use App\Core\DTO\ModuleDTO;
+use App\Core\DTO\ServiceResult;
 use App\Core\Models\Module;
 use App\Core\Repositories\Interfaces\ModuleRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -16,8 +17,22 @@ class ModuleService
         return $this->repository->store($data);
     }
 
-    public function edit(Module $module): Module {
-        return $module;
+    public function edit(Module $module): ServiceResult {
+        $editable =  true;
+        $warnings = [];
+
+        if (!$module->is_active) {
+            $editable = false;
+            $warnings[] = 'Este módulo está não está ativo.';
+        }
+
+        return new ServiceResult(
+            data: $module,
+            warnings: $warnings,
+            meta: [
+                'editable' => $editable
+            ]
+        );
     }
 
     public function update(Module $module, ModuleDTO $data): Module {

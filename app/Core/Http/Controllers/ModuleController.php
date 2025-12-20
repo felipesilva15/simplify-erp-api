@@ -132,7 +132,17 @@ class ModuleController extends Controller
      *      @OA\Response(
      *          response="200", 
      *          description="Module data",
-     *          @OA\JsonContent(ref="#/components/schemas/ModuleResource")
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/ModuleResource"
+     *                      )
+     *                  )
+     *              }
+     *          )
      *      ),
      *      @OA\Response(
      *          response="404", 
@@ -142,9 +152,14 @@ class ModuleController extends Controller
      * )
      */
     public function edit(Module $module, EditModuleAction $action): JsonResponse {
-        $module = $action->execute($module);
+        $serviceResult = $action->execute($module);
 
-        return response()->json(new ModuleResource($module), 200);
+        return $this->success(
+            data: new ModuleResource($serviceResult->data),
+            warnings: $serviceResult->warnings,
+            meta: $serviceResult->meta,
+            httpStatus: 200
+        );
     }
 
     /**
