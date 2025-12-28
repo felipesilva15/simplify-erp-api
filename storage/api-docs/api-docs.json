@@ -386,7 +386,19 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ModuleResource"
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/ModuleResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -1802,6 +1814,10 @@
                     "message": {
                         "type": "string",
                         "example": "Operação realizada com sucesso"
+                    },
+                    "links": {
+                        "type": "object",
+                        "nullable": true
                     },
                     "warnings": {
                         "type": "array",
