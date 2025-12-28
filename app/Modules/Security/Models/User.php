@@ -2,6 +2,8 @@
 
 namespace App\Modules\Security\Models;
 
+use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -27,6 +29,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  *      @OA\Property(property="deleted_at", type="string", format="date-time", example="2025-12-11T11:13:03.678895Z", nullable=true)
  * )
  */
+#[UseFactory(UserFactory::class)]
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
