@@ -8,13 +8,9 @@ use App\Core\Helpers\ListHelpers;
  * @OA\Schema(
  *   schema="ApiResponse",
  *   type="object",
- *   required={"success","message","data","errors","meta"},
+ *   required={"success","message","data"},
  *   @OA\Property(property="success", type="boolean", example=true),
- *   @OA\Property(property="message", type="string", example="Operação realizada com sucesso"),
- *   @OA\Property(property="links", type="object", nullable=true),
- *   @OA\Property(property="warnings", type="array", @OA\Items(type="string", example="Este recurso não pode ser editado."), nullable=true),
- *   @OA\Property(property="errors", type="object", nullable=true),
- *   @OA\Property(property="meta", type="object", nullable=true)
+ *   @OA\Property(property="message", type="string", example="Operação realizada com sucesso")
  * )
  */
 class ApiResponseDTO {

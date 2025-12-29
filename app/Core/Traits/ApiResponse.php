@@ -6,6 +6,19 @@ use App\Core\DTO\ApiResponseDTO;
 use Illuminate\Http\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+/**
+ * @OA\Schema(
+ *   schema="ApiErrorResponse",
+ *   type="object",
+ *   required={"success","message"},
+ *   allOf={
+ *      @OA\Schema(ref="#/components/schemas/ApiResponse"),
+ *      @OA\Schema(
+ *          @OA\Property(property="errors", type="object", nullable=true)
+ *      )
+ *   }
+ * )
+ */
 trait ApiResponse
 {
     protected function success(

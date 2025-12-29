@@ -143,7 +143,25 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ModuleCollection"
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/ModuleResource"
+                                                },
+                                                "links": {
+                                                    "$ref": "#/components/schemas/PaginatorLinks"
+                                                },
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/PaginatorMeta"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -178,7 +196,19 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ModuleResource"
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/ModuleResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -188,7 +218,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
                                 }
                             }
                         }
@@ -225,7 +255,19 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ModuleResource"
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/ModuleResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -235,7 +277,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
                                 }
                             }
                         }
@@ -281,7 +323,19 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ModuleResource"
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/ModuleResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -291,7 +345,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
                                 }
                             }
                         }
@@ -301,7 +355,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
                                 }
                             }
                         }
@@ -339,7 +393,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
                                 }
                             }
                         }
@@ -349,7 +403,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
                                 }
                             }
                         }
@@ -394,6 +448,23 @@
                                             "properties": {
                                                 "data": {
                                                     "$ref": "#/components/schemas/ModuleResource"
+                                                },
+                                                "warnings": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "Este recurso não pode ser editado."
+                                                    },
+                                                    "nullable": true
+                                                },
+                                                "meta": {
+                                                    "properties": {
+                                                        "editable": {
+                                                            "type": "boolean",
+                                                            "example": true
+                                                        }
+                                                    },
+                                                    "type": "object"
                                                 }
                                             },
                                             "type": "object"
@@ -408,7 +479,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
                                 }
                             }
                         }
@@ -1802,9 +1873,7 @@
                 "required": [
                     "success",
                     "message",
-                    "data",
-                    "errors",
-                    "meta"
+                    "data"
                 ],
                 "properties": {
                     "success": {
@@ -1814,26 +1883,6 @@
                     "message": {
                         "type": "string",
                         "example": "Operação realizada com sucesso"
-                    },
-                    "links": {
-                        "type": "object",
-                        "nullable": true
-                    },
-                    "warnings": {
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "example": "Este recurso não pode ser editado."
-                        },
-                        "nullable": true
-                    },
-                    "errors": {
-                        "type": "object",
-                        "nullable": true
-                    },
-                    "meta": {
-                        "type": "object",
-                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -1947,21 +1996,29 @@
                 ]
             },
             "ApiErrorDTO": {
-                "properties": {
-                    "path": {
-                        "type": "string",
-                        "example": "/api/route"
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ApiErrorResponse"
                     },
-                    "code": {
-                        "type": "integer",
-                        "example": 500
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Error ocurried"
+                    {
+                        "properties": {
+                            "path": {
+                                "type": "string",
+                                "example": "/api/route"
+                            },
+                            "code": {
+                                "type": "integer",
+                                "example": 500
+                            },
+                            "message": {
+                                "type": "string",
+                                "example": "Error ocurried"
+                            }
+                        },
+                        "type": "object"
                     }
-                },
-                "type": "object"
+                ]
             },
             "ListModuleRequest": {
                 "properties": {
@@ -2200,6 +2257,27 @@
                     }
                 },
                 "type": "object"
+            },
+            "ApiErrorResponse": {
+                "required": [
+                    "success",
+                    "message"
+                ],
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                        "properties": {
+                            "errors": {
+                                "type": "object",
+                                "nullable": true
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
             },
             "LoginRequest": {
                 "required": [

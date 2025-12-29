@@ -45,15 +45,40 @@ class ModuleController extends Controller
      *      @OA\Response(
      *          response="200", 
      *          description="Module list",
-     *          @OA\JsonContent(ref="#/components/schemas/ModuleCollection")
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/ModuleResource"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="links",
+     *                          ref="#/components/schemas/PaginatorLinks"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="meta",
+     *                          ref="#/components/schemas/PaginatorMeta"
+     *                      )
+     *                  )
+     *              }
+     *          )
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
     public function index(ListModuleRequest $request, ListModuleAction $action): JsonResponse {
         $moduleList = $action->execute($request->all());
+        $paginated = new ModuleCollection($moduleList);
+        $paginated = $paginated->toArray($request);
 
-        return response()->json(new ModuleCollection($moduleList), 200);
+        return $this->success(
+            data: $paginated['data'],
+            links: $paginated['links'],
+            meta: $paginated['meta'],
+            httpStatus: Response::HTTP_OK
+        );
     }
 
     /**
@@ -61,67 +86,6 @@ class ModuleController extends Controller
      *      path="/api/core/modules/{id}",
      *      tags={"Module"},
      *      summary="List a module by ID",
-     *      @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Module ID",
-     *         @OA\Schema(type="integer")
-     *      ),
-     *      @OA\Response(
-     *          response="200", 
-     *          description="Module data",
-     *          @OA\JsonContent(ref="#/components/schemas/ModuleResource")
-     *      ),
-     *      @OA\Response(
-     *          response="404", 
-     *          description="Record not found",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
-     *      ),
-     *      security={{"bearerAuth":{}}}
-     * )
-     */
-    public function show(Module $module, ShowModuleAction $action): JsonResponse {
-        $module = $action->execute($module);
-
-        return response()->json(new ModuleResource($module), 200);
-    }
-
-    /**
-     * @OA\Post(
-     *      path="/api/core/modules",
-     *      tags={"Module"},
-     *      summary="Registers a module",
-     *      @OA\RequestBody(
-     *         required=true,
-     *         description="Data for creating a new module",
-     *         @OA\JsonContent(ref="#/components/schemas/StoreModuleRequest")
-     *      ),
-     *      @OA\Response(
-     *          response="201", 
-     *          description="Registered module data",
-     *          @OA\JsonContent(ref="#/components/schemas/ModuleResource")
-     *      ),
-     *      @OA\Response(
-     *          response="401", 
-     *          description="Unauthorized",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
-     *      ),
-     *      security={{"bearerAuth":{}}}
-     * )
-     */
-    public function store(StoreModuleRequest $request, StoreModuleAction $action): JsonResponse {
-        $dto = ModuleDTO::fromArray($request->validated());
-        $module = $action->execute($dto);
-
-        return response()->json(new ModuleResource($module), 201);
-    }
-
-    /**
-     * @OA\Get(
-     *      path="/api/core/modules/{id}/edit",
-     *      tags={"Module"},
-     *      summary="Get data to edit a module",
      *      @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -147,7 +111,100 @@ class ModuleController extends Controller
      *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      security={{"bearerAuth":{}}}
+     * )
+     */
+    public function show(Module $module, ShowModuleAction $action): JsonResponse {
+        $module = $action->execute($module);
+
+        return $this->success(
+            data: new ModuleResource($module),
+            httpStatus: Response::HTTP_OK
+        );
+    }
+
+    /**
+     * @OA\Post(
+     *      path="/api/core/modules",
+     *      tags={"Module"},
+     *      summary="Registers a module",
+     *      @OA\RequestBody(
+     *         required=true,
+     *         description="Data for creating a new module",
+     *         @OA\JsonContent(ref="#/components/schemas/StoreModuleRequest")
+     *      ),
+     *      @OA\Response(
+     *          response="201", 
+     *          description="Registered module data",
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/ModuleResource"
+     *                      )
+     *                  )
+     *              }
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      security={{"bearerAuth":{}}}
+     * )
+     */
+    public function store(StoreModuleRequest $request, StoreModuleAction $action): JsonResponse {
+        $dto = ModuleDTO::fromArray($request->validated());
+        $module = $action->execute($dto);
+
+        return $this->success(
+            data: new ModuleResource($module),
+            httpStatus: Response::HTTP_CREATED
+        );
+    }
+
+    /**
+     * @OA\Get(
+     *      path="/api/core/modules/{id}/edit",
+     *      tags={"Module"},
+     *      summary="Get data to edit a module",
+     *      @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Module ID",
+     *         @OA\Schema(type="integer")
+     *      ),
+     *      @OA\Response(
+     *          response="200", 
+     *          description="Module data",
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/ModuleResource"
+     *                      ),
+     *                      @OA\Property(property="warnings", type="array", @OA\Items(type="string", example="Este recurso não pode ser editado."), nullable=true),
+     *                      @OA\Property(
+     *                          property="meta", 
+     *                          type="object", 
+     *                          @OA\Property(property="editable", type="boolean", example=true)
+     *                      )
+     *                  )
+     *              }
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response="404", 
+     *          description="Record not found",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      )
      * )
      */
@@ -158,7 +215,7 @@ class ModuleController extends Controller
             data: new ModuleResource($serviceResult->data),
             warnings: $serviceResult->warnings,
             meta: $serviceResult->meta,
-            httpStatus: 200
+            httpStatus: Response::HTTP_OK
         );
     }
 
@@ -182,17 +239,27 @@ class ModuleController extends Controller
      *      @OA\Response(
      *          response="200", 
      *          description="Updated module data",
-     *          @OA\JsonContent(ref="#/components/schemas/ModuleResource")
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/ModuleResource"
+     *                      )
+     *                  )
+     *              }
+     *          )
      *      ),
      *      @OA\Response(
      *          response="401", 
      *          description="Unauthorized",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
@@ -201,7 +268,10 @@ class ModuleController extends Controller
         $dto = ModuleDTO::fromArray($request->validated());
         $module = $action->execute($module, $dto);
 
-        return response()->json(new ModuleResource($module), 200);
+        return $this->success(
+            data: new ModuleResource($module),
+            httpStatus: Response::HTTP_OK
+        );
     }
 
     /**
@@ -223,12 +293,12 @@ class ModuleController extends Controller
      *      @OA\Response(
      *          response="401", 
      *          description="Unauthorized",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
