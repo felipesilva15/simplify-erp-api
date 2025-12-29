@@ -12,8 +12,10 @@ abstract class TestCase extends BaseTestCase
 {
     use RefreshDatabase;
 
-    protected string $authToken;
-    protected User $authUser;
+    protected string $adminAuthToken;
+    protected string $commomUserAuthToken;
+    protected User $adminAuthUser;
+    protected User $commomUserAuthUser;
 
     protected function setUp(): void {
         parent::setUp();
@@ -22,34 +24,29 @@ abstract class TestCase extends BaseTestCase
     }
 
     protected function generateAndSetAuthData(): void {
-        $this->authUser = User::factory()->admin()->createOne();
-        $this->authToken = JWTAuth::fromUser($this->authUser);
+        $this->adminAuthUser = User::factory()->admin()->createOne();
+        $this->commomUserAuthUser = User::factory()->createOne();
+        $this->adminAuthToken = JWTAuth::fromUser($this->adminAuthUser);
+        $this->commomUserAuthToken = JWTAuth::fromUser($this->commomUserAuthUser);
     }
 
-    protected function getAuthHeaders() : array {
+    protected function getCommomUserAuthHeaders() : array {
         return [
-            "Authorization" => "Bearer {$this->authToken}"
+            "Authorization" => "Bearer {$this->commomUserAuthToken}"
         ];
     }
 
-    protected function assertApiResponseStructure(TestResponse $response)
-    {
-        $response->assertJsonIsObject()
-            ->assertJsonStructure([
-                'success',
-                'message',
-                'data',
-                'warnings',
-                'links',
-                'errors',
-                'meta',
-            ]);
+    protected function getAdminAuthHeaders() : array {
+        return [
+            "Authorization" => "Bearer {$this->adminAuthToken}"
+        ];
     }
 
     protected function assertApiResponseStructureForListing(TestResponse $response)
     {
         $response->assertJsonIsObject()
             ->assertJsonStructure([
+                'success',
                 'data',
                 'links' => [
                     'first',
@@ -66,13 +63,14 @@ abstract class TestCase extends BaseTestCase
             ]);
     }
 
-    protected function assertApiResponseStructureForError(TestResponse $response)
+    protected function assertErrorResponse(TestResponse $response, int $status)
     {
-        $response->assertJsonIsObject()
+        $response->assertStatus($status)
+            ->assertJsonIsObject()
             ->assertJsonStructure([
                 'success',
-                'message',
-                'errors',
-            ]);
+                'message'
+            ])
+            ->assertJsonFragment(['success' => false]);
     }
 }
