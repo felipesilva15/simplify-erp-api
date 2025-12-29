@@ -2,6 +2,8 @@
 
 namespace App\Core\DTO;
 
+use App\Core\Helpers\ListHelpers;
+
 /**
  * @OA\Schema(
  *   schema="ApiResponse",
@@ -27,7 +29,7 @@ class ApiResponseDTO {
     ) { }
 
     public function toArray(): array {
-        return [
+        $apiResponse = [
             'success' => $this->success,
             'message' => $this->message,
             'data' => $this->data,
@@ -36,5 +38,7 @@ class ApiResponseDTO {
             'errors' => $this->errors,
             'meta' => $this->meta
         ];
+
+        return ListHelpers::removeNullProperties($apiResponse);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Core\Traits;
 
 use App\Core\DTO\ApiResponseDTO;
+use Illuminate\Http\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 trait ApiResponse
@@ -13,7 +14,7 @@ trait ApiResponse
         mixed $links = null,
         mixed $warnings = null,
         mixed $meta = null,
-        int $httpStatus = 200
+        int $httpStatus = Response::HTTP_OK
     ): JsonResponse {
         $response = new ApiResponseDTO(
             success: true,
@@ -31,16 +32,18 @@ trait ApiResponse
     protected function error(
         string $message,
         mixed $errors = null,
-        int $httpStatus = 400
+        int $httpStatus = Response::HTTP_BAD_REQUEST
     ) {
-        $response = [
-            'success' => false,
-            'message' => $message,
-            'data'    => null,
-            'errors'  => $errors,
-            'meta'    => null
-        ];
+        $response = new ApiResponseDTO(
+            success: false,
+            message: $message,
+            data: null,
+            links: null,
+            warnings: null,
+            errors: $errors,
+            meta: null
+        );
 
-        return response()->json($response, $httpStatus);
+        return response()->json($response->toArray(), $httpStatus);
     }
 }
