@@ -112,7 +112,20 @@ class ModuleTest extends TestCase
             ->assertJsonStructure([
                 'data' => $this->getResourceStructure()
             ])
-            ->assertJsonPath('data.name', $module->name);
+            ->assertJsonPath('data.name', $module->name)
+            ->assertJsonPath('meta.editable', true);
+    }
+
+    public function test_returns_warnings_for_inactive_module_when_edit(): void
+    {
+        $module = Module::factory()->inactive()->createOne();
+
+        $response = $this->getJson("{$this->endpoint}/{$module->id}/edit", $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonCount(1, 'warnings')
+            ->assertJsonPath('meta.editable', false);
     }
 
     public function test_cannot_get_module_by_invalid_id_for_edit(): void

@@ -49,7 +49,6 @@ class RolePolicy
 
     public function definePermissions(User $user, Role $model): bool
     {
-        Log::info('Chamou');
         return $this->authService->hasAuthorized($user, 'roles.definePermissions');
     }
 }

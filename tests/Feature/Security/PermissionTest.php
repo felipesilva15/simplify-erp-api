@@ -108,7 +108,8 @@ class PermissionTest extends TestCase
             ->assertJsonStructure([
                 'data' => $this->getResourceStructure()
             ])
-            ->assertJsonPath('data.name', $permission->name);
+            ->assertJsonPath('data.name', $permission->name)
+            ->assertJsonPath('meta.editable', true);
     }
 
     public function test_cannot_get_permission_by_invalid_id_for_edit(): void

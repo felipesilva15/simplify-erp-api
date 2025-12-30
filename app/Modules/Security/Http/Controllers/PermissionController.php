@@ -3,7 +3,6 @@
 namespace App\Modules\Security\Http\Controllers;
 
 use App\Core\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
@@ -49,6 +48,12 @@ class PermissionController extends Controller
      *          response="200", 
      *          description="Permission list",
      *          @OA\JsonContent(ref="#/components/schemas/PermissionCollection")
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(ref="#/components/schemas/PermissionCollection")
+     *              }
+     *          )
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
@@ -56,7 +61,15 @@ class PermissionController extends Controller
     public function index(ListPermissionRequest $request, ListPermissionAction $action): JsonResponse {
         $permissionList = $action->execute($request->all());
 
-        return response()->json(new PermissionCollection($permissionList), 200);
+        $paginated = new PermissionCollection($permissionList);
+        $paginated = $paginated->toArray($request);
+
+        return $this->success(
+            data: $paginated['data'],
+            links: $paginated['links'],
+            meta: $paginated['meta'],
+            httpStatus: Response::HTTP_OK
+        );
     }
 
     /**
@@ -74,12 +87,22 @@ class PermissionController extends Controller
      *      @OA\Response(
      *          response="200", 
      *          description="Permission data",
-     *          @OA\JsonContent(ref="#/components/schemas/PermissionResource")
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/PermissionResource"
+     *                      )
+     *                  )
+     *              }
+     *          )
      *      ),
      *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
@@ -87,7 +110,10 @@ class PermissionController extends Controller
     public function show(int $id, ShowPermissionAction $action): JsonResponse {
         $permission = $action->execute($id);
 
-        return response()->json(new PermissionResource($permission), 200);
+        return $this->success(
+            data: new PermissionResource($permission),
+            httpStatus: Response::HTTP_OK
+        );
     }
 
     /**
@@ -103,12 +129,22 @@ class PermissionController extends Controller
      *      @OA\Response(
      *          response="201", 
      *          description="Registered permission data",
-     *          @OA\JsonContent(ref="#/components/schemas/PermissionResource")
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/PermissionResource"
+     *                      )
+     *                  )
+     *              }
+     *          )
      *      ),
      *      @OA\Response(
      *          response="401", 
      *          description="Unauthorized",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
@@ -117,7 +153,10 @@ class PermissionController extends Controller
         $dto = PermissionDTO::fromArray($request->validated());
         $permission = $action->execute($dto);
 
-        return response()->json(new PermissionResource($permission), 201);
+        return $this->success(
+            data: new PermissionResource($permission),
+            httpStatus: Response::HTTP_CREATED
+        );
     }
 
     /**
@@ -135,19 +174,40 @@ class PermissionController extends Controller
      *      @OA\Response(
      *          response="200", 
      *          description="Permission data",
-     *          @OA\JsonContent(ref="#/components/schemas/PermissionResource")
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/PermissionResource"
+     *                      ),
+     *                      @OA\Property(property="warnings", type="array", @OA\Items(type="string", example="Este recurso não pode ser editado."), nullable=true),
+     *                      @OA\Property(
+     *                          property="meta", 
+     *                          type="object", 
+     *                          @OA\Property(property="editable", type="boolean", example=true)
+     *                      )
+     *                  )
+     *              }
+     *          )
      *      ),
      *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      )
      * )
      */
     public function edit(int $id, EditPermissionAction $action): JsonResponse {
         $permission = $action->execute($id);
 
-        return response()->json(new PermissionResource($permission), 200);
+        return $this->success(
+            data: new PermissionResource($permission),
+            warnings: [],
+            meta: ['editable' => true],
+            httpStatus: Response::HTTP_OK
+        );
     }
 
     /**
@@ -169,18 +229,28 @@ class PermissionController extends Controller
      *      ),
      *      @OA\Response(
      *          response="200", 
-     *          description="Updated permission data",
-     *          @OA\JsonContent(ref="#/components/schemas/PermissionResource")
+     *          description="Updated module data",
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/PermissionResource"
+     *                      )
+     *                  )
+     *              }
+     *          )
      *      ),
      *      @OA\Response(
      *          response="401", 
      *          description="Unauthorized",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
@@ -189,7 +259,10 @@ class PermissionController extends Controller
         $dto = PermissionDTO::fromArray($request->validated());
         $permission = $action->execute($permission->id, $dto);
 
-        return response()->json(new PermissionResource($permission), 200);
+        return $this->success(
+            data: new PermissionResource($permission),
+            httpStatus: Response::HTTP_OK
+        );
     }
 
     /**
@@ -211,12 +284,12 @@ class PermissionController extends Controller
      *      @OA\Response(
      *          response="401", 
      *          description="Unauthorized",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
