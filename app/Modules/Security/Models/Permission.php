@@ -3,6 +3,9 @@
 namespace App\Modules\Security\Models;
 
 use App\Core\Models\Module;
+use Database\Factories\PermissionFactory;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -22,9 +25,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *      @OA\Property(property="deleted_at", type="string", format="date-time", example="2025-12-05T00:27:48.633261Z", nullable=true)
  * )
  */
+#[UseFactory(PermissionFactory::class)]
 class Permission extends Model
 {
-    use SoftDeletes;
+    /** @use HasFactory<\Database\Factories\PermissionFactory> */
+    use SoftDeletes, HasFactory;
 
     protected $fillable = [
         'module_id',

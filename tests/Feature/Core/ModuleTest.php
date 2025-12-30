@@ -32,7 +32,7 @@ class ModuleTest extends TestCase
     }
 
     public function test_listing_returns_default_api_response_structure(): void {
-        $response = $this->getJson('/api/core/modules', $this->getAdminAuthHeaders());
+        $response = $this->getJson($this->endpoint, $this->getAdminAuthHeaders());
 
         $response->assertStatus(Response::HTTP_OK);
         $this->assertApiResponseStructureForListing($response);

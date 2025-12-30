@@ -221,8 +221,8 @@ class PermissionController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function destroy(int $id, DeletePermissionAction $action): Response {
-        $action->execute($id);
+    public function destroy(Permission $permission, DeletePermissionAction $action): Response {
+        $action->execute($permission->id);
         return response()->noContent();
     }
 }
