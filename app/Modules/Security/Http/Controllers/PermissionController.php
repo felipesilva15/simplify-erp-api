@@ -47,7 +47,6 @@ class PermissionController extends Controller
      *      @OA\Response(
      *          response="200", 
      *          description="Permission list",
-     *          @OA\JsonContent(ref="#/components/schemas/PermissionCollection")
      *          @OA\JsonContent(
      *              allOf={
      *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
