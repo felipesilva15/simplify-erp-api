@@ -2,6 +2,9 @@
 
 namespace App\Modules\Security\Models;
 
+use Database\Factories\RoleFactory;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -17,9 +20,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *      @OA\Property(property="deleted_at", type="string", format="date-time", example="2025-12-01T11:21:13.278086Z", nullable=true)
  * )
  */
+#[UseFactory(RoleFactory::class)]
 class Role extends Model
 {
-    use SoftDeletes;
+    /** @use HasFactory<\Database\Factories\RoleFactory> */
+    use SoftDeletes, HasFactory;
 
     protected $fillable = [
         'name',

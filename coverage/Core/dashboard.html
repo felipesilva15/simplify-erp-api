@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for C:\TestesVS\simplify-erp-api\app\Core</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../_css/bootstrap.min.css?v=11.0.11" rel="stylesheet" type="text/css">
+  <link href="../_css/nv.d3.min.css?v=11.0.11" rel="stylesheet" type="text/css">
+  <link href="../_css/style.css?v=11.0.11" rel="stylesheet" type="text/css">
+  <link href="../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../index.html">C:\TestesVS\simplify-erp-api\app</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Core</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Exceptions/InvalidCredentialsException.php.html#11">App\Core\Exceptions\InvalidCredentialsException</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Helpers/ModelHelpers.php.html#9">App\Core\Helpers\ModelHelpers</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Helpers/StringHelpers.php.html#5">App\Core\Helpers\StringHelpers</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Resources/Module/ModulePermissionResource.php.html#18">App\Core\Http\Resources\Module\ModulePermissionResource</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DTO/PaginatorMeta.php.html#15">App\Core\DTO\PaginatorMeta</a></td><td class="text-right">6%</td></tr>
+       <tr><td><a href="DTO/PaginatorLinks.php.html#14">App\Core\DTO\PaginatorLinks</a></td><td class="text-right">7%</td></tr>
+       <tr><td><a href="DTO/PaginatorMetaLink.php.html#13">App\Core\DTO\PaginatorMetaLink</a></td><td class="text-right">9%</td></tr>
+       <tr><td><a href="DTO/ServiceResult.php.html#5">App\Core\DTO\ServiceResult</a></td><td class="text-right">50%</td></tr>
+       <tr><td><a href="Repositories/Eloquent/ModuleRepository.php.html#11">App\Core\Repositories\Eloquent\ModuleRepository</a></td><td class="text-right">82%</td></tr>
+       <tr><td><a href="Services/ModuleService.php.html#12">App\Core\Services\ModuleService</a></td><td class="text-right">82%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Helpers/ModelHelpers.php.html#9">App\Core\Helpers\ModelHelpers</a></td><td class="text-right">210</td></tr>
+       <tr><td><a href="Helpers/StringHelpers.php.html#5">App\Core\Helpers\StringHelpers</a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Repositories/Eloquent/ModuleRepository.php.html#11">App\Core\Repositories\Eloquent\ModuleRepository</a></td><td class="text-right">10</td></tr>
+       <tr><td><a href="Services/ModuleService.php.html#12">App\Core\Services\ModuleService</a></td><td class="text-right">10</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="DTO/PaginatorLinks.php.html#22"><abbr title="App\Core\DTO\PaginatorLinks::fromArray">fromArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DTO/PaginatorLinks.php.html#31"><abbr title="App\Core\DTO\PaginatorLinks::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DTO/PaginatorMeta.php.html#24"><abbr title="App\Core\DTO\PaginatorMeta::fromArray">fromArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DTO/PaginatorMeta.php.html#34"><abbr title="App\Core\DTO\PaginatorMeta::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DTO/PaginatorMetaLink.php.html#20"><abbr title="App\Core\DTO\PaginatorMetaLink::fromArray">fromArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DTO/PaginatorMetaLink.php.html#28"><abbr title="App\Core\DTO\PaginatorMetaLink::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DTO/ServiceResult.php.html#13"><abbr title="App\Core\DTO\ServiceResult::hasWarnings">hasWarnings</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Exceptions/InvalidCredentialsException.php.html#15"><abbr title="App\Core\Exceptions\InvalidCredentialsException::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Exceptions/InvalidCredentialsException.php.html#19"><abbr title="App\Core\Exceptions\InvalidCredentialsException::render">render</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Helpers/ModelHelpers.php.html#11"><abbr title="App\Core\Helpers\ModelHelpers::getTableColumnsFromTable">getTableColumnsFromTable</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Helpers/ModelHelpers.php.html#54"><abbr title="App\Core\Helpers\ModelHelpers::setFiltersOnQuery">setFiltersOnQuery</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Helpers/ModelHelpers.php.html#83"><abbr title="App\Core\Helpers\ModelHelpers::setSortsOnQuery">setSortsOnQuery</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Helpers/StringHelpers.php.html#7"><abbr title="App\Core\Helpers\StringHelpers::toStringLiteral">toStringLiteral</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Resources/Module/ModulePermissionResource.php.html#20"><abbr title="App\Core\Http\Resources\Module\ModulePermissionResource::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Repositories/Eloquent/ModuleRepository.php.html#33"><abbr title="App\Core\Repositories\Eloquent\ModuleRepository::findById">findById</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/ModuleService.php.html#52"><abbr title="App\Core\Services\ModuleService::findById">findById</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Repositories/Eloquent/ModuleRepository.php.html#37"><abbr title="App\Core\Repositories\Eloquent\ModuleRepository::list">list</abbr></a></td><td class="text-right">75%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Helpers/ModelHelpers.php.html#54"><abbr title="App\Core\Helpers\ModelHelpers::setFiltersOnQuery">setFiltersOnQuery</abbr></a></td><td class="text-right">56</td></tr>
+       <tr><td><a href="Helpers/ModelHelpers.php.html#83"><abbr title="App\Core\Helpers\ModelHelpers::setSortsOnQuery">setSortsOnQuery</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Helpers/StringHelpers.php.html#7"><abbr title="App\Core\Helpers\StringHelpers::toStringLiteral">toStringLiteral</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Repositories/Eloquent/ModuleRepository.php.html#37"><abbr title="App\Core\Repositories\Eloquent\ModuleRepository::list">list</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Helpers/ModelHelpers.php.html#11"><abbr title="App\Core\Helpers\ModelHelpers::getTableColumnsFromTable">getTableColumnsFromTable</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Services/ModuleService.php.html#52"><abbr title="App\Core\Services\ModuleService::findById">findById</abbr></a></td><td class="text-right">6</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 11.0.11</a> using <a href="https://www.php.net/" target="_top">PHP 8.2.12</a> and <a href="https://phpunit.de/">PHPUnit 11.5.44</a> at Sun Jan 11 15:10:43 UTC 2026.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../_js/jquery.min.js?v=11.0.11" type="text/javascript"></script>
+  <script src="../_js/d3.min.js?v=11.0.11" type="text/javascript"></script>
+  <script src="../_js/nv.d3.min.js?v=11.0.11" type="text/javascript"></script>
+  <script type="text/javascript">
+$(document).ready(function() {
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#classCoverageDistribution svg')
+      .datum(getCoverageDistributionData([4,3,0,0,0,0,1,0,0,2,0,24], "Class Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#methodCoverageDistribution svg')
+      .datum(getCoverageDistributionData([16,0,0,0,0,0,0,0,1,0,0,59], "Method Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getCoverageDistributionData(data, label) {
+    var labels = [
+      '0%',
+      '0-10%',
+      '10-20%',
+      '20-30%',
+      '30-40%',
+      '40-50%',
+      '50-60%',
+      '60-70%',
+      '70-80%',
+      '80-90%',
+      '90-100%',
+      '100%'
+    ];
+    var values = [];
+    $.each(labels, function(key) {
+      values.push({x: labels[key], y: data[key]});
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Cyclomatic Complexity');
+
+    d3.select('#classComplexity svg')
+      .datum(getComplexityData([[100,2,"<a href=\"Actions\/Module\/DeleteModuleAction.php.html#8\">App\\Core\\Actions\\Module\\DeleteModuleAction<\/a>"],[100,2,"<a href=\"Actions\/Module\/EditModuleAction.php.html#9\">App\\Core\\Actions\\Module\\EditModuleAction<\/a>"],[100,2,"<a href=\"Actions\/Module\/ListModuleAction.php.html#8\">App\\Core\\Actions\\Module\\ListModuleAction<\/a>"],[100,2,"<a href=\"Actions\/Module\/ShowModuleAction.php.html#8\">App\\Core\\Actions\\Module\\ShowModuleAction<\/a>"],[100,2,"<a href=\"Actions\/Module\/StoreModuleAction.php.html#9\">App\\Core\\Actions\\Module\\StoreModuleAction<\/a>"],[100,2,"<a href=\"Actions\/Module\/UpdateModuleAction.php.html#9\">App\\Core\\Actions\\Module\\UpdateModuleAction<\/a>"],[100,3,"<a href=\"DTO\/ApiResponseDTO.php.html#16\">App\\Core\\DTO\\ApiResponseDTO<\/a>"],[100,3,"<a href=\"DTO\/ModuleDTO.php.html#7\">App\\Core\\DTO\\ModuleDTO<\/a>"],[100,2,"<a href=\"DTO\/PaginatorInfo.php.html#12\">App\\Core\\DTO\\PaginatorInfo<\/a>"],[7.6923076923076925,3,"<a href=\"DTO\/PaginatorLinks.php.html#14\">App\\Core\\DTO\\PaginatorLinks<\/a>"],[6.666666666666667,3,"<a href=\"DTO\/PaginatorMeta.php.html#15\">App\\Core\\DTO\\PaginatorMeta<\/a>"],[9.090909090909092,3,"<a href=\"DTO\/PaginatorMetaLink.php.html#13\">App\\Core\\DTO\\PaginatorMetaLink<\/a>"],[50,2,"<a href=\"DTO\/ServiceResult.php.html#5\">App\\Core\\DTO\\ServiceResult<\/a>"],[100,2,"<a href=\"Exceptions\/AccessDeniedHttpException.php.html#11\">App\\Core\\Exceptions\\AccessDeniedHttpException<\/a>"],[100,2,"<a href=\"Exceptions\/AuthenticationException.php.html#11\">App\\Core\\Exceptions\\AuthenticationException<\/a>"],[0,2,"<a href=\"Exceptions\/InvalidCredentialsException.php.html#11\">App\\Core\\Exceptions\\InvalidCredentialsException<\/a>"],[100,2,"<a href=\"Exceptions\/NotFoundHttpException.php.html#19\">App\\Core\\Exceptions\\NotFoundHttpException<\/a>"],[100,2,"<a href=\"Exceptions\/ValidationException.php.html#11\">App\\Core\\Exceptions\\ValidationException<\/a>"],[100,4,"<a href=\"Helpers\/ListHelpers.php.html#5\">App\\Core\\Helpers\\ListHelpers<\/a>"],[0,14,"<a href=\"Helpers\/ModelHelpers.php.html#9\">App\\Core\\Helpers\\ModelHelpers<\/a>"],[100,2,"<a href=\"Helpers\/PaginatorHelpers.php.html#11\">App\\Core\\Helpers\\PaginatorHelpers<\/a>"],[0,5,"<a href=\"Helpers\/StringHelpers.php.html#5\">App\\Core\\Helpers\\StringHelpers<\/a>"],[100,0,"<a href=\"Http\/Controllers\/Controller.php.html#38\">App\\Core\\Http\\Controllers\\Controller<\/a>"],[100,7,"<a href=\"Http\/Controllers\/ModuleController.php.html#23\">App\\Core\\Http\\Controllers\\ModuleController<\/a>"],[100,1,"<a href=\"Http\/Requests\/Module\/ListModuleRequest.php.html#22\">App\\Core\\Http\\Requests\\Module\\ListModuleRequest<\/a>"],[100,1,"<a href=\"Http\/Requests\/Module\/StoreModuleRequest.php.html#16\">App\\Core\\Http\\Requests\\Module\\StoreModuleRequest<\/a>"],[100,1,"<a href=\"Http\/Requests\/Module\/UpdateModuleRequest.php.html#16\">App\\Core\\Http\\Requests\\Module\\UpdateModuleRequest<\/a>"],[100,1,"<a href=\"Http\/Resources\/Module\/ModuleCollection.php.html#21\">App\\Core\\Http\\Resources\\Module\\ModuleCollection<\/a>"],[0,1,"<a href=\"Http\/Resources\/Module\/ModulePermissionResource.php.html#18\">App\\Core\\Http\\Resources\\Module\\ModulePermissionResource<\/a>"],[100,1,"<a href=\"Http\/Resources\/Module\/ModuleResource.php.html#22\">App\\Core\\Http\\Resources\\Module\\ModuleResource<\/a>"],[100,1,"<a href=\"Models\/Module.php.html#25\">App\\Core\\Models\\Module<\/a>"],[82.35294117647058,10,"<a href=\"Repositories\/Eloquent\/ModuleRepository.php.html#11\">App\\Core\\Repositories\\Eloquent\\ModuleRepository<\/a>"],[82.6086956521739,10,"<a href=\"Services\/ModuleService.php.html#12\">App\\Core\\Services\\ModuleService<\/a>"],[100,2,"<a href=\"Traits\/ApiResponse.php.html#22\">App\\Core\\Traits\\ApiResponse<\/a>"]], 'Class Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Method Complexity');
+
+    d3.select('#methodComplexity svg')
+      .datum(getComplexityData([[100,1,"<a href=\"Actions\/Module\/DeleteModuleAction.php.html#10\">App\\Core\\Actions\\Module\\DeleteModuleAction::__construct<\/a>"],[100,1,"<a href=\"Actions\/Module\/DeleteModuleAction.php.html#12\">App\\Core\\Actions\\Module\\DeleteModuleAction::execute<\/a>"],[100,1,"<a href=\"Actions\/Module\/EditModuleAction.php.html#11\">App\\Core\\Actions\\Module\\EditModuleAction::__construct<\/a>"],[100,1,"<a href=\"Actions\/Module\/EditModuleAction.php.html#13\">App\\Core\\Actions\\Module\\EditModuleAction::execute<\/a>"],[100,1,"<a href=\"Actions\/Module\/ListModuleAction.php.html#10\">App\\Core\\Actions\\Module\\ListModuleAction::__construct<\/a>"],[100,1,"<a href=\"Actions\/Module\/ListModuleAction.php.html#12\">App\\Core\\Actions\\Module\\ListModuleAction::execute<\/a>"],[100,1,"<a href=\"Actions\/Module\/ShowModuleAction.php.html#10\">App\\Core\\Actions\\Module\\ShowModuleAction::__construct<\/a>"],[100,1,"<a href=\"Actions\/Module\/ShowModuleAction.php.html#12\">App\\Core\\Actions\\Module\\ShowModuleAction::execute<\/a>"],[100,1,"<a href=\"Actions\/Module\/StoreModuleAction.php.html#11\">App\\Core\\Actions\\Module\\StoreModuleAction::__construct<\/a>"],[100,1,"<a href=\"Actions\/Module\/StoreModuleAction.php.html#13\">App\\Core\\Actions\\Module\\StoreModuleAction::execute<\/a>"],[100,1,"<a href=\"Actions\/Module\/UpdateModuleAction.php.html#11\">App\\Core\\Actions\\Module\\UpdateModuleAction::__construct<\/a>"],[100,1,"<a href=\"Actions\/Module\/UpdateModuleAction.php.html#13\">App\\Core\\Actions\\Module\\UpdateModuleAction::execute<\/a>"],[100,1,"<a href=\"DTO\/ApiResponseDTO.php.html#17\">App\\Core\\DTO\\ApiResponseDTO::__construct<\/a>"],[100,2,"<a href=\"DTO\/ApiResponseDTO.php.html#27\">App\\Core\\DTO\\ApiResponseDTO::toArray<\/a>"],[100,1,"<a href=\"DTO\/ModuleDTO.php.html#9\">App\\Core\\DTO\\ModuleDTO::__construct<\/a>"],[100,1,"<a href=\"DTO\/ModuleDTO.php.html#19\">App\\Core\\DTO\\ModuleDTO::fromArray<\/a>"],[100,1,"<a href=\"DTO\/ModuleDTO.php.html#31\">App\\Core\\DTO\\ModuleDTO::toArray<\/a>"],[100,1,"<a href=\"DTO\/PaginatorInfo.php.html#13\">App\\Core\\DTO\\PaginatorInfo::__construct<\/a>"],[100,1,"<a href=\"DTO\/PaginatorInfo.php.html#18\">App\\Core\\DTO\\PaginatorInfo::toArray<\/a>"],[100,1,"<a href=\"DTO\/PaginatorLinks.php.html#15\">App\\Core\\DTO\\PaginatorLinks::__construct<\/a>"],[0,1,"<a href=\"DTO\/PaginatorLinks.php.html#22\">App\\Core\\DTO\\PaginatorLinks::fromArray<\/a>"],[0,1,"<a href=\"DTO\/PaginatorLinks.php.html#31\">App\\Core\\DTO\\PaginatorLinks::toArray<\/a>"],[100,1,"<a href=\"DTO\/PaginatorMeta.php.html#16\">App\\Core\\DTO\\PaginatorMeta::__construct<\/a>"],[0,1,"<a href=\"DTO\/PaginatorMeta.php.html#24\">App\\Core\\DTO\\PaginatorMeta::fromArray<\/a>"],[0,1,"<a href=\"DTO\/PaginatorMeta.php.html#34\">App\\Core\\DTO\\PaginatorMeta::toArray<\/a>"],[100,1,"<a href=\"DTO\/PaginatorMetaLink.php.html#14\">App\\Core\\DTO\\PaginatorMetaLink::__construct<\/a>"],[0,1,"<a href=\"DTO\/PaginatorMetaLink.php.html#20\">App\\Core\\DTO\\PaginatorMetaLink::fromArray<\/a>"],[0,1,"<a href=\"DTO\/PaginatorMetaLink.php.html#28\">App\\Core\\DTO\\PaginatorMetaLink::toArray<\/a>"],[100,1,"<a href=\"DTO\/ServiceResult.php.html#7\">App\\Core\\DTO\\ServiceResult::__construct<\/a>"],[0,1,"<a href=\"DTO\/ServiceResult.php.html#13\">App\\Core\\DTO\\ServiceResult::hasWarnings<\/a>"],[100,1,"<a href=\"Exceptions\/AccessDeniedHttpException.php.html#15\">App\\Core\\Exceptions\\AccessDeniedHttpException::__construct<\/a>"],[100,1,"<a href=\"Exceptions\/AccessDeniedHttpException.php.html#19\">App\\Core\\Exceptions\\AccessDeniedHttpException::render<\/a>"],[100,1,"<a href=\"Exceptions\/AuthenticationException.php.html#15\">App\\Core\\Exceptions\\AuthenticationException::__construct<\/a>"],[100,1,"<a href=\"Exceptions\/AuthenticationException.php.html#19\">App\\Core\\Exceptions\\AuthenticationException::render<\/a>"],[0,1,"<a href=\"Exceptions\/InvalidCredentialsException.php.html#15\">App\\Core\\Exceptions\\InvalidCredentialsException::__construct<\/a>"],[0,1,"<a href=\"Exceptions\/InvalidCredentialsException.php.html#19\">App\\Core\\Exceptions\\InvalidCredentialsException::render<\/a>"],[100,1,"<a href=\"Exceptions\/NotFoundHttpException.php.html#23\">App\\Core\\Exceptions\\NotFoundHttpException::__construct<\/a>"],[100,1,"<a href=\"Exceptions\/NotFoundHttpException.php.html#27\">App\\Core\\Exceptions\\NotFoundHttpException::render<\/a>"],[100,1,"<a href=\"Exceptions\/ValidationException.php.html#15\">App\\Core\\Exceptions\\ValidationException::__construct<\/a>"],[100,1,"<a href=\"Exceptions\/ValidationException.php.html#19\">App\\Core\\Exceptions\\ValidationException::render<\/a>"],[100,1,"<a href=\"Helpers\/ListHelpers.php.html#7\">App\\Core\\Helpers\\ListHelpers::groupListByProperty<\/a>"],[100,3,"<a href=\"Helpers\/ListHelpers.php.html#15\">App\\Core\\Helpers\\ListHelpers::removeNullProperties<\/a>"],[0,2,"<a href=\"Helpers\/ModelHelpers.php.html#11\">App\\Core\\Helpers\\ModelHelpers::getTableColumnsFromTable<\/a>"],[0,7,"<a href=\"Helpers\/ModelHelpers.php.html#54\">App\\Core\\Helpers\\ModelHelpers::setFiltersOnQuery<\/a>"],[0,5,"<a href=\"Helpers\/ModelHelpers.php.html#83\">App\\Core\\Helpers\\ModelHelpers::setSortsOnQuery<\/a>"],[100,2,"<a href=\"Helpers\/PaginatorHelpers.php.html#13\">App\\Core\\Helpers\\PaginatorHelpers::getInfoFromPaginator<\/a>"],[0,5,"<a href=\"Helpers\/StringHelpers.php.html#7\">App\\Core\\Helpers\\StringHelpers::toStringLiteral<\/a>"],[100,1,"<a href=\"Http\/Controllers\/ModuleController.php.html#25\">App\\Core\\Http\\Controllers\\ModuleController::__construct<\/a>"],[100,1,"<a href=\"Http\/Controllers\/ModuleController.php.html#71\">App\\Core\\Http\\Controllers\\ModuleController::index<\/a>"],[100,1,"<a href=\"Http\/Controllers\/ModuleController.php.html#119\">App\\Core\\Http\\Controllers\\ModuleController::show<\/a>"],[100,1,"<a href=\"Http\/Controllers\/ModuleController.php.html#161\">App\\Core\\Http\\Controllers\\ModuleController::store<\/a>"],[100,1,"<a href=\"Http\/Controllers\/ModuleController.php.html#211\">App\\Core\\Http\\Controllers\\ModuleController::edit<\/a>"],[100,1,"<a href=\"Http\/Controllers\/ModuleController.php.html#267\">App\\Core\\Http\\Controllers\\ModuleController::update<\/a>"],[100,1,"<a href=\"Http\/Controllers\/ModuleController.php.html#306\">App\\Core\\Http\\Controllers\\ModuleController::destroy<\/a>"],[100,1,"<a href=\"Http\/Requests\/Module\/ListModuleRequest.php.html#24\">App\\Core\\Http\\Requests\\Module\\ListModuleRequest::rules<\/a>"],[100,1,"<a href=\"Http\/Requests\/Module\/StoreModuleRequest.php.html#18\">App\\Core\\Http\\Requests\\Module\\StoreModuleRequest::rules<\/a>"],[100,1,"<a href=\"Http\/Requests\/Module\/UpdateModuleRequest.php.html#18\">App\\Core\\Http\\Requests\\Module\\UpdateModuleRequest::rules<\/a>"],[100,1,"<a href=\"Http\/Resources\/Module\/ModuleCollection.php.html#23\">App\\Core\\Http\\Resources\\Module\\ModuleCollection::toArray<\/a>"],[0,1,"<a href=\"Http\/Resources\/Module\/ModulePermissionResource.php.html#20\">App\\Core\\Http\\Resources\\Module\\ModulePermissionResource::toArray<\/a>"],[100,1,"<a href=\"Http\/Resources\/Module\/ModuleResource.php.html#24\">App\\Core\\Http\\Resources\\Module\\ModuleResource::toArray<\/a>"],[100,1,"<a href=\"Models\/Module.php.html#41\">App\\Core\\Models\\Module::permissions<\/a>"],[100,1,"<a href=\"Repositories\/Eloquent\/ModuleRepository.php.html#13\">App\\Core\\Repositories\\Eloquent\\ModuleRepository::store<\/a>"],[100,1,"<a href=\"Repositories\/Eloquent\/ModuleRepository.php.html#20\">App\\Core\\Repositories\\Eloquent\\ModuleRepository::update<\/a>"],[100,1,"<a href=\"Repositories\/Eloquent\/ModuleRepository.php.html#29\">App\\Core\\Repositories\\Eloquent\\ModuleRepository::delete<\/a>"],[0,1,"<a href=\"Repositories\/Eloquent\/ModuleRepository.php.html#33\">App\\Core\\Repositories\\Eloquent\\ModuleRepository::findById<\/a>"],[75,6,"<a href=\"Repositories\/Eloquent\/ModuleRepository.php.html#37\">App\\Core\\Repositories\\Eloquent\\ModuleRepository::list<\/a>"],[100,1,"<a href=\"Services\/ModuleService.php.html#14\">App\\Core\\Services\\ModuleService::__construct<\/a>"],[100,1,"<a href=\"Services\/ModuleService.php.html#16\">App\\Core\\Services\\ModuleService::store<\/a>"],[100,2,"<a href=\"Services\/ModuleService.php.html#20\">App\\Core\\Services\\ModuleService::edit<\/a>"],[100,1,"<a href=\"Services\/ModuleService.php.html#38\">App\\Core\\Services\\ModuleService::update<\/a>"],[100,1,"<a href=\"Services\/ModuleService.php.html#44\">App\\Core\\Services\\ModuleService::delete<\/a>"],[100,1,"<a href=\"Services\/ModuleService.php.html#48\">App\\Core\\Services\\ModuleService::show<\/a>"],[0,2,"<a href=\"Services\/ModuleService.php.html#52\">App\\Core\\Services\\ModuleService::findById<\/a>"],[100,1,"<a href=\"Services\/ModuleService.php.html#62\">App\\Core\\Services\\ModuleService::list<\/a>"],[100,1,"<a href=\"Traits\/ApiResponse.php.html#24\">App\\Core\\Traits\\ApiResponse::success<\/a>"],[100,1,"<a href=\"Traits\/ApiResponse.php.html#45\">App\\Core\\Traits\\ApiResponse::error<\/a>"]], 'Method Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getComplexityData(data, label) {
+    var values = [];
+    $.each(data, function(key) {
+      var value = Math.round(data[key][0]*100) / 100;
+      values.push({
+        x: value,
+        y: data[key][1],
+        class: data[key][2],
+        size: 0.05,
+        shape: 'diamond'
+      });
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+});
+  </script>
+ </body>
+</html>
