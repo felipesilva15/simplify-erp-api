@@ -239,7 +239,7 @@ class UserTest extends TestCase
         $data['roles'] = $roles->select('id');
         $data['name'] = 'New name';
 
-    $response = $this->putJson("{$this->endpoint}/{$user->id}", $data,  $this->getAdminAuthHeaders());
+        $response = $this->putJson("{$this->endpoint}/{$user->id}", $data,  $this->getAdminAuthHeaders());
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonIsObject()
