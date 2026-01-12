@@ -17,11 +17,13 @@ class RoleTest extends TestCase
             'name',
             'description',
             'permissions' => [
-                'id',
-                'resource',
-                'action',
-                'name',
-                'description'
+                '*' => [
+                    'id',
+                    'resource',
+                    'action',
+                    'name',
+                    'description'
+                ]
             ],
             'updated_at',
             'created_at',
@@ -143,19 +145,16 @@ class RoleTest extends TestCase
         $data = $role->toArray();
 
         $response = $this->postJson($this->endpoint, $data, $this->getAdminAuthHeaders());
-
+        
         $response->assertStatus(Response::HTTP_CREATED)
             ->assertJsonIsObject()
             ->assertJsonStructure([
                 'data' => $this->getResourceStructure()
             ])
-            ->assertJsonPath('data.resource', $role->resource)
-            ->assertJsonPath('data.action', $role->action)
-            ->assertJsonPath('data.name', $role->resource.'.'.$role->action);
+            ->assertJsonPath('data.name', $role->name);
 
         $this->assertDatabaseHas('roles', [
-            'resource' => $role->resource,
-            'action' => $role->action,
+            'name' => $role->name
         ]);
     }
 

@@ -47,7 +47,22 @@ class RoleController extends Controller
      *      @OA\Response(
      *          response="200", 
      *          description="Role list",
-     *          @OA\JsonContent(ref="#/components/schemas/RoleCollection")
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(ref="#/components/schemas/RoleCollection")
+     *              }
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
@@ -55,7 +70,15 @@ class RoleController extends Controller
     public function index(ListRoleRequest $request, ListRoleAction $action): JsonResponse {
         $roleList = $action->execute($request->all());
 
-        return response()->json(new RoleCollection($roleList), 200);
+        $paginated = new RoleCollection($roleList);
+        $paginated = $paginated->toArray($request);
+
+        return $this->success(
+            data: $paginated['data'],
+            links: $paginated['links'],
+            meta: $paginated['meta'],
+            httpStatus: Response::HTTP_OK
+        );
     }
 
     /**
@@ -73,20 +96,43 @@ class RoleController extends Controller
      *      @OA\Response(
      *          response="200", 
      *          description="Role data",
-     *          @OA\JsonContent(ref="#/components/schemas/RoleResource")
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/RoleResource"
+     *                      )
+     *                  )
+     *              }
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function show(int $id, ShowRoleAction $action): JsonResponse {
-        $role = $action->execute($id);
+    public function show(Role $role, ShowRoleAction $action): JsonResponse {
+        $role = $action->execute($role->id);
 
-        return response()->json(new RoleResource($role), 200);
+        return $this->success(
+            data: new RoleResource($role),
+            httpStatus: Response::HTTP_OK
+        );
     }
 
     /**
@@ -102,12 +148,27 @@ class RoleController extends Controller
      *      @OA\Response(
      *          response="201", 
      *          description="Registered role data",
-     *          @OA\JsonContent(ref="#/components/schemas/RoleResource")
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/RoleResource"
+     *                      )
+     *                  )
+     *              }
+     *          )
      *      ),
      *      @OA\Response(
      *          response="401", 
      *          description="Unauthorized",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
@@ -116,7 +177,10 @@ class RoleController extends Controller
         $dto = RoleDTO::fromArray($request->validated());
         $role = $action->execute($dto);
 
-        return response()->json(new RoleResource($role), 201);
+        return $this->success(
+            data: new RoleResource($role),
+            httpStatus: Response::HTTP_CREATED
+        );
     }
 
     /**
@@ -134,19 +198,50 @@ class RoleController extends Controller
      *      @OA\Response(
      *          response="200", 
      *          description="Role data",
-     *          @OA\JsonContent(ref="#/components/schemas/RoleResource")
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/RoleResource"
+     *                      ),
+     *                      @OA\Property(property="warnings", type="array", @OA\Items(type="string", example="Este recurso não pode ser editado."), nullable=true),
+     *                      @OA\Property(
+     *                          property="meta", 
+     *                          type="object", 
+     *                          @OA\Property(property="editable", type="boolean", example=true)
+     *                      )
+     *                  )
+     *              }
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      )
      * )
      */
-    public function edit(int $id, EditRoleAction $action): JsonResponse {
-        $role = $action->execute($id);
+    public function edit(Role $role, EditRoleAction $action): JsonResponse {
+        $role = $action->execute($role->id);
 
-        return response()->json(new RoleResource($role), 200);
+        return $this->success(
+            data: new RoleResource($role),
+            warnings: [],
+            meta: ['editable' => true],
+            httpStatus: Response::HTTP_OK
+        );
     }
 
     /**
@@ -169,26 +264,44 @@ class RoleController extends Controller
      *      @OA\Response(
      *          response="200", 
      *          description="Updated role data",
-     *          @OA\JsonContent(ref="#/components/schemas/RoleResource")
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/RoleResource"
+     *                      )
+     *                  )
+     *              }
+     *          )
      *      ),
      *      @OA\Response(
      *          response="401", 
      *          description="Unauthorized",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function update(int $id, UpdateRoleRequest $request, UpdateRoleAction $action): JsonResponse {
+    public function update(Role $role, UpdateRoleRequest $request, UpdateRoleAction $action): JsonResponse {
         $dto = RoleDTO::fromArray($request->validated());
-        $role = $action->execute($id, $dto);
+        $role = $action->execute($role->id, $dto);
 
-        return response()->json(new RoleResource($role), 200);
+        return $this->success(
+            data: new RoleResource($role),
+            httpStatus: Response::HTTP_OK
+        );
     }
 
     /**
@@ -210,18 +323,23 @@ class RoleController extends Controller
      *      @OA\Response(
      *          response="401", 
      *          description="Unauthorized",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function destroy(int $id, DeleteRoleAction $action): Response {
-        $action->execute($id);
+    public function destroy(Role $role, DeleteRoleAction $action): Response {
+        $action->execute($role->id);
         return response()->noContent();
     }
 
@@ -245,23 +363,42 @@ class RoleController extends Controller
      *      @OA\Response(
      *          response="200", 
      *          description="Updated role data",
-     *          @OA\JsonContent(ref="#/components/schemas/RoleResource")
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/RoleResource"
+     *                      )
+     *                  )
+     *              }
+     *          )
      *      ),
      *      @OA\Response(
      *          response="401", 
      *          description="Unauthorized",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
     public function definePermissions(Role $role, RolePermissionsRequest $request, DefineRolePermissionsAction $action): JsonResponse {
         $role = $action->execute($role->id, $request->validated('ids'));
-        return response()->json(new RoleResource($role), 200);
+
+        return $this->success(
+            data: new RoleResource($role),
+            httpStatus: Response::HTTP_OK
+        );
     }
 }
