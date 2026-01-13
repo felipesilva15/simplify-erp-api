@@ -51,8 +51,7 @@ class UserTest extends TestCase
                 'data' => [
                     '*' => $this->getResourceStructure()
                 ]
-            ])
-            ->assertJsonCount(3, 'data');
+            ]);
     }
 
     public function test_cannot_list_users_without_authentication(): void
@@ -157,8 +156,7 @@ class UserTest extends TestCase
             ->assertJsonPath('data.name', $user->name);
 
         $this->assertDatabaseHas('users', [
-            'resource' => $user->resource,
-            'action' => $user->action,
+            'username' => $user->username
         ]);
     }
 

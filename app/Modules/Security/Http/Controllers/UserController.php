@@ -49,7 +49,22 @@ class UserController extends Controller
      *      @OA\Response(
      *          response="200", 
      *          description="User list",
-     *          @OA\JsonContent(ref="#/components/schemas/UserCollection")
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(ref="#/components/schemas/UserCollection")
+     *              }
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
@@ -57,7 +72,15 @@ class UserController extends Controller
     public function index(ListUserRequest $request, ListUserAction $action): JsonResponse {
         $userList = $action->execute($request->all());
 
-        return response()->json(new UserCollection($userList), 200);
+        $paginated = new UserCollection($userList);
+        $paginated = $paginated->toArray($request);
+
+        return $this->success(
+            data: $paginated['data'],
+            links: $paginated['links'],
+            meta: $paginated['meta'],
+            httpStatus: Response::HTTP_OK
+        );
     }
 
     /**
@@ -75,20 +98,43 @@ class UserController extends Controller
      *      @OA\Response(
      *          response="200", 
      *          description="User data",
-     *          @OA\JsonContent(ref="#/components/schemas/UserResource")
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/UserResource"
+     *                      )
+     *                  )
+     *              }
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function show(int $id, ShowUserAction $action): JsonResponse {
-        $user = $action->execute($id);
+    public function show(User $user, ShowUserAction $action): JsonResponse {
+        $user = $action->execute($user->id);
 
-        return response()->json(new UserResource($user), 200);
+        return $this->success(
+            data: new UserResource($user),
+            httpStatus: Response::HTTP_OK
+        );
     }
 
     /**
@@ -104,12 +150,27 @@ class UserController extends Controller
      *      @OA\Response(
      *          response="201", 
      *          description="Registered user data",
-     *          @OA\JsonContent(ref="#/components/schemas/UserResource")
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/UserResource"
+     *                      )
+     *                  )
+     *              }
+     *          )
      *      ),
      *      @OA\Response(
      *          response="401", 
      *          description="Unauthorized",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
@@ -118,7 +179,10 @@ class UserController extends Controller
         $dto = UserDTO::fromArray($request->validated());
         $user = $action->execute($dto);
 
-        return response()->json(new UserResource($user), 201);
+        return $this->success(
+            data: new UserResource($user),
+            httpStatus: Response::HTTP_CREATED
+        );
     }
 
     /**
@@ -136,19 +200,50 @@ class UserController extends Controller
      *      @OA\Response(
      *          response="200", 
      *          description="User data",
-     *          @OA\JsonContent(ref="#/components/schemas/UserResource")
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/UserResource"
+     *                      ),
+     *                      @OA\Property(property="warnings", type="array", @OA\Items(type="string", example="Este recurso não pode ser editado."), nullable=true),
+     *                      @OA\Property(
+     *                          property="meta", 
+     *                          type="object", 
+     *                          @OA\Property(property="editable", type="boolean", example=true)
+     *                      )
+     *                  )
+     *              }
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      )
      * )
      */
-    public function edit(int $id, EditUserAction $action): JsonResponse {
-        $user = $action->execute($id);
+    public function edit(User $user, EditUserAction $action): JsonResponse {
+        $user = $action->execute($user->id);
 
-        return response()->json(new UserResource($user), 200);
+        return $this->success(
+            data: new UserResource($user),
+            warnings: [],
+            meta: ['editable' => true],
+            httpStatus: Response::HTTP_OK
+        );
     }
 
     /**
@@ -171,27 +266,45 @@ class UserController extends Controller
      *      @OA\Response(
      *          response="200", 
      *          description="Updated user data",
-     *          @OA\JsonContent(ref="#/components/schemas/UserResource")
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/UserResource"
+     *                      )
+     *                  )
+     *              }
+     *          )
      *      ),
      *      @OA\Response(
      *          response="401", 
      *          description="Unauthorized",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function update(int $id, UpdateUserRequest $request, UpdateUserAction $action): JsonResponse {
+    public function update(User $user, UpdateUserRequest $request, UpdateUserAction $action): JsonResponse {
         $dto = UserDTO::fromArray($request->validated());
         $dto->fieldsToUse = array_keys($request->validated());
-        $user = $action->execute($id, $dto);
+        $user = $action->execute($user->id, $dto);
 
-        return response()->json(new UserResource($user), 200);
+        return $this->success(
+            data: new UserResource($user),
+            httpStatus: Response::HTTP_OK
+        );
     }
 
     /**
@@ -213,18 +326,23 @@ class UserController extends Controller
      *      @OA\Response(
      *          response="401", 
      *          description="Unauthorized",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function destroy(int $id, DeleteUserAction $action): Response {
-        $action->execute($id);
+    public function destroy(User $user, DeleteUserAction $action): Response {
+        $action->execute($user->id);
         return response()->noContent();
     }
 }
