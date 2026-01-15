@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Schema;
 
 class ModelHelpers
 {
-    public static function getTableColumnsFromTable(string $tableName): array {
+    public static function getColumnsFromTable(string $tableName): array {
         $databaseFields = Schema::getColumns($tableName);
         $fields = [];
 
@@ -52,7 +52,7 @@ class ModelHelpers
     }
 
     public static function setFiltersOnQuery(Builder $query, array $filters = [], array $columnsToFilter = []): Builder {
-        $columns = ModelHelpers::getTableColumnsFromTable($query->getModel()->getTable());
+        $columns = ModelHelpers::getColumnsFromTable($query->getModel()->getTable());
         $columns = collect($columns);
 
         foreach ($filters as $columnName => $value) {
@@ -81,7 +81,7 @@ class ModelHelpers
     }
 
     public static function setSortsOnQuery(Builder $query, array $sortBy, array $sortDir): Builder {
-        $columns = ModelHelpers::getTableColumnsFromTable($query->getModel()->getTable());
+        $columns = ModelHelpers::getColumnsFromTable($query->getModel()->getTable());
         $columns = collect($columns);
 
         foreach ($sortBy as $index => $columnName) {

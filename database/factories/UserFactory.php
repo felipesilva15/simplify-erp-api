@@ -20,7 +20,7 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make($this->getDefaultPassword()),
+            'password' => static::$password ??= bcrypt($this->getDefaultPassword()),
             'username' => fake()->userName(),
             'phone_number' => fake()->numerify('###########'),
             'remember_token' => Str::random(10),

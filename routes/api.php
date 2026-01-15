@@ -1,10 +1,12 @@
 <?php
 
+use App\Core\Helpers\StringHelpers;
 use App\Core\Http\Controllers\ModuleController;
 use App\Modules\Security\Http\Controllers\AuthController;
 use App\Modules\Security\Http\Controllers\PermissionController;
 use App\Modules\Security\Http\Controllers\RoleController;
 use App\Modules\Security\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Route;
 
 Route::post('security/auth/login', [AuthController::class, 'login']);
@@ -26,4 +28,7 @@ Route::group(['middleware' => 'auth'], function () {
         
         Route::resource('permissions', PermissionController::class);
     });
+});
+Route::get('test', function() {
+    return StringHelpers::toStringLiteral(new Date());
 });

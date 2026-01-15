@@ -157,7 +157,7 @@ class MakeModuleCrud extends Command
             $tableName = $entity . 's';
         }
 
-        $this->entityFields = ModelHelpers::getTableColumnsFromTable($tableName);
+        $this->entityFields = ModelHelpers::getColumnsFromTable($tableName);
     }
 
     private function createRepository(): void {
