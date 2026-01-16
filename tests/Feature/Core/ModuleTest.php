@@ -2,7 +2,9 @@
 
 namespace Tests\Feature\Core;
 
+use App\Core\Enums\SqlOrderDirectionEnum;
 use App\Core\Models\Module;
+use App\Modules\Security\Models\Permission;
 use Tests\TestCase;
 use Illuminate\Http\Response;
 
@@ -51,6 +53,54 @@ class ModuleTest extends TestCase
                 ]
             ])
             ->assertJsonCount(3, 'data');
+    }
+
+    public function test_can_list_modules_with_permissions(): void
+    {
+        Module::factory(3)
+            ->has(Permission::factory()->withName()->count(2))
+            ->create();
+        $response = $this->getJson($this->endpoint, $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonStructure([
+                'data' => [
+                    '*' => $this->getResourceStructure()
+                ]
+            ])
+            ->assertJsonCount(3, 'data')
+            ->assertJsonCount(2, 'data.0.permissions');
+    }
+
+    public function test_can_list_modules_with_sort(): void
+    {
+        $queryParams = [
+            'sort_by[]' => 'id',
+            'sort_dir[]' => SqlOrderDirectionEnum::Descending->value
+        ];
+
+        Module::factory(3)->create();
+        $response = $this->getJson(url()->query($this->endpoint, $queryParams), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonPath('data.0.id', 3);
+    }
+
+    public function test_can_list_modules_with_filter(): void
+    {
+        $queryParams = [
+            'id' => 2
+        ];
+
+        Module::factory(3)->create();
+        $response = $this->getJson(url()->query($this->endpoint, $queryParams), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.id', 2);
     }
 
     public function test_cannot_list_modules_without_authentication(): void
@@ -170,6 +220,18 @@ class ModuleTest extends TestCase
         ]);
     }
 
+    public function test_cannot_create_module_with_invalid_payload(): void
+    {
+        $module = Module::factory()->makeOne();
+        $data = $module->toArray();
+        unset($data['name']);
+
+        $response = $this->postJson($this->endpoint, $data, $this->getAdminAuthHeaders());
+
+        $this->assertErrorResponse($response, Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJsonValidationErrorFor('name');
+    }
+
     public function test_cannot_create_module_without_authentication(): void
     {
         $module = Module::factory()->makeOne();
@@ -203,6 +265,19 @@ class ModuleTest extends TestCase
                 'data' => $this->getResourceStructure()
             ])
             ->assertJsonPath('data.name', 'New name');
+    }
+
+    public function test_cannot_update_module_with_invalid_payload(): void
+    {
+        $module = Module::factory()->createOne();
+        
+        $data = $module->toArray();
+        unset($data['name']);
+
+        $response = $this->putJson("{$this->endpoint}/{$module->id}", $data,  $this->getAdminAuthHeaders());
+
+        $this->assertErrorResponse($response, Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJsonValidationErrorFor('name');
     }
 
     public function test_cannot_update_module_with_invalid_id(): void
