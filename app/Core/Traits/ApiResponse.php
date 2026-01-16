@@ -46,7 +46,7 @@ trait ApiResponse
         string $message,
         mixed $errors = null,
         int $httpStatus = Response::HTTP_BAD_REQUEST
-    ) {
+    ): JsonResponse {
         $response = new ApiResponseDTO(
             success: false,
             message: $message,

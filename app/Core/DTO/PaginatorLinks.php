@@ -18,22 +18,4 @@ class PaginatorLinks {
         public ?string $next = '',
         public ?string $last = '',
     ) { }
-
-    public static function fromArray(array $data): self {
-        return new self(
-            first: $data['first'] ?? '',
-            previous: $data['previous'] ?? '',
-            next: $data['next'] ?? 0,
-            last: $data['last'] ?? false
-        );
-    }
-
-    public function toArray(): array {
-        return [
-            'first' => $this->first,
-            'previous' => $this->previous,
-            'next' => $this->next,
-            'last' => $this->last
-        ];
-    }
 }

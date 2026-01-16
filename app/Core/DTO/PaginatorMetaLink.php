@@ -16,20 +16,4 @@ class PaginatorMetaLink {
         public ?int $page = 0,
         public ?bool $active = false,
     ) { }
-
-    public static function fromArray(array $data): self {
-        return new self(
-            url: $data['url'] ?? '',
-            page: $data['page'] ?? 0,
-            active: $data['active'] ?? false
-        );
-    }
-
-    public function toArray(): array {
-        return [
-            'url' => $this->url,
-            'page' => $this->page,
-            'active' => $this->active
-        ];
-    }
 }

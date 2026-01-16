@@ -20,24 +20,4 @@ class PaginatorMeta {
         public ?int $total = 0,
         public array $links = []
     ) { }
-
-    public static function fromArray(array $data): self {
-        return new self(
-            per_page: $data['per_page'] ?? 0,
-            current_page: $data['current_page'] ?? 0,
-            last_page: $data['last_page'] ?? 0,
-            total: $data['total'] ?? 0,
-            links: $data['links'] ?? [],
-        );
-    }
-
-    public function toArray(): array {
-        return [
-            'per_page' => $this->per_page,
-            'current_page' => $this->current_page,
-            'last_page' => $this->last_page,
-            'total' => $this->total,
-            'links' => $this->links
-        ];
-    }
 }
