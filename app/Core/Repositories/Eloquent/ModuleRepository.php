@@ -30,10 +30,6 @@ class ModuleRepository implements ModuleRepositoryInterface
         return (bool) $module->delete();
     }
 
-    public function findById(int $id): ?Module {
-        return Module::find($id);
-    }
-
     public function list(array $filters = []): LengthAwarePaginator {
         $query = Module::query();
 

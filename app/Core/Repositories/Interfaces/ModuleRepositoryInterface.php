@@ -14,7 +14,5 @@ interface ModuleRepositoryInterface
 
     public function delete(Module $module): bool;
 
-    public function findById(int $id): ?Module;
-
     public function list(array $filters = []): LengthAwarePaginator;
 }

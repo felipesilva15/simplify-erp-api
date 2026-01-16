@@ -49,16 +49,6 @@ class ModuleService
         return $module;
     }
 
-    public function findById(int $id): Module {
-        $module = $this->repository->findById($id);
-
-        if (!$module) {
-            throw new NotFoundHttpException();
-        }
-
-        return $module;
-    }
-
     public function list(array $filters = []): LengthAwarePaginator {
         return $this->repository->list($filters);
     }
