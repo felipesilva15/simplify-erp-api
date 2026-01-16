@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Security;
 
+use App\Core\Enums\SqlOrderDirectionEnum;
 use App\Modules\Security\Models\Permission;
 use Tests\TestCase;
 use Illuminate\Http\Response;
@@ -47,6 +48,36 @@ class PermissionTest extends TestCase
                 ]
             ])
             ->assertJsonCount(3, 'data');
+    }
+
+    public function test_can_list_permissions_with_sort(): void
+    {
+        $queryParams = [
+            'sort_by[]' => 'id',
+            'sort_dir[]' => SqlOrderDirectionEnum::Descending->value
+        ];
+
+        Permission::factory(3)->withName()->forModule()->create();
+        $response = $this->getJson(url()->query($this->endpoint, $queryParams), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonPath('data.0.id', 3);
+    }
+
+    public function test_can_list_permissions_with_filter(): void
+    {
+        $queryParams = [
+            'id' => 2
+        ];
+
+        Permission::factory(3)->withName()->forModule()->create();
+        $response = $this->getJson(url()->query($this->endpoint, $queryParams), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.id', 2);
     }
 
     public function test_cannot_list_permissions_without_authentication(): void
@@ -157,6 +188,18 @@ class PermissionTest extends TestCase
         ]);
     }
 
+    public function test_cannot_create_permission_with_invalid_payload(): void
+    {
+        $permission = Permission::factory()->forModule()->makeOne();
+        $data = $permission->toArray();
+        unset($data['resource']);
+
+        $response = $this->postJson($this->endpoint, $data, $this->getAdminAuthHeaders());
+
+        $this->assertErrorResponse($response, Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJsonValidationErrorFor('resource');
+    }
+
     public function test_cannot_create_permission_without_authentication(): void
     {
         $permission = Permission::factory()->makeOne();
@@ -190,6 +233,19 @@ class PermissionTest extends TestCase
                 'data' => $this->getResourceStructure()
             ])
             ->assertJsonPath('data.description', 'New description');
+    }
+
+    public function test_cannot_update_permission_with_invalid_payload(): void
+    {
+        $permission = Permission::factory()->withName()->forModule()->createOne();
+        
+        $data = $permission->toArray();
+        unset($data['resource']);
+
+        $response = $this->putJson("{$this->endpoint}/{$permission->id}", $data,  $this->getAdminAuthHeaders());
+
+        $this->assertErrorResponse($response, Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJsonValidationErrorFor('resource');
     }
 
     public function test_cannot_update_permission_with_invalid_id(): void

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Security;
 
+use App\Core\Enums\SqlOrderDirectionEnum;
 use App\Modules\Security\Models\Permission;
 use App\Modules\Security\Models\Role;
 use Tests\TestCase;
@@ -51,6 +52,36 @@ class RoleTest extends TestCase
                 ]
             ])
             ->assertJsonCount(3, 'data');
+    }
+
+    public function test_can_list_roles_with_sort(): void
+    {
+        $queryParams = [
+            'sort_by[]' => 'id',
+            'sort_dir[]' => SqlOrderDirectionEnum::Descending->value
+        ];
+
+        Role::factory(3)->create();
+        $response = $this->getJson(url()->query($this->endpoint, $queryParams), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonPath('data.0.id', 3);
+    }
+
+    public function test_can_list_roles_with_filter(): void
+    {
+        $queryParams = [
+            'id' => 2
+        ];
+
+        Role::factory(3)->create();
+        $response = $this->getJson(url()->query($this->endpoint, $queryParams), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.id', 2);
     }
 
     public function test_cannot_list_roles_without_authentication(): void
@@ -158,6 +189,18 @@ class RoleTest extends TestCase
         ]);
     }
 
+    public function test_cannot_create_role_with_invalid_payload(): void
+    {
+        $role = Role::factory()->makeOne();
+        $data = $role->toArray();
+        unset($data['name']);
+
+        $response = $this->postJson($this->endpoint, $data, $this->getAdminAuthHeaders());
+
+        $this->assertErrorResponse($response, Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJsonValidationErrorFor('name');
+    }
+
     public function test_cannot_create_role_without_authentication(): void
     {
         $role = Role::factory()->makeOne();
@@ -191,6 +234,19 @@ class RoleTest extends TestCase
                 'data' => $this->getResourceStructure()
             ])
             ->assertJsonPath('data.description', 'New description');
+    }
+
+    public function test_cannot_update_role_with_invalid_payload(): void
+    {
+        $role = Role::factory()->createOne();
+        
+        $data = $role->toArray();
+        unset($data['name']);
+
+        $response = $this->putJson("{$this->endpoint}/{$role->id}", $data,  $this->getAdminAuthHeaders());
+
+        $this->assertErrorResponse($response, Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJsonValidationErrorFor('name');
     }
 
     public function test_cannot_update_role_with_invalid_id(): void

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Security;
 
+use App\Core\Enums\SqlOrderDirectionEnum;
 use App\Modules\Security\Models\Role;
 use App\Modules\Security\Models\User;
 use Tests\TestCase;
@@ -52,6 +53,36 @@ class UserTest extends TestCase
                     '*' => $this->getResourceStructure()
                 ]
             ]);
+    }
+
+    public function test_can_list_users_with_sort(): void
+    {
+        $queryParams = [
+            'sort_by[]' => 'id',
+            'sort_dir[]' => SqlOrderDirectionEnum::Descending->value
+        ];
+
+        User::factory(3)->create();
+        $response = $this->getJson(url()->query($this->endpoint, $queryParams), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonPath('data.0.id', 5);
+    }
+
+    public function test_can_list_users_with_filter(): void
+    {
+        $queryParams = [
+            'id' => 2
+        ];
+
+        User::factory(3)->create();
+        $response = $this->getJson(url()->query($this->endpoint, $queryParams), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.id', 2);
     }
 
     public function test_cannot_list_users_without_authentication(): void
@@ -160,6 +191,18 @@ class UserTest extends TestCase
         ]);
     }
 
+    public function test_cannot_create_user_with_invalid_payload(): void
+    {
+        $user = User::factory()->makeOne();
+        $data = $user->toArray();
+        unset($data['username']);
+
+        $response = $this->postJson($this->endpoint, $data, $this->getAdminAuthHeaders());
+
+        $this->assertErrorResponse($response, Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJsonValidationErrorFor('username');
+    }
+
     public function test_can_create_user_with_roles(): void
     {
         $roles = Role::factory(2)->create();
@@ -225,6 +268,19 @@ class UserTest extends TestCase
                 'data' => $this->getResourceStructure()
             ])
             ->assertJsonPath('data.name', 'New name');
+    }
+
+    public function test_cannot_update_user_with_invalid_payload(): void
+    {
+        $user = User::factory()->createOne();
+        
+        $data = $user->toArray();
+        unset($data['username']);
+
+        $response = $this->putJson("{$this->endpoint}/{$user->id}", $data,  $this->getAdminAuthHeaders());
+
+        $this->assertErrorResponse($response, Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJsonValidationErrorFor('username');
     }
     
     public function test_can_update_user_with_roles(): void
