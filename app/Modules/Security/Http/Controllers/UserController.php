@@ -70,9 +70,9 @@ class UserController extends Controller
      * )
      */
     public function index(ListUserRequest $request, ListUserAction $action): JsonResponse {
-        $userList = $action->execute($request->all());
+        $serviceResult = $action->execute($request->all());
 
-        $paginated = new UserCollection($userList);
+        $paginated = new UserCollection($serviceResult->data);
         $paginated = $paginated->toArray($request);
 
         return $this->success(
@@ -129,10 +129,10 @@ class UserController extends Controller
      * )
      */
     public function show(User $user, ShowUserAction $action): JsonResponse {
-        $user = $action->execute($user->id);
+        $serviceResult = $action->execute($user);
 
         return $this->success(
-            data: new UserResource($user),
+            data: new UserResource($serviceResult->data),
             httpStatus: Response::HTTP_OK
         );
     }
@@ -177,10 +177,10 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request, StoreUserAction $action): JsonResponse {
         $dto = UserDTO::fromArray($request->validated());
-        $user = $action->execute($dto);
+        $serviceResult = $action->execute($dto);
 
         return $this->success(
-            data: new UserResource($user),
+            data: new UserResource($serviceResult->data),
             httpStatus: Response::HTTP_CREATED
         );
     }
@@ -236,12 +236,12 @@ class UserController extends Controller
      * )
      */
     public function edit(User $user, EditUserAction $action): JsonResponse {
-        $user = $action->execute($user->id);
+        $serviceResult = $action->execute($user);
 
         return $this->success(
-            data: new UserResource($user),
-            warnings: [],
-            meta: ['editable' => true],
+            data: new UserResource($serviceResult->data),
+            warnings: $serviceResult->warnings,
+            meta: $serviceResult->meta,
             httpStatus: Response::HTTP_OK
         );
     }
@@ -299,10 +299,10 @@ class UserController extends Controller
     public function update(User $user, UpdateUserRequest $request, UpdateUserAction $action): JsonResponse {
         $dto = UserDTO::fromArray($request->validated());
         $dto->fieldsToUse = array_keys($request->validated());
-        $user = $action->execute($user->id, $dto);
+        $serviceResult = $action->execute($user, $dto);
 
         return $this->success(
-            data: new UserResource($user),
+            data: new UserResource($serviceResult->data),
             httpStatus: Response::HTTP_OK
         );
     }
@@ -342,7 +342,7 @@ class UserController extends Controller
      * )
      */
     public function destroy(User $user, DeleteUserAction $action): Response {
-        $action->execute($user->id);
+        $action->execute($user);
         return response()->noContent();
     }
 }

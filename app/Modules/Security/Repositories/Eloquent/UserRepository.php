@@ -17,13 +17,7 @@ class UserRepository implements UserRepositoryInterface
         return User::create($arrayData);
     }
 
-    public function update(int $id, UserDTO $data): ?User {
-        $user = $this->findById($id);
-
-        if (!$user) {
-            return null;
-        }
-
+    public function update(User $user, UserDTO $data): ?User {
         $arrayData = $data->toArray();
         unset($arrayData["id"]);
 
@@ -32,18 +26,8 @@ class UserRepository implements UserRepositoryInterface
         return $user->fresh();
     }
 
-    public function delete(int $id): bool {
-        $user = $this->findById($id);
-
-        if (!$user) {
-            return false;
-        }
-
+    public function delete(User $user): bool {
         return (bool) $user->delete();
-    }
-
-    public function findById(int $id): ?User {
-        return User::find($id);
     }
 
     public function list(array $filters = []): LengthAwarePaginator {
@@ -64,13 +48,7 @@ class UserRepository implements UserRepositoryInterface
         return $query->paginate(perPage: $perPage, page: $page)->withQueryString();
     }
 
-    public function syncRoles(int $id, array $roleIds = []): ?User {
-        $user = $this->findById($id);
-
-        if (!$user) {
-            return null;
-        }
-        
+    public function syncRoles(User $user, array $roleIds = []): ?User {
         $user->roles()->sync($roleIds);
 
         return $user->fresh();

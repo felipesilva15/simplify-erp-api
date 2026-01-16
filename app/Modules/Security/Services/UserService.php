@@ -2,6 +2,7 @@
 
 namespace App\Modules\Security\Services;
 
+use App\Core\DTO\ServiceResult;
 use App\Core\Exceptions\NotFoundHttpException;
 use App\Core\Helpers\ListHelpers;
 use App\Modules\Security\DTO\UserDTO;
@@ -13,54 +14,57 @@ class UserService
 {
     public function __construct(protected UserRepositoryInterface $repository) { }
 
-    public function store(UserDTO $data): User {
+    public function store(UserDTO $data): ServiceResult {
         $user = $this->repository->store($data);
-        $user = $this->defineRoles($user->id, ListHelpers::groupListByProperty($data->roles, 'id'));
+        $user = $this->defineRoles($user, ListHelpers::groupListByProperty($data->roles, 'id'))->data;
 
-        return $user;
+        return new ServiceResult(
+            data: $user
+        );
     }
 
-    public function edit(int $id): ?User {
-        $user = $this->repository->findById($id);
-
-        if (!$user) {
-            throw new NotFoundHttpException();
-        }
-
-        return $user;
+    public function edit(User $user): ServiceResult {
+        return new ServiceResult(
+            data: $user,
+            meta: [
+                'editable' => true
+            ]
+        );
     }
 
-    public function update(int $id, UserDTO $data): ?User {
-        $user = $this->repository->update($id, $data);
+    public function update(User $user, UserDTO $data): ServiceResult {
+        $user = $this->repository->update($user, $data);
+        $user = $this->defineRoles($user, ListHelpers::groupListByProperty($data->roles, 'id'))->data;
 
-        if (!$user) {
-            throw new NotFoundHttpException();
-        }
-        
-        $user = $this->defineRoles($id, ListHelpers::groupListByProperty($data->roles, 'id'));
-
-        return $user;
+        return new ServiceResult(
+            data: $user
+        );
     }
 
-    public function delete(int $id): bool {
-        return $this->repository->delete($id);
+    public function delete(User $user): ServiceResult {
+        return new ServiceResult(
+            data: null,
+            meta: [
+                'deleted' => $this->repository->delete($user)
+            ]
+        );
     }
 
-    public function findById(int $id): ?User {
-        $user = $this->repository->findById($id);
-
-        if (!$user) {
-            throw new NotFoundHttpException();
-        }
-
-        return $user;
+    public function list(array $filters = []): ServiceResult {
+        return new ServiceResult(
+            data: $this->repository->list($filters)
+        );
     }
 
-    public function list(array $filters = []): LengthAwarePaginator {
-        return $this->repository->list($filters);
+    public function show(User $user): ServiceResult {
+        return new ServiceResult(
+            data: $user
+        );
     }
 
-    public function defineRoles(int $id, array $roleIds = []): ?User {
-        return $this->repository->syncRoles($id, $roleIds);
+    public function defineRoles(User $user, array $roleIds = []): ServiceResult {
+        return new ServiceResult(
+            data: $this->repository->syncRoles($user, $roleIds)
+        );
     }
 }
