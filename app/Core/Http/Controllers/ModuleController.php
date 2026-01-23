@@ -48,29 +48,27 @@ class ModuleController extends Controller
      *          @OA\JsonContent(
      *              allOf={
      *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
-     *                  @OA\Schema(
-     *                      @OA\Property(
-     *                          property="data",
-     *                          ref="#/components/schemas/ModuleResource"
-     *                      ),
-     *                      @OA\Property(
-     *                          property="links",
-     *                          ref="#/components/schemas/PaginatorLinks"
-     *                      ),
-     *                      @OA\Property(
-     *                          property="meta",
-     *                          ref="#/components/schemas/PaginatorMeta"
-     *                      )
-     *                  )
+     *                  @OA\Schema(ref="#/components/schemas/ModuleCollection")
      *              }
      *          )
+     *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
     public function index(ListModuleRequest $request, ListModuleAction $action): JsonResponse {
-        $moduleList = $action->execute($request->all());
-        $paginated = new ModuleCollection($moduleList);
+        $serviceResult = $action->execute($request->all());
+
+        $paginated = new ModuleCollection($serviceResult->data);
         $paginated = $paginated->toArray($request);
 
         return $this->success(
@@ -109,6 +107,16 @@ class ModuleController extends Controller
      *          )
      *      ),
      *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
@@ -117,10 +125,10 @@ class ModuleController extends Controller
      * )
      */
     public function show(Module $module, ShowModuleAction $action): JsonResponse {
-        $module = $action->execute($module);
+        $serviceResult = $action->execute($module);
 
         return $this->success(
-            data: new ModuleResource($module),
+            data: new ModuleResource($serviceResult->data),
             httpStatus: Response::HTTP_OK
         );
     }
@@ -155,15 +163,20 @@ class ModuleController extends Controller
      *          description="Unauthorized",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
     public function store(StoreModuleRequest $request, StoreModuleAction $action): JsonResponse {
         $dto = ModuleDTO::fromArray($request->validated());
-        $module = $action->execute($dto);
+        $serviceResult = $action->execute($dto);
 
         return $this->success(
-            data: new ModuleResource($module),
+            data: new ModuleResource($serviceResult->data),
             httpStatus: Response::HTTP_CREATED
         );
     }
@@ -200,6 +213,16 @@ class ModuleController extends Controller
      *                  )
      *              }
      *          )
+     *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
      *          response="404", 
@@ -257,6 +280,11 @@ class ModuleController extends Controller
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
@@ -266,10 +294,10 @@ class ModuleController extends Controller
      */
     public function update(Module $module, UpdateModuleRequest $request, UpdateModuleAction $action): JsonResponse {
         $dto = ModuleDTO::fromArray($request->validated());
-        $module = $action->execute($module, $dto);
+        $serviceResult = $action->execute($module, $dto);
 
         return $this->success(
-            data: new ModuleResource($module),
+            data: new ModuleResource($serviceResult->data),
             httpStatus: Response::HTTP_OK
         );
     }
@@ -293,6 +321,11 @@ class ModuleController extends Controller
      *      @OA\Response(
      *          response="401", 
      *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(

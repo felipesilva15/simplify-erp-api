@@ -13,8 +13,12 @@ class ModuleService
 {
     public function __construct(protected ModuleRepositoryInterface $repository) { }
 
-    public function store(ModuleDTO $data): Module {
-        return $this->repository->store($data);
+    public function store(ModuleDTO $data): ServiceResult {
+        $module = $this->repository->store($data);
+
+        return new ServiceResult(
+            data: $module
+        );
     }
 
     public function edit(Module $module): ServiceResult {
@@ -35,21 +39,32 @@ class ModuleService
         );
     }
 
-    public function update(Module $module, ModuleDTO $data): Module {
+    public function update(Module $module, ModuleDTO $data): ServiceResult {
         $module = $this->repository->update($module, $data);
 
-        return $module;
+        return new ServiceResult(
+            data: $module
+        );
     }
 
-    public function delete(Module $module): bool {
-        return $this->repository->delete($module);
+    public function delete(Module $module): ServiceResult {
+        return new ServiceResult(
+            data: null,
+            meta: [
+                'deleted' => $this->repository->delete($module)
+            ]
+        );
     }
 
-    public function show(Module $module): Module {
-        return $module;
+    public function list(array $filters = []): ServiceResult {
+        return new ServiceResult(
+            data: $this->repository->list($filters)
+        );
     }
 
-    public function list(array $filters = []): LengthAwarePaginator {
-        return $this->repository->list($filters);
+    public function show(Module $module): ServiceResult {
+        return new ServiceResult(
+            data: $module
+        );
     }
 }
