@@ -34,14 +34,4 @@ class PermissionPolicy
     {
         return $this->authService->hasAuthorized($user, 'permissions.delete');
     }
-
-    public function restore(User $user, Permission $model): bool
-    {
-        return $this->authService->hasAuthorized($user, 'permissions.restore');
-    }
-
-    public function forceDelete(User $user, Permission $model): bool
-    {
-        return $this->authService->hasAuthorized($user, 'permissions.forceDelete');
-    }
 }

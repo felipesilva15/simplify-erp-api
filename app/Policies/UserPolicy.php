@@ -33,14 +33,4 @@ class UserPolicy
     {
         return $this->authService->hasAuthorized($user, 'users.delete');
     }
-
-    public function restore(User $user, User $model): bool
-    {
-        return $this->authService->hasAuthorized($user, 'users.restore');
-    }
-
-    public function forceDelete(User $user, User $model): bool
-    {
-        return $this->authService->hasAuthorized($user, 'users.forceDelete');
-    }
 }
