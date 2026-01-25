@@ -148,20 +148,29 @@
                                             "$ref": "#/components/schemas/ApiResponse"
                                         },
                                         {
-                                            "properties": {
-                                                "data": {
-                                                    "$ref": "#/components/schemas/ModuleResource"
-                                                },
-                                                "links": {
-                                                    "$ref": "#/components/schemas/PaginatorLinks"
-                                                },
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/PaginatorMeta"
-                                                }
-                                            },
-                                            "type": "object"
+                                            "$ref": "#/components/schemas/ModuleCollection"
                                         }
                                     ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
                                 }
                             }
                         }
@@ -222,6 +231,16 @@
                                 }
                             }
                         }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -268,6 +287,26 @@
                                             "type": "object"
                                         }
                                     ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
                                 }
                             }
                         }
@@ -350,6 +389,16 @@
                             }
                         }
                     },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
                     "404": {
                         "description": "Record not found",
                         "content": {
@@ -390,6 +439,16 @@
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -470,6 +529,26 @@
                                             "type": "object"
                                         }
                                     ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
                                 }
                             }
                         }
@@ -1239,82 +1318,15 @@
                         "bearerAuth": []
                     }
                 ]
-            },
-            "post": {
-                "tags": [
-                    "Role"
-                ],
-                "summary": "Registers a role",
-                "operationId": "9c43b88da0ae4cdf61aa196ce5688d5a",
-                "requestBody": {
-                    "description": "Data for creating a new role",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/StoreRoleRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Registered role data",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "allOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ApiResponse"
-                                        },
-                                        {
-                                            "properties": {
-                                                "data": {
-                                                    "$ref": "#/components/schemas/RoleResource"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
             }
         },
-        "/api/security/roles/{id}": {
+        "/api/core/roles/{id}": {
             "get": {
                 "tags": [
                     "Role"
                 ],
                 "summary": "List a role by ID",
-                "operationId": "f381ab825a6063e13f6c68c43df89e58",
+                "operationId": "ee3c33c18a7054d5fb7c1a39541303d8",
                 "parameters": [
                     {
                         "name": "id",
@@ -1391,7 +1403,7 @@
                     "Role"
                 ],
                 "summary": "Update a role",
-                "operationId": "6adaeda7fe871380284cd26f86489a00",
+                "operationId": "f35b36cb596c57dceeba52ac4c0178b5",
                 "parameters": [
                     {
                         "name": "id",
@@ -1479,7 +1491,7 @@
                     "Role"
                 ],
                 "summary": "Delete a role",
-                "operationId": "37bbb12155a3e7a7d47e797f81e2c40b",
+                "operationId": "dbba9e2bc39586562a4c9cae799d31a2",
                 "parameters": [
                     {
                         "name": "id",
@@ -1533,13 +1545,82 @@
                 ]
             }
         },
-        "/api/security/roles/{id}/edit": {
+        "/api/core/roles": {
+            "post": {
+                "tags": [
+                    "Role"
+                ],
+                "summary": "Registers a role",
+                "operationId": "276240e17abe7c959f29ab7189322bd8",
+                "requestBody": {
+                    "description": "Data for creating a new role",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreRoleRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Registered role data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/RoleResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/core/roles/{id}/edit": {
             "get": {
                 "tags": [
                     "Role"
                 ],
                 "summary": "Get data to edit a role",
-                "operationId": "6b8569404d53713ef5b0acedbcc97efd",
+                "operationId": "33e465ada48c1cdcdb3206768a6ca438",
                 "parameters": [
                     {
                         "name": "id",

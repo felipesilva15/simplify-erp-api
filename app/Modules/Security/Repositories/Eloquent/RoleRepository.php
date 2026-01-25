@@ -17,13 +17,7 @@ class RoleRepository implements RoleRepositoryInterface
         return Role::create($arrayData);
     }
 
-    public function update(int $id, RoleDTO $data): ?Role {
-        $role = $this->findById($id);
-
-        if (!$role) {
-            return null;
-        }
-
+    public function update(Role $role, RoleDTO $data): ?Role {
         $arrayData = $data->toArray();
         unset($arrayData["id"]);
 
@@ -32,18 +26,8 @@ class RoleRepository implements RoleRepositoryInterface
         return $role->fresh();
     }
 
-    public function delete(int $id): bool {
-        $role = $this->findById($id);
-
-        if (!$role) {
-            return false;
-        }
-
+    public function delete(Role $role): bool {
         return (bool) $role->delete();
-    }
-
-    public function findById(int $id): ?Role {
-        return Role::find($id);
     }
 
     public function list(array $filters = []): LengthAwarePaginator {
@@ -64,15 +48,8 @@ class RoleRepository implements RoleRepositoryInterface
         return $query->paginate(perPage: $perPage, page: $page)->withQueryString();
     }
 
-    public function syncPermissions(int $id, array $permissionIds = []): ?Role {
-        $role = $this->findById($id);
-
-        if (!$role) {
-            return null;
-        }
-        
+    public function syncPermissions(Role $role, array $permissionIds = []): ?Role {
         $role->permissions()->sync($permissionIds);
-
         return $role->fresh();
     }
 }

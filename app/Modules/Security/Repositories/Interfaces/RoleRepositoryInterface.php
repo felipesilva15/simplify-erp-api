@@ -10,13 +10,11 @@ interface RoleRepositoryInterface
 {
     public function store(RoleDTO $data): Role;
 
-    public function update(int $id, RoleDTO $data): ?Role;
+    public function update(Role $role, RoleDTO $data): ?Role;
 
-    public function delete(int $id): bool;
-
-    public function findById(int $id): ?Role;
+    public function delete(Role $role): bool;
 
     public function list(array $filters = []): LengthAwarePaginator;
 
-    public function syncPermissions(int $id, array $permissionIds): ?Role;
+    public function syncPermissions(Role $role, array $permissionIds): ?Role;
 }

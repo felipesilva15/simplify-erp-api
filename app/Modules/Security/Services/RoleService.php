@@ -2,59 +2,64 @@
 
 namespace App\Modules\Security\Services;
 
-use App\Core\Exceptions\NotFoundHttpException;
+use App\Core\DTO\ServiceResult;
 use App\Modules\Security\DTO\RoleDTO;
 use App\Modules\Security\Models\Role;
 use App\Modules\Security\Repositories\Interfaces\RoleRepositoryInterface;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class RoleService
 {
     public function __construct(protected RoleRepositoryInterface $repository) { }
 
-    public function store(RoleDTO $data): Role {
-        return $this->repository->store($data);
+    public function store(RoleDTO $data): ServiceResult {
+        $role = $this->repository->store($data);
+
+        return new ServiceResult(
+            data: $role
+        );
     }
 
-    public function edit(int $id): ?Role {
-        $role = $this->repository->findById($id);
-
-        if (!$role) {
-            throw new NotFoundHttpException();
-        }
-
-        return $role;
+    public function edit(Role $role): ServiceResult {
+        return new ServiceResult(
+            data: $role,
+            meta: [
+                'editable' => true
+            ]
+        );
     }
 
-    public function update(int $id, RoleDTO $data): ?Role {
-        $role = $this->repository->update($id, $data);
+    public function update(Role $role, RoleDTO $data): ServiceResult {
+        $role = $this->repository->update($role, $data);
 
-        if (!$role) {
-            throw new NotFoundHttpException();
-        }
-
-        return $role;
+        return new ServiceResult(
+            data: $role
+        );
     }
 
-    public function delete(int $id): bool {
-        return $this->repository->delete($id);
+    public function delete(Role $role): ServiceResult {
+        return new ServiceResult(
+            data: null,
+            meta: [
+                'deleted' => $this->repository->delete($role)
+            ]
+        );
     }
 
-    public function findById(int $id): ?Role {
-        $role = $this->repository->findById($id);
-
-        if (!$role) {
-            throw new NotFoundHttpException();
-        }
-
-        return $role;
+    public function list(array $filters = []): ServiceResult {
+        return new ServiceResult(
+            data: $this->repository->list($filters)
+        );
     }
 
-    public function list(array $filters = []): LengthAwarePaginator {
-        return $this->repository->list($filters);
+    public function show(Role $role): ServiceResult {
+        return new ServiceResult(
+            data: $role
+        );
     }
 
-    public function definePermissions(int $id, array $permissionIds = []): ?Role {
-        return $this->repository->syncPermissions($id, $permissionIds);
+    public function definePermissions(Role $role, array $permissionIds = []): ServiceResult {
+        return new ServiceResult(
+            data: $this->repository->syncPermissions($role, $permissionIds)
+        );
     }
 }

@@ -68,9 +68,9 @@ class RoleController extends Controller
      * )
      */
     public function index(ListRoleRequest $request, ListRoleAction $action): JsonResponse {
-        $roleList = $action->execute($request->all());
+        $serviceResult = $action->execute($request->all());
 
-        $paginated = new RoleCollection($roleList);
+        $paginated = new RoleCollection($serviceResult->data);
         $paginated = $paginated->toArray($request);
 
         return $this->success(
@@ -83,7 +83,7 @@ class RoleController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/security/roles/{id}",
+     *      path="/api/core/roles/{id}",
      *      tags={"Role"},
      *      summary="List a role by ID",
      *      @OA\Parameter(
@@ -127,17 +127,17 @@ class RoleController extends Controller
      * )
      */
     public function show(Role $role, ShowRoleAction $action): JsonResponse {
-        $role = $action->execute($role->id);
+        $serviceResult = $action->execute($role);
 
         return $this->success(
-            data: new RoleResource($role),
+            data: new RoleResource($serviceResult->data),
             httpStatus: Response::HTTP_OK
         );
     }
 
     /**
      * @OA\Post(
-     *      path="/api/security/roles",
+     *      path="/api/core/roles",
      *      tags={"Role"},
      *      summary="Registers a role",
      *      @OA\RequestBody(
@@ -175,17 +175,17 @@ class RoleController extends Controller
      */
     public function store(StoreRoleRequest $request, StoreRoleAction $action): JsonResponse {
         $dto = RoleDTO::fromArray($request->validated());
-        $role = $action->execute($dto);
+        $serviceResult = $action->execute($dto);
 
         return $this->success(
-            data: new RoleResource($role),
+            data: new RoleResource($serviceResult->data),
             httpStatus: Response::HTTP_CREATED
         );
     }
 
     /**
      * @OA\Get(
-     *      path="/api/security/roles/{id}/edit",
+     *      path="/api/core/roles/{id}/edit",
      *      tags={"Role"},
      *      summary="Get data to edit a role",
      *      @OA\Parameter(
@@ -234,19 +234,19 @@ class RoleController extends Controller
      * )
      */
     public function edit(Role $role, EditRoleAction $action): JsonResponse {
-        $role = $action->execute($role->id);
+        $serviceResult = $action->execute($role);
 
         return $this->success(
-            data: new RoleResource($role),
-            warnings: [],
-            meta: ['editable' => true],
+            data: new RoleResource($serviceResult->data),
+            warnings: $serviceResult->warnings,
+            meta: $serviceResult->meta,
             httpStatus: Response::HTTP_OK
         );
     }
 
     /**
      * @OA\Put(
-     *      path="/api/security/roles/{id}",
+     *      path="/api/core/roles/{id}",
      *      tags={"Role"},
      *      summary="Update a role",
      *      @OA\Parameter(
@@ -296,17 +296,17 @@ class RoleController extends Controller
      */
     public function update(Role $role, UpdateRoleRequest $request, UpdateRoleAction $action): JsonResponse {
         $dto = RoleDTO::fromArray($request->validated());
-        $role = $action->execute($role->id, $dto);
+        $serviceResult = $action->execute($role, $dto);
 
         return $this->success(
-            data: new RoleResource($role),
+            data: new RoleResource($serviceResult->data),
             httpStatus: Response::HTTP_OK
         );
     }
 
     /**
      * @OA\Delete(
-     *      path="/api/security/roles/{id}",
+     *      path="/api/core/roles/{id}",
      *      tags={"Role"},
      *      summary="Delete a role",
      *      @OA\Parameter(
@@ -339,7 +339,7 @@ class RoleController extends Controller
      * )
      */
     public function destroy(Role $role, DeleteRoleAction $action): Response {
-        $action->execute($role->id);
+        $action->execute($role);
         return response()->noContent();
     }
 
@@ -394,10 +394,10 @@ class RoleController extends Controller
      * )
      */
     public function definePermissions(Role $role, RolePermissionsRequest $request, DefineRolePermissionsAction $action): JsonResponse {
-        $role = $action->execute($role->id, $request->validated('ids'));
+        $serviceResult = $action->execute($role, $request->validated('ids'));
 
         return $this->success(
-            data: new RoleResource($role),
+            data: new RoleResource($serviceResult->data),
             httpStatus: Response::HTTP_OK
         );
     }
