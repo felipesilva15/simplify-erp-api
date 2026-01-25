@@ -11,13 +11,9 @@ interface PermissionRepositoryInterface
 {
     public function store(PermissionDTO $data): Permission;
 
-    public function update(int $id, PermissionDTO $data): ?Permission;
+    public function update(Permission $permission, PermissionDTO $data): ?Permission;
 
-    public function delete(int $id): bool;
-
-    public function findById(int $id): ?Permission;
+    public function delete(Permission $permission): bool;
 
     public function list(array $filters = []): LengthAwarePaginator;
-
-    public function findByResourceAndAction(string $resource, string $action): ?Permission;
 }

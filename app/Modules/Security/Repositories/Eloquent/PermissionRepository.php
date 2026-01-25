@@ -18,13 +18,7 @@ class PermissionRepository implements PermissionRepositoryInterface
         return Permission::create($arrayData);
     }
 
-    public function update(int $id, PermissionDTO $data): ?Permission {
-        $permission = $this->findById($id);
-
-        if (!$permission) {
-            return null;
-        }
-
+    public function update(Permission $permission, PermissionDTO $data): ?Permission {
         $arrayData = $data->toArray();
         unset($arrayData["id"]);
 
@@ -33,18 +27,8 @@ class PermissionRepository implements PermissionRepositoryInterface
         return $permission->fresh();
     }
 
-    public function delete(int $id): bool {
-        $permission = $this->findById($id);
-
-        if (!$permission) {
-            return false;
-        }
-
+    public function delete(Permission $permission): bool {
         return (bool) $permission->delete();
-    }
-
-    public function findById(int $id): ?Permission {
-        return Permission::find($id);
     }
 
     public function list(array $filters = []): LengthAwarePaginator {
@@ -63,12 +47,5 @@ class PermissionRepository implements PermissionRepositoryInterface
         $page = isset($filters['page']) ? (int) $filters['page'] : 1;
 
         return $query->paginate(perPage: $perPage, page: $page)->withQueryString();
-    }
-
-    public function findByResourceAndAction(string $resource, string $action): ?Permission
-    {
-        return Permission::where('resource', $resource)
-                        ->where('action', $action)
-                        ->first();
     }
 }

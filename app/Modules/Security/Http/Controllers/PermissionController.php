@@ -54,13 +54,23 @@ class PermissionController extends Controller
      *              }
      *          )
      *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
     public function index(ListPermissionRequest $request, ListPermissionAction $action): JsonResponse {
-        $permissionList = $action->execute($request->all());
+        $serviceResult = $action->execute($request->all());
 
-        $paginated = new PermissionCollection($permissionList);
+        $paginated = new PermissionCollection($serviceResult->data);
         $paginated = $paginated->toArray($request);
 
         return $this->success(
@@ -73,7 +83,7 @@ class PermissionController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/security/permissions/{id}",
+     *      path="/api/core/permissions/{id}",
      *      tags={"Permission"},
      *      summary="List a permission by ID",
      *      @OA\Parameter(
@@ -99,6 +109,16 @@ class PermissionController extends Controller
      *          )
      *      ),
      *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
@@ -106,18 +126,18 @@ class PermissionController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function show(int $id, ShowPermissionAction $action): JsonResponse {
-        $permission = $action->execute($id);
+    public function show(Permission $permission, ShowPermissionAction $action): JsonResponse {
+        $serviceResult = $action->execute($permission);
 
         return $this->success(
-            data: new PermissionResource($permission),
+            data: new PermissionResource($serviceResult->data),
             httpStatus: Response::HTTP_OK
         );
     }
 
     /**
      * @OA\Post(
-     *      path="/api/security/permissions",
+     *      path="/api/core/permissions",
      *      tags={"Permission"},
      *      summary="Registers a permission",
      *      @OA\RequestBody(
@@ -145,22 +165,27 @@ class PermissionController extends Controller
      *          description="Unauthorized",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
     public function store(StorePermissionRequest $request, StorePermissionAction $action): JsonResponse {
         $dto = PermissionDTO::fromArray($request->validated());
-        $permission = $action->execute($dto);
+        $serviceResult = $action->execute($dto);
 
         return $this->success(
-            data: new PermissionResource($permission),
+            data: new PermissionResource($serviceResult->data),
             httpStatus: Response::HTTP_CREATED
         );
     }
 
     /**
      * @OA\Get(
-     *      path="/api/security/permissions/{id}/edit",
+     *      path="/api/core/permissions/{id}/edit",
      *      tags={"Permission"},
      *      summary="Get data to edit a permission",
      *      @OA\Parameter(
@@ -192,26 +217,36 @@ class PermissionController extends Controller
      *          )
      *      ),
      *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      )
      * )
      */
-    public function edit(int $id, EditPermissionAction $action): JsonResponse {
-        $permission = $action->execute($id);
+    public function edit(Permission $permission, EditPermissionAction $action): JsonResponse {
+        $serviceResult = $action->execute($permission);
 
         return $this->success(
-            data: new PermissionResource($permission),
-            warnings: [],
-            meta: ['editable' => true],
+            data: new PermissionResource($serviceResult->data),
+            warnings: $serviceResult->warnings,
+            meta: $serviceResult->meta,
             httpStatus: Response::HTTP_OK
         );
     }
 
     /**
      * @OA\Put(
-     *      path="/api/security/permissions/{id}",
+     *      path="/api/core/permissions/{id}",
      *      tags={"Permission"},
      *      summary="Update a permission",
      *      @OA\Parameter(
@@ -228,7 +263,7 @@ class PermissionController extends Controller
      *      ),
      *      @OA\Response(
      *          response="200", 
-     *          description="Updated module data",
+     *          description="Updated permission data",
      *          @OA\JsonContent(
      *              allOf={
      *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
@@ -247,6 +282,11 @@ class PermissionController extends Controller
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
@@ -256,17 +296,17 @@ class PermissionController extends Controller
      */
     public function update(Permission $permission, UpdatePermissionRequest $request, UpdatePermissionAction $action): JsonResponse {
         $dto = PermissionDTO::fromArray($request->validated());
-        $permission = $action->execute($permission->id, $dto);
+        $serviceResult = $action->execute($permission, $dto);
 
         return $this->success(
-            data: new PermissionResource($permission),
+            data: new PermissionResource($serviceResult->data),
             httpStatus: Response::HTTP_OK
         );
     }
 
     /**
      * @OA\Delete(
-     *      path="/api/security/permissions/{id}",
+     *      path="/api/core/permissions/{id}",
      *      tags={"Permission"},
      *      summary="Delete a permission",
      *      @OA\Parameter(
@@ -286,6 +326,11 @@ class PermissionController extends Controller
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
@@ -294,7 +339,7 @@ class PermissionController extends Controller
      * )
      */
     public function destroy(Permission $permission, DeletePermissionAction $action): Response {
-        $action->execute($permission->id);
+        $action->execute($permission);
         return response()->noContent();
     }
 }
