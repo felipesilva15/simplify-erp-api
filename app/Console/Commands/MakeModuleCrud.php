@@ -30,82 +30,154 @@ class MakeModuleCrud extends Command
     private $entity = '';
     private $entityFields = [];
     private $commomFields = ['id', 'created_at', 'updated_at', 'deleted_at'];
+    private $stubPath = '';
+
+    private $folders = [
+        "{{root_path}}",
+        "{{root_path}}/Models",
+        "{{root_path}}/Services",
+        "{{root_path}}/Repositories/Eloquent",
+        "{{root_path}}/Repositories/Interfaces",
+        "{{root_path}}/Actions/{{entity}}",
+        "{{root_path}}/DTO",
+        "{{root_path}}/Http/Controllers",
+        "{{root_path}}/Http/Requests/{{entity}}",
+        "{{root_path}}/Http/Resources/{{entity}}",
+    ];
+    private $stubMap = [
+        'model' => 'module.model.stub',
+        'repository' => 'module.repository.stub',
+        'repositoryInterface' => 'module.repository-interface.stub',
+        'service' => 'module.service.stub',
+        'storeAction' => 'module.action-store.stub',
+        'editAction' => 'module.action-edit.stub',
+        'updateAction' => 'module.action-update.stub',
+        'deleteAction' => 'module.action-delete.stub',
+        'showAction' => 'module.action-show.stub',
+        'listAction' => 'module.action-list.stub',
+        'dto' => 'module.dto.stub',
+        'controller' => 'module.controller.stub',
+        'storeRequest' => 'module.request-store.stub',
+        'updateRequest' => 'module.request-update.stub',
+        'listRequest' => 'module.request-list.stub',
+        'resource' => 'module.resource.stub',
+        'collection' => 'module.resource-collection.stub',
+    ];
+    private $pathMap = [
+        'model' => '{{root_path}}/Models/{{entity}}.php',
+        'repository' => '{{root_path}}/Repositories/Eloquent/{{entity}}Repository.php',
+        'repositoryInterface' => '{{root_path}}/Repositories/Interfaces/{{entity}}RepositoryInterface.php',
+        'service' => '{{root_path}}/Services/{{entity}}Service.php',
+        'storeAction' => '{{root_path}}/Actions/{{entity}}/Store{{entity}}Action.php',
+        'editAction' => '{{root_path}}/Actions/{{entity}}/Edit{{entity}}Action.php',
+        'updateAction' => '{{root_path}}/Actions/{{entity}}/Update{{entity}}Action.php',
+        'deleteAction' => '{{root_path}}/Actions/{{entity}}/Delete{{entity}}Action.php',
+        'showAction' => '{{root_path}}/Actions/{{entity}}/Show{{entity}}Action.php',
+        'listAction' => '{{root_path}}/Actions/{{entity}}/List{{entity}}Action.php',
+        'dto' => '{{root_path}}/DTO/{{entity}}DTO.php',
+        'controller' => '{{root_path}}/Http/Controllers/{{entity}}Controller.php',
+        'storeRequest' => '{{root_path}}/Http/Requests/{{entity}}/Store{{entity}}Request.php',
+        'updateRequest' => '{{root_path}}/Http/Requests/{{entity}}/Update{{entity}}Request.php',
+        'listRequest' => '{{root_path}}/Http/Requests/{{entity}}/List{{entity}}Request.php',
+        'resource' => '{{root_path}}/Http/Resources/{{entity}}/{{entity}}Resource.php',
+        'collection' => '{{root_path}}/Http/Resources/{{entity}}/{{entity}}Collection.php',
+    ];
+    private $replacements = [];
 
     public function handle()
     {
         $this->module = Str::studly($this->argument('module'));
         $this->entity = Str::studly($this->argument('entity'));
         $this->rootPath = app_path("Modules/{$this->module}");
+        $this->stubPath = app_path('Console/Stubs');
 
         $this->makeFolders();
         $this->loadEntityFields();
 
         if ($this->option('all') || $this->option('model')) {
-            $this->createModel();
+            $this->createFile('model');
         } 
         
         if ($this->option('all') || $this->option('service')) {
-            $this->createService();
+            $this->createFile('service');
         }
 
         if ($this->option('all') || $this->option('repository')) {
-            $this->createRepository();
-            $this->createRepositoryInterface();
+            $this->createFile('repository');
+            $this->createFile('repositoryInterface');
         }
 
         if ($this->option('all') || $this->option('dto')) {
-            $this->createDto();
+            $this->createFile('dto');
         }
 
         if ($this->option('all') || $this->option('controller')) {
-            $this->createController();
+            $this->createFile('controller');
         }
 
         if ($this->option('all') || $this->option('request')) {
-            $this->createRequests();
+            $this->createFile('storeRequest');
+            $this->createFile('updateRequest');
+            $this->createFile('listRequest');
         }
 
         if ($this->option('all') || $this->option('resource')) {
-            $this->createResources();
+            $this->createFile('resource');
+            $this->createFile('collection');
         }
 
         if ($this->option('all') || $this->option('action')) {
-            $this->createActions();
+            $this->createFile('storeAction');
+            $this->createFile('editAction');
+            $this->createFile('updateAction');
+            $this->createFile('deleteAction');
+            $this->createFile('showAction');
+            $this->createFile('listAction');
         }
 
         $this->info("Module [{$this->rootPath}] created successfully for {$this->entity} Entity!");
     }
 
     private function makeFolders(): void {
-        $folders = [
-            $this->rootPath,
-            "{$this->rootPath}/Models",
-            "{$this->rootPath}/Services",
-            "{$this->rootPath}/Repositories/Eloquent",
-            "{$this->rootPath}/Repositories/Interfaces",
-            "{$this->rootPath}/Actions/{$this->entity}",
-            "{$this->rootPath}/DTO",
-            "{$this->rootPath}/Http/Controllers",
-            "{$this->rootPath}/Http/Requests/{$this->entity}",
-            "{$this->rootPath}/Http/Resources/{$this->entity}",
-        ];
+        foreach ($this->folders as $folder) {
+            $folder = $this->replacePathPlaceholders($folder);
 
-        foreach ($folders as $folder) {
             if (!File::exists($folder)) {
                 File::makeDirectory($folder, 0755, true);
             }
         }
     }
 
-    private function getStubsPath(): string {
-        return app_path('Console/Stubs');
-    }
-
     private function getStubContent(string $name): string {
-        return File::get($this->getStubsPath() . DIRECTORY_SEPARATOR . $name);
+        return File::get($this->stubPath . DIRECTORY_SEPARATOR . $name);
     }
 
-    private function replaceDefaultStubPlaceholders(string $stub): string {
+    private function replacePathPlaceholders(string $path): string {
+        return str_replace(
+            [
+                '{{root_path}}',
+                '{{entity}}',
+            ],
+            [
+                $this->rootPath,
+                $this->entity,
+            ],
+            $path
+        );
+    }
+
+    private function createFile(string $type): void {
+        $stubName = $this->stubMap[$type];
+        $stub = $this->getStubContent($stubName);
+        $content = $this->replaceStubPlaceholders($stub);
+
+        $path = $this->pathMap[$type];
+        $path = $this->replacePathPlaceholders($path);
+
+        File::put($path, $content);
+    }
+
+    private function replaceStubPlaceholders(string $stub): string {
         return str_replace(
             [
                 '{{entity}}',
@@ -127,7 +199,7 @@ class MakeModuleCrud extends Command
         $stub = $this->getStubContent('module.model.stub');
         
         $dynamicReplacements = $this->getModelDynamicReplacements();
-        $content = $this->replaceDefaultStubPlaceholders($stub);
+        $content = $this->replaceStubPlaceholders($stub);
         $content = str_replace(
             [
                 '{{fillable_fields}}',
@@ -146,49 +218,30 @@ class MakeModuleCrud extends Command
     }
 
     private function loadEntityFields(): void {
-        $entity = trim(strtolower($this->entity));
-        $tableName = '';
-
-        if (substr($this->entity, -1) == 's') {
-            $tableName = $entity . 'es';
-        } elseif (substr($this->entity, -1) == 'y') {
-            $tableName = substr($entity, strlen($entity - 1)) . 'ies';
-        } else {
-            $tableName = $entity . 's';
-        }
-
+        $tableName = $this->getTableNameByEntityName($this->entity);
         $this->entityFields = ModelHelpers::getColumnsFromTable($tableName);
     }
 
-    private function createRepository(): void {
-        $stub = $this->getStubContent('module.repository.stub');
-        $content = $this->replaceDefaultStubPlaceholders($stub);
-        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Repositories' . DIRECTORY_SEPARATOR . 'Eloquent' . DIRECTORY_SEPARATOR . $this->entity . 'Repository.php';
+    private function getTableNameByEntityName(string $entityName): string {
+        $entityName = trim(strtolower($entityName));
+        $tableName = '';
 
-        File::put($path, $content);
-    }
+        if (substr($entityName, -1) == 's') {
+            $tableName = $entityName . 'es';
+        } elseif (substr($entityName, -1) == 'y') {
+            $tableName = substr($entityName, strlen($entityName - 1)) . 'ies';
+        } else {
+            $tableName = $entityName . 's';
+        }
 
-    private function createRepositoryInterface(): void {
-        $stub = $this->getStubContent('module.repository-interface.stub');
-        $content = $this->replaceDefaultStubPlaceholders($stub);
-        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Repositories' . DIRECTORY_SEPARATOR . 'Interfaces' . DIRECTORY_SEPARATOR . $this->entity . 'RepositoryInterface.php';
-
-        File::put($path, $content);
-    }
-
-    private function createService(): void {
-        $stub = $this->getStubContent('module.service.stub');
-        $content = $this->replaceDefaultStubPlaceholders($stub);
-        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Services' . DIRECTORY_SEPARATOR . $this->entity . 'Service.php';
-
-        File::put($path, $content);
+        return $tableName;
     }
 
     private function createDto(): void {
         $stub = $this->getStubContent('module.dto.stub');
 
         $dynamicReplacements = $this->getDtoDynamicReplacements();
-        $content = $this->replaceDefaultStubPlaceholders($stub);
+        $content = $this->replaceStubPlaceholders($stub);
         $content = str_replace(
             [
                 '{{constructor_properties}}',
@@ -212,7 +265,7 @@ class MakeModuleCrud extends Command
         $stub = $this->getStubContent('module.controller.stub');
         
         $dynamicReplacements = $this->getControllerDynamicReplacements();
-        $content = $this->replaceDefaultStubPlaceholders($stub);
+        $content = $this->replaceStubPlaceholders($stub);
         $content = str_replace(
             [
                 '{{swagger_query_parameters}}',
@@ -246,7 +299,7 @@ class MakeModuleCrud extends Command
         $stub = $this->getStubContent('module.request-store.stub');
         
         $dynamicReplacements = $this->getRequestDynamicReplacements();
-        $content = $this->replaceDefaultStubPlaceholders($stub);
+        $content = $this->replaceStubPlaceholders($stub);
         $content = str_replace(
             [
                 '{{rules_definitions}}',
@@ -270,7 +323,7 @@ class MakeModuleCrud extends Command
         $stub = $this->getStubContent('module.request-update.stub');
         
         $dynamicReplacements = $this->getRequestDynamicReplacements();
-        $content = $this->replaceDefaultStubPlaceholders($stub);
+        $content = $this->replaceStubPlaceholders($stub);
         $content = str_replace(
             [
                 '{{rules_definitions}}',
@@ -294,7 +347,7 @@ class MakeModuleCrud extends Command
         $stub = $this->getStubContent('module.request-list.stub');
         
         $dynamicReplacements = $this->getListRequestDynamicReplacements();
-        $content = $this->replaceDefaultStubPlaceholders($stub);
+        $content = $this->replaceStubPlaceholders($stub);
         $content = str_replace(
             [
                 '{{rules_definitions}}',
@@ -321,7 +374,7 @@ class MakeModuleCrud extends Command
         $stub = $this->getStubContent('module.resource.stub');
         
         $dynamicReplacements = $this->getResourceDynamicReplacements();
-        $content = $this->replaceDefaultStubPlaceholders($stub);
+        $content = $this->replaceStubPlaceholders($stub);
         $content = str_replace(
             [
                 '{{array_fields}}',
@@ -337,73 +390,6 @@ class MakeModuleCrud extends Command
         $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . $this->entity . 'Resource.php';
 
         File::put($path, $content);
-    }
-
-    private function createCollection(): void {
-        $stub = $this->getStubContent('module.resource-collection.stub');
-        $content = $this->replaceDefaultStubPlaceholders($stub);
-        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . $this->entity . 'Collection.php';
-
-        File::put($path, $content);
-    }
-
-    private function createActions(): void {
-        $this->createStoreAction();
-        $this->createEditAction();
-        $this->createUpdateAction();
-        $this->createDeleteAction();
-        $this->createShowAction();
-        $this->createListAction();
-    }
-
-    private function createStoreAction(): void {
-        $stub = $this->getStubContent('module.action-store.stub');
-        $content = $this->replaceDefaultStubPlaceholders($stub);
-        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Actions' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . 'Store' . $this->entity . 'Action.php';
-
-        File::put($path, $content);
-    }
-
-    private function createEditAction(): void {
-        $stub = $this->getStubContent('module.action-edit.stub');
-        $content = $this->replaceDefaultStubPlaceholders($stub);
-        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Actions' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . 'Edit' . $this->entity . 'Action.php';
-
-        File::put($path, $content);
-    }
-
-    private function createUpdateAction(): void {
-        $stub = $this->getStubContent('module.action-update.stub');
-        $content = $this->replaceDefaultStubPlaceholders($stub);
-        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Actions' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . 'Update' . $this->entity . 'Action.php';
-
-        File::put($path, $content);
-    }
-
-    private function createDeleteAction(): void {
-        $stub = $this->getStubContent('module.action-delete.stub');
-        $content = $this->replaceDefaultStubPlaceholders($stub);
-        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Actions' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . 'Delete' . $this->entity . 'Action.php';
-
-        File::put($path, $content);
-    }
-
-    private function createShowAction(): void {
-        $stub = $this->getStubContent('module.action-show.stub');
-        $content = $this->replaceDefaultStubPlaceholders($stub);
-        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Actions' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . 'Show' . $this->entity . 'Action.php';
-
-        File::put($path, $content);
-    }
-
-    private function createListAction(): void {
-        $stub = $this->getStubContent('module.action-list.stub');
-        $content = $this->replaceDefaultStubPlaceholders($stub);
-        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Actions' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . 'List' . $this->entity . 'Action.php';
-
-        File::put($path, $content);
-
-        Carbon::now();
     }
 
     private function getDtoDynamicReplacements(): array {
@@ -583,8 +569,7 @@ class MakeModuleCrud extends Command
                 'example' => 'false'
             ],
         ];
-
-
+        
         foreach ($this->entityFields as $field) {
             if (!$setCommomProperties && in_array($field['name'], $this->commomFields)) {
                 continue;

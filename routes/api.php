@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Route;
 
 Route::post('security/auth/login', [AuthController::class, 'login']);
+Route::post('security/auth/token', [AuthController::class, 'token']);
 
 Route::group(['middleware' => 'auth'], function () {
     Route::prefix('core')->group(function() {

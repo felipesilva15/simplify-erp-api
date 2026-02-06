@@ -4,6 +4,7 @@ use App\Core\Exceptions\AccessDeniedHttpException as CustomAccessDeniedHttpExcep
 use App\Core\Exceptions\AuthenticationException as CustomAuthenticationException;
 use App\Core\Exceptions\NotFoundHttpException as CustomNotFoundHttpException;
 use App\Core\Exceptions\ValidationException as CustomValidationException;
+use App\Modules\Security\Http\Middleware\JwtFromCookie;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -21,7 +22,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->group('api', [
+            JwtFromCookie::class,
+        ]);
+
+        $middleware->alias([
+            'jwt.cookie' => JwtFromCookie::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (AccessDeniedHttpException $e, Request $request) {

@@ -34,6 +34,46 @@ class AuthController extends Controller
      *          @OA\JsonContent(ref="#/components/schemas/LoginRequest")
      *      ),
      *      @OA\Response(
+     *          response="204", 
+     *          description="No content"
+     *      ),
+     *      @OA\Response(
+     *         response="401", 
+     *         description="Unauthorized",
+     *         @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *      )
+     *  )
+     * )
+     */
+    public function login(LoginRequest $request, LoginAction $action): Response {
+        $dto = AuthCredentialsDTO::fromArray($request->validated());
+        $tokenDetails = $action->execute($dto);
+
+        return response()
+            ->noContent()
+            ->cookie('token',
+                $tokenDetails->token,
+                config('jwt.ttl'),
+                '/',
+                null,
+                true,
+                true,
+                false,
+                'Lax'
+            );
+    }
+
+    /**
+     * @OA\Post(
+     *      path="/api/security/auth/token",
+     *      tags={"Authentication"},
+     *      summary="Log in",
+     *      @OA\RequestBody(
+     *          required=true,
+     *          description="Credentials to log in",
+     *          @OA\JsonContent(ref="#/components/schemas/LoginRequest")
+     *      ),
+     *      @OA\Response(
      *          response="200", 
      *          description="Token details",
      *          @OA\JsonContent(ref="#/components/schemas/TokenDetailsResource")
@@ -46,7 +86,7 @@ class AuthController extends Controller
      *  )
      * )
      */
-    public function login(LoginRequest $request, LoginAction $action): JsonResponse {
+    public function token(LoginRequest $request, LoginAction $action): JsonResponse {
         $dto = AuthCredentialsDTO::fromArray($request->validated());
         $tokenDetails = $action->execute($dto);
 
@@ -95,7 +135,9 @@ class AuthController extends Controller
      */
     public function logout(LogoutAction $action): Response {
         $action->execute();
-        return response()->noContent();
+        return response()
+            ->noContent()
+            ->withoutCookie('token');
     }
     
     /**
