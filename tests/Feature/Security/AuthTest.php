@@ -20,10 +20,10 @@ class AuthTest extends TestCase
         ];
     }
 
-    public function test_can_login(): void
+    public function test_can_get_auth_token(): void
     {
         $data = $this->getCredentials();
-        $response = $this->postJson("{$this->endpoint}/login", $data);
+        $response = $this->postJson("{$this->endpoint}/token", $data);
 
         $response->assertStatus(Response::HTTP_OK)
                 ->assertJsonIsObject()
@@ -34,11 +34,11 @@ class AuthTest extends TestCase
                 ]);
     }
 
-    public function test_cannot_login_with_invalid_credentials(): void
+    public function test_cannot_get_auth_token_with_invalid_credentials(): void
     {
         $data = $this->getCredentials();
         $data['password'] = "123456789";
-        $response = $this->postJson("{$this->endpoint}/login", $data);
+        $response = $this->postJson("{$this->endpoint}/token", $data);
 
         $this->assertErrorResponse($response, Response::HTTP_UNAUTHORIZED);
     }
@@ -95,7 +95,7 @@ class AuthTest extends TestCase
     public function test_expired_token_fails(): void
     {
         $data = $this->getCredentials();
-        $response = $this->postJson("{$this->endpoint}/login", $data);
+        $response = $this->postJson("{$this->endpoint}/token", $data);
 
         $expiresIn = $response->json('expires_in');
         $token = $response->json('access_token');
@@ -114,7 +114,7 @@ class AuthTest extends TestCase
     public function test_can_use_valid_token_successful(): void
     {
         $data = $this->getCredentials();
-        $response = $this->postJson("{$this->endpoint}/login", $data);
+        $response = $this->postJson("{$this->endpoint}/token", $data);
 
         $token = $response->json('access_token');
 

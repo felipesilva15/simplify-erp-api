@@ -585,6 +585,41 @@
                     }
                 },
                 "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/security/auth/token": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Log in",
+                "operationId": "8afeb28bec7769f891bee6dcd6a3a297",
+                "requestBody": {
+                    "description": "Credentials to log in",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
                     "200": {
                         "description": "Token details",
                         "content": {
