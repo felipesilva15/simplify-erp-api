@@ -19,7 +19,8 @@ class PermissionFactory extends Factory
         return [
             'resource' => fake()->word(),
             'action' => fake()->word(),
-            'description' => fake()->text(512)
+            'description' => fake()->text(512),
+            'is_active' => true
         ];
     }
 
