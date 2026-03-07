@@ -17,7 +17,6 @@ class ModuleTest extends TestCase
             'id',
             'name',
             'description',
-            'is_active',
             'permissions' => [
                 '*' => [
                     'id',
@@ -76,7 +75,7 @@ class ModuleTest extends TestCase
     public function test_can_list_modules_with_sort(): void
     {
         $queryParams = [
-            'sorts' => 'id'
+            'sorts' => '-id'
         ];
 
         Module::factory(3)->create();

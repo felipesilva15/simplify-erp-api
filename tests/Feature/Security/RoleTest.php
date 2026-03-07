@@ -57,7 +57,7 @@ class RoleTest extends TestCase
     public function test_can_list_roles_with_sort(): void
     {
         $queryParams = [
-            'sorts' => 'id'
+            'sorts' => '-id'
         ];
 
         Role::factory(3)->create();

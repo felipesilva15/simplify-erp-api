@@ -58,7 +58,7 @@ class UserTest extends TestCase
     public function test_can_list_users_with_sort(): void
     {
         $queryParams = [
-            'sorts' => 'id'
+            'sorts' => '-id'
         ];
 
         User::factory(3)->create();

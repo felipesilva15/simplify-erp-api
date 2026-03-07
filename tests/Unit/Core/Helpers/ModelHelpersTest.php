@@ -9,6 +9,7 @@ use App\Core\Enums\SqlOrderDirectionEnum;
 use App\Core\Helpers\ModelHelpers;
 use App\Core\Helpers\PaginatorHelpers;
 use App\Modules\Security\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase;
 
@@ -36,8 +37,12 @@ class ModelHelpersTest extends TestCase
 
     public function test_can_set_filters_on_query(): void {
         $filters = [
-            'id' => '1',
-            'name' => 'Felipe'
+            'id' => [
+                'eq' => 1
+            ],
+            'name' => [
+                'like' => 'Felipe'
+            ]
         ];
         $builder = User::query();
 
@@ -50,10 +55,28 @@ class ModelHelpersTest extends TestCase
         $this->assertStringEndsWith('%', $builder->getQuery()->wheres[1]['value']);
     }
 
+    public function test_can_set_filters_on_query_for_date_column(): void {
+        $filters = [
+            'created_at' => [
+                'lte' => Carbon::now()->toISOString()
+            ]
+        ];
+        $builder = User::query();
+
+        $builder = ModelHelpers::setFiltersOnQuery($builder, $filters);
+        
+        $this->assertCount(1, $builder->getQuery()->wheres);
+        $this->assertEquals('created_at', $builder->getQuery()->wheres[0]['column']);
+    }
+
     public function test_can_set_filters_on_query_only_for_some_columns(): void {
         $filters = [
-            'id' => '1',
-            'name' => 'Felipe'
+            'id' => [
+                'eq' => 1
+            ],
+            'name' => [
+                'like' => 'Felipe'
+            ]
         ];
         $builder = User::query();
 
@@ -65,7 +88,22 @@ class ModelHelpersTest extends TestCase
 
     public function test_cannot_set_filters_on_query_for_non_existent_column(): void {
         $filters = [
-            'foo' => 'bar'
+            'foo' => [
+                'eq' => 'bar'
+            ]
+        ];
+        $builder = User::query();
+
+        $builder = ModelHelpers::setFiltersOnQuery($builder, $filters);
+        
+        $this->assertEmpty($builder->getQuery()->wheres);
+    }
+
+    public function test_cannot_set_filters_on_query_for_non_existent_operator(): void {
+        $filters = [
+            'id' => [
+                'foo' => 0
+            ]
         ];
         $builder = User::query();
 
@@ -75,17 +113,10 @@ class ModelHelpersTest extends TestCase
     }
 
     public function test_can_set_sorts_on_query(): void {
-        $sortBy = [
-            'id',
-            'name'
-        ];
-        $sortDir = [
-            SqlOrderDirectionEnum::Descending->value,
-            SqlOrderDirectionEnum::Ascending->value
-        ];
+        $sorts = '-id,name';
         $builder = User::query();
 
-        $builder = ModelHelpers::setSortsOnQuery($builder, $sortBy, $sortDir);
+        $builder = ModelHelpers::setSortsOnQuery($builder, $sorts);
         
         $this->assertCount(2, $builder->getQuery()->orders);
         $this->assertEquals('id', $builder->getQuery()->orders[0]['column']);
@@ -93,41 +124,18 @@ class ModelHelpersTest extends TestCase
     }
 
     public function test_cannot_set_sorts_on_query_for_non_existent_column(): void {
-        $sortBy = [
-            'foo'
-        ];
-        $sortDir = [
-            SqlOrderDirectionEnum::Descending->value
-        ];
+        $sorts = 'foo';
         $builder = User::query();
 
-        $builder = ModelHelpers::setSortsOnQuery($builder, $sortBy, $sortDir);
+        $builder = ModelHelpers::setSortsOnQuery($builder, $sorts);
         
         $this->assertEmpty($builder->getQuery()->orders);
     }
 
-    public function test_cannot_set_sorts_on_query_for_non_existent_direction(): void {
-        $sortBy = [
-            'id'
-        ];
-        $sortDir = [
-            'foo'
-        ];
+    public function test_cannot_set_sorts_on_query_for_empty_sorts(): void {
         $builder = User::query();
 
-        $builder = ModelHelpers::setSortsOnQuery($builder, $sortBy, $sortDir);
-        
-        $this->assertEmpty($builder->getQuery()->orders);
-    }
-
-    public function test_cannot_set_sorts_on_query_without_direction(): void {
-        $sortBy = [
-            'id'
-        ];
-        $sortDir = [];
-        $builder = User::query();
-
-        $builder = ModelHelpers::setSortsOnQuery($builder, $sortBy, $sortDir);
+        $builder = ModelHelpers::setSortsOnQuery($builder, '');
         
         $this->assertEmpty($builder->getQuery()->orders);
     }

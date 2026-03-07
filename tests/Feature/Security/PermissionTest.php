@@ -53,7 +53,7 @@ class PermissionTest extends TestCase
     public function test_can_list_permissions_with_sort(): void
     {
         $queryParams = [
-            'sorts' => 'id'
+            'sorts' => '-id'
         ];
 
         Permission::factory(3)->withName()->forModule()->create();
