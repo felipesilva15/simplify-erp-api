@@ -18,6 +18,7 @@ use App\Core\Http\Requests\Module\ListModuleRequest;
 use App\Core\Http\Resources\Module\ModuleResource;
 use App\Core\Http\Resources\Module\ModuleCollection;
 use App\Core\DTO\ModuleDTO;
+use App\Core\Http\Requests\Core\ListRequest;
 use App\Core\Models\Module;
 
 class ModuleController extends Controller
@@ -65,7 +66,7 @@ class ModuleController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function index(ListModuleRequest $request, ListModuleAction $action): JsonResponse {
+    public function index(ListRequest $request, ListModuleAction $action): JsonResponse {
         $serviceResult = $action->execute($request->all());
 
         $paginated = new ModuleCollection($serviceResult->data);

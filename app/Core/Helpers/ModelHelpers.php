@@ -2,12 +2,25 @@
 
 namespace App\Core\Helpers;
 
+use App\Core\Enums\RequestQueryOperatorsEnum;
 use App\Core\Enums\SqlOrderDirectionEnum;
+use App\Core\Enums\SqlQueryOperatorsEnum;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Schema;
 
 class ModelHelpers
 {
+    public static array $operatorDictionary = [
+        RequestQueryOperatorsEnum::Equal->value => SqlQueryOperatorsEnum::Equal,
+        RequestQueryOperatorsEnum::Like->value => SqlQueryOperatorsEnum::Like,
+        RequestQueryOperatorsEnum::LessThan->value => SqlQueryOperatorsEnum::LessThan,
+        RequestQueryOperatorsEnum::LessThanEqual->value => SqlQueryOperatorsEnum::LessThanEqual,
+        RequestQueryOperatorsEnum::GreaterThan->value => SqlQueryOperatorsEnum::GreaterThan,
+        RequestQueryOperatorsEnum::GreaterThanEqual->value => SqlQueryOperatorsEnum::GreaterThanEqual,
+        RequestQueryOperatorsEnum::NotEqual->value => SqlQueryOperatorsEnum::NotEqual
+    ];
+
     public static function getColumnsFromTable(string $tableName): array {
         $databaseFields = Schema::getColumns($tableName);
         $fields = [];
@@ -55,7 +68,7 @@ class ModelHelpers
         $columns = ModelHelpers::getColumnsFromTable($query->getModel()->getTable());
         $columns = collect($columns);
 
-        foreach ($filters as $columnName => $value) {
+        foreach ($filters as $columnName => $operations) {
             if (count($columnsToFilter) > 0 && !in_array($columnName, $columnsToFilter)) {
                 continue;
             }
@@ -66,35 +79,42 @@ class ModelHelpers
                 continue;
             }
 
-            switch ($column['type']) {
-                case 'string':
-                    $query->where($columnName, 'like', '%'.trim($value).'%');
-                    break;
+            foreach ($operations as $operator => $value) {
+                $operatorEnum = RequestQueryOperatorsEnum::tryFrom($operator);
+
+                if (!$operatorEnum) {
+                    continue;
+                }
+
+                $sqlOperatorEnum = self::$operatorDictionary[$operatorEnum->value];
+
+                if ($column['type'] == 'Carbon') {
+                    $value = Carbon::parse($value);
+                } elseif ($sqlOperatorEnum == SqlQueryOperatorsEnum::Like) {
+                    $value = "%$value%";
+                }
                 
-                default:
-                    $query->where($columnName, $value);
-                    break;
+                $query->where($column['name'], $sqlOperatorEnum->value, $value);
             }
         }
         
         return $query;
     }
 
-    public static function setSortsOnQuery(Builder $query, array $sortBy, array $sortDir): Builder {
+    public static function setSortsOnQuery(Builder $query, string $sortOptions): Builder {
+        if (empty($sortOptions)) {
+            return $query;
+        }
+
+        $sorts = explode(',', $sortOptions);
+
         $columns = ModelHelpers::getColumnsFromTable($query->getModel()->getTable());
         $columns = collect($columns);
 
-        foreach ($sortBy as $index => $columnName) {
-            if (!isset($sortDir[$index])) {
-                continue;
-            }
+        foreach ($sorts as $sort) {
+            $sortDirection = str_starts_with($sort, '-') ? SqlOrderDirectionEnum::Descending : SqlOrderDirectionEnum::Ascending;
 
-            $sortDirection = SqlOrderDirectionEnum::tryFrom($sortDir[$index]);
-
-            if (!$sortDirection) {
-                continue;
-            }
-
+            $columnName = ltrim($sort, '-'); 
             $column = $columns->firstWhere('name', '=', $columnName);
 
             if (!$column) {

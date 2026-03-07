@@ -31,10 +31,7 @@ class ListPermissionRequest extends FormRequest
             'action' => 'nullable|string',
             'name' => 'nullable|string',
             'description' => 'nullable|string',
-            'sort_by' => 'nullable|array',
-            'sort_by.*' => 'string',
-            'sort_dir' => 'nullable|array',
-            'sort_dir.*' => [Rule::enum(SqlOrderDirectionEnum::class)],
+            'sorts' => 'nullable|string',
             'per_page' => 'nullable|integer|max:100',
             'page' => 'nullable|integer|min:0'
         ];

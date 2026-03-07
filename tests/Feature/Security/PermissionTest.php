@@ -53,8 +53,7 @@ class PermissionTest extends TestCase
     public function test_can_list_permissions_with_sort(): void
     {
         $queryParams = [
-            'sort_by[]' => 'id',
-            'sort_dir[]' => SqlOrderDirectionEnum::Descending->value
+            'sorts' => 'id'
         ];
 
         Permission::factory(3)->withName()->forModule()->create();
@@ -68,7 +67,11 @@ class PermissionTest extends TestCase
     public function test_can_list_permissions_with_filter(): void
     {
         $queryParams = [
-            'id' => 2
+            'filters' => [
+                'id' => [
+                    'eq' => 2
+                ]
+            ]
         ];
 
         Permission::factory(3)->withName()->forModule()->create();

@@ -76,8 +76,7 @@ class ModuleTest extends TestCase
     public function test_can_list_modules_with_sort(): void
     {
         $queryParams = [
-            'sort_by[]' => 'id',
-            'sort_dir[]' => SqlOrderDirectionEnum::Descending->value
+            'sorts' => 'id'
         ];
 
         Module::factory(3)->create();
@@ -91,7 +90,11 @@ class ModuleTest extends TestCase
     public function test_can_list_modules_with_filter(): void
     {
         $queryParams = [
-            'id' => 2
+            'filters' => [
+                'id' => [
+                    'eq' => 2
+                ]
+            ]
         ];
 
         Module::factory(3)->create();

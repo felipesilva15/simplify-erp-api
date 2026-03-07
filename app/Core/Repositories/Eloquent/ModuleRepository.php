@@ -30,16 +30,16 @@ class ModuleRepository implements ModuleRepositoryInterface
         return (bool) $module->delete();
     }
 
-    public function list(array $filters = []): LengthAwarePaginator {
+    public function list(array $params = []): LengthAwarePaginator {
         $query = Module::query();
 
         // Filtering
-        if (count($filters) > 0)
-            $query = ModelHelpers::setFiltersOnQuery($query, $filters);
+        if (isset($params['filters']) && count($params['filters']) > 0)
+            $query = ModelHelpers::setFiltersOnQuery($query, $params['filters']);
 
         // Sorting
-        if (count($filters['sort_by'] ?? []) > 0 && count($filters['sort_dir'] ?? []) > 0)
-            $query = ModelHelpers::setSortsOnQuery($query, $filters['sort_by'], $filters['sort_dir']);
+        if (!empty($params['sorts']))
+            $query = ModelHelpers::setSortsOnQuery($query, $params['sorts']);
 
         // Pagination
         $perPage = isset($filters['per_page']) ? (int) $filters['per_page'] : 15;

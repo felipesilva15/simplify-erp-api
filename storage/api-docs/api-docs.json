@@ -2590,10 +2590,11 @@
                 "type": "object"
             },
             "RequestQueryOperatorsEnum": {
-                "description": "Request query operators:\n *      Equal = ''\n *      Less than = 'lt'\n *      Less than equal = 'lte'\n *      Greater than = 'gt'\n *      Greater than equal = 'gte'\n *      Not equal = 'ne'",
+                "description": "Request query operators:\n *      Equal = 'eq'\n *      Like = 'like'\n *      Less than = 'lt'\n *      Less than equal = 'lte'\n *      Greater than = 'gt'\n *      Greater than equal = 'gte'\n *      Not equal = 'ne'",
                 "type": "string",
                 "enum": [
-                    "",
+                    "eq",
+                    "like",
                     "lt",
                     "lte",
                     "gt",
@@ -2610,10 +2611,11 @@
                 ]
             },
             "SqlQueryOperatorsEnum": {
-                "description": "SQL query operators:\n *      Equal = '='\n *      Less than = '<'\n *      Less than equal = '<='\n *      Greater than = '>'\n *      Greater than equal = '>='\n *      Not equal = '!='",
+                "description": "SQL query operators:\n *      Equal = '='\n *      Like = 'like'\n *      Less than = '<'\n *      Less than equal = '<='\n *      Greater than = '>'\n *      Greater than equal = '>='\n *      Not equal = '!='",
                 "type": "string",
                 "enum": [
                     "=",
+                    "like",
                     "<",
                     "<=",
                     ">",
@@ -2645,6 +2647,27 @@
                         "type": "object"
                     }
                 ]
+            },
+            "ListRequest": {
+                "properties": {
+                    "filters": {
+                        "$ref": "#/components/schemas/Filters"
+                    },
+                    "sorts": {
+                        "description": "Campos para ordenação separados por vírgula. Use '-' para desc",
+                        "type": "string",
+                        "example": "name,-id"
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "page": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
             },
             "ListModuleRequest": {
                 "properties": {
@@ -2884,6 +2907,52 @@
                 },
                 "type": "object"
             },
+            "FieldFilter": {
+                "properties": {
+                    "eq": {
+                        "$ref": "#/components/schemas/FilterValue"
+                    },
+                    "neq": {
+                        "$ref": "#/components/schemas/FilterValue"
+                    },
+                    "gt": {
+                        "$ref": "#/components/schemas/FilterValue"
+                    },
+                    "gte": {
+                        "$ref": "#/components/schemas/FilterValue"
+                    },
+                    "lt": {
+                        "$ref": "#/components/schemas/FilterValue"
+                    },
+                    "lte": {
+                        "$ref": "#/components/schemas/FilterValue"
+                    },
+                    "like": {
+                        "$ref": "#/components/schemas/FilterValue"
+                    }
+                },
+                "type": "object",
+                "additionalProperties": false
+            },
+            "FilterValue": {
+                "oneOf": [
+                    {
+                        "type": "string"
+                    },
+                    {
+                        "type": "number"
+                    },
+                    {
+                        "type": "boolean"
+                    }
+                ]
+            },
+            "Filters": {
+                "type": "object",
+                "additionalProperties": {
+                    "$ref": "#/components/schemas/FieldFilter"
+                }
+            },
             "ApiErrorResponse": {
                 "required": [
                     "success",
@@ -3031,42 +3100,6 @@
                         "maxLength": 512,
                         "minLength": 1,
                         "example": "Sample",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "ListRoleRequest": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "example": "Sample"
-                    },
-                    "description": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-01T11:21:13.539443Z",
-                        "nullable": true
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-01T11:21:13.539443Z",
-                        "nullable": true
-                    },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-01T11:21:13.539443Z",
                         "nullable": true
                     }
                 },

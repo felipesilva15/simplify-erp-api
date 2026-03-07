@@ -8,17 +8,19 @@ namespace App\Core\Enums;
  *   type="string",
  *   description="SQL query operators:
  *      Equal = '='
+ *      Like = 'like'
  *      Less than = '<'
  *      Less than equal = '<='
  *      Greater than = '>'
  *      Greater than equal = '>='
  *      Not equal = '!='",
- *   enum={"=", "<", "<=", ">", ">=", "!="}
+ *   enum={"=", "like", "<", "<=", ">", ">=", "!="}
  * )
  */
 enum SqlQueryOperatorsEnum: string
 {
     case Equal = '=';
+    case Like = 'like';
     case LessThan = '<';
     case LessThanEqual = '<=';
     case GreaterThan = '>';

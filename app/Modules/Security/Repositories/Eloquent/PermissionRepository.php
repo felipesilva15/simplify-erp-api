@@ -39,8 +39,8 @@ class PermissionRepository implements PermissionRepositoryInterface
             $query = ModelHelpers::setFiltersOnQuery($query, $filters);
 
         // Sorting
-        if (count($filters['sort_by'] ?? []) > 0 && count($filters['sort_dir'] ?? []) > 0)
-            $query = ModelHelpers::setSortsOnQuery($query, $filters['sort_by'], $filters['sort_dir']);
+        if (!empty($filters['sorts']))
+            $query = ModelHelpers::setSortsOnQuery($query, $filters['sorts']);
 
         // Pagination
         $perPage = isset($filters['per_page']) ? (int) $filters['per_page'] : 15;

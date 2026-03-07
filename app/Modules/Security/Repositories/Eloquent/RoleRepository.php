@@ -30,20 +30,20 @@ class RoleRepository implements RoleRepositoryInterface
         return (bool) $role->delete();
     }
 
-    public function list(array $filters = []): LengthAwarePaginator {
+    public function list(array $params = []): LengthAwarePaginator {
         $query = Role::query();
 
         // Filtering
-        if (count($filters) > 0)
-            $query = ModelHelpers::setFiltersOnQuery($query, $filters);
+        if (isset($params['filters']) && count($params['filters']) > 0)
+            $query = ModelHelpers::setFiltersOnQuery($query, $params['filters']);
 
         // Sorting
-        if (count($filters['sort_by'] ?? []) > 0 && count($filters['sort_dir'] ?? []) > 0)
-            $query = ModelHelpers::setSortsOnQuery($query, $filters['sort_by'], $filters['sort_dir']);
+        if (!empty($params['sorts']))
+            $query = ModelHelpers::setSortsOnQuery($query, $params['sorts']);
 
         // Pagination
-        $perPage = isset($filters['per_page']) ? (int) $filters['per_page'] : 15;
-        $page = isset($filters['page']) ? (int) $filters['page'] : 1;
+        $perPage = isset($params['per_page']) ? (int) $params['per_page'] : 15;
+        $page = isset($params['page']) ? (int) $params['page'] : 1;
 
         return $query->paginate(perPage: $perPage, page: $page)->withQueryString();
     }
