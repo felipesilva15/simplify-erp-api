@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 use App\Core\Http\Controllers\Controller;
+use App\Core\Http\Requests\Core\ListRequest;
 use App\Modules\Security\Actions\Role\StoreRoleAction;
 use App\Modules\Security\Actions\Role\UpdateRoleAction;
 use App\Modules\Security\Actions\Role\DeleteRoleAction;
@@ -15,7 +16,6 @@ use App\Modules\Security\Actions\Role\ShowRoleAction;
 use App\Modules\Security\Actions\Role\ListRoleAction;
 use App\Modules\Security\Http\Requests\Role\StoreRoleRequest;
 use App\Modules\Security\Http\Requests\Role\UpdateRoleRequest;
-use App\Modules\Security\Http\Requests\Role\ListRoleRequest;
 use App\Modules\Security\Http\Resources\Role\RoleResource;
 use App\Modules\Security\Http\Resources\Role\RoleCollection;
 use App\Modules\Security\DTO\RoleDTO;
@@ -34,16 +34,14 @@ class RoleController extends Controller
      *      path="/api/security/roles",
      *      tags={"Role"},
      *      summary="List all rows",
-     *      @OA\Parameter(name="id", in="query", required=false, @OA\Schema(type="integer")),
-     *      @OA\Parameter(name="name", in="query", required=false, @OA\Schema(type="string")),
-     *      @OA\Parameter(name="description", in="query", required=false, @OA\Schema(type="string")),
-     *      @OA\Parameter(name="created_at", in="query", required=false, @OA\Schema(type="string")),
-     *      @OA\Parameter(name="updated_at", in="query", required=false, @OA\Schema(type="string")),
-     *      @OA\Parameter(name="deleted_at", in="query", required=false, @OA\Schema(type="string")),
-     *      @OA\Parameter(name="sort_by[]", in="query", description="Fields name's to sort", required=false, @OA\Schema(type="array", @OA\Items(type="string", example="id"))),
-     *      @OA\Parameter(name="sort_dir[]", in="query", description="Directions to sort: Ascending = 'asc'; Descending = 'desc'", required=false, @OA\Schema(type="array", @OA\Items(type="string", example="desc"))),
-     *      @OA\Parameter(name="per_page", in="query", description="Items per page", required=false, @OA\Schema(type="integer")),
-     *      @OA\Parameter(name="page", in="query", description="Page number", required=false, @OA\Schema(type="integer")),
+     *      @OA\Parameter(name="filters[id][eq]", in="query", required=false, @OA\Schema(type="integer")),
+     *      @OA\Parameter(name="filters[name][like]", in="query", required=false, @OA\Schema(type="string")),
+     *      @OA\Parameter(name="filters[description][like]", in="query", required=false, @OA\Schema(type="string")),
+     *      @OA\Parameter(name="filters[created_at][gte]", in="query", required=false, @OA\Schema(type="string")),
+     *      @OA\Parameter(name="filters[updated_at][lte]", in="query", required=false, @OA\Schema(type="string")),
+     *      @OA\Parameter(ref="#/components/parameters/sortsParam"),
+     *      @OA\Parameter(ref="#/components/parameters/perPageParam"),
+     *      @OA\Parameter(ref="#/components/parameters/pageParam"),
      *      @OA\Response(
      *          response="200", 
      *          description="Role list",
@@ -67,7 +65,7 @@ class RoleController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function index(ListRoleRequest $request, ListRoleAction $action): JsonResponse {
+    public function index(ListRequest $request, ListRoleAction $action): JsonResponse {
         $serviceResult = $action->execute($request->all());
 
         $paginated = new RoleCollection($serviceResult->data);

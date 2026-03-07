@@ -6,6 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 use App\Core\Http\Controllers\Controller;
+use App\Core\Http\Requests\Core\ListRequest;
 use App\Modules\Security\Actions\User\StoreUserAction;
 use App\Modules\Security\Actions\User\UpdateUserAction;
 use App\Modules\Security\Actions\User\DeleteUserAction;
@@ -14,7 +15,6 @@ use App\Modules\Security\Actions\User\ShowUserAction;
 use App\Modules\Security\Actions\User\ListUserAction;
 use App\Modules\Security\Http\Requests\User\StoreUserRequest;
 use App\Modules\Security\Http\Requests\User\UpdateUserRequest;
-use App\Modules\Security\Http\Requests\User\ListUserRequest;
 use App\Modules\Security\Http\Resources\User\UserResource;
 use App\Modules\Security\Http\Resources\User\UserCollection;
 use App\Modules\Security\DTO\UserDTO;
@@ -69,7 +69,7 @@ class UserController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function index(ListUserRequest $request, ListUserAction $action): JsonResponse {
+    public function index(ListRequest $request, ListUserAction $action): JsonResponse {
         $serviceResult = $action->execute($request->all());
 
         $paginated = new UserCollection($serviceResult->data);

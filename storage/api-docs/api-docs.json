@@ -1309,7 +1309,7 @@
                 "operationId": "353ba6ecbb20948929f177d9931b3ef9",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "filters[id][eq]",
                         "in": "query",
                         "required": false,
                         "schema": {
@@ -1317,7 +1317,7 @@
                         }
                     },
                     {
-                        "name": "name",
+                        "name": "filters[name][like]",
                         "in": "query",
                         "required": false,
                         "schema": {
@@ -1325,7 +1325,7 @@
                         }
                     },
                     {
-                        "name": "description",
+                        "name": "filters[description][like]",
                         "in": "query",
                         "required": false,
                         "schema": {
@@ -1333,7 +1333,7 @@
                         }
                     },
                     {
-                        "name": "created_at",
+                        "name": "filters[created_at][gte]",
                         "in": "query",
                         "required": false,
                         "schema": {
@@ -1341,7 +1341,7 @@
                         }
                     },
                     {
-                        "name": "updated_at",
+                        "name": "filters[updated_at][lte]",
                         "in": "query",
                         "required": false,
                         "schema": {
@@ -1349,56 +1349,13 @@
                         }
                     },
                     {
-                        "name": "deleted_at",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
+                        "$ref": "#/components/parameters/sortsParam"
                     },
                     {
-                        "name": "sort_by[]",
-                        "in": "query",
-                        "description": "Fields name's to sort",
-                        "required": false,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string",
-                                "example": "id"
-                            }
-                        }
+                        "$ref": "#/components/parameters/perPageParam"
                     },
                     {
-                        "name": "sort_dir[]",
-                        "in": "query",
-                        "description": "Directions to sort: Ascending = 'asc'; Descending = 'desc'",
-                        "required": false,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string",
-                                "example": "desc"
-                            }
-                        }
-                    },
-                    {
-                        "name": "per_page",
-                        "in": "query",
-                        "description": "Items per page",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "description": "Page number",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
+                        "$ref": "#/components/parameters/pageParam"
                     }
                 ],
                 "responses": {
@@ -2654,15 +2611,17 @@
                         "$ref": "#/components/schemas/Filters"
                     },
                     "sorts": {
-                        "description": "Campos para ordenação separados por vírgula. Use '-' para desc",
+                        "description": "Fields for sorting separated by commas. Use '-' to sort descending",
                         "type": "string",
-                        "example": "name,-id"
+                        "example": "-id"
                     },
                     "per_page": {
+                        "description": "Items per page",
                         "type": "integer",
                         "example": 10
                     },
                     "page": {
+                        "description": "Page number",
                         "type": "integer",
                         "example": 1
                     }
@@ -2912,7 +2871,7 @@
                     "eq": {
                         "$ref": "#/components/schemas/FilterValue"
                     },
-                    "neq": {
+                    "ne": {
                         "$ref": "#/components/schemas/FilterValue"
                     },
                     "gt": {
@@ -2987,54 +2946,6 @@
                     "password": {
                         "type": "string",
                         "example": "123"
-                    }
-                },
-                "type": "object"
-            },
-            "ListPermissionRequest": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "module_id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "resource": {
-                        "type": "string",
-                        "example": "Sample"
-                    },
-                    "action": {
-                        "type": "string",
-                        "example": "Sample"
-                    },
-                    "name": {
-                        "type": "string",
-                        "example": "Sample"
-                    },
-                    "description": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-05T00:27:48.907847Z",
-                        "nullable": true
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-05T00:27:48.907847Z",
-                        "nullable": true
-                    },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-05T00:27:48.907847Z",
-                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -3153,57 +3064,6 @@
                         "maxLength": 512,
                         "minLength": 1,
                         "example": "Sample",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "ListUserRequest": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "example": "Sample"
-                    },
-                    "email": {
-                        "type": "string",
-                        "example": "Sample"
-                    },
-                    "email_verified_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-11T11:13:04.482174Z",
-                        "nullable": true
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-11T11:13:04.482174Z",
-                        "nullable": true
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-11T11:13:04.482174Z",
-                        "nullable": true
-                    },
-                    "username": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true
-                    },
-                    "phone_number": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true
-                    },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-11T11:13:04.482174Z",
                         "nullable": true
                     }
                 },
@@ -3802,6 +3662,38 @@
                     }
                 },
                 "type": "object"
+            }
+        },
+        "parameters": {
+            "sortsParam": {
+                "name": "sorts",
+                "in": "query",
+                "description": "Fields for sorting separated by commas. Use '-' to sort descending",
+                "required": false,
+                "schema": {
+                    "type": "string"
+                },
+                "example": "-id"
+            },
+            "perPageParam": {
+                "name": "per_page",
+                "in": "query",
+                "description": "Items per page",
+                "required": false,
+                "schema": {
+                    "type": "integer"
+                },
+                "example": 10
+            },
+            "pageParam": {
+                "name": "page",
+                "in": "query",
+                "description": "Page number",
+                "required": false,
+                "schema": {
+                    "type": "integer"
+                },
+                "example": 1
             }
         },
         "securitySchemes": {

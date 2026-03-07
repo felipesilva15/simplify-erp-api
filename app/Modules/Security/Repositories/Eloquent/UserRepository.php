@@ -30,16 +30,16 @@ class UserRepository implements UserRepositoryInterface
         return (bool) $user->delete();
     }
 
-    public function list(array $filters = []): LengthAwarePaginator {
+    public function list(array $params = []): LengthAwarePaginator {
         $query = User::query();
 
         // Filtering
-        if (count($filters) > 0)
-            $query = ModelHelpers::setFiltersOnQuery($query, $filters);
+        if (isset($params['filters']) && count($params['filters']) > 0)
+            $query = ModelHelpers::setFiltersOnQuery($query, $params['filters']);
 
         // Sorting
-        if (!empty($filters['sorts']))
-            $query = ModelHelpers::setSortsOnQuery($query, $filters['sorts']);
+        if (!empty($params['sorts']))
+            $query = ModelHelpers::setSortsOnQuery($query, $params['sorts']);
 
         // Pagination
         $perPage = isset($filters['per_page']) ? (int) $filters['per_page'] : 15;

@@ -3,9 +3,6 @@
 namespace App\Modules\Security\Http\Requests\Role;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
-
-use App\Core\Enums\SqlOrderDirectionEnum;
 
 /**
  * @OA\Schema(

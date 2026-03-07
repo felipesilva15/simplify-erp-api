@@ -3,6 +3,7 @@
 namespace App\Modules\Security\Http\Controllers;
 
 use App\Core\Http\Controllers\Controller;
+use App\Core\Http\Requests\Core\ListRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
@@ -14,7 +15,6 @@ use App\Modules\Security\Actions\Permission\ShowPermissionAction;
 use App\Modules\Security\Actions\Permission\ListPermissionAction;
 use App\Modules\Security\Http\Requests\Permission\StorePermissionRequest;
 use App\Modules\Security\Http\Requests\Permission\UpdatePermissionRequest;
-use App\Modules\Security\Http\Requests\Permission\ListPermissionRequest;
 use App\Modules\Security\Http\Resources\Permission\PermissionResource;
 use App\Modules\Security\Http\Resources\Permission\PermissionCollection;
 use App\Modules\Security\DTO\PermissionDTO;
@@ -67,7 +67,7 @@ class PermissionController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function index(ListPermissionRequest $request, ListPermissionAction $action): JsonResponse {
+    public function index(ListRequest $request, ListPermissionAction $action): JsonResponse {
         $serviceResult = $action->execute($request->all());
 
         $paginated = new PermissionCollection($serviceResult->data);
