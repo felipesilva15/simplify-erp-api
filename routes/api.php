@@ -24,6 +24,7 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::resource('users', UserController::class);
 
+        Route::get('roles/lookup', [RoleController::class, 'lookup']);
         Route::resource('roles', RoleController::class);
         Route::patch('roles/{role}/permissions', [RoleController::class, 'definePermissions']);
         

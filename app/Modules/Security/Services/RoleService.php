@@ -62,4 +62,10 @@ class RoleService
             data: $this->repository->syncPermissions($role, $permissionIds)
         );
     }
+
+    public function lookup(array $params): ServiceResult {
+        return new ServiceResult(
+            data: $this->repository->lookup($params)
+        );
+    }
 }

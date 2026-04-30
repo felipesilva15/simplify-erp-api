@@ -8,18 +8,21 @@ use Illuminate\Http\Response;
 
 use App\Core\Http\Controllers\Controller;
 use App\Core\Http\Requests\Core\ListRequest;
+use App\Core\Http\Requests\Core\LookupRequest;
 use App\Modules\Security\Actions\Role\StoreRoleAction;
 use App\Modules\Security\Actions\Role\UpdateRoleAction;
 use App\Modules\Security\Actions\Role\DeleteRoleAction;
 use App\Modules\Security\Actions\Role\EditRoleAction;
 use App\Modules\Security\Actions\Role\ShowRoleAction;
 use App\Modules\Security\Actions\Role\ListRoleAction;
+use App\Modules\Security\Actions\Role\LookupRoleAction;
 use App\Modules\Security\Http\Requests\Role\StoreRoleRequest;
 use App\Modules\Security\Http\Requests\Role\UpdateRoleRequest;
 use App\Modules\Security\Http\Resources\Role\RoleResource;
 use App\Modules\Security\Http\Resources\Role\RoleCollection;
 use App\Modules\Security\DTO\RoleDTO;
 use App\Modules\Security\Http\Requests\Role\RolePermissionsRequest;
+use App\Modules\Security\Http\Resources\Role\RoleLookupCollection;
 use App\Modules\Security\Models\Role;
 
 class RoleController extends Controller
@@ -396,6 +399,20 @@ class RoleController extends Controller
 
         return $this->success(
             data: new RoleResource($serviceResult->data),
+            httpStatus: Response::HTTP_OK
+        );
+    }
+
+    public function lookup(LookupRequest $request, LookupRoleAction $action): JsonResponse {
+        $serviceResult = $action->execute($request->all());
+
+        $paginated = new RoleLookupCollection($serviceResult->data);
+        $paginated = $paginated->toArray($request);
+
+        return $this->success(
+            data: $paginated['data'],
+            links: $paginated['links'],
+            meta: $paginated['meta'],
             httpStatus: Response::HTTP_OK
         );
     }

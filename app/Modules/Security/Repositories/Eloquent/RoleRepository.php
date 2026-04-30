@@ -7,6 +7,7 @@ use App\Modules\Security\Models\Role;
 use App\Modules\Security\Repositories\Interfaces\RoleRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Core\Helpers\ModelHelpers;
+use Illuminate\Database\Eloquent\Builder;
 
 class RoleRepository implements RoleRepositoryInterface
 {
@@ -51,5 +52,21 @@ class RoleRepository implements RoleRepositoryInterface
     public function syncPermissions(Role $role, array $permissionIds = []): ?Role {
         $role->permissions()->sync($permissionIds);
         return $role->fresh();
+    }
+
+    public function lookup(array $params = []): LengthAwarePaginator {
+        $query = Role::query();
+
+        if (isset($params['q']) && $params['q'] != '') {
+            $query->where(function (Builder $query) use ($params) {
+                return $query->orWhere('name', 'like', "%".$params['q']."%")
+                            ->orWhere('id', '=', (int) $params['q']);
+            });
+        }
+
+        $perPage = isset($params['per_page']) ? (int) $params['per_page'] : 30;
+        $page = isset($params['page']) ? (int) $params['page'] : 1;
+
+        return $query->without('permissions')->paginate(perPage: $perPage, page: $page)->withQueryString();
     }
 }
