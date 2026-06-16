@@ -22,6 +22,7 @@ class LookupRequest extends FormRequest
     {
         return [
             'q' => 'nullable|string',
+            'keys' => 'nullable|array',
             'per_page' => 'nullable|integer|max:100',
             'page' => 'nullable|integer|min:1'
         ];

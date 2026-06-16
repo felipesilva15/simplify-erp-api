@@ -64,6 +64,10 @@ class RoleRepository implements RoleRepositoryInterface
             });
         }
 
+        if (isset($params['keys']) && count($params['keys'])) {
+            $query->whereIn('id', $params['keys']);
+        }
+
         $perPage = isset($params['per_page']) ? (int) $params['per_page'] : 30;
         $page = isset($params['page']) ? (int) $params['page'] : 1;
 
