@@ -59,7 +59,7 @@ class RoleService
 
     public function definePermissions(Role $role, array $permissionIds = []): ServiceResult {
         return new ServiceResult(
-            data: $this->repository->syncPermissions($role, $permissionIds)
+            data: $this->repository->sync($role, 'permissions', $permissionIds)
         );
     }
 
