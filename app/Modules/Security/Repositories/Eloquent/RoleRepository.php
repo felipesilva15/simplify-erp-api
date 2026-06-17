@@ -2,7 +2,6 @@
 
 namespace App\Modules\Security\Repositories\Eloquent;
 
-use App\Modules\Security\DTO\RoleDTO;
 use App\Modules\Security\Models\Role;
 use App\Modules\Security\Repositories\Interfaces\RoleRepositoryInterface;
 use App\Core\Repositories\Eloquent\BaseRepository;

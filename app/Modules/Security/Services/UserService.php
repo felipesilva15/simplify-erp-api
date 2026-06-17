@@ -64,7 +64,7 @@ class UserService
 
     public function defineRoles(User $user, array $roleIds = []): ServiceResult {
         return new ServiceResult(
-            data: $this->repository->syncRoles($user, $roleIds)
+            data: $this->repository->sync($user, 'roles', $roleIds)
         );
     }
 }

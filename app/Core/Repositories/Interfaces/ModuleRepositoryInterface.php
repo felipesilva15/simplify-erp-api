@@ -3,5 +3,7 @@
 namespace App\Core\Repositories\Interfaces;
 
 
-interface ModuleRepositoryInterface
-{}
+interface ModuleRepositoryInterface extends BaseRepositoryInterface
+{
+    
+}

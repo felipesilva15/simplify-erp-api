@@ -2,8 +2,9 @@
 
 namespace App\Modules\Security\Repositories\Interfaces;
 
-use App\Modules\Security\Models\Role;
+use App\Core\Repositories\Interfaces\BaseRepositoryInterface;
 
-interface RoleRepositoryInterface  
+interface RoleRepositoryInterface extends BaseRepositoryInterface
 {
+    
 }

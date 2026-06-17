@@ -2,18 +2,9 @@
 
 namespace App\Modules\Security\Repositories\Interfaces;
 
-use App\Modules\Security\DTO\PermissionDTO;
-use App\Modules\Security\Models\Permission;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
+use App\Core\Repositories\Interfaces\BaseRepositoryInterface;
 
-interface PermissionRepositoryInterface
+interface PermissionRepositoryInterface extends BaseRepositoryInterface
 {
-    public function store(PermissionDTO $data): Permission;
-
-    public function update(Permission $permission, PermissionDTO $data): ?Permission;
-
-    public function delete(Permission $permission): bool;
-
-    public function list(array $filters = []): LengthAwarePaginator;
+    
 }
