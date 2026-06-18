@@ -2,69 +2,27 @@
 
 namespace App\Core\Services;
 
-use App\Core\Exceptions\NotFoundHttpException;
-use App\Core\DTO\ModuleDTO;
 use App\Core\DTO\ServiceResult;
-use App\Core\Models\Module;
 use App\Core\Repositories\Interfaces\ModuleRepositoryInterface;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Model;
+use Override;
 
-class ModuleService
+class ModuleService extends BaseCrudService
 {
-    public function __construct(protected ModuleRepositoryInterface $repository) { }
-
-    public function store(ModuleDTO $data): ServiceResult {
-        $module = $this->repository->store($data);
-
-        return new ServiceResult(
-            data: $module
-        );
+    public function __construct(ModuleRepositoryInterface $repository)
+    {
+        $this->repository = $repository;
     }
 
-    public function edit(Module $module): ServiceResult {
-        $editable =  true;
-        $warnings = [];
+    #[Override]
+    public function edit(Model $module): ServiceResult {
+       $result = parent::edit($module);
 
         if (!$module->is_active) {
-            $editable = false;
-            $warnings[] = 'Este módulo está não está ativo.';
+            $result->meta['editable'] = false;
+            $result->warnings[] = 'Este módulo está não está ativo.';
         }
 
-        return new ServiceResult(
-            data: $module,
-            warnings: $warnings,
-            meta: [
-                'editable' => $editable
-            ]
-        );
-    }
-
-    public function update(Module $module, ModuleDTO $data): ServiceResult {
-        $module = $this->repository->update($module, $data);
-
-        return new ServiceResult(
-            data: $module
-        );
-    }
-
-    public function delete(Module $module): ServiceResult {
-        return new ServiceResult(
-            data: null,
-            meta: [
-                'deleted' => $this->repository->delete($module)
-            ]
-        );
-    }
-
-    public function list(array $filters = []): ServiceResult {
-        return new ServiceResult(
-            data: $this->repository->list($filters)
-        );
-    }
-
-    public function show(Module $module): ServiceResult {
-        return new ServiceResult(
-            data: $module
-        );
+        return $result;
     }
 }
