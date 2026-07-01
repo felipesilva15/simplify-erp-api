@@ -2,55 +2,12 @@
 
 namespace App\Modules\{{module}}\Services;
 
-use App\Core\Exceptions\NotFoundHttpException;
-use App\Modules\{{module}}\DTO\{{entity}}DTO;
-use App\Modules\{{module}}\Models\{{entity}};
+use App\Core\Services\BaseCrudService;
 use App\Modules\{{module}}\Repositories\Interfaces\{{entity}}RepositoryInterface;
-use Illuminate\Pagination\LengthAwarePaginator;
 
-class {{entity}}Service
+class {{entity}}Service extends BaseCrudService
 {
-    public function __construct(protected {{entity}}RepositoryInterface $repository) { }
-
-    public function store({{entity}}DTO $data): {{entity}} {
-        return $this->repository->store($data);
-    }
-
-    public function edit(int $id): ?{{entity}} {
-        ${{lower_entity}} = $this->repository->findById($id);
-
-        if (!${{lower_entity}}) {
-            throw new NotFoundHttpException();
-        }
-
-        return ${{lower_entity}};
-    }
-
-    public function update(int $id, {{entity}}DTO $data): ?{{entity}} {
-        ${{lower_entity}} = $this->repository->update($id, $data);
-
-        if (!${{lower_entity}}) {
-            throw new NotFoundHttpException();
-        }
-
-        return ${{lower_entity}};
-    }
-
-    public function delete(int $id): bool {
-        return $this->repository->delete($id);
-    }
-
-    public function findById(int $id): ?{{entity}} {
-        ${{lower_entity}} = $this->repository->findById($id);
-
-        if (!${{lower_entity}}) {
-            throw new NotFoundHttpException();
-        }
-
-        return ${{lower_entity}};
-    }
-
-    public function list(array $filters = []): LengthAwarePaginator {
-        return $this->repository->list($filters);
+    public function __construct({{entity}}RepositoryInterface $repository) {
+        $this->repository = $repository;
     }
 }

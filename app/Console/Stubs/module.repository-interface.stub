@@ -2,19 +2,9 @@
 
 namespace App\Modules\{{module}}\Repositories\Interfaces;
 
-use App\Modules\{{module}}\DTO\{{entity}}DTO;
-use App\Modules\{{module}}\Models\{{entity}};
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use App\Core\Repositories\Interfaces\BaseRepositoryInterface;
 
-interface {{entity}}RepositoryInterface
+interface {{entity}}RepositoryInterface extends BaseRepositoryInterface
 {
-    public function store({{entity}}DTO $data): {{entity}};
-
-    public function update(int $id, {{entity}}DTO $data): ?{{entity}};
-
-    public function delete(int $id): bool;
-
-    public function findById(int $id): ?{{entity}};
-
-    public function list(array $filters = []): LengthAwarePaginator;
+    
 }
