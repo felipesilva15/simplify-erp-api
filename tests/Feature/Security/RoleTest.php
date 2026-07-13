@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Security;
 
-use App\Core\Enums\SqlOrderDirectionEnum;
 use App\Modules\Security\Models\Permission;
 use App\Modules\Security\Models\Role;
 use Tests\TestCase;
@@ -29,6 +28,18 @@ class RoleTest extends TestCase
             'updated_at',
             'created_at',
             'deleted_at'
+        ];
+    }
+
+    protected function getLookupResourceStructure(): array {
+        return [
+            'key',
+            'label',
+            'sublabel',
+            'meta' => [
+                'id',
+                'name'
+            ]
         ];
     }
 
@@ -60,30 +71,30 @@ class RoleTest extends TestCase
             'sorts' => '-id'
         ];
 
-        Role::factory(3)->create();
+        $roles = Role::factory(3)->create();
         $response = $this->getJson(url()->query($this->endpoint, $queryParams), $this->getAdminAuthHeaders());
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonIsObject()
-            ->assertJsonPath('data.0.id', 3);
+            ->assertJsonPath('data.0.id', $roles->last()->id);
     }
 
     public function test_can_list_roles_with_filter(): void
     {
+        $roles = Role::factory(3)->create();
         $queryParams = [
             'filters' => [
                 'id' => [
-                    'eq' => 2
+                    'eq' => $roles[1]->id
                 ]
             ]
         ];
-        Role::factory(3)->create();
         $response = $this->getJson(url()->query($this->endpoint, $queryParams), $this->getAdminAuthHeaders());
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonIsObject()
             ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.id', 2);
+            ->assertJsonPath('data.0.id', $roles[1]->id);
     }
 
     public function test_cannot_list_roles_without_authentication(): void
@@ -96,6 +107,93 @@ class RoleTest extends TestCase
     {
         $response = $this->getJson($this->endpoint, $this->getCommomUserAuthHeaders());
         $this->assertErrorResponse($response, Response::HTTP_FORBIDDEN);
+    }
+
+    public function test_lookup_returns_default_api_response_structure(): void {
+        $response = $this->getJson("{$this->endpoint}/lookup", $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK);
+        $this->assertApiResponseStructureForListing($response);
+    }
+
+    public function test_can_lookup_roles(): void
+    {
+        Role::factory(3)->create();
+        $response = $this->getJson("{$this->endpoint}/lookup", $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonStructure([
+                'data' => [
+                    '*' => $this->getLookupResourceStructure()
+                ]
+            ])
+            ->assertJsonCount(3, 'data');
+    }
+
+    public function test_can_lookup_roles_with_text_filter(): void
+    {
+        $role = Role::factory()->createOne(['name' => 'Departamento Financeiro']);
+        Role::factory()->createOne(['name' => 'Departamento Comercial']);
+        $queryParams = [
+            'q' => 'Financeiro'
+        ];
+
+        $response = $this->getJson(url()->query("{$this->endpoint}/lookup", $queryParams), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.key', $role->id)
+            ->assertJsonPath('data.0.label', $role->name)
+            ->assertJsonPath('data.0.sublabel', "Cod.: {$role->id}")
+            ->assertJsonPath('data.0.meta.id', $role->id)
+            ->assertJsonPath('data.0.meta.name', $role->name);
+    }
+
+    public function test_can_lookup_roles_filtered_by_keys(): void
+    {
+        $roles = Role::factory(3)->create();
+        $queryParams = [
+            'keys' => [
+                $roles[0]->id,
+                $roles[2]->id
+            ]
+        ];
+
+        $response = $this->getJson(url()->query("{$this->endpoint}/lookup", $queryParams), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonPath('meta.total', 2)
+            ->assertJsonFragment(['key' => $roles[0]->id])
+            ->assertJsonFragment(['key' => $roles[2]->id]);
+    }
+
+    public function test_can_lookup_roles_with_pagination(): void
+    {
+        Role::factory(5)->create();
+        $queryParams = [
+            'per_page' => 2,
+            'page' => 2
+        ];
+
+        $response = $this->getJson(url()->query("{$this->endpoint}/lookup", $queryParams), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonPath('meta.per_page', 2)
+            ->assertJsonPath('meta.current_page', 2)
+            ->assertJsonPath('meta.last_page', 3)
+            ->assertJsonPath('meta.total', 5);
+    }
+
+    public function test_cannot_lookup_roles_without_authentication(): void
+    {
+        $response = $this->getJson("{$this->endpoint}/lookup");
+        $this->assertErrorResponse($response, Response::HTTP_UNAUTHORIZED);
     }
 
     public function test_can_get_role_by_id(): void
