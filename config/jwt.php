@@ -85,6 +85,10 @@ return [
 
     ],
 
+    'cookie_name' => env('JWT_COOKIE_NAME', 'token'),
+    'cookie_same_site' => env('JWT_COOKIE_SAME_SITE', 'lax'),
+    'cookie_secure' => env('JWT_COOKIE_SECURE', true),
+
     /*
     |--------------------------------------------------------------------------
     | JWT time to live

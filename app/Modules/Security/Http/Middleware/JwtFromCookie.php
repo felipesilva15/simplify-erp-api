@@ -15,10 +15,13 @@ class JwtFromCookie
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->header('Authorization') && $request->hasCookie('token')) {
+        $request->headers->remove('Authorization');
+        $token = $request->cookie(config('jwt.cookie_name')) ?? '';
+
+        if ($token) {
             $request->headers->set(
                 'Authorization',
-                'Bearer ' . $request->cookie('token')
+                'Bearer ' . $token
             );
         }
 

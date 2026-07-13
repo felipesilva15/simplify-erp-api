@@ -13,6 +13,7 @@ use App\Modules\Security\Http\Resources\Auth\TokenDetailsResource;
 use App\Modules\Security\Http\Resources\User\UserResource;
 use App\Modules\Security\Services\AuthService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
@@ -48,19 +49,21 @@ class AuthController extends Controller
     public function login(LoginRequest $request, LoginAction $action): Response {
         $dto = AuthCredentialsDTO::fromArray($request->validated());
         $tokenDetails = $action->execute($dto);
+        $cookie = Cookie::make(
+            name: config('jwt.cookie_name'),
+            value: $tokenDetails->token,
+            minutes: config('jwt.ttl'),
+            path: '/',
+            domain: null,
+            secure: config('jwt.cookie_secure'),
+            httpOnly: true,
+            raw: false,
+            sameSite: config('jwt.cookie_same_site')
+        );
 
         return response()
             ->noContent()
-            ->cookie('token',
-                $tokenDetails->token,
-                config('jwt.ttl'),
-                '/',
-                null,
-                true,
-                true,
-                false,
-                'Lax'
-            );
+            ->cookie($cookie);
     }
 
     /**
