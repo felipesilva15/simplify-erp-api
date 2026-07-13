@@ -34,8 +34,8 @@ abstract class BaseRepository implements BaseRepositoryInterface
         if (!empty($params['sorts']))
             $query = ModelHelpers::setSortsOnQuery($query, $params['sorts']);
 
-        $perPage = isset($filters['per_page']) ? (int) $filters['per_page'] : 15;
-        $page = isset($filters['page']) ? (int) $filters['page'] : 1;
+        $perPage = isset($params['per_page']) ? (int) $params['per_page'] : 15;
+        $page = isset($params['page']) ? (int) $params['page'] : 1;
 
         return $query->paginate(perPage: $perPage, page: $page)->withQueryString();
     }
