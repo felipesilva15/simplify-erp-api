@@ -2,11 +2,11 @@
 
 namespace App\Modules\Security\Models;
 
+use App\Core\Models\BaseModel;
 use App\Core\Models\Module;
 use Database\Factories\PermissionFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -26,7 +26,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * )
  */
 #[UseFactory(PermissionFactory::class)]
-class Permission extends Model
+class Permission extends BaseModel
 {
     /** @use HasFactory<\Database\Factories\PermissionFactory> */
     use SoftDeletes, HasFactory;

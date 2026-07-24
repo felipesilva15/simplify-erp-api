@@ -2,7 +2,7 @@
 
 namespace App\Modules\{{module}}\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Core\Models\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *      {{swagger_properties}}
  * )
  */
-class {{entity}} extends Model
+class {{entity}} extends BaseModel
 {
     use SoftDeletes;
 
