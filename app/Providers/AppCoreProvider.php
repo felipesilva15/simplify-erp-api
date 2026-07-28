@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Core\Repositories\Eloquent\ModuleRepository;
+use App\Core\Repositories\Eloquent\ResourceRepository;
 use App\Core\Repositories\Interfaces\ModuleRepositoryInterface;
+use App\Core\Repositories\Interfaces\ResourceRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppCoreProvider extends ServiceProvider
@@ -14,5 +16,6 @@ class AppCoreProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(ModuleRepositoryInterface::class, ModuleRepository::class);
+        $this->app->bind(ResourceRepositoryInterface::class, ResourceRepository::class);
     }
 }

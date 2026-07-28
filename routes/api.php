@@ -2,6 +2,7 @@
 
 use App\Core\Helpers\StringHelpers;
 use App\Core\Http\Controllers\ModuleController;
+use App\Core\Http\Controllers\ResourceController;
 use App\Modules\Security\Http\Controllers\AuthController;
 use App\Modules\Security\Http\Controllers\PermissionController;
 use App\Modules\Security\Http\Controllers\RoleController;
@@ -15,6 +16,7 @@ Route::post('security/auth/token', [AuthController::class, 'token']);
 Route::group(['middleware' => 'auth'], function () {
     Route::prefix('core')->group(function() {
         Route::resource('modules', ModuleController::class);
+        Route::resource('resources', ResourceController::class);
     });
 
     Route::prefix('security')->group(function() {

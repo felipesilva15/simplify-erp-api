@@ -8,8 +8,8 @@ class PermissionDTO
 {
     public function __construct(
         public int $id = 0,
-        public int $module_id = 0,
-        public string $resource = '',
+        public int $resource_id = 0,
+        public string $label = '',
         public string $action = '',
         public string $name = '',
         public ?string $description = '',
@@ -21,8 +21,8 @@ class PermissionDTO
     public static function fromArray(array $data): self {
         return new self(
             id: $data['id'] ?? 0,
-            module_id: $data['module_id'] ?? 0,
-            resource: $data['resource'] ?? '',
+            resource_id: $data['resource_id'] ?? 0,
+            label: $data['label'] ?? '',
             action: $data['action'] ?? '',
             name: $data['name'] ?? '',
             description: $data['description'] ?? '',
@@ -35,8 +35,8 @@ class PermissionDTO
     public function toArray(): array {
         return [
             'id' => $this->id,
-            'module_id' => $this->module_id,
-            'resource' => $this->resource,
+            'resource_id' => $this->resource_id,
+            'label' => $this->label,
             'action' => $this->action,
             'name' => $this->name,
             'description' => $this->description,

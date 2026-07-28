@@ -24,11 +24,11 @@ class PermissionResource extends JsonResource
     public function toArray(Request $request): array {
         return [
             'id' => $this->id,
-            'resource' => $this->getAttribute('resource'),
-            'action' => $this->action,
-            'name' => $this->name,
+            'label' => $this->label,
             'description' => $this->description,
-            'module' => new PermissionModuleResource($this->module),
+            'name' => $this->name,
+            'action' => $this->action,
+            'resource' => new PermissionResourceResource($this->getAttribute('resource')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at

@@ -4,14 +4,14 @@ namespace App\Core\DTO;
 
 use Carbon\Carbon;
 
-class ModuleDTO
+class ResourceDTO
 {
     public function __construct(
         public int $id = 0,
         public string $name = '',
         public string $slug = '',
         public ?string $description = '',
-        public ?bool $is_active = false,
+        public ?int $module_id = 0,
         public ?Carbon $created_at = null,
         public ?Carbon $updated_at = null,
         public ?Carbon $deleted_at = null
@@ -23,7 +23,7 @@ class ModuleDTO
             name: $data['name'] ?? '',
             slug: $data['slug'] ?? '',
             description: $data['description'] ?? '',
-            is_active: $data['is_active'] ?? false,
+            module_id: $data['module_id'] ?? 0,
             created_at: $data['created_at'] ?? null,
             updated_at: $data['updated_at'] ?? null,
             deleted_at: $data['deleted_at'] ?? null
@@ -36,7 +36,7 @@ class ModuleDTO
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
-            'is_active' => $this->is_active,
+            'module_id' => $this->module_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at

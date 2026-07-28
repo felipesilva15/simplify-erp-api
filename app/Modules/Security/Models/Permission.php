@@ -4,6 +4,7 @@ namespace App\Modules\Security\Models;
 
 use App\Core\Models\BaseModel;
 use App\Core\Models\Module;
+use App\Core\Models\Resource;
 use Database\Factories\PermissionFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,8 +16,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @OA\Schema(
  *      schema="Permission",
  *      @OA\Property(property="id", type="integer", example=1),
- *      @OA\Property(property="module_id", type="integer", example=1),
- *      @OA\Property(property="resource", type="string", example="Sample"),
+ *      @OA\Property(property="resource_id", type="integer", example=1),
+ *      @OA\Property(property="label", type="string", example="Sample"),
  *      @OA\Property(property="action", type="string", example="Sample"),
  *      @OA\Property(property="name", type="string", example="Sample"),
  *      @OA\Property(property="description", type="string", example="Sample", nullable=true),
@@ -32,10 +33,10 @@ class Permission extends BaseModel
     use SoftDeletes, HasFactory;
 
     protected $fillable = [
-        'module_id',
-        'resource',
+        'resource_id',
         'action',
         'name',
+        'label',
         'description'
     ];
 
@@ -43,8 +44,8 @@ class Permission extends BaseModel
         
     ];
 
-    public function module(): BelongsTo {
-        return $this->belongsTo(Module::class);
+    public function resource(): BelongsTo {
+        return $this->belongsTo(Resource::class);
     }
 
     public function roles(): BelongsToMany {
