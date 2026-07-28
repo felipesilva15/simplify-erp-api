@@ -11,6 +11,7 @@ abstract class BaseCrudService
     protected BaseRepositoryInterface $repository;
 
     public function store(mixed $data): ServiceResult {
+        $data = $this->prepareData($data);
         $entity = $this->repository->store($data);
 
         return new ServiceResult(
@@ -29,6 +30,7 @@ abstract class BaseCrudService
     }
 
     public function update(Model $entity, mixed $data): ServiceResult {
+        $data = $this->prepareData($data);
         $entity = $this->repository->update($entity, $data);
 
         return new ServiceResult(
@@ -57,9 +59,19 @@ abstract class BaseCrudService
         );
     }
 
+    public function find(mixed $id): ServiceResult {
+        return new ServiceResult(
+            data: $this->repository->getById($id)
+        );
+    }
+
     public function lookup(array $params): ServiceResult {
         return new ServiceResult(
             data: $this->repository->lookup($params)
         );
+    }
+
+    protected function prepareData(mixed $data): mixed {
+        return $data;
     }
 }
