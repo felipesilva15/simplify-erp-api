@@ -169,13 +169,14 @@ class BaseCrudServiceTest extends TestCase
     public function test_can_find(): void
     {
         $entity = Mockery::mock(Model::class);
-        $result = $this->service->find(1);
 
         $this->repositoryMock
             ->shouldReceive('getById')
             ->once()
             ->with(1)
             ->andReturn($entity);
+
+        $result = $this->service->find(1);
 
         $this->assertInstanceOf(ServiceResult::class, $result);
         $this->assertSame($entity, $result->data);

@@ -192,12 +192,16 @@ class PermissionTest extends TestCase
             ->assertJsonStructure([
                 'data' => $this->getResourceStructure()
             ])
-            ->assertJsonPath('data.resource', $permission->resource)
+            ->assertJsonPath('data.resource', [
+                'id' => $permission->resource->id,
+                'name' => $permission->resource->name,
+                'slug' => $permission->resource->slug,
+            ])
             ->assertJsonPath('data.action', $permission->action)
-            ->assertJsonPath('data.name', $permission->resource.'.'.$permission->action);
+            ->assertJsonPath('data.name', $permission->resource->slug.'.'.$permission->action);
 
         $this->assertDatabaseHas('permissions', [
-            'resource' => $permission->resource,
+            'resource_id' => $permission->resource->id,
             'action' => $permission->action,
         ]);
     }
@@ -206,12 +210,12 @@ class PermissionTest extends TestCase
     {
         $permission = Permission::factory()->for($this->resource)->makeOne();
         $data = $permission->toArray();
-        unset($data['resource']);
+        unset($data['resource_id']);
 
         $response = $this->postJson($this->endpoint, $data, $this->getAdminAuthHeaders());
 
         $this->assertErrorResponse($response, Response::HTTP_UNPROCESSABLE_ENTITY);
-        $response->assertJsonValidationErrorFor('resource');
+        $response->assertJsonValidationErrorFor('resource_id');
     }
 
     public function test_cannot_create_permission_without_authentication(): void
@@ -254,12 +258,12 @@ class PermissionTest extends TestCase
         $permission = Permission::factory()->withName()->for($this->resource)->createOne();
         
         $data = $permission->toArray();
-        unset($data['resource']);
+        unset($data['resource_id']);
 
         $response = $this->putJson("{$this->endpoint}/{$permission->id}", $data,  $this->getAdminAuthHeaders());
 
         $this->assertErrorResponse($response, Response::HTTP_UNPROCESSABLE_ENTITY);
-        $response->assertJsonValidationErrorFor('resource');
+        $response->assertJsonValidationErrorFor('resource_id');
     }
 
     public function test_cannot_update_permission_with_invalid_id(): void

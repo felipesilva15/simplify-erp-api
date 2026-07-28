@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Security;
 
+use App\Core\Models\Resource;
 use App\Modules\Security\Models\Permission;
 use App\Modules\Security\Models\Role;
 use Tests\TestCase;
@@ -416,7 +417,7 @@ class RoleTest extends TestCase
     public function test_can_define_role_permissions(): void
     {
         $role = Role::factory()->createOne();
-        $permissions = Permission::factory(3)->withName()->forModule()->create();
+        $permissions = Permission::factory(3)->withName()->for(Resource::factory()->forModule())->create();
         $data = [
             'ids' => $permissions->pluck('id')
         ];
