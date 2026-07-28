@@ -13,6 +13,7 @@ class ModuleFactory extends Factory
     {
         return [
             'name' => fake()->name(),
+            'slug' => strtolower(fake()->name()),
             'description' => fake()->text(80),
             'is_active' => true
         ];

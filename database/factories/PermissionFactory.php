@@ -17,7 +17,7 @@ class PermissionFactory extends Factory
     public function definition(): array
     {
         return [
-            'resource' => fake()->word(),
+            'label' => fake()->word(),
             'action' => fake()->word(),
             'description' => fake()->text(512)
         ];
@@ -26,7 +26,7 @@ class PermissionFactory extends Factory
     public function withName(): static
     {
         return $this->state(fn (array $attributes) => [
-            'name' => $attributes['resource'].'.'.$attributes['action'],
+            'name' => fake()->word().'.'.$attributes['action'],
         ]);
     }
 }

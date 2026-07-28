@@ -3,24 +3,35 @@
 namespace Tests\Feature\Security;
 
 use App\Core\Enums\SqlOrderDirectionEnum;
+use App\Core\Models\Resource;
 use App\Modules\Security\Models\Permission;
 use Tests\TestCase;
 use Illuminate\Http\Response;
+use Mockery;
 
 class PermissionTest extends TestCase
 {
     protected string $endpoint = '/api/security/permissions';
+    private Resource $resource;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->resource = Resource::factory()->forModule()->createOne();
+    }
 
     protected function getResourceStructure(): array {
         return [
             'id',
-            'resource',
-            'action',
-            'name',
+            'label',
             'description',
-            'module' => [
+            'name',
+            'action',
+            'resource' => [
                 'id',
-                'name'
+                'name',
+                'slug'
             ],
             'updated_at',
             'created_at',
@@ -37,7 +48,7 @@ class PermissionTest extends TestCase
 
     public function test_can_list_permissions(): void
     {
-        Permission::factory(3)->withName()->forModule()->create();
+        Permission::factory(3)->withName()->for($this->resource)->create();
         $response = $this->getJson($this->endpoint, $this->getAdminAuthHeaders());
 
         $response->assertStatus(Response::HTTP_OK)
@@ -56,7 +67,7 @@ class PermissionTest extends TestCase
             'sorts' => '-id'
         ];
 
-        Permission::factory(3)->withName()->forModule()->create();
+        Permission::factory(3)->withName()->for($this->resource)->create();
         $response = $this->getJson(url()->query($this->endpoint, $queryParams), $this->getAdminAuthHeaders());
 
         $response->assertStatus(Response::HTTP_OK)
@@ -74,7 +85,7 @@ class PermissionTest extends TestCase
             ]
         ];
 
-        Permission::factory(3)->withName()->forModule()->create();
+        Permission::factory(3)->withName()->for($this->resource)->create();
         $response = $this->getJson(url()->query($this->endpoint, $queryParams), $this->getAdminAuthHeaders());
 
         $response->assertStatus(Response::HTTP_OK)
@@ -97,7 +108,7 @@ class PermissionTest extends TestCase
 
     public function test_can_get_permission_by_id(): void
     {
-        $permission = Permission::factory()->withName()->forModule()->createOne();
+        $permission = Permission::factory()->withName()->for($this->resource)->createOne();
 
         $response = $this->getJson("{$this->endpoint}/{$permission->id}", $this->getAdminAuthHeaders());
 
@@ -117,7 +128,7 @@ class PermissionTest extends TestCase
 
     public function test_cannot_get_permission_by_id_without_authentication(): void
     {
-        $permission = Permission::factory()->withName()->forModule()->createOne();
+        $permission = Permission::factory()->withName()->for($this->resource)->createOne();
 
         $response = $this->getJson("{$this->endpoint}/{$permission->id}");
         $this->assertErrorResponse($response, Response::HTTP_UNAUTHORIZED);
@@ -125,7 +136,7 @@ class PermissionTest extends TestCase
 
     public function test_cannot_get_permission_by_id_without_permission(): void
     {
-        $permission = Permission::factory()->withName()->forModule()->createOne();
+        $permission = Permission::factory()->withName()->for($this->resource)->createOne();
 
         $response = $this->getJson("{$this->endpoint}/{$permission->id}", $this->getCommomUserAuthHeaders());
         $this->assertErrorResponse($response, Response::HTTP_FORBIDDEN);
@@ -133,7 +144,7 @@ class PermissionTest extends TestCase
 
     public function test_can_get_permission_by_id_for_edit(): void
     {
-        $permission = Permission::factory()->withName()->forModule()->createOne();
+        $permission = Permission::factory()->withName()->for($this->resource)->createOne();
 
         $response = $this->getJson("{$this->endpoint}/{$permission->id}/edit", $this->getAdminAuthHeaders());
 
@@ -155,7 +166,7 @@ class PermissionTest extends TestCase
 
     public function test_cannot_get_permission_by_id_for_edit_without_authentication(): void
     {
-        $permission = Permission::factory()->withName()->forModule()->createOne();
+        $permission = Permission::factory()->withName()->for($this->resource)->createOne();
 
         $response = $this->getJson("{$this->endpoint}/{$permission->id}/edit");
         $this->assertErrorResponse($response, Response::HTTP_UNAUTHORIZED);
@@ -163,7 +174,7 @@ class PermissionTest extends TestCase
 
     public function test_cannot_get_permission_by_id_for_edit_without_permission(): void
     {
-        $permission = Permission::factory()->withName()->forModule()->createOne();
+        $permission = Permission::factory()->withName()->for($this->resource)->createOne();
 
         $response = $this->getJson("{$this->endpoint}/{$permission->id}/edit", $this->getCommomUserAuthHeaders());
         $this->assertErrorResponse($response, Response::HTTP_FORBIDDEN);
@@ -171,7 +182,7 @@ class PermissionTest extends TestCase
 
     public function test_can_create_permission(): void
     {
-        $permission = Permission::factory()->forModule()->makeOne();
+        $permission = Permission::factory()->for($this->resource)->makeOne();
         $data = $permission->toArray();
 
         $response = $this->postJson($this->endpoint, $data, $this->getAdminAuthHeaders());
@@ -193,7 +204,7 @@ class PermissionTest extends TestCase
 
     public function test_cannot_create_permission_with_invalid_payload(): void
     {
-        $permission = Permission::factory()->forModule()->makeOne();
+        $permission = Permission::factory()->for($this->resource)->makeOne();
         $data = $permission->toArray();
         unset($data['resource']);
 
@@ -223,7 +234,7 @@ class PermissionTest extends TestCase
 
     public function test_can_update_permission(): void
     {
-        $permission = Permission::factory()->withName()->forModule()->createOne();
+        $permission = Permission::factory()->withName()->for($this->resource)->createOne();
         
         $data = $permission->toArray();
         $data['description'] = 'New description';
@@ -240,7 +251,7 @@ class PermissionTest extends TestCase
 
     public function test_cannot_update_permission_with_invalid_payload(): void
     {
-        $permission = Permission::factory()->withName()->forModule()->createOne();
+        $permission = Permission::factory()->withName()->for($this->resource)->createOne();
         
         $data = $permission->toArray();
         unset($data['resource']);
@@ -253,7 +264,7 @@ class PermissionTest extends TestCase
 
     public function test_cannot_update_permission_with_invalid_id(): void
     {
-        $permission = Permission::factory()->withName()->forModule()->createOne();
+        $permission = Permission::factory()->withName()->for($this->resource)->createOne();
         
         $data = $permission->toArray();
         $data['description'] = 'New description';
@@ -265,7 +276,7 @@ class PermissionTest extends TestCase
 
     public function test_cannot_update_permission_without_authentication(): void
     {
-        $permission = Permission::factory()->withName()->forModule()->createOne();
+        $permission = Permission::factory()->withName()->for($this->resource)->createOne();
         $data = $permission->toArray();
 
         $response = $this->putJson("{$this->endpoint}/{$permission->id}", $data);
@@ -274,7 +285,7 @@ class PermissionTest extends TestCase
 
     public function test_cannot_update_permission_without_permission(): void
     {
-        $permission = Permission::factory()->withName()->forModule()->createOne();
+        $permission = Permission::factory()->withName()->for($this->resource)->createOne();
         $data = $permission->toArray();
 
         $response = $this->putJson("{$this->endpoint}/{$permission->id}", $data, $this->getCommomUserAuthHeaders());
@@ -283,7 +294,7 @@ class PermissionTest extends TestCase
 
     public function test_can_delete_permission_by_id(): void
     {
-        $permission = Permission::factory()->withName()->forModule()->createOne();
+        $permission = Permission::factory()->withName()->for($this->resource)->createOne();
 
         $response = $this->deleteJson("{$this->endpoint}/{$permission->id}", [],  $this->getAdminAuthHeaders());
         $response->assertNoContent();
@@ -301,7 +312,7 @@ class PermissionTest extends TestCase
 
     public function test_cannot_delete_permission_without_authentication(): void
     {
-        $permission = Permission::factory()->withName()->forModule()->createOne();
+        $permission = Permission::factory()->withName()->for($this->resource)->createOne();
 
         $response = $this->deleteJson("{$this->endpoint}/{$permission->id}");
         $this->assertErrorResponse($response, Response::HTTP_UNAUTHORIZED);
@@ -309,7 +320,7 @@ class PermissionTest extends TestCase
 
     public function test_cannot_delete_permission_without_permission(): void
     {
-        $permission = Permission::factory()->withName()->forModule()->createOne();
+        $permission = Permission::factory()->withName()->for($this->resource)->createOne();
 
         $response = $this->deleteJson("{$this->endpoint}/{$permission->id}", [], $this->getCommomUserAuthHeaders());
         $this->assertErrorResponse($response, Response::HTTP_FORBIDDEN);

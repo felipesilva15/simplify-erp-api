@@ -2,16 +2,14 @@
 
 namespace Tests\Feature\Core;
 
-use App\Core\Enums\SqlOrderDirectionEnum;
-use App\Core\Models\Module;
 use App\Core\Models\Resource;
 use App\Modules\Security\Models\Permission;
 use Tests\TestCase;
 use Illuminate\Http\Response;
 
-class ModuleTest extends TestCase
+class ResourceTest extends TestCase
 {
-    protected string $endpoint = '/api/core/modules';
+    protected string $endpoint = '/api/core/resources';
 
     protected function getResourceStructure(): array {
         return [
@@ -19,22 +17,18 @@ class ModuleTest extends TestCase
             'name',
             'slug',
             'description',
-            'is_active',
-            'resources' => [
+            'module' => [
+                'id',
+                'name',
+                'slug'
+            ],
+            'permissions' => [
                 '*' => [
                     'id',
+                    'action',
                     'name',
-                    'slug',
-                    'description',
-                    'permissions' => [
-                        '*' => [
-                            'id',
-                            'name',
-                            'label',
-                            'description',
-                            'action'
-                        ]
-                    ]
+                    'label',
+                    'description'
                 ]
             ],
             'updated_at',
@@ -50,9 +44,9 @@ class ModuleTest extends TestCase
         $this->assertApiResponseStructureForListing($response);
     }
 
-    public function test_can_list_modules(): void
+    public function test_can_list_resources(): void
     {
-        Module::factory(3)->create();
+        Resource::factory(3)->forModule()->forModule()->create();
         $response = $this->getJson($this->endpoint, $this->getAdminAuthHeaders());
 
         $response->assertStatus(Response::HTTP_OK)
@@ -65,10 +59,11 @@ class ModuleTest extends TestCase
             ->assertJsonCount(3, 'data');
     }
 
-    public function test_can_list_modules_with_resources(): void
+    public function test_can_list_resources_with_permissions(): void
     {
-        Module::factory(3)
-            ->has(Resource::factory()->count(2))
+        Resource::factory(3)->forModule()
+            ->forModule()
+            ->has(Permission::factory()->forResource()->withName()->count(2))
             ->create();
         $response = $this->getJson($this->endpoint, $this->getAdminAuthHeaders());
 
@@ -80,16 +75,16 @@ class ModuleTest extends TestCase
                 ]
             ])
             ->assertJsonCount(3, 'data')
-            ->assertJsonCount(2, 'data.0.resources');
+            ->assertJsonCount(2, 'data.0.permissions');
     }
 
-    public function test_can_list_modules_with_sort(): void
+    public function test_can_list_resources_with_sort(): void
     {
         $queryParams = [
             'sorts' => '-id'
         ];
 
-        Module::factory(3)->create();
+        Resource::factory(3)->forModule()->create();
         $response = $this->getJson(url()->query($this->endpoint, $queryParams), $this->getAdminAuthHeaders());
 
         $response->assertStatus(Response::HTTP_OK)
@@ -97,7 +92,7 @@ class ModuleTest extends TestCase
             ->assertJsonPath('data.0.id', 3);
     }
 
-    public function test_can_list_modules_with_filter(): void
+    public function test_can_list_resources_with_filter(): void
     {
         $queryParams = [
             'filters' => [
@@ -107,7 +102,7 @@ class ModuleTest extends TestCase
             ]
         ];
 
-        Module::factory(3)->create();
+        Resource::factory(3)->forModule()->create();
         $response = $this->getJson(url()->query($this->endpoint, $queryParams), $this->getAdminAuthHeaders());
 
         $response->assertStatus(Response::HTTP_OK)
@@ -116,108 +111,96 @@ class ModuleTest extends TestCase
             ->assertJsonPath('data.0.id', 2);
     }
 
-    public function test_cannot_list_modules_without_authentication(): void
+    public function test_cannot_list_resources_without_authentication(): void
     {
         $response = $this->getJson($this->endpoint);
         $this->assertErrorResponse($response, Response::HTTP_UNAUTHORIZED);
     }
 
-    public function test_cannot_list_modules_without_permission(): void
+    public function test_cannot_list_resources_without_permission(): void
     {
         $response = $this->getJson($this->endpoint, $this->getCommomUserAuthHeaders());
         $this->assertErrorResponse($response, Response::HTTP_FORBIDDEN);
     }
 
-    public function test_can_get_module_by_id(): void
+    public function test_can_get_resource_by_id(): void
     {
-        $module = Module::factory()->createOne();
+        $resource = Resource::factory()->forModule()->createOne();
 
-        $response = $this->getJson("{$this->endpoint}/{$module->id}", $this->getAdminAuthHeaders());
+        $response = $this->getJson("{$this->endpoint}/{$resource->id}", $this->getAdminAuthHeaders());
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonIsObject()
             ->assertJsonStructure([
                 'data' => $this->getResourceStructure()
             ])
-            ->assertJsonPath('data.name', $module->name);
+            ->assertJsonPath('data.name', $resource->name);
     }
 
-    public function test_cannot_get_module_by_invalid_id(): void
+    public function test_cannot_get_resource_by_invalid_id(): void
     {
         $response = $this->getJson("{$this->endpoint}/999999", $this->getAdminAuthHeaders());
         $this->assertErrorResponse($response, Response::HTTP_NOT_FOUND);
     }
 
-    public function test_cannot_get_module_by_id_without_authentication(): void
+    public function test_cannot_get_resource_by_id_without_authentication(): void
     {
-        $module = Module::factory()->createOne();
+        $resource = Resource::factory()->forModule()->createOne();
 
-        $response = $this->getJson("{$this->endpoint}/{$module->id}");
+        $response = $this->getJson("{$this->endpoint}/{$resource->id}");
         $this->assertErrorResponse($response, Response::HTTP_UNAUTHORIZED);
     }
 
-    public function test_cannot_get_module_by_id_without_permission(): void
+    public function test_cannot_get_resource_by_id_without_permission(): void
     {
-        $module = Module::factory()->createOne();
+        $resource = Resource::factory()->forModule()->createOne();
 
-        $response = $this->getJson("{$this->endpoint}/{$module->id}", $this->getCommomUserAuthHeaders());
+        $response = $this->getJson("{$this->endpoint}/{$resource->id}", $this->getCommomUserAuthHeaders());
         $this->assertErrorResponse($response, Response::HTTP_FORBIDDEN);
     }
 
-    public function test_can_get_module_by_id_for_edit(): void
+    public function test_can_get_resource_by_id_for_edit(): void
     {
-        $module = Module::factory()->createOne();
+        $resource = Resource::factory()->forModule()->createOne();
 
-        $response = $this->getJson("{$this->endpoint}/{$module->id}/edit", $this->getAdminAuthHeaders());
+        $response = $this->getJson("{$this->endpoint}/{$resource->id}/edit", $this->getAdminAuthHeaders());
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonIsObject()
             ->assertJsonStructure([
                 'data' => $this->getResourceStructure()
             ])
-            ->assertJsonPath('data.name', $module->name)
+            ->assertJsonPath('data.name', $resource->name)
             ->assertJsonPath('meta.editable', true);
     }
 
-    public function test_returns_warnings_for_inactive_module_when_edit(): void
-    {
-        $module = Module::factory()->inactive()->createOne();
-
-        $response = $this->getJson("{$this->endpoint}/{$module->id}/edit", $this->getAdminAuthHeaders());
-
-        $response->assertStatus(Response::HTTP_OK)
-            ->assertJsonIsObject()
-            ->assertJsonCount(1, 'warnings')
-            ->assertJsonPath('meta.editable', false);
-    }
-
-    public function test_cannot_get_module_by_invalid_id_for_edit(): void
+    public function test_cannot_get_resource_by_invalid_id_for_edit(): void
     {
         $response = $this->getJson("{$this->endpoint}/999999/edit", $this->getAdminAuthHeaders());
 
         $this->assertErrorResponse($response, Response::HTTP_NOT_FOUND);
     }
 
-    public function test_cannot_get_module_by_id_for_edit_without_authentication(): void
+    public function test_cannot_get_resource_by_id_for_edit_without_authentication(): void
     {
-        $module = Module::factory()->createOne();
+        $resource = Resource::factory()->forModule()->createOne();
 
-        $response = $this->getJson("{$this->endpoint}/{$module->id}/edit");
+        $response = $this->getJson("{$this->endpoint}/{$resource->id}/edit");
         $this->assertErrorResponse($response, Response::HTTP_UNAUTHORIZED);
     }
 
-    public function test_cannot_get_module_by_id_for_edit_without_permission(): void
+    public function test_cannot_get_resource_by_id_for_edit_without_permission(): void
     {
-        $module = Module::factory()->createOne();
+        $resource = Resource::factory()->forModule()->createOne();
 
-        $response = $this->getJson("{$this->endpoint}/{$module->id}/edit", $this->getCommomUserAuthHeaders());
+        $response = $this->getJson("{$this->endpoint}/{$resource->id}/edit", $this->getCommomUserAuthHeaders());
         $this->assertErrorResponse($response, Response::HTTP_FORBIDDEN);
     }
 
-    public function test_can_create_module(): void
+    public function test_can_create_resource(): void
     {
-        $module = Module::factory()->makeOne();
-        $data = $module->toArray();
+        $resource = Resource::factory()->forModule()->makeOne();
+        $data = $resource->toArray();
 
         $response = $this->postJson($this->endpoint, $data, $this->getAdminAuthHeaders());
 
@@ -226,17 +209,17 @@ class ModuleTest extends TestCase
             ->assertJsonStructure([
                 'data' => $this->getResourceStructure()
             ])
-            ->assertJsonPath('data.name', $module->name);
+            ->assertJsonPath('data.name', $resource->name);
 
-        $this->assertDatabaseHas('modules', [
-            'name' => $module->name,
+        $this->assertDatabaseHas('resources', [
+            'name' => $resource->name,
         ]);
     }
 
-    public function test_cannot_create_module_with_invalid_payload(): void
+    public function test_cannot_create_resource_with_invalid_payload(): void
     {
-        $module = Module::factory()->makeOne();
-        $data = $module->toArray();
+        $resource = Resource::factory()->forModule()->makeOne();
+        $data = $resource->toArray();
         unset($data['name']);
 
         $response = $this->postJson($this->endpoint, $data, $this->getAdminAuthHeaders());
@@ -245,32 +228,32 @@ class ModuleTest extends TestCase
         $response->assertJsonValidationErrorFor('name');
     }
 
-    public function test_cannot_create_module_without_authentication(): void
+    public function test_cannot_create_resource_without_authentication(): void
     {
-        $module = Module::factory()->makeOne();
-        $data = $module->toArray();
+        $resource = Resource::factory()->forModule()->makeOne();
+        $data = $resource->toArray();
 
         $response = $this->postJson($this->endpoint, $data);
         $this->assertErrorResponse($response, Response::HTTP_UNAUTHORIZED);
     }
 
-    public function test_cannot_create_module_without_permission(): void
+    public function test_cannot_create_resource_without_permission(): void
     {
-        $module = Module::factory()->makeOne();
-        $data = $module->toArray();
+        $resource = Resource::factory()->forModule()->makeOne();
+        $data = $resource->toArray();
 
         $response = $this->postJson($this->endpoint, $data, $this->getCommomUserAuthHeaders());
         $this->assertErrorResponse($response, Response::HTTP_FORBIDDEN);
     }
 
-    public function test_can_update_module(): void
+    public function test_can_update_resource(): void
     {
-        $module = Module::factory()->createOne();
+        $resource = Resource::factory()->forModule()->createOne();
         
-        $data = $module->toArray();
+        $data = $resource->toArray();
         $data['name'] = 'New name';
 
-        $response = $this->putJson("{$this->endpoint}/{$module->id}", $data,  $this->getAdminAuthHeaders());
+        $response = $this->putJson("{$this->endpoint}/{$resource->id}", $data,  $this->getAdminAuthHeaders());
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonIsObject()
@@ -280,24 +263,24 @@ class ModuleTest extends TestCase
             ->assertJsonPath('data.name', 'New name');
     }
 
-    public function test_cannot_update_module_with_invalid_payload(): void
+    public function test_cannot_update_resource_with_invalid_payload(): void
     {
-        $module = Module::factory()->createOne();
+        $resource = Resource::factory()->forModule()->createOne();
         
-        $data = $module->toArray();
+        $data = $resource->toArray();
         unset($data['name']);
 
-        $response = $this->putJson("{$this->endpoint}/{$module->id}", $data,  $this->getAdminAuthHeaders());
+        $response = $this->putJson("{$this->endpoint}/{$resource->id}", $data,  $this->getAdminAuthHeaders());
 
         $this->assertErrorResponse($response, Response::HTTP_UNPROCESSABLE_ENTITY);
         $response->assertJsonValidationErrorFor('name');
     }
 
-    public function test_cannot_update_module_with_invalid_id(): void
+    public function test_cannot_update_resource_with_invalid_id(): void
     {
-        $module = Module::factory()->createOne();
+        $resource = Resource::factory()->forModule()->createOne();
         
-        $data = $module->toArray();
+        $data = $resource->toArray();
         $data['name'] = 'New name';
 
         $response = $this->putJson("{$this->endpoint}/999999", $data,  $this->getAdminAuthHeaders());
@@ -305,55 +288,55 @@ class ModuleTest extends TestCase
         $this->assertErrorResponse($response, Response::HTTP_NOT_FOUND);
     }
 
-    public function test_cannot_update_module_without_authentication(): void
+    public function test_cannot_update_resource_without_authentication(): void
     {
-        $module = Module::factory()->createOne();
-        $data = $module->toArray();
+        $resource = Resource::factory()->forModule()->createOne();
+        $data = $resource->toArray();
 
-        $response = $this->putJson("{$this->endpoint}/{$module->id}", $data);
+        $response = $this->putJson("{$this->endpoint}/{$resource->id}", $data);
         $this->assertErrorResponse($response, Response::HTTP_UNAUTHORIZED);
     }
 
-    public function test_cannot_update_module_without_permission(): void
+    public function test_cannot_update_resource_without_permission(): void
     {
-        $module = Module::factory()->createOne();
-        $data = $module->toArray();
+        $resource = Resource::factory()->forModule()->createOne();
+        $data = $resource->toArray();
 
-        $response = $this->putJson("{$this->endpoint}/{$module->id}", $data, $this->getCommomUserAuthHeaders());
+        $response = $this->putJson("{$this->endpoint}/{$resource->id}", $data, $this->getCommomUserAuthHeaders());
         $this->assertErrorResponse($response, Response::HTTP_FORBIDDEN);
     }
 
-    public function test_can_delete_module_by_id(): void
+    public function test_can_delete_resource_by_id(): void
     {
-        $module = Module::factory()->createOne();
+        $resource = Resource::factory()->forModule()->createOne();
 
-        $response = $this->deleteJson("{$this->endpoint}/{$module->id}", [],  $this->getAdminAuthHeaders());
+        $response = $this->deleteJson("{$this->endpoint}/{$resource->id}", [],  $this->getAdminAuthHeaders());
         $response->assertNoContent();
 
-        $this->assertSoftDeleted('modules', [
-            'id' => $module->id,
+        $this->assertSoftDeleted('resources', [
+            'id' => $resource->id,
         ]);
     }
 
-    public function test_cannot_delete_module_by_invalid_id(): void
+    public function test_cannot_delete_resource_by_invalid_id(): void
     {
         $response = $this->deleteJson("{$this->endpoint}/999999", [],  $this->getAdminAuthHeaders());
         $this->assertErrorResponse($response, Response::HTTP_NOT_FOUND);
     }
 
-    public function test_cannot_delete_module_without_authentication(): void
+    public function test_cannot_delete_resource_without_authentication(): void
     {
-        $module = Module::factory()->createOne();
+        $resource = Resource::factory()->forModule()->createOne();
 
-        $response = $this->deleteJson("{$this->endpoint}/{$module->id}");
+        $response = $this->deleteJson("{$this->endpoint}/{$resource->id}");
         $this->assertErrorResponse($response, Response::HTTP_UNAUTHORIZED);
     }
 
-    public function test_cannot_delete_module_without_permission(): void
+    public function test_cannot_delete_resource_without_permission(): void
     {
-        $module = Module::factory()->createOne();
+        $resource = Resource::factory()->forModule()->createOne();
 
-        $response = $this->deleteJson("{$this->endpoint}/{$module->id}", [], $this->getCommomUserAuthHeaders());
+        $response = $this->deleteJson("{$this->endpoint}/{$resource->id}", [], $this->getCommomUserAuthHeaders());
         $this->assertErrorResponse($response, Response::HTTP_FORBIDDEN);
     }
 }
