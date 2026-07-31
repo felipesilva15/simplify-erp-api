@@ -2,16 +2,8 @@
 
 namespace App\Core\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-
-use App\Core\Actions\Module\StoreModuleAction;
-use App\Core\Actions\Module\UpdateModuleAction;
-use App\Core\Actions\Module\DeleteModuleAction;
-use App\Core\Actions\Module\EditModuleAction;
-use App\Core\Actions\Module\ShowModuleAction;
-use App\Core\Actions\Module\ListModuleAction;
 use App\Core\Http\Requests\Module\StoreModuleRequest;
 use App\Core\Http\Requests\Module\UpdateModuleRequest;
 use App\Core\Http\Resources\Module\ModuleResource;
@@ -19,10 +11,14 @@ use App\Core\Http\Resources\Module\ModuleCollection;
 use App\Core\DTO\ModuleDTO;
 use App\Core\Http\Requests\Core\ListRequest;
 use App\Core\Models\Module;
+use App\Core\Services\ModuleService;
 
 class ModuleController extends Controller
 {
-    public function __construct() {
+    protected ModuleService $service;
+
+    public function __construct(ModuleService $service) {
+        $this->service = $service;
         $this->authorizeResource(Module::class, 'module');
     }
 
@@ -65,8 +61,8 @@ class ModuleController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function index(ListRequest $request, ListModuleAction $action): JsonResponse {
-        $serviceResult = $action->execute($request->all());
+    public function index(ListRequest $request): JsonResponse {
+        $serviceResult = $this->service->list($request->all());
 
         $paginated = new ModuleCollection($serviceResult->data);
         $paginated = $paginated->toArray($request);
@@ -124,8 +120,8 @@ class ModuleController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function show(Module $module, ShowModuleAction $action): JsonResponse {
-        $serviceResult = $action->execute($module);
+    public function show(Module $module): JsonResponse {
+        $serviceResult = $this->service->show($module);
 
         return $this->success(
             data: new ModuleResource($serviceResult->data),
@@ -171,9 +167,9 @@ class ModuleController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function store(StoreModuleRequest $request, StoreModuleAction $action): JsonResponse {
+    public function store(StoreModuleRequest $request): JsonResponse {
         $dto = ModuleDTO::fromArray($request->validated());
-        $serviceResult = $action->execute($dto);
+        $serviceResult = $this->service->store($dto);
 
         return $this->success(
             data: new ModuleResource($serviceResult->data),
@@ -231,8 +227,8 @@ class ModuleController extends Controller
      *      )
      * )
      */
-    public function edit(Module $module, EditModuleAction $action): JsonResponse {
-        $serviceResult = $action->execute($module);
+    public function edit(Module $module): JsonResponse {
+        $serviceResult = $this->service->edit($module);
 
         return $this->success(
             data: new ModuleResource($serviceResult->data),
@@ -292,9 +288,9 @@ class ModuleController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function update(Module $module, UpdateModuleRequest $request, UpdateModuleAction $action): JsonResponse {
+    public function update(Module $module, UpdateModuleRequest $request): JsonResponse {
         $dto = ModuleDTO::fromArray($request->validated());
-        $serviceResult = $action->execute($module, $dto);
+        $serviceResult = $this->service->update($module, $dto);
 
         return $this->success(
             data: new ModuleResource($serviceResult->data),
@@ -336,8 +332,8 @@ class ModuleController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function destroy(Module $module, DeleteModuleAction $action): Response {
-        $action->execute($module);
+    public function destroy(Module $module): Response {
+        $this->service->delete($module);
         return response()->noContent();
     }
 }

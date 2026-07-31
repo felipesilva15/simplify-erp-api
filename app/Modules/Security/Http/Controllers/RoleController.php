@@ -2,20 +2,11 @@
 
 namespace App\Modules\Security\Http\Controllers;
 
-use App\Modules\Security\Actions\Role\DefineRolePermissionsAction;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-
 use App\Core\Http\Controllers\Controller;
 use App\Core\Http\Requests\Core\ListRequest;
 use App\Core\Http\Requests\Core\LookupRequest;
-use App\Modules\Security\Actions\Role\StoreRoleAction;
-use App\Modules\Security\Actions\Role\UpdateRoleAction;
-use App\Modules\Security\Actions\Role\DeleteRoleAction;
-use App\Modules\Security\Actions\Role\EditRoleAction;
-use App\Modules\Security\Actions\Role\ShowRoleAction;
-use App\Modules\Security\Actions\Role\ListRoleAction;
-use App\Modules\Security\Actions\Role\LookupRoleAction;
 use App\Modules\Security\Http\Requests\Role\StoreRoleRequest;
 use App\Modules\Security\Http\Requests\Role\UpdateRoleRequest;
 use App\Modules\Security\Http\Resources\Role\RoleResource;
@@ -24,10 +15,14 @@ use App\Modules\Security\DTO\RoleDTO;
 use App\Modules\Security\Http\Requests\Role\RolePermissionsRequest;
 use App\Modules\Security\Http\Resources\Role\RoleLookupCollection;
 use App\Modules\Security\Models\Role;
+use App\Modules\Security\Services\RoleService;
 
 class RoleController extends Controller
 {
-    public function __construct() {
+    protected RoleService $service;
+
+    public function __construct(RoleService $service) {
+        $this->service = $service;
         $this->authorizeResource(Role::class, 'role');
         $this->middleware('can:definePermissions,role')->only(['definePermissions']);
     }
@@ -68,8 +63,8 @@ class RoleController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function index(ListRequest $request, ListRoleAction $action): JsonResponse {
-        $serviceResult = $action->execute($request->all());
+    public function index(ListRequest $request): JsonResponse {
+        $serviceResult = $this->service->list($request->all());
 
         $paginated = new RoleCollection($serviceResult->data);
         $paginated = $paginated->toArray($request);
@@ -127,8 +122,8 @@ class RoleController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function show(Role $role, ShowRoleAction $action): JsonResponse {
-        $serviceResult = $action->execute($role);
+    public function show(Role $role): JsonResponse {
+        $serviceResult = $this->service->show($role);
 
         return $this->success(
             data: new RoleResource($serviceResult->data),
@@ -174,9 +169,9 @@ class RoleController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function store(StoreRoleRequest $request, StoreRoleAction $action): JsonResponse {
+    public function store(StoreRoleRequest $request): JsonResponse {
         $dto = RoleDTO::fromArray($request->validated());
-        $serviceResult = $action->execute($dto);
+        $serviceResult = $this->service->store($dto);
 
         return $this->success(
             data: new RoleResource($serviceResult->data),
@@ -234,8 +229,8 @@ class RoleController extends Controller
      *      )
      * )
      */
-    public function edit(Role $role, EditRoleAction $action): JsonResponse {
-        $serviceResult = $action->execute($role);
+    public function edit(Role $role): JsonResponse {
+        $serviceResult = $this->service->edit($role);
 
         return $this->success(
             data: new RoleResource($serviceResult->data),
@@ -295,9 +290,9 @@ class RoleController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function update(Role $role, UpdateRoleRequest $request, UpdateRoleAction $action): JsonResponse {
+    public function update(Role $role, UpdateRoleRequest $request): JsonResponse {
         $dto = RoleDTO::fromArray($request->validated());
-        $serviceResult = $action->execute($role, $dto);
+        $serviceResult = $this->service->update($role, $dto);
 
         return $this->success(
             data: new RoleResource($serviceResult->data),
@@ -339,8 +334,8 @@ class RoleController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function destroy(Role $role, DeleteRoleAction $action): Response {
-        $action->execute($role);
+    public function destroy(Role $role): Response {
+        $this->service->delete($role);
         return response()->noContent();
     }
 
@@ -394,8 +389,8 @@ class RoleController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function definePermissions(Role $role, RolePermissionsRequest $request, DefineRolePermissionsAction $action): JsonResponse {
-        $serviceResult = $action->execute($role, $request->validated('ids'));
+    public function definePermissions(Role $role, RolePermissionsRequest $request): JsonResponse {
+        $serviceResult = $this->service->definePermissions($role, $request->validated('ids'));
 
         return $this->success(
             data: new RoleResource($serviceResult->data),
@@ -403,8 +398,8 @@ class RoleController extends Controller
         );
     }
 
-    public function lookup(LookupRequest $request, LookupRoleAction $action): JsonResponse {
-        $serviceResult = $action->execute($request->all());
+    public function lookup(LookupRequest $request): JsonResponse {
+        $serviceResult = $this->service->lookup($request->all());
 
         $paginated = new RoleLookupCollection($serviceResult->data);
         $paginated = $paginated->toArray($request);

@@ -16,7 +16,10 @@ use App\Core\Services\ResourceService;
 
 class ResourceController extends Controller
 {
-    public function __construct() {
+    protected ResourceService $service;
+
+    public function __construct(ResourceService $service) {
+        $this->service = $service;
         $this->authorizeResource(Resource::class, 'resource');
     }
 
@@ -59,8 +62,8 @@ class ResourceController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function index(ListRequest $request, ResourceService $service): JsonResponse {
-        $serviceResult = $service->list($request->all());
+    public function index(ListRequest $request): JsonResponse {
+        $serviceResult = $this->service->list($request->all());
 
         $paginated = new ResourceCollection($serviceResult->data);
         $paginated = $paginated->toArray($request);
@@ -118,8 +121,8 @@ class ResourceController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function show(Resource $resource, ResourceService $service): JsonResponse {
-        $serviceResult = $service->show($resource);
+    public function show(Resource $resource): JsonResponse {
+        $serviceResult = $this->service->show($resource);
         
         return $this->success(
             data: new ResourceResource($serviceResult->data),
@@ -165,9 +168,9 @@ class ResourceController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function store(StoreResourceRequest $request, ResourceService $service): JsonResponse {
+    public function store(StoreResourceRequest $request): JsonResponse {
         $dto = ResourceDTO::fromArray($request->validated());
-        $serviceResult = $service->store($dto);
+        $serviceResult = $this->service->store($dto);
 
         return $this->success(
             data: new ResourceResource($serviceResult->data),
@@ -225,8 +228,8 @@ class ResourceController extends Controller
      *      )
      * )
      */
-    public function edit(Resource $resource, ResourceService $service): JsonResponse {
-        $serviceResult = $service->edit($resource);
+    public function edit(Resource $resource): JsonResponse {
+        $serviceResult = $this->service->edit($resource);
 
         return $this->success(
             data: new ResourceResource($serviceResult->data),
@@ -286,9 +289,9 @@ class ResourceController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function update(Resource $resource, UpdateResourceRequest $request, ResourceService $service): JsonResponse {
+    public function update(Resource $resource, UpdateResourceRequest $request): JsonResponse {
         $dto = ResourceDTO::fromArray($request->validated());
-        $serviceResult = $service->update($resource, $dto);
+        $serviceResult = $this->service->update($resource, $dto);
 
         return $this->success(
             data: new ResourceResource($serviceResult->data),
@@ -330,8 +333,8 @@ class ResourceController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function destroy(Resource $resource, ResourceService $service): Response {
-        $service->delete($resource);
+    public function destroy(Resource $resource): Response {
+        $this->service->delete($resource);
         return response()->noContent();
     }
 }

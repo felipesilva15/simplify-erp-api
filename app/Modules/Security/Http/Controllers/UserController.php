@@ -7,22 +7,20 @@ use Illuminate\Http\Response;
 
 use App\Core\Http\Controllers\Controller;
 use App\Core\Http\Requests\Core\ListRequest;
-use App\Modules\Security\Actions\User\StoreUserAction;
-use App\Modules\Security\Actions\User\UpdateUserAction;
-use App\Modules\Security\Actions\User\DeleteUserAction;
-use App\Modules\Security\Actions\User\EditUserAction;
-use App\Modules\Security\Actions\User\ShowUserAction;
-use App\Modules\Security\Actions\User\ListUserAction;
 use App\Modules\Security\Http\Requests\User\StoreUserRequest;
 use App\Modules\Security\Http\Requests\User\UpdateUserRequest;
 use App\Modules\Security\Http\Resources\User\UserResource;
 use App\Modules\Security\Http\Resources\User\UserCollection;
 use App\Modules\Security\DTO\UserDTO;
 use App\Modules\Security\Models\User;
+use App\Modules\Security\Services\UserService;
 
 class UserController extends Controller
 {
-    public function __construct() {
+    protected UserService $service;
+
+    public function __construct(UserService $service) {
+        $this->service = $service;
         $this->authorizeResource(User::class, 'user');
     }
 
@@ -69,8 +67,8 @@ class UserController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function index(ListRequest $request, ListUserAction $action): JsonResponse {
-        $serviceResult = $action->execute($request->all());
+    public function index(ListRequest $request): JsonResponse {
+        $serviceResult = $this->service->list($request->all());
 
         $paginated = new UserCollection($serviceResult->data);
         $paginated = $paginated->toArray($request);
@@ -128,8 +126,8 @@ class UserController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function show(User $user, ShowUserAction $action): JsonResponse {
-        $serviceResult = $action->execute($user);
+    public function show(User $user): JsonResponse {
+        $serviceResult = $this->service->show($user);
 
         return $this->success(
             data: new UserResource($serviceResult->data),
@@ -175,9 +173,9 @@ class UserController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function store(StoreUserRequest $request, StoreUserAction $action): JsonResponse {
+    public function store(StoreUserRequest $request): JsonResponse {
         $dto = UserDTO::fromArray($request->validated());
-        $serviceResult = $action->execute($dto);
+        $serviceResult = $this->service->store($dto);
 
         return $this->success(
             data: new UserResource($serviceResult->data),
@@ -235,8 +233,8 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function edit(User $user, EditUserAction $action): JsonResponse {
-        $serviceResult = $action->execute($user);
+    public function edit(User $user): JsonResponse {
+        $serviceResult = $this->service->edit($user);
 
         return $this->success(
             data: new UserResource($serviceResult->data),
@@ -296,10 +294,10 @@ class UserController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function update(User $user, UpdateUserRequest $request, UpdateUserAction $action): JsonResponse {
+    public function update(User $user, UpdateUserRequest $request): JsonResponse {
         $dto = UserDTO::fromArray($request->validated());
         $dto->fieldsToUse = array_keys($request->validated());
-        $serviceResult = $action->execute($user, $dto);
+        $serviceResult = $this->service->update($user, $dto);
 
         return $this->success(
             data: new UserResource($serviceResult->data),
@@ -341,8 +339,8 @@ class UserController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function destroy(User $user, DeleteUserAction $action): Response {
-        $action->execute($user);
+    public function destroy(User $user): Response {
+        $this->service->delete($user);
         return response()->noContent();
     }
 }

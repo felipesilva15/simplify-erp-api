@@ -4,10 +4,6 @@ namespace App\Modules\Security\Http\Controllers;
 
 use App\Core\Http\Controllers\Controller;
 use App\Modules\Security\Http\Requests\Auth\LoginRequest;
-use App\Modules\Security\Actions\Auth\GetAuthUserAction;
-use App\Modules\Security\Actions\Auth\LoginAction;
-use App\Modules\Security\Actions\Auth\LogoutAction;
-use App\Modules\Security\Actions\Auth\RefreshTokenAction;
 use App\Modules\Security\DTO\AuthCredentialsDTO;
 use App\Modules\Security\Http\Resources\Auth\TokenDetailsResource;
 use App\Modules\Security\Http\Resources\User\UserResource;
@@ -18,10 +14,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
-    protected AuthService $authService;
+    protected AuthService $service;
 
-    public function __construct(AuthService $authService) {
-        $this->authService = $authService;
+    public function __construct(AuthService $service) {
+        $this->service = $service;
     }
 
     /**
@@ -46,9 +42,9 @@ class AuthController extends Controller
      *  )
      * )
      */
-    public function login(LoginRequest $request, LoginAction $action): Response {
+    public function login(LoginRequest $request): Response {
         $dto = AuthCredentialsDTO::fromArray($request->validated());
-        $tokenDetails = $action->execute($dto);
+        $tokenDetails = $this->service->login($dto);
         $cookie = Cookie::make(
             name: config('jwt.cookie_name'),
             value: $tokenDetails->token,
@@ -89,9 +85,9 @@ class AuthController extends Controller
      *  )
      * )
      */
-    public function token(LoginRequest $request, LoginAction $action): JsonResponse {
+    public function token(LoginRequest $request): JsonResponse {
         $dto = AuthCredentialsDTO::fromArray($request->validated());
-        $tokenDetails = $action->execute($dto);
+        $tokenDetails = $this->service->login($dto);
 
         return response()->json(new TokenDetailsResource($tokenDetails), 200);
     }
@@ -114,8 +110,8 @@ class AuthController extends Controller
      *     security={{"bearerAuth":{}}}
      * )
      */
-    public function me(GetAuthUserAction $action): JsonResponse {
-        $user = $action->execute();
+    public function me(): JsonResponse {
+        $user = $this->service->getLoggedInUser();
         return response()->json(new UserResource($user), 200);
     }
     
@@ -136,8 +132,8 @@ class AuthController extends Controller
      *     security={{"bearerAuth":{}}}
      * )
      */
-    public function logout(LogoutAction $action): Response {
-        $action->execute();
+    public function logout(): Response {
+        $this->service->logout();
         return response()
             ->noContent()
             ->withoutCookie('token');
@@ -161,8 +157,8 @@ class AuthController extends Controller
      *     security={{"bearerAuth":{}}}
      * )
      */
-    public function refresh(RefreshTokenAction $action): JsonResponse {
-        $tokenDetails = $action->execute();
+    public function refresh(): JsonResponse {
+        $tokenDetails = $this->service->refreshToken();
         return response()->json(new TokenDetailsResource($tokenDetails), 200);
     }
 }

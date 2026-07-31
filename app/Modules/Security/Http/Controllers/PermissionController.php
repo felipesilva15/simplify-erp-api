@@ -6,23 +6,20 @@ use App\Core\Http\Controllers\Controller;
 use App\Core\Http\Requests\Core\ListRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-
-use App\Modules\Security\Actions\Permission\StorePermissionAction;
-use App\Modules\Security\Actions\Permission\UpdatePermissionAction;
-use App\Modules\Security\Actions\Permission\DeletePermissionAction;
-use App\Modules\Security\Actions\Permission\EditPermissionAction;
-use App\Modules\Security\Actions\Permission\ShowPermissionAction;
-use App\Modules\Security\Actions\Permission\ListPermissionAction;
 use App\Modules\Security\Http\Requests\Permission\StorePermissionRequest;
 use App\Modules\Security\Http\Requests\Permission\UpdatePermissionRequest;
 use App\Modules\Security\Http\Resources\Permission\PermissionResource;
 use App\Modules\Security\Http\Resources\Permission\PermissionCollection;
 use App\Modules\Security\DTO\PermissionDTO;
 use App\Modules\Security\Models\Permission;
+use App\Modules\Security\Services\PermissionService;
 
 class PermissionController extends Controller
 {
-    public function __construct() {
+    protected PermissionService $service;
+
+    public function __construct(PermissionService $service) {
+        $this->service = $service;
         $this->authorizeResource(Permission::class, 'permission');
     }
 
@@ -67,8 +64,8 @@ class PermissionController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function index(ListRequest $request, ListPermissionAction $action): JsonResponse {
-        $serviceResult = $action->execute($request->all());
+    public function index(ListRequest $request): JsonResponse {
+        $serviceResult = $this->service->list($request->all());
 
         $paginated = new PermissionCollection($serviceResult->data);
         $paginated = $paginated->toArray($request);
@@ -126,8 +123,8 @@ class PermissionController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function show(Permission $permission, ShowPermissionAction $action): JsonResponse {
-        $serviceResult = $action->execute($permission);
+    public function show(Permission $permission): JsonResponse {
+        $serviceResult = $this->service->show($permission);
 
         return $this->success(
             data: new PermissionResource($serviceResult->data),
@@ -173,9 +170,9 @@ class PermissionController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function store(StorePermissionRequest $request, StorePermissionAction $action): JsonResponse {
+    public function store(StorePermissionRequest $request): JsonResponse {
         $dto = PermissionDTO::fromArray($request->validated());
-        $serviceResult = $action->execute($dto);
+        $serviceResult = $this->service->store($dto);
 
         return $this->success(
             data: new PermissionResource($serviceResult->data),
@@ -233,8 +230,8 @@ class PermissionController extends Controller
      *      )
      * )
      */
-    public function edit(Permission $permission, EditPermissionAction $action): JsonResponse {
-        $serviceResult = $action->execute($permission);
+    public function edit(Permission $permission): JsonResponse {
+        $serviceResult = $this->service->edit($permission);
 
         return $this->success(
             data: new PermissionResource($serviceResult->data),
@@ -294,9 +291,9 @@ class PermissionController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function update(Permission $permission, UpdatePermissionRequest $request, UpdatePermissionAction $action): JsonResponse {
+    public function update(Permission $permission, UpdatePermissionRequest $request): JsonResponse {
         $dto = PermissionDTO::fromArray($request->validated());
-        $serviceResult = $action->execute($permission, $dto);
+        $serviceResult = $this->service->update($permission, $dto);
 
         return $this->success(
             data: new PermissionResource($serviceResult->data),
@@ -338,8 +335,8 @@ class PermissionController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function destroy(Permission $permission, DeletePermissionAction $action): Response {
-        $action->execute($permission);
+    public function destroy(Permission $permission): Response {
+        $this->service->delete($permission);
         return response()->noContent();
     }
 }
