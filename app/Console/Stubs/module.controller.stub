@@ -7,22 +7,21 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 use App\Core\Http\Controllers\Controller;
-use App\Modules\{{module}}\Actions\{{entity}}\Store{{entity}}Action;
-use App\Modules\{{module}}\Actions\{{entity}}\Update{{entity}}Action;
-use App\Modules\{{module}}\Actions\{{entity}}\Delete{{entity}}Action;
-use App\Modules\{{module}}\Actions\{{entity}}\Edit{{entity}}Action;
-use App\Modules\{{module}}\Actions\{{entity}}\Show{{entity}}Action;
-use App\Modules\{{module}}\Actions\{{entity}}\List{{entity}}Action;
+use App\Core\Http\Requests\Core\ListRequest;
 use App\Modules\{{module}}\Http\Requests\{{entity}}\Store{{entity}}Request;
 use App\Modules\{{module}}\Http\Requests\{{entity}}\Update{{entity}}Request;
-use App\Modules\{{module}}\Http\Requests\{{entity}}\List{{entity}}Request;
 use App\Modules\{{module}}\Http\Resources\{{entity}}\{{entity}}Resource;
 use App\Modules\{{module}}\Http\Resources\{{entity}}\{{entity}}Collection;
 use App\Modules\{{module}}\DTO\{{entity}}DTO;
+use App\Modules\{{module}}\Models\{{entity}};
+use App\Modules\{{module}}\Services\{{entity}}Service;
 
 class {{entity}}Controller extends Controller
 {
-    public function __construct() {
+    protected {{entity}}Service $service;
+
+    public function __construct({{entity}}Service $service) {
+        $this->service = $service;
         $this->authorizeResource({{entity}}::class, '{{lower_entity}}');
     }
 
@@ -31,23 +30,48 @@ class {{entity}}Controller extends Controller
      *      path="/api/{{lower_module}}/{{lower_entity}}s",
      *      tags={"{{entity}}"},
      *      summary="List all rows",
-     *      {{swagger_query_parameters}},
-     *      @OA\Parameter(name="sort_by[]", in="query", description="Fields name's to sort", required=false, @OA\Schema(type="array", @OA\Items(type="string", example="id"))),
-     *      @OA\Parameter(name="sort_dir[]", in="query", description="Directions to sort: Ascending = 'asc'; Descending = 'desc'", required=false, @OA\Schema(type="array", @OA\Items(type="string", example="desc"))),
-     *      @OA\Parameter(name="per_page", in="query", description="Items per page", required=false, @OA\Schema(type="integer")),
-     *      @OA\Parameter(name="page", in="query", description="Page number", required=false, @OA\Schema(type="integer")),
+     *      @OA\Parameter(name="filters[id][eq]", in="query", required=false, @OA\Schema(type="integer")),
+     *      @OA\Parameter(name="filters[name][like]", in="query", required=false, @OA\Schema(type="string")),
+     *      @OA\Parameter(name="filters[created_at][gte]", in="query", required=false, @OA\Schema(type="string")),
+     *      @OA\Parameter(name="filters[updated_at][lte]", in="query", required=false, @OA\Schema(type="string")),
+     *      @OA\Parameter(ref="#/components/parameters/sortsParam"),
+     *      @OA\Parameter(ref="#/components/parameters/perPageParam"),
+     *      @OA\Parameter(ref="#/components/parameters/pageParam"),
      *      @OA\Response(
      *          response="200", 
      *          description="{{entity}} list",
-     *          @OA\JsonContent(ref="#/components/schemas/{{entity}}Collection")
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(ref="#/components/schemas/{{entity}}Collection")
+     *              }
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function index(List{{entity}}Request $request, List{{entity}}Action $action): JsonResponse {
-        ${{lower_entity}}List = $action->execute($request->all());
+    public function index(ListRequest $request): JsonResponse {
+        $serviceResult = $this->service->list($request->all());
 
-        return response()->json(new {{entity}}Collection(${{lower_entity}}List), 200);
+        $paginated = new {{entity}}Collection($serviceResult->data);
+        $paginated = $paginated->toArray($request);
+
+        return $this->success(
+            data: $paginated['data'],
+            links: $paginated['links'],
+            meta: $paginated['meta'],
+            httpStatus: Response::HTTP_OK
+        );
     }
 
     /**
@@ -65,20 +89,43 @@ class {{entity}}Controller extends Controller
      *      @OA\Response(
      *          response="200", 
      *          description="{{entity}} data",
-     *          @OA\JsonContent(ref="#/components/schemas/{{entity}}Resource")
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/{{entity}}Resource"
+     *                      )
+     *                  )
+     *              }
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function show(int $id, Show{{entity}}Action $action): JsonResponse {
-        ${{lower_entity}} = $action->execute($id);
+    public function show({{entity}} ${{lower_entity}}): JsonResponse {
+        $serviceResult = $this->service->show(${{lower_entity}});
 
-        return response()->json(new {{entity}}Resource(${{lower_entity}}), 200);
+        return $this->success(
+            data: new {{entity}}Resource($serviceResult->data),
+            httpStatus: Response::HTTP_OK
+        );
     }
 
     /**
@@ -94,21 +141,39 @@ class {{entity}}Controller extends Controller
      *      @OA\Response(
      *          response="201", 
      *          description="Registered {{lower_entity}} data",
-     *          @OA\JsonContent(ref="#/components/schemas/{{entity}}Resource")
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/{{entity}}Resource"
+     *                      )
+     *                  )
+     *              }
+     *          )
      *      ),
      *      @OA\Response(
      *          response="401", 
      *          description="Unauthorized",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function store(Store{{entity}}Request $request, Store{{entity}}Action $action): JsonResponse {
+    public function store(Store{{entity}}Request $request): JsonResponse {
         $dto = {{entity}}DTO::fromArray($request->validated());
-        ${{lower_entity}} = $action->execute($dto);
+        $serviceResult = $this->service->store($dto);
 
-        return response()->json(new {{entity}}Resource(${{lower_entity}}), 201);
+        return $this->success(
+            data: new {{entity}}Resource($serviceResult->data),
+            httpStatus: Response::HTTP_CREATED
+        );
     }
 
     /**
@@ -126,19 +191,50 @@ class {{entity}}Controller extends Controller
      *      @OA\Response(
      *          response="200", 
      *          description="{{entity}} data",
-     *          @OA\JsonContent(ref="#/components/schemas/{{entity}}Resource")
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/{{entity}}Resource"
+     *                      ),
+     *                      @OA\Property(property="warnings", type="array", @OA\Items(type="string", example="Este recurso não pode ser editado."), nullable=true),
+     *                      @OA\Property(
+     *                          property="meta", 
+     *                          type="object", 
+     *                          @OA\Property(property="editable", type="boolean", example=true)
+     *                      )
+     *                  )
+     *              }
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      )
      * )
      */
-    public function edit(int $id, Edit{{entity}}Action $action): JsonResponse {
-        ${{lower_entity}} = $action->execute($id);
+    public function edit({{entity}} ${{lower_entity}}): JsonResponse {
+        $serviceResult = $this->service->edit(${{lower_entity}});
 
-        return response()->json(new {{entity}}Resource(${{lower_entity}}), 200);
+        return $this->success(
+            data: new {{entity}}Resource($serviceResult->data),
+            warnings: $serviceResult->warnings,
+            meta: $serviceResult->meta,
+            httpStatus: Response::HTTP_OK
+        );
     }
 
     /**
@@ -161,26 +257,44 @@ class {{entity}}Controller extends Controller
      *      @OA\Response(
      *          response="200", 
      *          description="Updated {{lower_entity}} data",
-     *          @OA\JsonContent(ref="#/components/schemas/{{entity}}Resource")
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/{{entity}}Resource"
+     *                      )
+     *                  )
+     *              }
+     *          )
      *      ),
      *      @OA\Response(
      *          response="401", 
      *          description="Unauthorized",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function update(int $id, Update{{entity}}Request $request, Update{{entity}}Action $action): JsonResponse {
+    public function update({{entity}} ${{lower_entity}}, Update{{entity}}Request $request): JsonResponse {
         $dto = {{entity}}DTO::fromArray($request->validated());
-        ${{lower_entity}} = $action->execute($id, $dto);
+        $serviceResult = $this->service->update(${{lower_entity}}, $dto);
 
-        return response()->json(new {{entity}}Resource(${{lower_entity}}), 200);
+        return $this->success(
+            data: new {{entity}}Resource($serviceResult->data),
+            httpStatus: Response::HTTP_OK
+        );
     }
 
     /**
@@ -202,18 +316,23 @@ class {{entity}}Controller extends Controller
      *      @OA\Response(
      *          response="401", 
      *          description="Unauthorized",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
      *          response="404", 
      *          description="Record not found",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function destroy(int $id, Delete{{entity}}Action $action): Response {
-        $action->execute($id);
+    public function destroy({{entity}} ${{lower_entity}}): Response {
+        $this->service->delete(${{lower_entity}});
         return response()->noContent();
     }
 }
