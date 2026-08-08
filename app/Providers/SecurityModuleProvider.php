@@ -10,7 +10,7 @@ use App\Modules\Security\Repositories\Interfaces\RoleRepositoryInterface;
 use App\Modules\Security\Repositories\Interfaces\UserRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
-class AuthModuleProvider extends ServiceProvider
+class SecurityModuleProvider extends ServiceProvider
 {
     /**
      * Register services.
