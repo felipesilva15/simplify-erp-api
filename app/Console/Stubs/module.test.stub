@@ -1,0 +1,302 @@
+<?php
+
+namespace Tests\Feature\{{module}};
+
+use App\Modules\{{module}}\Models\{{entity}};
+use Tests\TestCase;
+use Illuminate\Http\Response;
+
+class {{entity}}Test extends TestCase
+{
+    protected string $endpoint = '/api/{{lower_module}}/{{lower_entity}}s';
+
+    protected function getResourceStructure(): array {
+        return [
+            {{resource_structure}}
+        ];
+    }
+
+    public function test_listing_returns_default_api_response_structure(): void {
+        $response = $this->getJson($this->endpoint, $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK);
+        $this->assertApiResponseStructureForListing($response);
+    }
+
+    public function test_can_list_{{lower_entity}}s(): void
+    {
+        {{entity}}::factory(3)->create();
+        $response = $this->getJson($this->endpoint, $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonStructure([
+                'data' => [
+                    '*' => $this->getResourceStructure()
+                ]
+            ])
+            ->assertJsonCount(3, 'data');
+    }
+
+    public function test_can_list_{{lower_entity}}s_with_sort(): void
+    {
+        $queryParams = [
+            'sorts' => '-id'
+        ];
+
+        {{entity}}::factory(3)->create();
+        $response = $this->getJson(url()->query($this->endpoint, $queryParams), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonPath('data.0.id', 3);
+    }
+
+    public function test_can_list_{{lower_entity}}s_with_filter(): void
+    {
+        $queryParams = [
+            'filters' => [
+                'id' => [
+                    'eq' => 2
+                ]
+            ]
+        ];
+
+        {{entity}}::factory(3)->create();
+        $response = $this->getJson(url()->query($this->endpoint, $queryParams), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.id', 2);
+    }
+
+    public function test_cannot_list_{{lower_entity}}s_without_authentication(): void
+    {
+        $response = $this->getJson($this->endpoint);
+        $this->assertErrorResponse($response, Response::HTTP_UNAUTHORIZED);
+    }
+
+    public function test_cannot_list_{{lower_entity}}s_without_permission(): void
+    {
+        $response = $this->getJson($this->endpoint, $this->getCommomUserAuthHeaders());
+        $this->assertErrorResponse($response, Response::HTTP_FORBIDDEN);
+    }
+
+    public function test_can_get_{{lower_entity}}_by_id(): void
+    {
+        $model = {{entity}}::factory()->createOne();
+
+        $response = $this->getJson("{$this->endpoint}/{$model->id}", $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonStructure([
+                'data' => $this->getResourceStructure()
+            ])
+            ->assertJsonPath('data.{{display_field}}', $model->{{display_field}});
+    }
+
+    public function test_cannot_get_{{lower_entity}}_by_invalid_id(): void
+    {
+        $response = $this->getJson("{$this->endpoint}/999999", $this->getAdminAuthHeaders());
+        $this->assertErrorResponse($response, Response::HTTP_NOT_FOUND);
+    }
+
+    public function test_cannot_get_{{lower_entity}}_by_id_without_authentication(): void
+    {
+        $model = {{entity}}::factory()->createOne();
+
+        $response = $this->getJson("{$this->endpoint}/{$model->id}");
+        $this->assertErrorResponse($response, Response::HTTP_UNAUTHORIZED);
+    }
+
+    public function test_cannot_get_{{lower_entity}}_by_id_without_permission(): void
+    {
+        $model = {{entity}}::factory()->createOne();
+
+        $response = $this->getJson("{$this->endpoint}/{$model->id}", $this->getCommomUserAuthHeaders());
+        $this->assertErrorResponse($response, Response::HTTP_FORBIDDEN);
+    }
+
+    public function test_can_get_{{lower_entity}}_by_id_for_edit(): void
+    {
+        $model = {{entity}}::factory()->createOne();
+
+        $response = $this->getJson("{$this->endpoint}/{$model->id}/edit", $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonStructure([
+                'data' => $this->getResourceStructure()
+            ])
+            ->assertJsonPath('data.{{display_field}}', $model->{{display_field}})
+            ->assertJsonPath('meta.editable', true);
+    }
+
+    public function test_cannot_get_{{lower_entity}}_by_invalid_id_for_edit(): void
+    {
+        $response = $this->getJson("{$this->endpoint}/999999/edit", $this->getAdminAuthHeaders());
+
+        $this->assertErrorResponse($response, Response::HTTP_NOT_FOUND);
+    }
+
+    public function test_cannot_get_{{lower_entity}}_by_id_for_edit_without_authentication(): void
+    {
+        $model = {{entity}}::factory()->createOne();
+
+        $response = $this->getJson("{$this->endpoint}/{$model->id}/edit");
+        $this->assertErrorResponse($response, Response::HTTP_UNAUTHORIZED);
+    }
+
+    public function test_cannot_get_{{lower_entity}}_by_id_for_edit_without_permission(): void
+    {
+        $model = {{entity}}::factory()->createOne();
+
+        $response = $this->getJson("{$this->endpoint}/{$model->id}/edit", $this->getCommomUserAuthHeaders());
+        $this->assertErrorResponse($response, Response::HTTP_FORBIDDEN);
+    }
+
+    public function test_can_create_{{lower_entity}}(): void
+    {
+        $model = {{entity}}::factory()->makeOne();
+        $data = $model->toArray();
+
+        $response = $this->postJson($this->endpoint, $data, $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_CREATED)
+            ->assertJsonIsObject()
+            ->assertJsonStructure([
+                'data' => $this->getResourceStructure()
+            ])
+            ->assertJsonPath('data.{{display_field}}', $model->{{display_field}});
+
+        $this->assertDatabaseHas('{{table_name}}', [
+            '{{display_field}}' => $model->{{display_field}},
+        ]);
+    }
+
+    public function test_cannot_create_{{lower_entity}}_with_invalid_payload(): void
+    {
+        $model = {{entity}}::factory()->makeOne();
+        $data = $model->toArray();
+        unset($data['{{required_field}}']);
+
+        $response = $this->postJson($this->endpoint, $data, $this->getAdminAuthHeaders());
+
+        $this->assertErrorResponse($response, Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJsonValidationErrorFor('{{required_field}}');
+    }
+
+    public function test_cannot_create_{{lower_entity}}_without_authentication(): void
+    {
+        $model = {{entity}}::factory()->makeOne();
+        $data = $model->toArray();
+
+        $response = $this->postJson($this->endpoint, $data);
+        $this->assertErrorResponse($response, Response::HTTP_UNAUTHORIZED);
+    }
+
+    public function test_cannot_create_{{lower_entity}}_without_permission(): void
+    {
+        $model = {{entity}}::factory()->makeOne();
+        $data = $model->toArray();
+
+        $response = $this->postJson($this->endpoint, $data, $this->getCommomUserAuthHeaders());
+        $this->assertErrorResponse($response, Response::HTTP_FORBIDDEN);
+    }
+
+    public function test_can_update_{{lower_entity}}(): void
+    {
+        $model = {{entity}}::factory()->createOne();
+
+        $data = $model->toArray();
+        $data['{{display_field}}'] = 'Updated {{entity}}';
+
+        $response = $this->putJson("{$this->endpoint}/{$model->id}", $data, $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonStructure([
+                'data' => $this->getResourceStructure()
+            ])
+            ->assertJsonPath('data.{{display_field}}', 'Updated {{entity}}');
+    }
+
+    public function test_cannot_update_{{lower_entity}}_with_invalid_payload(): void
+    {
+        $model = {{entity}}::factory()->createOne();
+
+        $data = $model->toArray();
+        unset($data['{{required_field}}']);
+
+        $response = $this->putJson("{$this->endpoint}/{$model->id}", $data, $this->getAdminAuthHeaders());
+
+        $this->assertErrorResponse($response, Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJsonValidationErrorFor('{{required_field}}');
+    }
+
+    public function test_cannot_update_{{lower_entity}}_with_invalid_id(): void
+    {
+        $model = {{entity}}::factory()->createOne();
+
+        $data = $model->toArray();
+        $data['{{display_field}}'] = 'Updated {{entity}}';
+
+        $response = $this->putJson("{$this->endpoint}/999999", $data, $this->getAdminAuthHeaders());
+
+        $this->assertErrorResponse($response, Response::HTTP_NOT_FOUND);
+    }
+
+    public function test_cannot_update_{{lower_entity}}_without_authentication(): void
+    {
+        $model = {{entity}}::factory()->createOne();
+        $data = $model->toArray();
+
+        $response = $this->putJson("{$this->endpoint}/{$model->id}", $data);
+        $this->assertErrorResponse($response, Response::HTTP_UNAUTHORIZED);
+    }
+
+    public function test_cannot_update_{{lower_entity}}_without_permission(): void
+    {
+        $model = {{entity}}::factory()->createOne();
+        $data = $model->toArray();
+
+        $response = $this->putJson("{$this->endpoint}/{$model->id}", $data, $this->getCommomUserAuthHeaders());
+        $this->assertErrorResponse($response, Response::HTTP_FORBIDDEN);
+    }
+
+    public function test_can_delete_{{lower_entity}}_by_id(): void
+    {
+        $model = {{entity}}::factory()->createOne();
+
+        $response = $this->deleteJson("{$this->endpoint}/{$model->id}", [], $this->getAdminAuthHeaders());
+        $response->assertNoContent();
+
+        $this->assertSoftDeleted('{{table_name}}', [
+            'id' => $model->id,
+        ]);
+    }
+
+    public function test_cannot_delete_{{lower_entity}}_by_invalid_id(): void
+    {
+        $response = $this->deleteJson("{$this->endpoint}/999999", [], $this->getAdminAuthHeaders());
+        $this->assertErrorResponse($response, Response::HTTP_NOT_FOUND);
+    }
+
+    public function test_cannot_delete_{{lower_entity}}_without_authentication(): void
+    {
+        $model = {{entity}}::factory()->createOne();
+
+        $response = $this->deleteJson("{$this->endpoint}/{$model->id}");
+        $this->assertErrorResponse($response, Response::HTTP_UNAUTHORIZED);
+    }
+
+    public function test_cannot_delete_{{lower_entity}}_without_permission(): void
+    {
+        $model = {{entity}}::factory()->createOne();
+
+        $response = $this->deleteJson("{$this->endpoint}/{$model->id}", [], $this->getCommomUserAuthHeaders());
+        $this->assertErrorResponse($response, Response::HTTP_FORBIDDEN);
+    }
+}

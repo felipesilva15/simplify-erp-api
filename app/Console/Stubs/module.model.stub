@@ -3,6 +3,9 @@
 namespace App\Modules\{{module}}\Models;
 
 use App\Core\Models\BaseModel;
+use Database\Factories\{{entity}}Factory;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -11,9 +14,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *      {{swagger_properties}}
  * )
  */
+#[UseFactory({{entity}}Factory::class)]
 class {{entity}} extends BaseModel
 {
-    use SoftDeletes;
+    /** @use HasFactory<\Database\Factories\{{entity}}Factory> */
+    use SoftDeletes, HasFactory;
 
     protected $fillable = [
         {{fillable_fields}}

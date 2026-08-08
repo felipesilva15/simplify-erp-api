@@ -22,7 +22,9 @@ class MakeModuleCrud extends Command
                             {--controller : Whether the controller should be created} 
                             {--request : Whether the requests should be created} 
                             {--resource : Whether the resources should be created}
-                            {--policy : Whether the policy should be created}';
+                            {--policy : Whether the policy should be created} 
+                            {--factory : Whether the factory should be created} 
+                            {--test : Whether the tests should be created}';
 
     protected $description = 'Create a new domain module files (Repository, Service, DTO, etc)';
 
@@ -48,6 +50,9 @@ class MakeModuleCrud extends Command
         '{{root_path}}/Http/Controllers',
         '{{root_path}}/Http/Requests/{{entity}}',
         '{{root_path}}/Http/Resources/{{entity}}',
+        '{{app_path}}/Policies',
+        '{{database_path}}/factories',
+        '{{tests_path}}/Feature/{{module}}',
     ];
 
     private array $files = [
@@ -61,6 +66,18 @@ class MakeModuleCrud extends Command
             'option' => 'policy',
             'stub' => 'module.policy.stub',
             'path' => '{{app_path}}/Policies/{{entity}}Policy.php',
+        ],
+        'factory' => [
+            'option' => 'factory',
+            'stub' => 'module.factory.stub',
+            'path' => '{{database_path}}/factories/{{entity}}Factory.php',
+            'replacements' => 'getFactoryReplacements',
+        ],
+        'test' => [
+            'option' => 'test',
+            'stub' => 'module.test.stub',
+            'path' => '{{tests_path}}/Feature/{{module}}/{{entity}}Test.php',
+            'replacements' => 'getTestReplacements',
         ],
         'service' => [
             'option' => 'service',
@@ -192,11 +209,13 @@ class MakeModuleCrud extends Command
         return [
             '{{root_path}}' => $this->rootPath,
             '{{app_path}}' => app_path(),
+            '{{database_path}}' => database_path(),
+            '{{tests_path}}' => base_path('tests'),
             '{{module}}' => $this->module,
             '{{entity}}' => $this->entity,
             '{{lower_module}}' => strtolower($this->module),
             '{{lower_entity}}' => strtolower($this->entity),
-            '{{permission_name}}' => $this->getTableNameByEntityName($this->entity),
+            '{{table_name}}' => $this->getTableNameByEntityName($this->entity),
         ];
     }
 
@@ -279,6 +298,62 @@ class MakeModuleCrud extends Command
             ),
             ...$this->getSwaggerFields(setCommonProperties: true, setValidationAttributes: true),
         ];
+    }
+
+    private function getFactoryReplacements(): array
+    {
+        return [
+            '{{factory_attributes}}' => $this->renderLines(
+                array_map(
+                    fn ($field) => "'{$field['name']}' => {$this->fakerExpression($field)}",
+                    $this->entityFields(skipCommon: true),
+                ),
+                indent: '            ',
+            ),
+        ];
+    }
+
+    private function getTestReplacements(): array
+    {
+        $fields = $this->entityFields(skipCommon: true);
+        $stringField = array_values(array_filter($fields, fn ($field) => $field['type'] === 'string'))[0] ?? null;
+        $requiredField = array_values(array_filter($fields, fn ($field) => ! $field['nullable']))[0] ?? null;
+
+        $displayField = $stringField['name'] ?? ($fields[0]['name'] ?? '');
+        $requiredField = $requiredField['name'] ?? $displayField;
+
+        return [
+            '{{resource_structure}}' => $this->renderLines(
+                array_map(fn ($field) => "'{$field['name']}'", $this->entityFields()),
+                indent: '            ',
+            ),
+            '{{display_field}}' => $displayField,
+            '{{required_field}}' => $requiredField,
+        ];
+    }
+
+    private function fakerExpression(array $field): string
+    {
+        if (str_contains($field['name'], 'mail')) {
+            return 'fake()->unique()->safeEmail()';
+        }
+
+        if (str_contains($field['name'], 'slug')) {
+            return 'strtolower(fake()->name())';
+        }
+
+        if (str_contains($field['name'], 'phone')) {
+            return "fake()->numerify('###########')";
+        }
+
+        return match ($field['type']) {
+            'string' => 'fake()->name()',
+            'int' => 'fake()->numberBetween(0, 100)',
+            'float' => 'fake()->randomFloat(2, 0, 9999)',
+            'bool' => 'fake()->boolean()',
+            'Carbon' => "fake()->date('Y-m-d H:i:s')",
+            default => 'fake()->name()',
+        };
     }
 
     private function buildRule(array $field): string

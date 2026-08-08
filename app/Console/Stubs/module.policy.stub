@@ -12,26 +12,26 @@ class {{entity}}Policy
 
     public function viewAny(User $user)
     {
-        return $this->authService->hasAuthorized($user, '{{permission_name}}.viewAny');
+        return $this->authService->hasAuthorized($user, '{{table_name}}.viewAny');
     }
 
     public function view(User $user, {{entity}} $model)
     {
-        return $this->authService->hasAuthorized($user, '{{permission_name}}.view');
+        return $this->authService->hasAuthorized($user, '{{table_name}}.view');
     }
 
     public function create(User $user)
     {
-        return $this->authService->hasAuthorized($user, '{{permission_name}}.create');
+        return $this->authService->hasAuthorized($user, '{{table_name}}.create');
     }
 
     public function update(User $user, {{entity}} $model)
     {
-        return $this->authService->hasAuthorized($user, '{{permission_name}}.update');
+        return $this->authService->hasAuthorized($user, '{{table_name}}.update');
     }
 
     public function delete(User $user, {{entity}} $model)
     {
-        return $this->authService->hasAuthorized($user, '{{permission_name}}.delete');
+        return $this->authService->hasAuthorized($user, '{{table_name}}.delete');
     }
 }
