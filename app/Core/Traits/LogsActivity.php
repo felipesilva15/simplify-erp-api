@@ -35,7 +35,7 @@ trait LogsActivity
             'action'        => $action,
             'user_id'       => auth()->id(),
             'description'   => $description ?? $this->defaultActivityDescription($action),
-            'route_name'    => request()?->route()->getName(),
+            'route_name'    => request()?->route()?->getName(),
             'route_path'    => request()?->path(),
             'ip_address'    => request()?->ip(),
             'user_agent'    => request()?->userAgent(),

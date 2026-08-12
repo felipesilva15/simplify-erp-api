@@ -15,8 +15,8 @@ Route::post('security/auth/token', [AuthController::class, 'token'])->name('auth
 
 Route::group(['middleware' => 'auth'], function () {
     Route::prefix('core')->group(function() {
-        Route::resource('modules', ModuleController::class);
-        Route::resource('resources', ResourceController::class);
+        Route::crudResource('modules', ModuleController::class);
+        Route::crudResource('resources', ResourceController::class);
     });
 
     Route::prefix('security')->group(function() {
@@ -24,13 +24,12 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('auth/refresh', [AuthController::class, 'refresh'])->name('auth.refresh');
         Route::get('auth/me', [AuthController::class, 'me'])->name('auth.me');
 
-        Route::resource('users', UserController::class);
+        Route::crudResource('users', UserController::class);
 
-        Route::get('roles/lookup', [RoleController::class, 'lookup'])->name('roles.lookup');
-        Route::resource('roles', RoleController::class);
+        Route::crudResource('roles', RoleController::class);
         Route::patch('roles/{role}/permissions', [RoleController::class, 'definePermissions'])->name('roles.definePermissions');
         
-        Route::resource('permissions', PermissionController::class);
+        Route::crudResource('permissions', PermissionController::class);
     });
 });
 Route::get('test', function() {
