@@ -8,6 +8,7 @@ enum ActivityActionEnum: string
     case Updated   = 'updated';
     case Deleted   = 'deleted';
     case Approved  = 'approved';
+    case Auth  = 'auth';
 
     public function label(): string
     {
@@ -16,6 +17,7 @@ enum ActivityActionEnum: string
             self::Updated   => 'Atualizado',
             self::Deleted   => 'Excluído',
             self::Approved  => 'Aprovado',
+            self::Auth  => 'Autenticado',
         };
     }
 }

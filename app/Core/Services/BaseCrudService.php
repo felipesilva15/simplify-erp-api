@@ -3,16 +3,19 @@
 namespace App\Core\Services;
 
 use App\Core\DTO\ServiceResult;
+use App\Core\Enums\ActivityActionEnum;
 use App\Core\Repositories\Interfaces\BaseRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
 
 abstract class BaseCrudService
 {
     protected BaseRepositoryInterface $repository;
+    protected ActivityLogService $activity;
 
     public function store(mixed $data): ServiceResult {
         $data = $this->prepareData($data);
         $entity = $this->repository->store($data);
+        $this->activity->log($entity, ActivityActionEnum::Created);
 
         return new ServiceResult(
             data: $entity
@@ -32,6 +35,7 @@ abstract class BaseCrudService
     public function update(Model $entity, mixed $data): ServiceResult {
         $data = $this->prepareData($data);
         $entity = $this->repository->update($entity, $data);
+        $this->activity->log($entity, ActivityActionEnum::Updated);
 
         return new ServiceResult(
             data: $entity
@@ -39,10 +43,13 @@ abstract class BaseCrudService
     }
 
     public function delete(Model $entity): ServiceResult {
+        $deleted = $this->repository->delete($entity);
+        $this->activity->log($entity, ActivityActionEnum::Deleted);
+
         return new ServiceResult(
             data: null,
             meta: [
-                'deleted' => $this->repository->delete($entity)
+                'deleted' => $deleted
             ]
         );
     }

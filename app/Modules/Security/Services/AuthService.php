@@ -2,7 +2,9 @@
 
 namespace App\Modules\Security\Services;
 
+use App\Core\Enums\ActivityActionEnum;
 use App\Core\Exceptions\InvalidCredentialsException;
+use App\Core\Services\ActivityLogService;
 use App\Modules\Security\DTO\AuthCredentialsDTO;
 use App\Modules\Security\DTO\TokenDetailsDTO;
 use App\Modules\Security\Models\User;
@@ -19,12 +21,21 @@ use Tymon\JWTAuth\Facades\JWTAuth;
  * )
  */
 class AuthService {
+    protected ActivityLogService $activity;
+
+    public function __construct(ActivityLogService $activity) {
+        $this->activity = $activity;
+    }
+
     public function login(AuthCredentialsDTO $credentials): TokenDetailsDTO {
         $token = JWTAuth::attempt($credentials->toArray());
 
         if (!$token) {
             throw new InvalidCredentialsException();
         }
+
+        $user = $this->getLoggedInUser();
+        $this->activity->log($user, ActivityActionEnum::Auth, 'Realizou login');
     
         return $this->makeTokenDetailsDTO($token);
     }
@@ -34,11 +45,15 @@ class AuthService {
     }
 
     public function logout(): void {
+        $user = $this->getLoggedInUser();
+        $this->activity->log($user, ActivityActionEnum::Auth, 'Realizou logout');
         Auth::logout();
     }
 
     public function refreshToken(): TokenDetailsDTO {
         $token = Auth::refresh();
+        $user = $this->getLoggedInUser();
+        $this->activity->log($user, ActivityActionEnum::Auth, 'Atualizou o token de acesso');
         return $this->makeTokenDetailsDTO($token);
     }
 

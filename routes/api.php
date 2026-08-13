@@ -1,13 +1,12 @@
 <?php
 
-use App\Core\Helpers\StringHelpers;
 use App\Core\Http\Controllers\ModuleController;
 use App\Core\Http\Controllers\ResourceController;
+use App\Core\Models\ActivityLog;
 use App\Modules\Security\Http\Controllers\AuthController;
 use App\Modules\Security\Http\Controllers\PermissionController;
 use App\Modules\Security\Http\Controllers\RoleController;
 use App\Modules\Security\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Route;
 
 Route::post('security/auth/login', [AuthController::class, 'login'])->name('auth.login');
@@ -33,5 +32,5 @@ Route::group(['middleware' => 'auth'], function () {
     });
 });
 Route::get('test', function() {
-    return StringHelpers::toStringLiteral(new Date());
+    return ActivityLog::all();
 });
