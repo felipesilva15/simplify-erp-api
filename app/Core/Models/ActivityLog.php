@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Core\Enums\ActivityActionEnum;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class ActivityLog extends Model
 {
@@ -44,7 +45,7 @@ class ActivityLog extends Model
     protected function originLabel(): Attribute
     {
         return Attribute::get(function () {
-            $class = $this->origin_type;
+            $class = Relation::getMorphedModel($this->origin_type) ?? $this->origin_type;
 
             return class_exists($class) && method_exists($class, 'activityLabel')
                 ? $class::activityLabel()

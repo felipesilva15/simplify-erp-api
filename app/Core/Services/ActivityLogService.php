@@ -7,7 +7,7 @@ use App\Core\DTO\ServiceResult;
 use App\Core\Enums\ActivityActionEnum;
 use App\Core\Repositories\Interfaces\ActivityLogRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
-use Override;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class ActivityLogService
 {
@@ -20,7 +20,7 @@ class ActivityLogService
 
     public function log(Model $model, ActivityActionEnum $action, ?string $description = null): void {
         $this->repository->store(ActivityLogDTO::fromArray([
-            'origin_type'   => $model::class,
+            'origin_type'   => $model->getMorphClass(),
             'origin_id'     => (string) $model->getKey(),
             'action'        => $action,
             'user_id'       => auth()?->id(),
@@ -35,7 +35,7 @@ class ActivityLogService
     public function logById(string $modelClass, int|string $id, ActivityActionEnum $action, ?string $description = null): void
     {
         $this->repository->store(ActivityLogDTO::fromArray([
-            'origin_type'   => $modelClass,
+            'origin_type'   => Relation::getMorphAlias($modelClass),
             'origin_id'     => (string) $id,
             'action'        => $action,
             'user_id'       => auth()?->id(),
