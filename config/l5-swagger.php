@@ -217,9 +217,9 @@ return [
                 */
                 'bearerAuth' => [
                     'type' => 'apiKey',
-                    'description' => 'Insira o token JWT no formato: Bearer {token}',
-                    'name' => 'Authorization',
-                    'in' => 'header'
+                    'description' => 'Insira o token JWT',
+                    'name' => config('jwt.cookie_name'),
+                    'in' => 'cookie'
                 ],
             ],
             'security' => [

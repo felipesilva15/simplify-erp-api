@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 /**
  * @OA\Schema(
- *     schema="RoleCollection",
+ *     schema="RoleLookupCollection",
  *     type="object",
  *     allOf={
  *         @OA\Schema(

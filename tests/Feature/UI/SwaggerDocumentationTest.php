@@ -15,7 +15,7 @@ class SwaggerDocumentationTest extends TestCase
                 ->assertSeeHtml('<div id="swagger-ui"></div>');
     }
 
-    public function test_swagger_json_is_valid(): void
+    public function test_openapi_json_is_valid(): void
     {
         $response = $this->getJson('/docs?api-docs.json');
 

@@ -2,7 +2,6 @@
 
 namespace App\Core\Http\Resources\Resource;
 
-use App\Core\Http\Resources\Module\ModulePermissionResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -14,7 +13,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *      @OA\Property(property="slug", type="string", example="sample", minLength=1, maxLength=80),
  *      @OA\Property(property="description", type="string", example="Sample", minLength=1, maxLength=512, nullable=true),
  *      @OA\Property(property="is_active", type="boolean", example=false, nullable=true),
- *      @OA\Property(property="permissions", type="array", @OA\Items(ref="#/components/schemas/ModulePermissionResource")),
+ *      @OA\Property(property="permissions", type="array", @OA\Items(ref="#/components/schemas/ResourcePermissionResource")),
  *      @OA\Property(property="created_at", type="string", format="date-time", example="2025-12-05T00:30:46.143219Z", nullable=true),
  *      @OA\Property(property="updated_at", type="string", format="date-time", example="2025-12-05T00:30:46.143219Z", nullable=true),
  *      @OA\Property(property="deleted_at", type="string", format="date-time", example="2025-12-05T00:30:46.143219Z", nullable=true)

@@ -566,6 +566,544 @@
                 }
             }
         },
+        "/api/core/resources": {
+            "get": {
+                "tags": [
+                    "Resource"
+                ],
+                "summary": "List all rows",
+                "operationId": "717f9320e4c4b8caf00c9f864ce1fc70",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "description",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "is_active",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "created_at",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "updated_at",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "deleted_at",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort_by[]",
+                        "in": "query",
+                        "description": "Fields name's to sort",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "example": "id"
+                            }
+                        }
+                    },
+                    {
+                        "name": "sort_dir[]",
+                        "in": "query",
+                        "description": "Directions to sort: Ascending = 'asc'; Descending = 'desc'",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "example": "desc"
+                            }
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resource list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ResourceCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Resource"
+                ],
+                "summary": "Registers a resource",
+                "operationId": "989c0cc39ad7c2251f4e577f33ce3cf9",
+                "requestBody": {
+                    "description": "Data for creating a new resource",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreResourceRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Registered resource data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/ResourceResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/core/resources/{id}": {
+            "get": {
+                "tags": [
+                    "Resource"
+                ],
+                "summary": "List a resource by ID",
+                "operationId": "8f709576154f97a874b3c51be52cc87a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Resource ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resource data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/ResourceResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Resource"
+                ],
+                "summary": "Update a resource",
+                "operationId": "cd0baf4e7deff9fbb351d02052a7d33b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Resource ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Data for update resource",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateResourceRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated resource data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/ResourceResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Resource"
+                ],
+                "summary": "Delete a resource",
+                "operationId": "744edec359491aa2a38672a877642937",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Resource ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/core/resources/{id}/edit": {
+            "get": {
+                "tags": [
+                    "Resource"
+                ],
+                "summary": "Get data to edit a resource",
+                "operationId": "7136d850ff993055b0e145bf79881a34",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Resource ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resource data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/ResourceResource"
+                                                },
+                                                "warnings": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "Este recurso não pode ser editado."
+                                                    },
+                                                    "nullable": true
+                                                },
+                                                "meta": {
+                                                    "properties": {
+                                                        "editable": {
+                                                            "type": "boolean",
+                                                            "example": true
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/security/auth/login": {
             "post": {
                 "tags": [
@@ -2628,57 +3166,43 @@
                 },
                 "type": "object"
             },
-            "ListModuleRequest": {
+            "LookupRequest": {
                 "properties": {
-                    "id": {
+                    "q": {
+                        "description": "Filter for some columns",
+                        "type": "string",
+                        "example": "1"
+                    },
+                    "per_page": {
+                        "description": "Items per page",
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "page": {
+                        "description": "Page number",
                         "type": "integer",
                         "example": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "example": "Sample"
-                    },
-                    "description": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true
-                    },
-                    "is_active": {
-                        "type": "boolean",
-                        "example": false,
-                        "nullable": true
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-05T00:30:46.141280Z",
-                        "nullable": true
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-05T00:30:46.141280Z",
-                        "nullable": true
-                    },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-05T00:30:46.141280Z",
-                        "nullable": true
                     }
                 },
                 "type": "object"
             },
             "StoreModuleRequest": {
                 "required": [
-                    "name"
+                    "name",
+                    "slug"
                 ],
                 "properties": {
                     "name": {
                         "type": "string",
                         "maxLength": 80,
                         "minLength": 1,
-                        "example": "Sample"
+                        "example": "Sample module"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "sample"
                     },
                     "description": {
                         "type": "string",
@@ -2697,7 +3221,8 @@
             },
             "UpdateModuleRequest": {
                 "required": [
-                    "name"
+                    "name",
+                    "slug"
                 ],
                 "properties": {
                     "name": {
@@ -2705,6 +3230,12 @@
                         "maxLength": 80,
                         "minLength": 1,
                         "example": "Sample"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "sample"
                     },
                     "description": {
                         "type": "string",
@@ -2717,6 +3248,70 @@
                         "type": "boolean",
                         "example": false,
                         "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "StoreResourceRequest": {
+                "required": [
+                    "name",
+                    "slug"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample module"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "sample"
+                    },
+                    "description": {
+                        "type": "string",
+                        "maxLength": 512,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "module_id": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateResourceRequest": {
+                "required": [
+                    "name",
+                    "slug"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "sample"
+                    },
+                    "description": {
+                        "type": "string",
+                        "maxLength": 512,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "module_id": {
+                        "type": "integer",
+                        "example": 1
                     }
                 },
                 "type": "object"
@@ -2740,7 +3335,98 @@
                     }
                 ]
             },
-            "ModulePermissionResource": {
+            "ModuleResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample module"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "sample"
+                    },
+                    "description": {
+                        "type": "string",
+                        "maxLength": 512,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": false,
+                        "nullable": true
+                    },
+                    "resources": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ModuleResourceResource"
+                        }
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-05T00:30:46.143219Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-05T00:30:46.143219Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-05T00:30:46.143219Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ModuleResourcePermissionResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "minLength": 1,
+                        "example": "sample"
+                    },
+                    "label": {
+                        "type": "string",
+                        "maxLength": 180,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "description": {
+                        "type": "string",
+                        "maxLength": 512,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "action": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "example": "Sample",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ModuleResourceResource": {
                 "properties": {
                     "id": {
                         "type": "integer",
@@ -2750,13 +3436,13 @@
                         "type": "string",
                         "maxLength": 60,
                         "minLength": 1,
-                        "example": "Sample"
+                        "example": "Sample module"
                     },
                     "action": {
                         "type": "string",
                         "maxLength": 120,
                         "minLength": 1,
-                        "example": "Sample"
+                        "example": "sample"
                     },
                     "name": {
                         "type": "string",
@@ -2774,7 +3460,26 @@
                 },
                 "type": "object"
             },
-            "ModuleResource": {
+            "ResourceCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ModuleResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "ResourceModuleResource": {
                 "properties": {
                     "id": {
                         "type": "integer",
@@ -2785,6 +3490,61 @@
                         "maxLength": 80,
                         "minLength": 1,
                         "example": "Sample"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "sample"
+                    }
+                },
+                "type": "object"
+            },
+            "ResourcePermissionResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "action": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "minLength": 1,
+                        "example": "sample"
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 180,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "description": {
+                        "type": "string",
+                        "maxLength": 512,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ResourceResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample module"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "sample"
                     },
                     "description": {
                         "type": "string",
@@ -2801,7 +3561,7 @@
                     "permissions": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/ModulePermissionResource"
+                            "$ref": "#/components/schemas/ResourcePermissionResource"
                         }
                     },
                     "created_at": {
@@ -2833,7 +3593,11 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "Sample module"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "sample"
                     },
                     "description": {
                         "type": "string",
@@ -2844,6 +3608,50 @@
                         "type": "boolean",
                         "example": false,
                         "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-05T00:30:46.131084Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-05T00:30:46.131084Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-05T00:30:46.131084Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "Resource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Sample module"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "sample"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "module_id": {
+                        "type": "integer",
+                        "example": 1
                     },
                     "created_at": {
                         "type": "string",
@@ -2952,16 +3760,16 @@
             },
             "StorePermissionRequest": {
                 "required": [
-                    "module_id",
-                    "resource",
+                    "resource_id",
+                    "label",
                     "action"
                 ],
                 "properties": {
-                    "module_id": {
+                    "resource_id": {
                         "type": "integer",
                         "example": 1
                     },
-                    "resource": {
+                    "label": {
                         "type": "string",
                         "maxLength": 60,
                         "minLength": 1,
@@ -2985,16 +3793,16 @@
             },
             "UpdatePermissionRequest": {
                 "required": [
-                    "module_id",
-                    "resource",
+                    "resource_id",
+                    "label",
                     "action"
                 ],
                 "properties": {
-                    "module_id": {
+                    "resource_id": {
                         "type": "integer",
                         "example": 1
                     },
-                    "resource": {
+                    "label": {
                         "type": "string",
                         "maxLength": 60,
                         "minLength": 1,
@@ -3223,21 +4031,6 @@
                     }
                 ]
             },
-            "PermissionModuleResource": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "maxLength": 80,
-                        "minLength": 1,
-                        "example": "Sample"
-                    }
-                },
-                "type": "object"
-            },
             "PermissionResource": {
                 "properties": {
                     "id": {
@@ -3269,9 +4062,6 @@
                         "example": "Sample",
                         "nullable": true
                     },
-                    "module": {
-                        "$ref": "#/components/schemas/PermissionModuleResource"
-                    },
                     "created_at": {
                         "type": "string",
                         "format": "date-time",
@@ -3289,6 +4079,27 @@
                         "format": "date-time",
                         "example": "2025-12-05T00:27:48.930766Z",
                         "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "PermissionResourceResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample"
                     }
                 },
                 "type": "object"
@@ -3311,6 +4122,71 @@
                         "$ref": "#/components/schemas/PaginatorInfo"
                     }
                 ]
+            },
+            "RoleLookupCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/RoleResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "RoleLookupResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "description": {
+                        "type": "string",
+                        "maxLength": 512,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "permissions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RolePermissionResource"
+                        }
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-01T11:21:13.562558Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-01T11:21:13.562558Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-01T11:21:13.562558Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
             },
             "RolePermissionResource": {
                 "properties": {
@@ -3508,11 +4384,11 @@
                         "type": "integer",
                         "example": 1
                     },
-                    "module_id": {
+                    "resource_id": {
                         "type": "integer",
                         "example": 1
                     },
-                    "resource": {
+                    "label": {
                         "type": "string",
                         "example": "Sample"
                     },
@@ -3699,9 +4575,9 @@
         "securitySchemes": {
             "bearerAuth": {
                 "type": "apiKey",
-                "description": "Insira o token JWT no formato: Bearer {token}",
-                "name": "Authorization",
-                "in": "header"
+                "description": "Insira o token JWT",
+                "name": "token",
+                "in": "cookie"
             }
         }
     },
@@ -3709,6 +4585,10 @@
         {
             "name": "Module",
             "description": "Module"
+        },
+        {
+            "name": "Resource",
+            "description": "Resource"
         },
         {
             "name": "Authentication",

@@ -7,7 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @OA\Schema(
- *      schema="RoleResource",
+ *      schema="RoleLookupResource",
  *      @OA\Property(property="id", type="integer", example=1),
  *      @OA\Property(property="name", type="string", example="Sample", minLength=1, maxLength=80),
  *      @OA\Property(property="description", type="string", example="Sample", minLength=1, maxLength=512, nullable=true),
