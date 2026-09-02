@@ -8,7 +8,22 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 
+
 /**
+ * @OA\OpenApi(
+ *     x={
+ *         "tagGroups"={
+ *             {
+ *                 "name"="Core",
+ *                 "tags"={"Module", "Resource"}
+ *             },
+ *             {
+ *                 "name"="Security",
+ *                 "tags"={"Authentication", "Permission", "Role", "User"}
+ *             }
+ *         }
+ *     }
+ * )
  * @OA\Info(
  *      title="Simplify ERP API",
  *      version="1.0.0",

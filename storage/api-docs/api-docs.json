@@ -4606,5 +4606,23 @@
             "name": "User",
             "description": "User"
         }
+    ],
+    "x-tagGroups": [
+        {
+            "name": "Core",
+            "tags": [
+                "Module",
+                "Resource"
+            ]
+        },
+        {
+            "name": "Security",
+            "tags": [
+                "Authentication",
+                "Permission",
+                "Role",
+                "User"
+            ]
+        }
     ]
 }
