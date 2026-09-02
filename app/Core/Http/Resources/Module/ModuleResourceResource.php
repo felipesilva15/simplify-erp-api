@@ -21,6 +21,7 @@ class ModuleResourceResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'label' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
             'permissions' => ModuleResourcePermissionResource::collection($this->permissions)
