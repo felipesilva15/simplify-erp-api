@@ -2,12 +2,14 @@
 
 namespace App\Modules\{{module}}\Services;
 
+use App\Core\Services\ActivityLogService;
 use App\Core\Services\BaseCrudService;
 use App\Modules\{{module}}\Repositories\Interfaces\{{entity}}RepositoryInterface;
 
 class {{entity}}Service extends BaseCrudService
 {
-    public function __construct({{entity}}RepositoryInterface $repository) {
+    public function __construct({{entity}}RepositoryInterface $repository, ActivityLogService $activity) {
         $this->repository = $repository;
+        $this->activity = $activity;
     }
 }
