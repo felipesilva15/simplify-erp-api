@@ -28,6 +28,7 @@ class ModelHelpers
         $typesMap = [
             'varchar' => ['type' => 'string', 'default' => ''],
             'char' => ['type' => 'string', 'default' => ''],
+            'bpchar' => ['type' => 'string', 'default' => ''],
             'text' => ['type' => 'string', 'default' => ''],
             'blob' => ['type' => 'string', 'default' => ''],
             'int' => ['type' => 'int', 'default' => 0],

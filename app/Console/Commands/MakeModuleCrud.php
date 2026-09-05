@@ -231,7 +231,7 @@ class MakeModuleCrud extends Command
 
     private function getTableNameByEntityName(string $entityName): string
     {
-        $entityName = strtolower($entityName);
+        $entityName = strtolower(Str::snake($entityName));
 
         if (str_ends_with($entityName, 's')) {
             return $entityName.'es';
