@@ -20,6 +20,10 @@ use Illuminate\Routing\Controller as BaseController;
  *             {
  *                 "name"="Security",
  *                 "tags"={"Authentication", "Permission", "Role", "User"}
+ *             },
+ *             {
+ *                 "name"="Partner",
+ *                 "tags"={"PartnerType"}
  *             }
  *         }
  *     }

@@ -3,6 +3,7 @@
 use App\Core\Http\Controllers\ModuleController;
 use App\Core\Http\Controllers\ResourceController;
 use App\Core\Models\ActivityLog;
+use App\Modules\Partner\Http\Controllers\PartnerTypeController;
 use App\Modules\Security\Http\Controllers\AuthController;
 use App\Modules\Security\Http\Controllers\PermissionController;
 use App\Modules\Security\Http\Controllers\RoleController;
@@ -29,6 +30,10 @@ Route::group(['middleware' => 'auth'], function () {
         Route::patch('roles/{role}/permissions', [RoleController::class, 'definePermissions'])->name('roles.definePermissions');
         
         Route::crudResource('permissions', PermissionController::class);
+    });
+
+    Route::prefix('partner')->group(function() {
+        Route::crudResource('partner_types', PartnerTypeController::class);
     });
 });
 Route::get('test', function() {
