@@ -10,6 +10,15 @@ use Override;
 class PartnerTypeRepository extends BaseRepository implements PartnerTypeRepositoryInterface
 {
     #[Override]
+    public function getLookupColumnsToFilter(): array
+    {
+        return [
+            'name' => 'string',
+            'code' => 'string'
+        ];
+    }
+
+    #[Override]
     protected function getModelClass(): string
     {
         return PartnerType::class;

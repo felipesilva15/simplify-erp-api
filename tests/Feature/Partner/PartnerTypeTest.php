@@ -8,7 +8,7 @@ use Illuminate\Http\Response;
 
 class PartnerTypeTest extends TestCase
 {
-    protected string $endpoint = '/api/partner/partner_types';
+    protected string $endpoint = '/api/partner/partner-types';
 
     protected function getResourceStructure(): array {
         return [

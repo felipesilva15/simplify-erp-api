@@ -1104,13 +1104,13 @@
                 }
             }
         },
-        "/api/partner/partner_types": {
+        "/api/partner/partner-types": {
             "get": {
                 "tags": [
                     "PartnerType"
                 ],
                 "summary": "List all rows",
-                "operationId": "533fc30e9defded14120b9eb1da205fb",
+                "operationId": "a5676a76eaf761f47222b7e9dfab2b23",
                 "parameters": [
                     {
                         "name": "filters[id][eq]",
@@ -1203,10 +1203,10 @@
                 "tags": [
                     "PartnerType"
                 ],
-                "summary": "Registers a partner_type",
-                "operationId": "ff405992d8c447dc5ed98c219760a43d",
+                "summary": "Registers a partner type",
+                "operationId": "4ddab14bbbba0663b08eb7381b0dc85f",
                 "requestBody": {
-                    "description": "Data for creating a new partner_type",
+                    "description": "Data for creating a new partner type",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -1218,7 +1218,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Registered partner_type data",
+                        "description": "Registered partner type data",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1267,13 +1267,13 @@
                 ]
             }
         },
-        "/api/partner/partner_types/{id}": {
+        "/api/partner/partner-types/{id}": {
             "get": {
                 "tags": [
                     "PartnerType"
                 ],
-                "summary": "List a partner_type by ID",
-                "operationId": "e188058486bacf80e30f19351a71cf5b",
+                "summary": "List a partner type by ID",
+                "operationId": "86f74bde04197601612099cb0906761d",
                 "parameters": [
                     {
                         "name": "id",
@@ -1349,8 +1349,8 @@
                 "tags": [
                     "PartnerType"
                 ],
-                "summary": "Update a partner_type",
-                "operationId": "117faafeba0a3739bfff731001767a00",
+                "summary": "Update a partner type",
+                "operationId": "cce277b59f08e6291a09b6a6a0cc5527",
                 "parameters": [
                     {
                         "name": "id",
@@ -1363,7 +1363,7 @@
                     }
                 ],
                 "requestBody": {
-                    "description": "Data for update partner_type",
+                    "description": "Data for update partner type",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -1375,7 +1375,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Updated partner_type data",
+                        "description": "Updated partner type data",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1437,8 +1437,8 @@
                 "tags": [
                     "PartnerType"
                 ],
-                "summary": "Delete a partner_type",
-                "operationId": "e3b650d156afbd1e2281cf856d8b6d0d",
+                "summary": "Delete a partner type",
+                "operationId": "0a17c740a9e714be96e1b1bdd3a8a99e",
                 "parameters": [
                     {
                         "name": "id",
@@ -1492,13 +1492,13 @@
                 ]
             }
         },
-        "/api/partner/partner_types/{id}/edit": {
+        "/api/partner/partner-types/{id}/edit": {
             "get": {
                 "tags": [
                     "PartnerType"
                 ],
-                "summary": "Get data to edit a partner_type",
-                "operationId": "5254ac9a65290f229d825133f5d2a5eb",
+                "summary": "Get data to edit a partner type",
+                "operationId": "2d37fdbab39c8f79640316c48b65da7f",
                 "parameters": [
                     {
                         "name": "id",
@@ -1581,6 +1581,67 @@
                         }
                     }
                 }
+            }
+        },
+        "/api/partner/partner-types/lookup": {
+            "get": {
+                "tags": [
+                    "PartnerType"
+                ],
+                "summary": "Lookup partner types",
+                "operationId": "e8eb67b50d46ef6ee4439a6d74d999dc",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "keys[]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Partner type lookup list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/PartnerTypeLookupCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/security/auth/login": {
@@ -4280,6 +4341,49 @@
                         "$ref": "#/components/schemas/PaginatorInfo"
                     }
                 ]
+            },
+            "PartnerTypeLookupCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PartnerTypeLookupResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "PartnerTypeLookupResource": {
+                "properties": {
+                    "key": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "label": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "sublabel": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Cod.: 1"
+                    },
+                    "meta": {
+                        "type": "object"
+                    }
+                },
+                "type": "object"
             },
             "PartnerTypeResource": {
                 "properties": {

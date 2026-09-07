@@ -33,7 +33,7 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::prefix('partner')->group(function() {
-        Route::crudResource('partner_types', PartnerTypeController::class);
+        Route::crudResource('partner-types', PartnerTypeController::class);
     });
 });
 Route::get('test', function() {

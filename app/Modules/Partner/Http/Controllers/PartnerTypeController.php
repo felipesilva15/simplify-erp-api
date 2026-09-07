@@ -3,6 +3,8 @@
 namespace App\Modules\Partner\Http\Controllers;
 
 
+use App\Core\Http\Requests\Core\LookupRequest;
+use App\Modules\Partner\Http\Resources\PartnerType\PartnerTypeLookupCollection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
@@ -27,7 +29,7 @@ class PartnerTypeController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/partner/partner_types",
+     *      path="/api/partner/partner-types",
      *      tags={"PartnerType"},
      *      summary="List all rows",
      *      @OA\Parameter(name="filters[id][eq]", in="query", required=false, @OA\Schema(type="integer")),
@@ -76,9 +78,9 @@ class PartnerTypeController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/partner/partner_types/{id}",
+     *      path="/api/partner/partner-types/{id}",
      *      tags={"PartnerType"},
-     *      summary="List a partner_type by ID",
+     *      summary="List a partner type by ID",
      *      @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -130,17 +132,17 @@ class PartnerTypeController extends Controller
 
     /**
      * @OA\Post(
-     *      path="/api/partner/partner_types",
+     *      path="/api/partner/partner-types",
      *      tags={"PartnerType"},
-     *      summary="Registers a partner_type",
+     *      summary="Registers a partner type",
      *      @OA\RequestBody(
      *         required=true,
-     *         description="Data for creating a new partner_type",
+     *         description="Data for creating a new partner type",
      *         @OA\JsonContent(ref="#/components/schemas/StorePartnerTypeRequest")
      *      ),
      *      @OA\Response(
      *          response="201", 
-     *          description="Registered partner_type data",
+     *          description="Registered partner type data",
      *          @OA\JsonContent(
      *              allOf={
      *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
@@ -178,9 +180,9 @@ class PartnerTypeController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/partner/partner_types/{id}/edit",
+     *      path="/api/partner/partner-types/{id}/edit",
      *      tags={"PartnerType"},
-     *      summary="Get data to edit a partner_type",
+     *      summary="Get data to edit a partner type",
      *      @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -239,9 +241,9 @@ class PartnerTypeController extends Controller
 
     /**
      * @OA\Put(
-     *      path="/api/partner/partner_types/{id}",
+     *      path="/api/partner/partner-types/{id}",
      *      tags={"PartnerType"},
-     *      summary="Update a partner_type",
+     *      summary="Update a partner type",
      *      @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -251,12 +253,12 @@ class PartnerTypeController extends Controller
      *      ),
      *      @OA\RequestBody(
      *         required=true,
-     *         description="Data for update partner_type",
+     *         description="Data for update partner type",
      *         @OA\JsonContent(ref="#/components/schemas/UpdatePartnerTypeRequest")
      *      ),
      *      @OA\Response(
      *          response="200", 
-     *          description="Updated partner_type data",
+     *          description="Updated partner type data",
      *          @OA\JsonContent(
      *              allOf={
      *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
@@ -299,9 +301,9 @@ class PartnerTypeController extends Controller
 
     /**
      * @OA\Delete(
-     *      path="/api/partner/partner_types/{id}",
+     *      path="/api/partner/partner-types/{id}",
      *      tags={"PartnerType"},
-     *      summary="Delete a partner_type",
+     *      summary="Delete a partner type",
      *      @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -334,5 +336,44 @@ class PartnerTypeController extends Controller
     public function destroy(PartnerType $partner_type): Response {
         $this->service->delete($partner_type);
         return response()->noContent();
+    }
+
+    /**
+     * @OA\Get(
+     *      path="/api/partner/partner-types/lookup",
+     *      tags={"PartnerType"},
+     *      summary="Lookup partner types",
+     *      @OA\Parameter(name="q", in="query", description="Query for avaiable fields", required=false, @OA\Schema(type="string")),
+     *      @OA\Parameter(name="keys[]", in="query", description="Keys to find", required=false, @OA\Schema(type="integer")),
+     *      @OA\Response(
+     *          response="200", 
+     *          description="Partner type lookup list",
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(ref="#/components/schemas/PartnerTypeLookupCollection")
+     *              }
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      security={{"bearerAuth":{}}}
+     * )
+     */
+    public function lookup(LookupRequest $request): JsonResponse {
+        $serviceResult = $this->service->lookup($request->all());
+
+        $paginated = new PartnerTypeLookupCollection($serviceResult->data);
+        $paginated = $paginated->toArray($request);
+
+        return $this->success(
+            data: $paginated['data'],
+            links: $paginated['links'],
+            meta: $paginated['meta'],
+            httpStatus: Response::HTTP_OK
+        );
     }
 }

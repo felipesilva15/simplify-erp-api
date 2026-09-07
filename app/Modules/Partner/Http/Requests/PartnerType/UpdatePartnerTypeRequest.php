@@ -19,7 +19,7 @@ class UpdatePartnerTypeRequest extends FormRequest
     {
         return [
             'name' => 'required|string|min:1|max:60',
-            'code' => ['required', 'string', 'min:1', 'max:3',  Rule::unique('partner_types', 'code')->ignore($this->id)]
+            'code' => ['required', 'string', 'min:1', 'max:3',  Rule::unique('partner_types', 'code')->ignore($this->partner_type)],
         ];
     }  
 }
