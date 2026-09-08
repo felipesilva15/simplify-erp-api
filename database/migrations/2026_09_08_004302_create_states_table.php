@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('partner_types', function (Blueprint $table) {
+        Schema::create('states', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 60);
-            $table->char('code', 20)->unique();
+            $table->foreignId('country_id')->constrained();
+            $table->string('name', 80);
+            $table->char('uf', 2)->unique();
+            $table->unsignedSmallInteger('ibge_code')->unique();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('partner_types');
+        Schema::dropIfExists('states');
     }
 };

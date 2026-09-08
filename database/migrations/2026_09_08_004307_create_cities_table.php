@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('partner_types', function (Blueprint $table) {
+        Schema::create('cities', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 60);
-            $table->char('code', 20)->unique();
+            $table->foreignId('state_id')->constrained();
+            $table->string('name', 90);
+            $table->unsignedInteger('ibge_code')->unique();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('partner_types');
+        Schema::dropIfExists('cities');
     }
 };
