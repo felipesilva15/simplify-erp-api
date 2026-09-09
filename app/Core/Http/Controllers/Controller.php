@@ -23,7 +23,7 @@ use Illuminate\Routing\Controller as BaseController;
  *             },
  *             {
  *                 "name"="Partner",
- *                 "tags"={"PartnerType"}
+ *                 "tags"={"PartnerType", "Partner"}
  *             }
  *         }
  *     }

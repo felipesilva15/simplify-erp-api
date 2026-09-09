@@ -3,6 +3,7 @@
 use App\Core\Http\Controllers\ModuleController;
 use App\Core\Http\Controllers\ResourceController;
 use App\Core\Models\ActivityLog;
+use App\Modules\Partner\Http\Controllers\PartnerController;
 use App\Modules\Partner\Http\Controllers\PartnerTypeController;
 use App\Modules\Security\Http\Controllers\AuthController;
 use App\Modules\Security\Http\Controllers\PermissionController;
@@ -34,8 +35,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::prefix('partner')->group(function() {
         Route::crudResource('partner-types', PartnerTypeController::class);
+        Route::crudResource('partners', PartnerController::class);
     });
 });
 Route::get('test', function() {
-    return ActivityLog::all();
+    return ActivityLog::orderByDesc('created_at')->get();
 });

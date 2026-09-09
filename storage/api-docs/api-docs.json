@@ -1104,6 +1104,548 @@
                 }
             }
         },
+        "/api/partner/partners": {
+            "get": {
+                "tags": [
+                    "Partner"
+                ],
+                "summary": "List all rows",
+                "operationId": "16c737bc612c0f1da2873a9fd54afedd",
+                "parameters": [
+                    {
+                        "name": "filters[id][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[name][like]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[created_at][gte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[updated_at][lte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "$ref": "#/components/parameters/sortsParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/perPageParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/pageParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Partner list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/PartnerCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Partner"
+                ],
+                "summary": "Registers a partner",
+                "operationId": "4dc1b2fd97a53b96705c91d6ea9cf42c",
+                "requestBody": {
+                    "description": "Data for creating a new partner",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StorePartnerRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Registered partner data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/PartnerResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/partner/partners/{id}": {
+            "get": {
+                "tags": [
+                    "Partner"
+                ],
+                "summary": "List a partner by ID",
+                "operationId": "6b65f8d560caff29619f52cc2ad41fa6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Partner ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Partner data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/PartnerResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Partner"
+                ],
+                "summary": "Update a partner",
+                "operationId": "e5f579baaafe9aa27929c02d8cb0b6b7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Partner ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Data for update partner",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdatePartnerRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated partner data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/PartnerResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Partner"
+                ],
+                "summary": "Delete a partner",
+                "operationId": "0e8f7fc205850c018a0b96e2d30f9d06",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Partner ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/partner/partners/{id}/edit": {
+            "get": {
+                "tags": [
+                    "Partner"
+                ],
+                "summary": "Get data to edit a partner",
+                "operationId": "3b70ef9ec1bc18c3595bcc5c0143146c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Partner ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Partner data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/PartnerResource"
+                                                },
+                                                "warnings": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "Este recurso não pode ser editado."
+                                                    },
+                                                    "nullable": true
+                                                },
+                                                "meta": {
+                                                    "properties": {
+                                                        "editable": {
+                                                            "type": "boolean",
+                                                            "example": true
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/partner/partners/lookup": {
+            "get": {
+                "tags": [
+                    "Partner"
+                ],
+                "summary": "Lookup partners",
+                "operationId": "319efbd353ac9c33fef61c42aca06e17",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Query for avaiable fields",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "keys[]",
+                        "in": "query",
+                        "description": "Keys to find",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Partner type lookup list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/PartnerLookupCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/partner/partner-types": {
             "get": {
                 "tags": [
@@ -1594,6 +2136,7 @@
                     {
                         "name": "q",
                         "in": "query",
+                        "description": "Query for avaiable fields",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -1602,6 +2145,7 @@
                     {
                         "name": "keys[]",
                         "in": "query",
+                        "description": "Keys to find",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -4281,6 +4825,383 @@
                     }
                 ]
             },
+            "GenderEnum": {
+                "description": "Gender",
+                "type": "string",
+                "enum": [
+                    "MALE",
+                    "FEMALE",
+                    "OTHER"
+                ]
+            },
+            "MaritalStatusEnum": {
+                "description": "Marital status",
+                "type": "string",
+                "enum": [
+                    "MARIED",
+                    "WIDOWED",
+                    "SINGLE",
+                    "SEPARATED",
+                    "DIVORCED"
+                ]
+            },
+            "PersonTypeEnum": {
+                "description": "Person type",
+                "type": "string",
+                "enum": [
+                    "PERSON",
+                    "COMPANY",
+                    "FOREIGN"
+                ]
+            },
+            "PixTypeEnum": {
+                "description": "Pix type",
+                "type": "string",
+                "enum": [
+                    "EMAIL",
+                    "DOCUMENT",
+                    "RANDOM_KEY",
+                    "PHONE_NUMBER"
+                ]
+            },
+            "TaxpayerTypeEnum": {
+                "description": "Taxpayer type",
+                "type": "string",
+                "enum": [
+                    "TAXPAYER",
+                    "NON_TAXPAYER",
+                    "EXEMPT"
+                ]
+            },
+            "StorePartnerRequest": {
+                "required": [
+                    "partner_type_code",
+                    "name",
+                    "trade_name",
+                    "person_type",
+                    "taxpayer_type",
+                    "document_number"
+                ],
+                "properties": {
+                    "partner_type_code": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "trade_name": {
+                        "type": "string",
+                        "maxLength": 150,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "person_type": {
+                        "$ref": "#/components/schemas/PersonTypeEnum"
+                    },
+                    "taxpayer_type": {
+                        "$ref": "#/components/schemas/TaxpayerTypeEnum"
+                    },
+                    "document_number": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "identity_number": {
+                        "type": "string",
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "identity_issuer": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "partner_since": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-09-09",
+                        "nullable": true
+                    },
+                    "state_registration": {
+                        "type": "string",
+                        "maxLength": 14,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "municipal_registration": {
+                        "type": "string",
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "suframa_registration": {
+                        "type": "string",
+                        "maxLength": 9,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "marital_status": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/MaritalStatusEnum"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "cbo": {
+                        "type": "string",
+                        "maxLength": 6,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "gender": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/GenderEnum"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "birth_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-09-09",
+                        "nullable": true
+                    },
+                    "father_name": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "father_document": {
+                        "type": "string",
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "mother_name": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "mother_document": {
+                        "type": "string",
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "pix_type": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/PixTypeEnum"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "pix_key": {
+                        "type": "string",
+                        "maxLength": 0,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "notes": {
+                        "type": "string",
+                        "maxLength": 0,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdatePartnerRequest": {
+                "required": [
+                    "partner_type_code",
+                    "name",
+                    "trade_name",
+                    "person_type",
+                    "taxpayer_type",
+                    "document_number"
+                ],
+                "properties": {
+                    "partner_type_code": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "trade_name": {
+                        "type": "string",
+                        "maxLength": 150,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "person_type": {
+                        "type": "string",
+                        "maxLength": 30,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "taxpayer_type": {
+                        "type": "string",
+                        "maxLength": 30,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "document_number": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "identity_number": {
+                        "type": "string",
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "identity_issuer": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "partner_since": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-09-09",
+                        "nullable": true
+                    },
+                    "state_registration": {
+                        "type": "string",
+                        "maxLength": 14,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "municipal_registration": {
+                        "type": "string",
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "suframa_registration": {
+                        "type": "string",
+                        "maxLength": 9,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "marital_status": {
+                        "type": "string",
+                        "maxLength": 30,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "cbo": {
+                        "type": "string",
+                        "maxLength": 6,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "gender": {
+                        "type": "string",
+                        "maxLength": 12,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "birth_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-09-09",
+                        "nullable": true
+                    },
+                    "father_name": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "father_document": {
+                        "type": "string",
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "mother_name": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "mother_document": {
+                        "type": "string",
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "pix_type": {
+                        "type": "string",
+                        "maxLength": 30,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "pix_key": {
+                        "type": "string",
+                        "maxLength": 0,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "notes": {
+                        "type": "string",
+                        "maxLength": 0,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "StorePartnerTypeRequest": {
                 "required": [
                     "name",
@@ -4319,6 +5240,248 @@
                         "maxLength": 3,
                         "minLength": 1,
                         "example": "Sample"
+                    }
+                },
+                "type": "object"
+            },
+            "PartnerCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PartnerResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "PartnerLookupCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PartnerTypeLookupResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "PartnerLookupResource": {
+                "properties": {
+                    "key": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "label": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "sublabel": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Cod.: 1"
+                    },
+                    "meta": {
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "PartnerResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "partner_type_code": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "trade_name": {
+                        "type": "string",
+                        "maxLength": 150,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "person_type": {
+                        "type": "string",
+                        "maxLength": 30,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "taxpayer_type": {
+                        "type": "string",
+                        "maxLength": 30,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "document_number": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "identity_number": {
+                        "type": "string",
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "identity_issuer": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "partner_since": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-09T02:22:32.660898Z",
+                        "nullable": true
+                    },
+                    "state_registration": {
+                        "type": "string",
+                        "maxLength": 14,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "municipal_registration": {
+                        "type": "string",
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "suframa_registration": {
+                        "type": "string",
+                        "maxLength": 9,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "marital_status": {
+                        "type": "string",
+                        "maxLength": 30,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "cbo": {
+                        "type": "string",
+                        "maxLength": 6,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "gender": {
+                        "type": "string",
+                        "maxLength": 12,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "birth_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-09T02:22:32.660898Z",
+                        "nullable": true
+                    },
+                    "father_name": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "father_document": {
+                        "type": "string",
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "mother_name": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "mother_document": {
+                        "type": "string",
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "pix_type": {
+                        "type": "string",
+                        "maxLength": 30,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "pix_key": {
+                        "type": "string",
+                        "maxLength": 0,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "notes": {
+                        "type": "string",
+                        "maxLength": 0,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-09T02:22:32.660898Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-09T02:22:32.660898Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-09T02:22:32.660898Z",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -4419,6 +5582,144 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "Partner": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "partner_type_code": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "trade_name": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "person_type": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "taxpayer_type": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "document_number": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "identity_number": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "identity_issuer": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "partner_since": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-09T02:22:32.660898Z",
+                        "nullable": true
+                    },
+                    "state_registration": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "municipal_registration": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "suframa_registration": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "marital_status": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "cbo": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "gender": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "birth_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-09T02:22:32.660898Z",
+                        "nullable": true
+                    },
+                    "father_name": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "father_document": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "mother_name": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "mother_document": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "pix_type": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "pix_key": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-09T02:22:32.660898Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-09T02:22:32.660898Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-09T02:22:32.660898Z",
                         "nullable": true
                     }
                 },
@@ -5309,6 +6610,10 @@
             "description": "Resource"
         },
         {
+            "name": "Partner",
+            "description": "Partner"
+        },
+        {
             "name": "PartnerType",
             "description": "PartnerType"
         },
@@ -5349,7 +6654,8 @@
         {
             "name": "Partner",
             "tags": [
-                "PartnerType"
+                "PartnerType",
+                "Partner"
             ]
         }
     ]
