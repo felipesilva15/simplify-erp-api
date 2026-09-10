@@ -2,6 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Modules\Partner\Enums\GenderEnum;
+use App\Modules\Partner\Enums\MaritalStatusEnum;
+use App\Modules\Partner\Enums\PersonTypeEnum;
+use App\Modules\Partner\Enums\PixTypeEnum;
+use App\Modules\Partner\Enums\TaxpayerTypeEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -12,29 +17,29 @@ class PartnerFactory extends Factory
     public function definition(): array
     {
         return [
-            'partner_type_code' => fake()->name(),
+            'partner_type_code' => fake()->unique()->lexify('???'),
             'name' => fake()->name(),
             'trade_name' => fake()->name(),
-            'person_type' => fake()->name(),
-            'taxpayer_type' => fake()->name(),
-            'document_number' => fake()->name(),
-            'identity_number' => fake()->name(),
-            'identity_issuer' => fake()->name(),
-            'partner_since' => fake()->date('Y-m-d H:i:s'),
-            'state_registration' => fake()->name(),
-            'municipal_registration' => fake()->name(),
-            'suframa_registration' => fake()->name(),
-            'marital_status' => fake()->name(),
-            'cbo' => fake()->name(),
-            'gender' => fake()->name(),
-            'birth_date' => fake()->date('Y-m-d H:i:s'),
+            'person_type' => PersonTypeEnum::Company,
+            'taxpayer_type' => TaxpayerTypeEnum::NonTaxpayer,
+            'document_number' => fake()->unique()->lexify('??????????????'),
+            'identity_number' => fake()->unique()->lexify('?????????'),
+            'identity_issuer' => fake()->unique()->lexify('???'),
+            'partner_since' => fake()->date('Y-m-d'),
+            'state_registration' => fake()->unique()->lexify('????????????'),
+            'municipal_registration' => fake()->unique()->lexify('?????????'),
+            'suframa_registration' => fake()->unique()->lexify('????????'),
+            'marital_status' => MaritalStatusEnum::Single,
+            'cbo' => fake()->unique()->lexify('??????'),
+            'gender' => GenderEnum::Male,
+            'birth_date' => fake()->date('Y-m-d'),
             'father_name' => fake()->name(),
-            'father_document' => fake()->name(),
+            'father_document' => fake()->unique()->lexify('?????????'),
             'mother_name' => fake()->name(),
-            'mother_document' => fake()->name(),
-            'pix_type' => fake()->name(),
-            'pix_key' => fake()->name(),
-            'notes' => fake()->name()
+            'mother_document' => fake()->unique()->lexify('?????????'),
+            'pix_type' => PixTypeEnum::Email,
+            'pix_key' => fake()->email(),
+            'notes' => fake()->text(160)
         ];
     }
 }
