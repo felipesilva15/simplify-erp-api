@@ -4873,6 +4873,48 @@
                     "EXEMPT"
                 ]
             },
+            "StorePartnerTypeRequest": {
+                "required": [
+                    "name",
+                    "code"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 60,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "code": {
+                        "type": "string",
+                        "maxLength": 3,
+                        "minLength": 1,
+                        "example": "Sample"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdatePartnerTypeRequest": {
+                "required": [
+                    "name",
+                    "code"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 60,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "code": {
+                        "type": "string",
+                        "maxLength": 3,
+                        "minLength": 1,
+                        "example": "Sample"
+                    }
+                },
+                "type": "object"
+            },
             "StorePartnerRequest": {
                 "required": [
                     "partner_type_code",
@@ -5065,16 +5107,10 @@
                         "example": "Sample"
                     },
                     "person_type": {
-                        "type": "string",
-                        "maxLength": 30,
-                        "minLength": 1,
-                        "example": "Sample"
+                        "$ref": "#/components/schemas/PersonTypeEnum"
                     },
                     "taxpayer_type": {
-                        "type": "string",
-                        "maxLength": 30,
-                        "minLength": 1,
-                        "example": "Sample"
+                        "$ref": "#/components/schemas/TaxpayerTypeEnum"
                     },
                     "document_number": {
                         "type": "string",
@@ -5124,10 +5160,11 @@
                         "nullable": true
                     },
                     "marital_status": {
-                        "type": "string",
-                        "maxLength": 30,
-                        "minLength": 1,
-                        "example": "Sample",
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/MaritalStatusEnum"
+                            }
+                        ],
                         "nullable": true
                     },
                     "cbo": {
@@ -5138,10 +5175,11 @@
                         "nullable": true
                     },
                     "gender": {
-                        "type": "string",
-                        "maxLength": 12,
-                        "minLength": 1,
-                        "example": "Sample",
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/GenderEnum"
+                            }
+                        ],
                         "nullable": true
                     },
                     "birth_date": {
@@ -5179,10 +5217,11 @@
                         "nullable": true
                     },
                     "pix_type": {
-                        "type": "string",
-                        "maxLength": 30,
-                        "minLength": 1,
-                        "example": "Sample",
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/PixTypeEnum"
+                            }
+                        ],
                         "nullable": true
                     },
                     "pix_key": {
@@ -5202,33 +5241,74 @@
                 },
                 "type": "object"
             },
-            "StorePartnerTypeRequest": {
-                "required": [
-                    "name",
-                    "code"
-                ],
+            "PartnerTypeCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PartnerTypeResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "PartnerTypeLookupCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PartnerTypeLookupResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "PartnerTypeLookupResource": {
                 "properties": {
-                    "name": {
+                    "key": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "label": {
                         "type": "string",
-                        "maxLength": 60,
+                        "maxLength": 80,
                         "minLength": 1,
                         "example": "Sample"
                     },
-                    "code": {
+                    "sublabel": {
                         "type": "string",
-                        "maxLength": 3,
+                        "maxLength": 80,
                         "minLength": 1,
-                        "example": "Sample"
+                        "example": "Cod.: 1"
+                    },
+                    "meta": {
+                        "type": "object"
                     }
                 },
                 "type": "object"
             },
-            "UpdatePartnerTypeRequest": {
-                "required": [
-                    "name",
-                    "code"
-                ],
+            "PartnerTypeResource": {
                 "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
                     "name": {
                         "type": "string",
                         "maxLength": 60,
@@ -5240,6 +5320,24 @@
                         "maxLength": 3,
                         "minLength": 1,
                         "example": "Sample"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -5481,107 +5579,6 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2026-09-09T02:22:32.660898Z",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "PartnerTypeCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/PartnerTypeResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "PartnerTypeLookupCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/PartnerTypeLookupResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "PartnerTypeLookupResource": {
-                "properties": {
-                    "key": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "label": {
-                        "type": "string",
-                        "maxLength": 80,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "sublabel": {
-                        "type": "string",
-                        "maxLength": 80,
-                        "minLength": 1,
-                        "example": "Cod.: 1"
-                    },
-                    "meta": {
-                        "type": "object"
-                    }
-                },
-                "type": "object"
-            },
-            "PartnerTypeResource": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "maxLength": 60,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "code": {
-                        "type": "string",
-                        "maxLength": 3,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
-                        "nullable": true
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
-                        "nullable": true
-                    },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
                         "nullable": true
                     }
                 },

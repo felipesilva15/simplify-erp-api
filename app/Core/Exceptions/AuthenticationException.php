@@ -12,8 +12,8 @@ class AuthenticationException extends HttpException
 {
     use ApiResponse;
 
-    public function __construct(string $message = 'Você não está autenticado para acessar este recurso.', \Throwable $previous = null, int $code = Response::HTTP_UNAUTHORIZED, array $headers = []) {
-        parent::__construct(Response::HTTP_UNAUTHORIZED, $message, $previous, $headers, $code);
+    public function __construct(string $message = 'Você não está autenticado para acessar este recurso.', int $code = Response::HTTP_UNAUTHORIZED, array $headers = []) {
+        parent::__construct($code, $message, null, $headers, $code);
     }
 
     public function render(Request $request): JsonResponse {

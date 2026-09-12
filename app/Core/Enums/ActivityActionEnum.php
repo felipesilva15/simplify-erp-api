@@ -2,6 +2,19 @@
 
 namespace App\Core\Enums;
 
+/**
+ * @OA\Schema(
+ *   schema="ActivityActionEnum",
+ *   type="string",
+ *   description="Activity actions:
+ *      Created = 'created'
+ *      Updated = 'updated'
+ *      Deleted = 'deleted'
+ *      Approved = 'approved'
+ *      Auth = 'auth'",
+ *   enum={"created", "updated", "deleted", "approved", "auth"}
+ * )
+ */
 enum ActivityActionEnum: string
 {
     case Created   = 'created';
