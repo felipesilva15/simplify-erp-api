@@ -28,6 +28,636 @@
         }
     ],
     "paths": {
+        "/api/core/modules/{id}/activity-logs": {
+            "get": {
+                "tags": [
+                    "Module"
+                ],
+                "summary": "List activity logs of a module",
+                "operationId": "715f3a81c1681d1be722da065e7f4a95",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Module ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Module activity logs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ActivityLogCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/core/resources/{id}/activity-logs": {
+            "get": {
+                "tags": [
+                    "Resource"
+                ],
+                "summary": "List activity logs of a resource",
+                "operationId": "4153bbe0f06fbb7e66bac063e64faa50",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Resource ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resource activity logs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ActivityLogCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/partner/partners/{id}/activity-logs": {
+            "get": {
+                "tags": [
+                    "Partner"
+                ],
+                "summary": "List activity logs of a partner",
+                "operationId": "b039386c06ffa20d367d804602f5f471",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Partner ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Partner activity logs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ActivityLogCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/partner/partner-types/{id}/activity-logs": {
+            "get": {
+                "tags": [
+                    "PartnerType"
+                ],
+                "summary": "List activity logs of a partner type",
+                "operationId": "9728477260e19e5809a450795e46c365",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Partner type ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Partner type activity logs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ActivityLogCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/security/permissions/{id}/activity-logs": {
+            "get": {
+                "tags": [
+                    "Permission"
+                ],
+                "summary": "List activity logs of a permission",
+                "operationId": "d2455261a711992bb9103c352fae77f5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Permission ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Permission activity logs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ActivityLogCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/security/roles/{id}/activity-logs": {
+            "get": {
+                "tags": [
+                    "Role"
+                ],
+                "summary": "List activity logs of a role",
+                "operationId": "57ff7295f2cd05efc4c6453cd23ddd61",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Role ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Role activity logs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ActivityLogCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/security/users/{id}/activity-logs": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "List activity logs of a user",
+                "operationId": "5b3fee9571b3705167b5b024b3263e1a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User activity logs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ActivityLogCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/core/modules": {
             "get": {
                 "tags": [
@@ -2215,7 +2845,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
                                 }
                             }
                         }
@@ -2257,7 +2887,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
                                 }
                             }
                         }
@@ -2288,7 +2918,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
                                 }
                             }
                         }
@@ -2317,7 +2947,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
                                 }
                             }
                         }
@@ -2353,7 +2983,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorDTO"
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
                                 }
                             }
                         }
@@ -4168,6 +4798,17 @@
                 },
                 "type": "object"
             },
+            "ActivityActionEnum": {
+                "description": "Activity actions:\n *      Created = 'created'\n *      Updated = 'updated'\n *      Deleted = 'deleted'\n *      Approved = 'approved'\n *      Auth = 'auth'",
+                "type": "string",
+                "enum": [
+                    "created",
+                    "updated",
+                    "deleted",
+                    "approved",
+                    "auth"
+                ]
+            },
             "RequestQueryOperatorsEnum": {
                 "description": "Request query operators:\n *      Equal = 'eq'\n *      Like = 'like'\n *      Less than = 'lt'\n *      Less than equal = 'lte'\n *      Greater than = 'gt'\n *      Greater than equal = 'gte'\n *      Not equal = 'ne'",
                 "type": "string",
@@ -4200,31 +4841,6 @@
                     ">",
                     ">=",
                     "!="
-                ]
-            },
-            "ApiErrorDTO": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "$ref": "#/components/schemas/ApiErrorResponse"
-                    },
-                    {
-                        "properties": {
-                            "path": {
-                                "type": "string",
-                                "example": "/api/route"
-                            },
-                            "code": {
-                                "type": "integer",
-                                "example": 500
-                            },
-                            "message": {
-                                "type": "string",
-                                "example": "Error ocurried"
-                            }
-                        },
-                        "type": "object"
-                    }
                 ]
             },
             "ListRequest": {
@@ -4396,6 +5012,93 @@
                     "module_id": {
                         "type": "integer",
                         "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "ActivityLogCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ActivityLogResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "ActivityLogResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "origin_type": {
+                        "type": "string",
+                        "example": "user"
+                    },
+                    "origin_id": {
+                        "type": "string",
+                        "example": "1"
+                    },
+                    "action": {
+                        "$ref": "#/components/schemas/ActivityActionEnum"
+                    },
+                    "action_label": {
+                        "type": "string",
+                        "example": "Criado"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Registro criado",
+                        "nullable": true
+                    },
+                    "route_name": {
+                        "type": "string",
+                        "example": "users.store",
+                        "nullable": true
+                    },
+                    "route_path": {
+                        "type": "string",
+                        "example": "api/security/users",
+                        "nullable": true
+                    },
+                    "ip_address": {
+                        "type": "string",
+                        "example": "127.0.0.1",
+                        "nullable": true
+                    },
+                    "user_agent": {
+                        "type": "string",
+                        "example": "Mozilla/5.0",
+                        "nullable": true
+                    },
+                    "user": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Felipe Silva"
+                            }
+                        },
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -4873,48 +5576,6 @@
                     "EXEMPT"
                 ]
             },
-            "StorePartnerTypeRequest": {
-                "required": [
-                    "name",
-                    "code"
-                ],
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "maxLength": 60,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "code": {
-                        "type": "string",
-                        "maxLength": 3,
-                        "minLength": 1,
-                        "example": "Sample"
-                    }
-                },
-                "type": "object"
-            },
-            "UpdatePartnerTypeRequest": {
-                "required": [
-                    "name",
-                    "code"
-                ],
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "maxLength": 60,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "code": {
-                        "type": "string",
-                        "maxLength": 3,
-                        "minLength": 1,
-                        "example": "Sample"
-                    }
-                },
-                "type": "object"
-            },
             "StorePartnerRequest": {
                 "required": [
                     "partner_type_code",
@@ -5241,74 +5902,12 @@
                 },
                 "type": "object"
             },
-            "PartnerTypeCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/PartnerTypeResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "PartnerTypeLookupCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/PartnerTypeLookupResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "PartnerTypeLookupResource": {
+            "StorePartnerTypeRequest": {
+                "required": [
+                    "name",
+                    "code"
+                ],
                 "properties": {
-                    "key": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "label": {
-                        "type": "string",
-                        "maxLength": 80,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "sublabel": {
-                        "type": "string",
-                        "maxLength": 80,
-                        "minLength": 1,
-                        "example": "Cod.: 1"
-                    },
-                    "meta": {
-                        "type": "object"
-                    }
-                },
-                "type": "object"
-            },
-            "PartnerTypeResource": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
                     "name": {
                         "type": "string",
                         "maxLength": 60,
@@ -5320,24 +5919,27 @@
                         "maxLength": 3,
                         "minLength": 1,
                         "example": "Sample"
-                    },
-                    "created_at": {
+                    }
+                },
+                "type": "object"
+            },
+            "UpdatePartnerTypeRequest": {
+                "required": [
+                    "name",
+                    "code"
+                ],
+                "properties": {
+                    "name": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
-                        "nullable": true
+                        "maxLength": 60,
+                        "minLength": 1,
+                        "example": "Sample"
                     },
-                    "updated_at": {
+                    "code": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
-                        "nullable": true
-                    },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
-                        "nullable": true
+                        "maxLength": 3,
+                        "minLength": 1,
+                        "example": "Sample"
                     }
                 },
                 "type": "object"
@@ -5579,6 +6181,107 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2026-09-09T02:22:32.660898Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "PartnerTypeCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PartnerTypeResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "PartnerTypeLookupCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PartnerTypeLookupResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "PartnerTypeLookupResource": {
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "example": "TYP"
+                    },
+                    "label": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "sublabel": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Cod.: 1"
+                    },
+                    "meta": {
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "PartnerTypeResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 60,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "code": {
+                        "type": "string",
+                        "maxLength": 3,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
                         "nullable": true
                     }
                 },
