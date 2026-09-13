@@ -2,10 +2,9 @@
 
 namespace App\Modules\{{module}}\Http\Controllers;
 
-
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-
+{{lookup_imports}}
 use App\Core\Http\Controllers\Controller;
 use App\Core\Http\Requests\Core\ListRequest;
 use App\Modules\{{module}}\Http\Requests\{{entity}}\Store{{entity}}Request;
@@ -15,9 +14,56 @@ use App\Modules\{{module}}\Http\Resources\{{entity}}\{{entity}}Collection;
 use App\Modules\{{module}}\DTO\{{entity}}DTO;
 use App\Modules\{{module}}\Models\{{entity}};
 use App\Modules\{{module}}\Services\{{entity}}Service;
+use App\Core\Traits\HasActivityLogs;
 
+/**
+ * @OA\PathItem(
+ *     path="/api/{{lower_module}}/{{route_entity}}/{id}/activity-logs",
+ *     @OA\Get(
+ *         tags={"{{entity}}"},
+ *         summary="List activity logs of a {{human_entity}}",
+ *         @OA\Parameter(
+ *             name="id",
+ *             in="path",
+ *             required=true,
+ *             description="{{entity}} ID",
+ *             @OA\Schema(type="integer")
+ *         ),
+ *         @OA\Parameter(name="per_page", in="query", required=false, @OA\Schema(type="integer")),
+ *         @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer")),
+ *         @OA\Response(
+ *             response="200",
+ *             description="{{entity}} activity logs",
+ *             @OA\JsonContent(
+ *                 allOf={
+ *                     @OA\Schema(ref="#/components/schemas/ApiResponse"),
+ *                     @OA\Schema(ref="#/components/schemas/ActivityLogCollection")
+ *                 }
+ *             )
+ *         ),
+ *         @OA\Response(
+ *             response="401",
+ *             description="Unauthorized",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="403",
+ *             description="Forbidden",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="404",
+ *             description="Record not found",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         security={{"bearerAuth":{}}}
+ *     )
+ * )
+ */
 class {{entity}}Controller extends Controller
 {
+    use HasActivityLogs;
+
     protected {{entity}}Service $service;
 
     public function __construct({{entity}}Service $service) {
@@ -25,18 +71,20 @@ class {{entity}}Controller extends Controller
         $this->authorizeResource({{entity}}::class, '{{lower_entity}}');
     }
 
+    protected function activityLogModelClass(): string
+    {
+        return {{entity}}::class;
+    }
+
     /**
      * @OA\Get(
-     *      path="/api/{{lower_module}}/{{lower_entity}}s",
+     *      path="/api/{{lower_module}}/{{route_entity}}",
      *      tags={"{{entity}}"},
-     *      summary="List all {{lower_entity}}s",
-     *      @OA\Parameter(name="filters[id][eq]", in="query", required=false, @OA\Schema(type="integer")),
-     *      @OA\Parameter(name="filters[name][like]", in="query", required=false, @OA\Schema(type="string")),
-     *      @OA\Parameter(name="filters[created_at][gte]", in="query", required=false, @OA\Schema(type="string")),
-     *      @OA\Parameter(name="filters[updated_at][lte]", in="query", required=false, @OA\Schema(type="string")),
-     *      @OA\Parameter(ref="#/components/parameters/sortsParam"),
-     *      @OA\Parameter(ref="#/components/parameters/perPageParam"),
-     *      @OA\Parameter(ref="#/components/parameters/pageParam"),
+     *      summary="List all {{human_entities}}",
+     *     {{index_filter_parameters}}
+     *     @OA\Parameter(ref="#/components/parameters/sortsParam"),
+     *     @OA\Parameter(ref="#/components/parameters/perPageParam"),
+     *     @OA\Parameter(ref="#/components/parameters/pageParam"),
      *      @OA\Response(
      *          response="200", 
      *          description="{{entity}} list",
@@ -76,11 +124,11 @@ class {{entity}}Controller extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/{{lower_module}}/{{lower_entity}}s/{id}",
+     *      path="/api/{{lower_module}}/{{route_entity}}/{{lower_entity}}",
      *      tags={"{{entity}}"},
-     *      summary="List a {{lower_entity}} by ID",
+     *      summary="List a {{human_entity}} by ID",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="{{lower_entity}}",
      *         in="path",
      *         required=true,
      *         description="{{entity}} ID",
@@ -130,17 +178,17 @@ class {{entity}}Controller extends Controller
 
     /**
      * @OA\Post(
-     *      path="/api/{{lower_module}}/{{lower_entity}}s",
+     *      path="/api/{{lower_module}}/{{route_entity}}",
      *      tags={"{{entity}}"},
-     *      summary="Registers a {{lower_entity}}",
+     *      summary="Registers a {{human_entity}}",
      *      @OA\RequestBody(
      *         required=true,
-     *         description="Data for creating a new {{lower_entity}}",
+     *         description="Data for creating a new {{human_entity}}",
      *         @OA\JsonContent(ref="#/components/schemas/Store{{entity}}Request")
      *      ),
      *      @OA\Response(
      *          response="201", 
-     *          description="Registered {{lower_entity}} data",
+     *          description="Registered {{human_entity}} data",
      *          @OA\JsonContent(
      *              allOf={
      *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
@@ -163,6 +211,11 @@ class {{entity}}Controller extends Controller
      *          description="Forbidden",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
+     *      @OA\Response(
+     *          response="422", 
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
@@ -178,11 +231,11 @@ class {{entity}}Controller extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/{{lower_module}}/{{lower_entity}}s/{id}/edit",
+     *      path="/api/{{lower_module}}/{{route_entity}}/{{lower_entity}}/edit",
      *      tags={"{{entity}}"},
-     *      summary="Get data to edit a {{lower_entity}}",
+     *      summary="Get data to edit a {{human_entity}}",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="{{lower_entity}}",
      *         in="path",
      *         required=true,
      *         description="{{entity}} ID",
@@ -239,11 +292,11 @@ class {{entity}}Controller extends Controller
 
     /**
      * @OA\Put(
-     *      path="/api/{{lower_module}}/{{lower_entity}}s/{id}",
+     *      path="/api/{{lower_module}}/{{route_entity}}/{{lower_entity}}",
      *      tags={"{{entity}}"},
-     *      summary="Update a {{lower_entity}}",
+     *      summary="Update a {{human_entity}}",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="{{lower_entity}}",
      *         in="path",
      *         required=true,
      *         description="{{entity}} ID",
@@ -251,12 +304,12 @@ class {{entity}}Controller extends Controller
      *      ),
      *      @OA\RequestBody(
      *         required=true,
-     *         description="Data for update {{lower_entity}}",
+     *         description="Data for update {{human_entity}}",
      *         @OA\JsonContent(ref="#/components/schemas/Update{{entity}}Request")
      *      ),
      *      @OA\Response(
      *          response="200", 
-     *          description="Updated {{lower_entity}} data",
+     *          description="Updated {{human_entity}} data",
      *          @OA\JsonContent(
      *              allOf={
      *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
@@ -284,6 +337,11 @@ class {{entity}}Controller extends Controller
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
+     *      @OA\Response(
+     *          response="422", 
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
@@ -299,11 +357,11 @@ class {{entity}}Controller extends Controller
 
     /**
      * @OA\Delete(
-     *      path="/api/{{lower_module}}/{{lower_entity}}s/{id}",
+     *      path="/api/{{lower_module}}/{{route_entity}}/{{lower_entity}}",
      *      tags={"{{entity}}"},
-     *      summary="Delete a {{lower_entity}}",
+     *      summary="Delete a {{human_entity}}",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="{{lower_entity}}",
      *         in="path",
      *         required=true,
      *         description="{{entity}} ID",
@@ -334,5 +392,5 @@ class {{entity}}Controller extends Controller
     public function destroy({{entity}} ${{lower_entity}}): Response {
         $this->service->delete(${{lower_entity}});
         return response()->noContent();
-    }
+    }{{lookup_method}}
 }

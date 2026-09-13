@@ -11,6 +11,8 @@ use Illuminate\Support\Str;
 
 class MakeModuleCrud extends Command
 {
+    private const SPACES_PER_TAB = 4;
+
     protected $signature = 'make:module-crud 
                             {module : Name of module} 
                             {entity : Name of entity} 
@@ -21,7 +23,8 @@ class MakeModuleCrud extends Command
                             {--dto : Whether the DTO should be created} 
                             {--controller : Whether the controller should be created} 
                             {--request : Whether the requests should be created} 
-                            {--resource : Whether the resources should be created}
+                            {--resource : Whether the resources should be created} 
+                            {--lookup : Whether the lookup resources should be created} 
                             {--policy : Whether the policy should be created} 
                             {--factory : Whether the factory should be created} 
                             {--test : Whether the tests should be created}';
@@ -88,6 +91,7 @@ class MakeModuleCrud extends Command
             'option' => 'repository',
             'stub' => 'module.repository.stub',
             'path' => '{{root_path}}/Repositories/Eloquent/{{entity}}Repository.php',
+            'replacements' => 'getRepositoryReplacements',
         ],
         'repositoryInterface' => [
             'option' => 'repository',
@@ -104,6 +108,7 @@ class MakeModuleCrud extends Command
             'option' => 'controller',
             'stub' => 'module.controller.stub',
             'path' => '{{root_path}}/Http/Controllers/{{entity}}Controller.php',
+            'replacements' => 'getControllerReplacements',
         ],
         'storeRequest' => [
             'option' => 'request',
@@ -128,13 +133,24 @@ class MakeModuleCrud extends Command
             'stub' => 'module.resource-collection.stub',
             'path' => '{{root_path}}/Http/Resources/{{entity}}/{{entity}}Collection.php',
         ],
+        'resourceLookup' => [
+            'option' => 'lookup',
+            'stub' => 'module.resource-lookup.stub',
+            'path' => '{{root_path}}/Http/Resources/{{entity}}/{{entity}}LookupResource.php',
+            'replacements' => 'getLookupReplacements',
+        ],
+        'lookupCollection' => [
+            'option' => 'lookup',
+            'stub' => 'module.resource-lookup-collection.stub',
+            'path' => '{{root_path}}/Http/Resources/{{entity}}/{{entity}}LookupCollection.php',
+        ],
     ];
 
     private array $requestTypes = [
         'string' => 'string',
         'float' => 'decimal',
         'int' => 'integer',
-        'Carbon' => 'datetime',
+        'Carbon' => 'date',
         'bool' => 'boolean',
     ];
 
@@ -163,15 +179,39 @@ class MakeModuleCrud extends Command
         $this->makeFolders();
         $this->loadEntityFields();
 
+        $generatedOptions = [];
+
         foreach ($this->files as $config) {
-            if ($this->option('all') || $this->option($config['option'])) {
-                $this->createFile($config);
+            if (! $this->shouldGenerate($config['option'])) {
+                continue;
             }
+
+            $this->createFile($config);
+            $generatedOptions[$config['option']] = true;
+        }
+
+        if (isset($generatedOptions['repository'])) {
+            $this->updateModuleProvider();
+        }
+
+        if (isset($generatedOptions['controller'])) {
+            $this->registerModuleProvider();
+            $this->updateModuleRoutes();
+            $this->updateSwaggerTagGroups();
         }
 
         $this->info("Module [{$this->rootPath}] created successfully for {$this->entity} Entity!");
 
         return self::SUCCESS;
+    }
+
+    private function shouldGenerate(string $option): bool
+    {
+        if ($option === 'lookup') {
+            return (bool) $this->option('lookup');
+        }
+
+        return $this->option('all') || $this->option($option);
     }
 
     private function createFile(array $config): void
@@ -206,6 +246,8 @@ class MakeModuleCrud extends Command
 
     private function getBaseReplacements(): array
     {
+        $pluralEntity = Str::pluralStudly($this->entity);
+
         return [
             '{{root_path}}' => $this->rootPath,
             '{{app_path}}' => app_path(),
@@ -213,8 +255,12 @@ class MakeModuleCrud extends Command
             '{{tests_path}}' => base_path('tests'),
             '{{module}}' => $this->module,
             '{{entity}}' => $this->entity,
-            '{{lower_module}}' => strtolower($this->module),
-            '{{lower_entity}}' => strtolower($this->entity),
+            '{{lower_module}}' => Str::kebab($this->module),
+            '{{lower_entity}}' => Str::lower(Str::snake($this->entity)),
+            '{{route_entity}}' => Str::kebab($pluralEntity),
+            '{{human_entity}}' => Str::lower(Str::headline($this->entity)),
+            '{{human_entities}}' => Str::lower(Str::headline($pluralEntity)),
+            '{{permission_entity}}' => Str::camel($pluralEntity),
             '{{table_name}}' => $this->getTableNameByEntityName($this->entity),
         ];
     }
@@ -222,6 +268,16 @@ class MakeModuleCrud extends Command
     private function replacePlaceholders(string $content, array $replacements): string
     {
         return strtr($content, $replacements);
+    }
+
+    private function readStubBlock(string $stub): string
+    {
+        return rtrim(File::get("{$this->stubPath}/{$stub}"));
+    }
+
+    private function tabs(int $levels): string
+    {
+        return str_repeat(' ', $levels * self::SPACES_PER_TAB);
     }
 
     private function loadEntityFields(): void
@@ -249,7 +305,7 @@ class MakeModuleCrud extends Command
         return [
             '{{fillable_fields}}' => $this->renderLines(
                 array_map(fn ($field) => "'{$field['name']}'", $this->entityFields(skipCommon: true)),
-                indent: '        ',
+                indent: $this->tabs(2),
             ),
             ...$this->getSwaggerFields(setCommonProperties: true, setValidationAttributes: false),
         ];
@@ -263,15 +319,39 @@ class MakeModuleCrud extends Command
 
         foreach ($this->entityFields() as $field) {
             $default = StringHelpers::toStringLiteral($field['default']);
+            $arrayFields[] = "'{$field['name']}' => \$this->{$field['name']}";
+
+            if ($field['type'] === 'Carbon') {
+                $properties[] = "public ?Carbon \${$field['name']} = null";
+                $params[] = "{$field['name']}: !empty(\$data['{$field['name']}']) ? Carbon::parse(\$data['{$field['name']}']) : null";
+
+                continue;
+            }
+
             $properties[] = 'public '.($field['nullable'] ? '?' : '').$field['type'].' $'.$field['name'].' = '.$default;
             $params[] = "{$field['name']}: \$data['{$field['name']}'] ?? {$default}";
-            $arrayFields[] = "'{$field['name']}' => \$this->{$field['name']}";
         }
 
         return [
-            '{{constructor_properties}}' => $this->renderLines($properties, indent: '        '),
-            '{{constructor_params}}' => $this->renderLines($params, indent: '            '),
-            '{{array_fields}}' => $this->renderLines($arrayFields, indent: '            '),
+            '{{dto_carbon_import}}' => $this->hasCarbonFields() ? 'use Carbon\Carbon;' : '',
+            '{{constructor_properties}}' => $this->renderLines($properties, indent: $this->tabs(2)),
+            '{{constructor_params}}' => $this->renderLines($params, indent: $this->tabs(3)),
+            '{{array_fields}}' => $this->renderLines($arrayFields, indent: $this->tabs(3)),
+        ];
+    }
+
+    private function getControllerReplacements(): array
+    {
+        $base = $this->getBaseReplacements();
+
+        return [
+            '{{index_filter_parameters}}' => $this->renderIndexFilterParameters(),
+            '{{lookup_imports}}' => $this->option('lookup')
+                ? $this->replacePlaceholders($this->readStubBlock('module.controller-lookup-imports.stub'), $base).PHP_EOL
+                : '',
+            '{{lookup_method}}' => $this->option('lookup')
+                ? $this->replacePlaceholders($this->readStubBlock('module.controller-lookup.stub'), $base)
+                : '',
         ];
     }
 
@@ -283,7 +363,7 @@ class MakeModuleCrud extends Command
                     fn ($field) => "'{$field['name']}' => '{$this->buildRule($field)}'",
                     $this->entityFields(skipCommon: true),
                 ),
-                indent: '            ',
+                indent: $this->tabs(3),
             ),
             ...$this->getSwaggerFields(setCommonProperties: false, setValidationAttributes: true),
         ];
@@ -294,7 +374,7 @@ class MakeModuleCrud extends Command
         return [
             '{{array_fields}}' => $this->renderLines(
                 array_map(fn ($field) => "'{$field['name']}' => \$this->{$field['name']}", $this->entityFields()),
-                indent: '            ',
+                indent: $this->tabs(3),
             ),
             ...$this->getSwaggerFields(setCommonProperties: true, setValidationAttributes: true),
         ];
@@ -308,7 +388,7 @@ class MakeModuleCrud extends Command
                     fn ($field) => "'{$field['name']}' => {$this->fakerExpression($field)}",
                     $this->entityFields(skipCommon: true),
                 ),
-                indent: '            ',
+                indent: $this->tabs(3),
             ),
         ];
     }
@@ -325,11 +405,159 @@ class MakeModuleCrud extends Command
         return [
             '{{resource_structure}}' => $this->renderLines(
                 array_map(fn ($field) => "'{$field['name']}'", $this->entityFields()),
-                indent: '            ',
+                indent: $this->tabs(3),
             ),
             '{{display_field}}' => $displayField,
             '{{required_field}}' => $requiredField,
         ];
+    }
+
+    private function getRepositoryReplacements(): array
+    {
+        $stringFields = array_values(array_filter(
+            $this->entityFields(skipCommon: true),
+            fn ($field) => $field['type'] === 'string',
+        ));
+
+        $columns = array_map(fn ($field) => "'{$field['name']}' => 'string'", $stringFields);
+
+        if (count($columns) === 0) {
+            $columns = ["'id' => 'int'"];
+        }
+
+        $lookupColumns = $this->renderLines($columns, indent: $this->tabs(3));
+
+        return [
+            '{{lookup_columns}}' => $lookupColumns,
+            '{{lookup_columns_method}}' => $this->option('lookup')
+                ? $this->replacePlaceholders($this->readStubBlock('module.repository-lookup.stub'), ['{{lookup_columns}}' => $lookupColumns]).PHP_EOL.PHP_EOL
+                : '',
+        ];
+    }
+
+    private function getLookupReplacements(): array
+    {
+        $fields = $this->entityFields(skipCommon: true);
+        $stringFields = array_values(array_filter($fields, fn ($field) => $field['type'] === 'string'));
+
+        $labelField = null;
+
+        foreach ($stringFields as $field) {
+            if ($field['name'] === 'name') {
+                $labelField = $field;
+                break;
+            }
+        }
+
+        if ($labelField === null && count($stringFields) > 0) {
+            $labelField = $stringFields[0];
+        }
+
+        $keyField = null;
+
+        foreach ($stringFields as $field) {
+            if ($field['name'] === 'code') {
+                $keyField = $field;
+                break;
+            }
+        }
+
+        $usesIdAsKey = $keyField === null;
+        $keyName = $usesIdAsKey ? 'id' : $keyField['name'];
+        $labelName = $labelField['name'] ?? 'id';
+        $labelMaxLength = $labelField['max_length'] ?? 80;
+
+        $metaNames = ['id'];
+
+        foreach ([$labelName, $keyName] as $name) {
+            if (! in_array($name, $metaNames, true)) {
+                $metaNames[] = $name;
+            }
+        }
+
+        foreach ($stringFields as $field) {
+            if (! in_array($field['name'], $metaNames, true)) {
+                $metaNames[] = $field['name'];
+            }
+
+            if (count($metaNames) >= 5) {
+                break;
+            }
+        }
+
+        $allFields = $this->entityFields();
+        $metaProperties = [];
+
+        foreach ($metaNames as $name) {
+            $metaField = null;
+
+            foreach ($allFields as $field) {
+                if ($field['name'] === $name) {
+                    $metaField = $field;
+                    break;
+                }
+            }
+
+            $metaProperties[] = $this->getLookupMetaProperty(
+                $metaField ?? ['name' => $name, 'type' => 'string', 'nullable' => false, 'max_length' => $labelMaxLength],
+            );
+        }
+
+        return [
+            '{{lookup_key_type}}' => $usesIdAsKey ? 'integer' : 'string',
+            '{{lookup_key_example}}' => $usesIdAsKey ? '1' : '"Sample"',
+            '{{lookup_label_max_length}}' => $labelMaxLength,
+            '{{lookup_key_accessor}}' => $usesIdAsKey ? '$this->id' : '$this->'.$keyName,
+            '{{lookup_label_accessor}}' => '$this->'.$labelName,
+            '{{lookup_meta_args}}' => implode(', ', array_map(fn ($name) => "'".$name."'", $metaNames)),
+            '{{lookup_meta_properties}}' => $this->renderLines($metaProperties, indent: ' * '.$this->tabs(2)),
+        ];
+    }
+
+    private function getLookupMetaProperty(array $field): string
+    {
+        if ($field['name'] === 'id') {
+            return '@OA\Property(property="id", type="integer", example=1)';
+        }
+
+        return $this->getSwaggerProperty($field, true);
+    }
+
+    private function renderIndexFilterParameters(): string
+    {
+        $lines = [];
+
+        foreach ($this->entityFields() as $field) {
+            $schemaType = match ($field['type']) {
+                'int' => 'integer',
+                'float' => 'number',
+                'bool' => 'boolean',
+                'Carbon' => 'string',
+                default => 'string',
+            };
+
+            foreach ($this->filterOperatorsForType($field['type']) as $operator) {
+                $lines[] = '@OA\Parameter(name="filters['.$field['name'].']['.$operator.']", in="query", required=false, @OA\Schema(type="'.$schemaType.'"))';
+            }
+        }
+
+        $rendered = '';
+        $prefix = $this->tabs(1).' * '.$this->tabs(1);
+
+        foreach ($lines as $index => $line) {
+            $rendered .= ($index > 0 ? $prefix : '').$line.','.PHP_EOL;
+        }
+
+        return rtrim($rendered, PHP_EOL);
+    }
+
+    private function filterOperatorsForType(string $type): array
+    {
+        return match ($type) {
+            'string' => ['eq', 'like', 'ne'],
+            'bool' => ['eq', 'ne'],
+            default => ['eq', 'lt', 'lte', 'gt', 'gte', 'ne'],
+        };
     }
 
     private function fakerExpression(array $field): string
@@ -389,7 +617,7 @@ class MakeModuleCrud extends Command
         }
 
         return [
-            '{{swagger_properties}}' => $this->renderLines($properties, indent: ' *      '),
+            '{{swagger_properties}}' => $this->renderLines($properties, indent: ' * '.$this->tabs(1)),
             '{{swagger_required}}' => implode(',', $required),
         ];
     }
@@ -437,6 +665,17 @@ class MakeModuleCrud extends Command
         ));
     }
 
+    private function hasCarbonFields(): bool
+    {
+        foreach ($this->entityFields as $field) {
+            if ($field['type'] === 'Carbon') {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private function renderLines(array $lines, string $indent, bool $trailingComma = true): string
     {
         $output = '';
@@ -450,5 +689,221 @@ class MakeModuleCrud extends Command
         }
 
         return rtrim($output, PHP_EOL);
+    }
+
+    private function updateModuleProvider(): void
+    {
+        $path = app_path("Providers/{$this->module}ModuleProvider.php");
+        $repository = "App\\Modules\\{$this->module}\\Repositories\\Eloquent\\{$this->entity}Repository";
+        $repositoryInterface = "App\\Modules\\{$this->module}\\Repositories\\Interfaces\\{$this->entity}RepositoryInterface";
+        $bind = $this->tabs(2)."\$this->app->bind({$this->entity}RepositoryInterface::class, {$this->entity}Repository::class);";
+
+        if (! File::exists($path)) {
+            $content = $this->replacePlaceholders(File::get("{$this->stubPath}/module.provider.stub"), [
+                ...$this->getBaseReplacements(),
+                '{{repository_class}}' => $repository,
+                '{{repository_interface_class}}' => $repositoryInterface,
+                '{{binding}}' => $bind,
+            ]);
+
+            File::put($path, $content);
+
+            return;
+        }
+
+        $content = File::get($path);
+
+        if (str_contains($content, $bind)) {
+            return;
+        }
+
+        $content = str_replace(
+            "use Illuminate\Support\ServiceProvider;",
+            "use {$repository};\nuse {$repositoryInterface};\nuse Illuminate\Support\ServiceProvider;",
+            $content,
+        );
+
+        $content = str_replace("\n".$this->tabs(1)."}\n}", "\n{$bind}\n".$this->tabs(1)."}\n}", $content, $count);
+
+        if ($count > 0) {
+            File::put($path, $content);
+        }
+    }
+
+    private function registerModuleProvider(): void
+    {
+        $path = base_path('bootstrap/providers.php');
+        $content = File::get($path);
+        $provider = "App\\Providers\\{$this->module}ModuleProvider";
+
+        if (str_contains($content, "{$provider}::class")) {
+            return;
+        }
+
+        if (! str_contains($content, "{$provider}::class")) {
+            $content = str_replace('];', $this->tabs(1)."{$provider}::class,\n];", $content);
+        }
+
+        File::put($path, $content);
+    }
+
+    private function updateModuleRoutes(): void
+    {
+        $path = base_path('routes/api.php');
+        $content = File::get($path);
+        $kebabModule = Str::kebab($this->module);
+        $routeEntity = Str::kebab(Str::pluralStudly($this->entity));
+
+        if (str_contains($content, "Route::crudResource('{$routeEntity}',")) {
+            return;
+        }
+
+        $controllerImport = "use App\\Modules\\{$this->module}\\Http\\Controllers\\{$this->entity}Controller;";
+
+        if (! str_contains($content, $controllerImport)) {
+            $content = str_replace(
+                "use Illuminate\Support\Facades\Route;",
+                "{$controllerImport}\nuse Illuminate\Support\Facades\Route;",
+                $content,
+            );
+        }
+
+        $prefixOpen = "Route::prefix('{$kebabModule}')->group(function() {";
+
+        if (str_contains($content, $prefixOpen)) {
+            $end = $this->findGroupEnd($content, $prefixOpen);
+
+            if ($end === null) {
+                return;
+            }
+
+            $lineStart = strrpos(substr($content, 0, $end), "\n") + 1;
+            $routes = $this->getLookupRouteLine($routeEntity).$this->getCrudRouteLine($routeEntity);
+
+            $content = substr($content, 0, $lineStart)."\n".$routes.substr($content, $lineStart);
+        } else {
+            $group = $this->buildModuleRouteGroup($routeEntity);
+            $authOpen = "Route::group(['middleware' => 'auth'], function () {";
+            $end = $this->findGroupEnd($content, $authOpen);
+
+            if ($end === null) {
+                return;
+            }
+
+            $lineStart = strrpos(substr($content, 0, $end), "\n") + 1;
+
+            $content = substr($content, 0, $lineStart)."\n".$group."\n".substr($content, $lineStart);
+        }
+
+        File::put($path, $content);
+    }
+
+    private function buildModuleRouteGroup(string $routeEntity): string
+    {
+        $stub = File::get("{$this->stubPath}/module.route-group.stub");
+
+        return $this->replacePlaceholders($stub, [
+            ...$this->getBaseReplacements(),
+            '{{lookup_route_line}}' => $this->getLookupRouteLine($routeEntity),
+        ]);
+    }
+
+    private function getLookupRouteLine(string $routeEntity): string
+    {
+        if (! $this->option('lookup')) {
+            return '';
+        }
+
+        return $this->tabs(2)."Route::get('{$routeEntity}/lookup', [{$this->entity}Controller::class, 'lookup'])->name('{$routeEntity}.lookup');".PHP_EOL;
+    }
+
+    private function getCrudRouteLine(string $routeEntity): string
+    {
+        return $this->tabs(2)."Route::crudResource('{$routeEntity}', {$this->entity}Controller::class);".PHP_EOL;
+    }
+
+    private function findGroupEnd(string $content, string $openNeedle): ?int
+    {
+        $openPosition = strpos($content, $openNeedle);
+
+        if ($openPosition === false) {
+            return null;
+        }
+
+        $start = (int) strpos($content, '{', $openPosition);
+        $depth = 0;
+        $length = strlen($content);
+
+        for ($i = $start; $i < $length; $i++) {
+            $character = $content[$i];
+
+            if ($character === '{') {
+                $depth++;
+            }
+
+            if ($character === '}') {
+                $depth--;
+
+                if ($depth === 0) {
+                    return $i;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private function updateSwaggerTagGroups(): void
+    {
+        $path = app_path('Core/Http/Controllers/Controller.php');
+        $content = File::get($path);
+        $moduleTag = '"name"="'.$this->module.'"';
+
+        if (str_contains($content, $moduleTag)) {
+            $modulePosition = strpos($content, $moduleTag);
+            $tagsPosition = strpos($content, '"tags"={', $modulePosition);
+
+            if ($tagsPosition === false) {
+                return;
+            }
+
+            $tagsEnd = strpos($content, '}', $tagsPosition);
+
+            if ($tagsEnd === false) {
+                return;
+            }
+
+            $tags = substr($content, $tagsPosition, $tagsEnd - $tagsPosition + 1);
+
+            if (str_contains($tags, '"'.$this->entity.'"')) {
+                return;
+            }
+
+            $newTags = substr_replace($tags, ', "'.$this->entity.'"', -1, 0);
+
+            $content = substr_replace($content, $newTags, $tagsPosition, strlen($tags));
+        } else {
+            if (str_contains($content, '"'.$this->entity.'"')) {
+                return;
+            }
+
+            $prefix = ' * ';
+            $needle = $prefix.$this->tabs(3)."}\n".$prefix.$this->tabs(2)."}\n".$prefix.$this->tabs(1).'}';
+            $replacement = $prefix.$this->tabs(3)."},\n"
+                .$prefix.$this->tabs(3)."{\n"
+                .$prefix.$this->tabs(4)."\"name\"=\"{$this->module}\",\n"
+                .$prefix.$this->tabs(4)."\"tags\"={\"{$this->entity}\"}\n"
+                .$prefix.$this->tabs(3)."}\n"
+                .$prefix.$this->tabs(2)."}\n"
+                .$prefix.$this->tabs(1).'}';
+
+            $content = str_replace($needle, $replacement, $content, $count);
+
+            if ($count === 0) {
+                return;
+            }
+        }
+
+        File::put($path, $content);
     }
 }

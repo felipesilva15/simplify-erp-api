@@ -7,8 +7,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @OA\Schema(
- *      schema="{{entity}}Resource",
- *      {{swagger_properties}}
+ *     schema="{{entity}}Resource",
+ *     {{swagger_properties}}
  * )
  */
 class {{entity}}Resource extends JsonResource

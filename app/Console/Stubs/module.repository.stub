@@ -9,7 +9,7 @@ use Override;
 
 class {{entity}}Repository extends BaseRepository implements {{entity}}RepositoryInterface
 {
-    #[Override]
+{{lookup_columns_method}}    #[Override]
     protected function getModelClass(): string
     {
         return {{entity}}::class;

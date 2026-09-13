@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Modules\{{module}}\Http\Resources\{{entity}};
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+/**
+ * @OA\Schema(
+ *      schema="{{entity}}LookupResource",
+ *      @OA\Property(property="key", type="{{lookup_key_type}}", example={{lookup_key_example}}),
+ *      @OA\Property(property="label", type="string", example="Sample", minLength=1, maxLength={{lookup_label_max_length}}),
+ *      @OA\Property(property="sublabel", type="string", example="Cod.: 1", minLength=1, maxLength=80),
+ *      @OA\Property(
+ *          property="meta",
+ *          type="object",
+ *         {{lookup_meta_properties}}
+ *      )
+ * )
+ */
+class {{entity}}LookupResource extends JsonResource
+{
+    public function toArray(Request $request): array {
+        return [
+            'key' => {{lookup_key_accessor}},
+            'label' => {{lookup_label_accessor}},
+            'sublabel' => 'Cod.: '.{{lookup_key_accessor}},
+            'meta' => $this->only({{lookup_meta_args}})
+        ];
+    }
+}
