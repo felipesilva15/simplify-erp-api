@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Modules\{{module}}\Http\Resources\{{entity}};
+
+use App\Core\Helpers\PaginatorHelpers;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
+
+/**
+ * @OA\Schema(
+ *     schema="{{entity}}LookupCollection",
+ *     type="object",
+ *     allOf={
+ *         @OA\Schema(
+ *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/{{entity}}LookupResource")),
+ *         ),
+ *         @OA\Schema(ref="#/components/schemas/PaginatorInfo"),
+ *     }
+ * )
+ */
+class {{entity}}LookupCollection extends ResourceCollection
+{
+    public function toArray(Request $request): array
+    {
+        $info = PaginatorHelpers::getInfoFromPaginator($this->resource)->toArray();
+
+        return [
+            'data' => {{entity}}LookupResource::collection($this->collection),
+            ...$info
+        ];
+    }
+}

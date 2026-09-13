@@ -10,8 +10,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @OA\Schema(
- *      schema="{{entity}}",
- *      {{swagger_properties}}
+ *     schema="{{entity}}",
+ *     {{swagger_properties}}
  * )
  */
 #[UseFactory({{entity}}Factory::class)]

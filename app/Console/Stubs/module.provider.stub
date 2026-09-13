@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Providers;
+
+use {{repository_class}};
+use {{repository_interface_class}};
+use Illuminate\Support\ServiceProvider;
+
+class {{module}}ModuleProvider extends ServiceProvider
+{
+    /**
+     * Register services.
+     */
+    public function register(): void
+    {
+{{binding}}
+    }
+}
