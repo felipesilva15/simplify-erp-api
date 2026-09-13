@@ -37,7 +37,7 @@ class AuthController extends Controller
      *      @OA\Response(
      *         response="401", 
      *         description="Unauthorized",
-     *         @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *         @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      )
      *  )
      * )
@@ -80,7 +80,7 @@ class AuthController extends Controller
      *      @OA\Response(
      *         response="401", 
      *         description="Unauthorized",
-     *         @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *         @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      )
      *  )
      * )
@@ -105,7 +105,7 @@ class AuthController extends Controller
      *     @OA\Response(
      *         response="401", 
      *         description="Unauthorized",
-     *         @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *         @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *     ),
      *     security={{"bearerAuth":{}}}
      * )
@@ -127,7 +127,7 @@ class AuthController extends Controller
      *     @OA\Response(
      *          response="401", 
      *          description="Unauthorized",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *     ),
      *     security={{"bearerAuth":{}}}
      * )
@@ -152,7 +152,7 @@ class AuthController extends Controller
      *     @OA\Response(
      *          response="401", 
      *          description="Unauthorized",
-     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorDTO")
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *     ),
      *     security={{"bearerAuth":{}}}
      * )
