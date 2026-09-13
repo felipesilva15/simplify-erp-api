@@ -63,4 +63,10 @@ class ActivityLogService
             data: $this->repository->list($filters)
         );
     }
+
+    public function listByModelAndId(string $modelClass, mixed $id, array $params = []): ServiceResult {
+        return new ServiceResult(
+            data: $this->repository->listByModelAndId($modelClass, $id, $params)
+        );
+    }
 }
