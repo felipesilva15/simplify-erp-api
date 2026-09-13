@@ -7,11 +7,13 @@ use Illuminate\Http\Response;
 
 use App\Core\Http\Controllers\Controller;
 use App\Core\Http\Requests\Core\ListRequest;
+use App\Core\Http\Requests\Core\LookupRequest;
 use App\Core\Traits\HasActivityLogs;
 use App\Modules\Security\Http\Requests\User\StoreUserRequest;
 use App\Modules\Security\Http\Requests\User\UpdateUserRequest;
 use App\Modules\Security\Http\Resources\User\UserResource;
 use App\Modules\Security\Http\Resources\User\UserCollection;
+use App\Modules\Security\Http\Resources\User\UserLookupCollection;
 use App\Modules\Security\DTO\UserDTO;
 use App\Modules\Security\Models\User;
 use App\Modules\Security\Services\UserService;
@@ -404,5 +406,44 @@ class UserController extends Controller
     public function destroy(User $user): Response {
         $this->service->delete($user);
         return response()->noContent();
+    }
+
+    /**
+     * @OA\Get(
+     *      path="/api/security/users/lookup",
+     *      tags={"User"},
+     *      summary="Lookup users",
+     *      @OA\Parameter(name="q", in="query", description="Query for available fields", required=false, @OA\Schema(type="string")),
+     *      @OA\Parameter(name="keys[]", in="query", description="Keys to find", required=false, @OA\Schema(type="integer")),
+     *      @OA\Response(
+     *          response="200", 
+     *          description="User lookup list",
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(ref="#/components/schemas/UserLookupCollection")
+     *              }
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      security={{"bearerAuth":{}}}
+     * )
+     */
+    public function lookup(LookupRequest $request): JsonResponse {
+        $serviceResult = $this->service->lookup($request->all());
+
+        $paginated = new UserLookupCollection($serviceResult->data);
+        $paginated = $paginated->toArray($request);
+
+        return $this->success(
+            data: $paginated['data'],
+            links: $paginated['links'],
+            meta: $paginated['meta'],
+            httpStatus: Response::HTTP_OK
+        );
     }
 }

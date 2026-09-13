@@ -4929,6 +4929,69 @@
                     }
                 }
             }
+        },
+        "/api/security/users/lookup": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Lookup users",
+                "operationId": "76eb77b551e8e52e157579d7ca710cd0",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Query for available fields",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "keys[]",
+                        "in": "query",
+                        "description": "Keys to find",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User lookup list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/UserLookupCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -7286,6 +7349,82 @@
                         "$ref": "#/components/schemas/PaginatorInfo"
                     }
                 ]
+            },
+            "UserLookupCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/UserLookupResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "UserLookupResource": {
+                "properties": {
+                    "key": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "label": {
+                        "type": "string",
+                        "maxLength": 180,
+                        "minLength": 1,
+                        "example": "Felipe Silva"
+                    },
+                    "sublabel": {
+                        "type": "string",
+                        "maxLength": 180,
+                        "minLength": 1,
+                        "example": "Cod.: 1 | Email: felipe@example.com"
+                    },
+                    "meta": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "maxLength": 180,
+                                "minLength": 1,
+                                "example": "Felipe Silva"
+                            },
+                            "email": {
+                                "type": "string",
+                                "maxLength": 180,
+                                "minLength": 1,
+                                "example": "felipe@example.com",
+                                "nullable": true
+                            },
+                            "username": {
+                                "type": "string",
+                                "maxLength": 50,
+                                "minLength": 1,
+                                "example": "felipe",
+                                "nullable": true
+                            },
+                            "phone_number": {
+                                "type": "string",
+                                "maxLength": 20,
+                                "minLength": 1,
+                                "example": "+55 11 99999-9999",
+                                "nullable": true
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
             },
             "UserResource": {
                 "properties": {

@@ -10,6 +10,17 @@ use Override;
 class UserRepository extends BaseRepository implements UserRepositoryInterface
 {
     #[Override]
+    public function getLookupColumnsToFilter(): array
+    {
+        return [
+            'id' => 'int',
+            'name' => 'string',
+            'email' => 'string',
+            'username' => 'string'
+        ];
+    }
+
+    #[Override]
     protected function getModelClass(): string
     {
         return User::class;

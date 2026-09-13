@@ -100,10 +100,9 @@ class OpenApiConsistencyTest extends TestCase
     public function test_every_api_route_is_documented(): void
     {
         $specOperations = $this->documentedOperations();
-        $excluded = self::EXCLUDED_ROUTES;
 
         $outliers = collect($this->apiRoutes())
-            ->filter(fn (array $route) => ! in_array($route['path'], $excluded, true))
+            ->filter(fn (array $route) => ! in_array($route['path'], self::EXCLUDED_ROUTES, true))
             ->filter(fn (array $route) => ! str_ends_with($route['path'], '/create'))
             ->filter(
                 fn (array $route) => ! collect($specOperations)->contains(

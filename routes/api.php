@@ -25,8 +25,10 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('auth/refresh', [AuthController::class, 'refresh'])->name('auth.refresh');
         Route::get('auth/me', [AuthController::class, 'me'])->name('auth.me');
 
+        Route::get('users/lookup', [UserController::class, 'lookup'])->name('users.lookup');
         Route::crudResource('users', UserController::class);
 
+        Route::get('roles/lookup', [RoleController::class, 'lookup'])->name('roles.lookup');
         Route::crudResource('roles', RoleController::class);
         Route::patch('roles/{role}/permissions', [RoleController::class, 'definePermissions'])->name('roles.definePermissions');
         
@@ -34,7 +36,10 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::prefix('partner')->group(function() {
+        Route::get('partner-types/lookup', [PartnerTypeController::class, 'lookup'])->name('partner-types.lookup');
         Route::crudResource('partner-types', PartnerTypeController::class);
+
+        Route::get('partners/lookup', [PartnerController::class, 'lookup'])->name('partners.lookup');
         Route::crudResource('partners', PartnerController::class);
     });
 });
