@@ -7,6 +7,7 @@ use Illuminate\Http\Response;
 
 use App\Core\Http\Controllers\Controller;
 use App\Core\Http\Requests\Core\ListRequest;
+use App\Core\Traits\HasActivityLogs;
 use App\Modules\Security\Http\Requests\User\StoreUserRequest;
 use App\Modules\Security\Http\Requests\User\UpdateUserRequest;
 use App\Modules\Security\Http\Resources\User\UserResource;
@@ -15,13 +16,64 @@ use App\Modules\Security\DTO\UserDTO;
 use App\Modules\Security\Models\User;
 use App\Modules\Security\Services\UserService;
 
+/**
+ * @OA\PathItem(
+ *     path="/api/security/users/{id}/activity-logs",
+ *     @OA\Get(
+ *         tags={"User"},
+ *         summary="List activity logs of a user",
+ *         @OA\Parameter(
+ *             name="id",
+ *             in="path",
+ *             required=true,
+ *             description="User ID",
+ *             @OA\Schema(type="integer")
+ *         ),
+ *         @OA\Parameter(name="per_page", in="query", required=false, @OA\Schema(type="integer")),
+ *         @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer")),
+ *         @OA\Response(
+ *             response="200",
+ *             description="User activity logs",
+ *             @OA\JsonContent(
+ *                 allOf={
+ *                     @OA\Schema(ref="#/components/schemas/ApiResponse"),
+ *                     @OA\Schema(ref="#/components/schemas/ActivityLogCollection")
+ *                 }
+ *             )
+ *         ),
+ *         @OA\Response(
+ *             response="401",
+ *             description="Unauthorized",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="403",
+ *             description="Forbidden",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="404",
+ *             description="Record not found",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         security={{"bearerAuth":{}}}
+ *     )
+ * )
+ */
 class UserController extends Controller
 {
+    use HasActivityLogs;
+
     protected UserService $service;
 
     public function __construct(UserService $service) {
         $this->service = $service;
         $this->authorizeResource(User::class, 'user');
+    }
+
+    protected function activityLogModelClass(): string
+    {
+        return User::class;
     }
 
     /**

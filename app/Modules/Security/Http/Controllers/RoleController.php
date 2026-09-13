@@ -16,15 +16,67 @@ use App\Modules\Security\Http\Requests\Role\RolePermissionsRequest;
 use App\Modules\Security\Http\Resources\Role\RoleLookupCollection;
 use App\Modules\Security\Models\Role;
 use App\Modules\Security\Services\RoleService;
+use App\Core\Traits\HasActivityLogs;
 
+/**
+ * @OA\PathItem(
+ *     path="/api/security/roles/{id}/activity-logs",
+ *     @OA\Get(
+ *         tags={"Role"},
+ *         summary="List activity logs of a role",
+ *         @OA\Parameter(
+ *             name="id",
+ *             in="path",
+ *             required=true,
+ *             description="Role ID",
+ *             @OA\Schema(type="integer")
+ *         ),
+ *         @OA\Parameter(name="per_page", in="query", required=false, @OA\Schema(type="integer")),
+ *         @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer")),
+ *         @OA\Response(
+ *             response="200",
+ *             description="Role activity logs",
+ *             @OA\JsonContent(
+ *                 allOf={
+ *                     @OA\Schema(ref="#/components/schemas/ApiResponse"),
+ *                     @OA\Schema(ref="#/components/schemas/ActivityLogCollection")
+ *                 }
+ *             )
+ *         ),
+ *         @OA\Response(
+ *             response="401",
+ *             description="Unauthorized",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="403",
+ *             description="Forbidden",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="404",
+ *             description="Record not found",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         security={{"bearerAuth":{}}}
+ *     )
+ * )
+ */
 class RoleController extends Controller
 {
+    use HasActivityLogs;
+
     protected RoleService $service;
 
     public function __construct(RoleService $service) {
         $this->service = $service;
         $this->authorizeResource(Role::class, 'role');
         $this->middleware('can:definePermissions,role')->only(['definePermissions']);
+    }
+
+    protected function activityLogModelClass(): string
+    {
+        return Role::class;
     }
 
     /**

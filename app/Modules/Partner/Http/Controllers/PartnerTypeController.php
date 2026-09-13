@@ -17,14 +17,66 @@ use App\Modules\Partner\Http\Resources\PartnerType\PartnerTypeCollection;
 use App\Modules\Partner\DTO\PartnerTypeDTO;
 use App\Modules\Partner\Models\PartnerType;
 use App\Modules\Partner\Services\PartnerTypeService;
+use App\Core\Traits\HasActivityLogs;
 
+/**
+ * @OA\PathItem(
+ *     path="/api/partner/partner-types/{id}/activity-logs",
+ *     @OA\Get(
+ *         tags={"PartnerType"},
+ *         summary="List activity logs of a partner type",
+ *         @OA\Parameter(
+ *             name="id",
+ *             in="path",
+ *             required=true,
+ *             description="Partner type ID",
+ *             @OA\Schema(type="integer")
+ *         ),
+ *         @OA\Parameter(name="per_page", in="query", required=false, @OA\Schema(type="integer")),
+ *         @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer")),
+ *         @OA\Response(
+ *             response="200",
+ *             description="Partner type activity logs",
+ *             @OA\JsonContent(
+ *                 allOf={
+ *                     @OA\Schema(ref="#/components/schemas/ApiResponse"),
+ *                     @OA\Schema(ref="#/components/schemas/ActivityLogCollection")
+ *                 }
+ *             )
+ *         ),
+ *         @OA\Response(
+ *             response="401",
+ *             description="Unauthorized",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="403",
+ *             description="Forbidden",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="404",
+ *             description="Record not found",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         security={{"bearerAuth":{}}}
+ *     )
+ * )
+ */
 class PartnerTypeController extends Controller
 {
+    use HasActivityLogs;
+
     protected PartnerTypeService $service;
 
     public function __construct(PartnerTypeService $service) {
         $this->service = $service;
         $this->authorizeResource(PartnerType::class, 'partner_type');
+    }
+
+    protected function activityLogModelClass(): string
+    {
+        return PartnerType::class;
     }
 
     /**

@@ -12,14 +12,66 @@ use App\Core\DTO\ModuleDTO;
 use App\Core\Http\Requests\Core\ListRequest;
 use App\Core\Models\Module;
 use App\Core\Services\ModuleService;
+use App\Core\Traits\HasActivityLogs;
 
+/**
+ * @OA\PathItem(
+ *     path="/api/core/modules/{id}/activity-logs",
+ *     @OA\Get(
+ *         tags={"Module"},
+ *         summary="List activity logs of a module",
+ *         @OA\Parameter(
+ *             name="id",
+ *             in="path",
+ *             required=true,
+ *             description="Module ID",
+ *             @OA\Schema(type="integer")
+ *         ),
+ *         @OA\Parameter(name="per_page", in="query", required=false, @OA\Schema(type="integer")),
+ *         @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer")),
+ *         @OA\Response(
+ *             response="200",
+ *             description="Module activity logs",
+ *             @OA\JsonContent(
+ *                 allOf={
+ *                     @OA\Schema(ref="#/components/schemas/ApiResponse"),
+ *                     @OA\Schema(ref="#/components/schemas/ActivityLogCollection")
+ *                 }
+ *             )
+ *         ),
+ *         @OA\Response(
+ *             response="401",
+ *             description="Unauthorized",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="403",
+ *             description="Forbidden",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="404",
+ *             description="Record not found",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         security={{"bearerAuth":{}}}
+ *     )
+ * )
+ */
 class ModuleController extends Controller
 {
+    use HasActivityLogs;
+
     protected ModuleService $service;
 
     public function __construct(ModuleService $service) {
         $this->service = $service;
         $this->authorizeResource(Module::class, 'module');
+    }
+
+    protected function activityLogModelClass(): string
+    {
+        return Module::class;
     }
 
     /**

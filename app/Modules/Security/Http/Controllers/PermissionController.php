@@ -13,14 +13,66 @@ use App\Modules\Security\Http\Resources\Permission\PermissionCollection;
 use App\Modules\Security\DTO\PermissionDTO;
 use App\Modules\Security\Models\Permission;
 use App\Modules\Security\Services\PermissionService;
+use App\Core\Traits\HasActivityLogs;
 
+/**
+ * @OA\PathItem(
+ *     path="/api/security/permissions/{id}/activity-logs",
+ *     @OA\Get(
+ *         tags={"Permission"},
+ *         summary="List activity logs of a permission",
+ *         @OA\Parameter(
+ *             name="id",
+ *             in="path",
+ *             required=true,
+ *             description="Permission ID",
+ *             @OA\Schema(type="integer")
+ *         ),
+ *         @OA\Parameter(name="per_page", in="query", required=false, @OA\Schema(type="integer")),
+ *         @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer")),
+ *         @OA\Response(
+ *             response="200",
+ *             description="Permission activity logs",
+ *             @OA\JsonContent(
+ *                 allOf={
+ *                     @OA\Schema(ref="#/components/schemas/ApiResponse"),
+ *                     @OA\Schema(ref="#/components/schemas/ActivityLogCollection")
+ *                 }
+ *             )
+ *         ),
+ *         @OA\Response(
+ *             response="401",
+ *             description="Unauthorized",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="403",
+ *             description="Forbidden",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="404",
+ *             description="Record not found",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         security={{"bearerAuth":{}}}
+ *     )
+ * )
+ */
 class PermissionController extends Controller
 {
+    use HasActivityLogs;
+
     protected PermissionService $service;
 
     public function __construct(PermissionService $service) {
         $this->service = $service;
         $this->authorizeResource(Permission::class, 'permission');
+    }
+
+    protected function activityLogModelClass(): string
+    {
+        return Permission::class;
     }
 
     /**
