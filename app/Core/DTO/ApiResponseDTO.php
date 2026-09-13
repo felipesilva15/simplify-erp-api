@@ -10,7 +10,11 @@ use App\Core\Helpers\ListHelpers;
  *   type="object",
  *   required={"success","message","data"},
  *   @OA\Property(property="success", type="boolean", example=true),
- *   @OA\Property(property="message", type="string", example="Operação realizada com sucesso")
+ *   @OA\Property(property="message", type="string", example="Operação realizada com sucesso"),
+ *   @OA\Property(property="data", nullable=true),
+ *   @OA\Property(property="warnings", type="array", @OA\Items(type="string"), nullable=true),
+ *   @OA\Property(property="links", type="object", nullable=true),
+ *   @OA\Property(property="meta", type="object", nullable=true)
  * )
  */
 class ApiResponseDTO {

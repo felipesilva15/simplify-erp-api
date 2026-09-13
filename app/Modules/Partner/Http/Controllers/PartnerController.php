@@ -83,7 +83,7 @@ class PartnerController extends Controller
      * @OA\Get(
      *      path="/api/partner/partners",
      *      tags={"Partner"},
-     *      summary="List all rows",
+     *      summary="List all partners",
      *      @OA\Parameter(name="filters[id][eq]", in="query", required=false, @OA\Schema(type="integer")),
      *      @OA\Parameter(name="filters[name][like]", in="query", required=false, @OA\Schema(type="string")),
      *      @OA\Parameter(name="filters[created_at][gte]", in="query", required=false, @OA\Schema(type="string")),
@@ -130,11 +130,11 @@ class PartnerController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/partner/partners/{id}",
+     *      path="/api/partner/partners/{partner}",
      *      tags={"Partner"},
      *      summary="List a partner by ID",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="partner",
      *         in="path",
      *         required=true,
      *         description="Partner ID",
@@ -217,6 +217,11 @@ class PartnerController extends Controller
      *          description="Forbidden",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
+     *      @OA\Response(
+     *          response="422", 
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
@@ -232,11 +237,11 @@ class PartnerController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/partner/partners/{id}/edit",
+     *      path="/api/partner/partners/{partner}/edit",
      *      tags={"Partner"},
      *      summary="Get data to edit a partner",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="partner",
      *         in="path",
      *         required=true,
      *         description="Partner ID",
@@ -293,11 +298,11 @@ class PartnerController extends Controller
 
     /**
      * @OA\Put(
-     *      path="/api/partner/partners/{id}",
+     *      path="/api/partner/partners/{partner}",
      *      tags={"Partner"},
      *      summary="Update a partner",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="partner",
      *         in="path",
      *         required=true,
      *         description="Partner ID",
@@ -338,6 +343,11 @@ class PartnerController extends Controller
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
+     *      @OA\Response(
+     *          response="422", 
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
@@ -353,11 +363,11 @@ class PartnerController extends Controller
 
     /**
      * @OA\Delete(
-     *      path="/api/partner/partners/{id}",
+     *      path="/api/partner/partners/{partner}",
      *      tags={"Partner"},
      *      summary="Delete a partner",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="partner",
      *         in="path",
      *         required=true,
      *         description="Partner ID",

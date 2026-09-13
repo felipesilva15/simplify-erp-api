@@ -79,7 +79,7 @@ class ResourceController extends Controller
      * @OA\Get(
      *      path="/api/core/resources",
      *      tags={"Resource"},
-     *      summary="List all rows",
+     *      summary="List all resources",
      *      @OA\Parameter(name="id", in="query", required=false, @OA\Schema(type="integer")),
      *      @OA\Parameter(name="name", in="query", required=false, @OA\Schema(type="string")),
      *      @OA\Parameter(name="description", in="query", required=false, @OA\Schema(type="string")),
@@ -130,11 +130,11 @@ class ResourceController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/core/resources/{id}",
+     *      path="/api/core/resources/{resource}",
      *      tags={"Resource"},
      *      summary="List a resource by ID",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="resource",
      *         in="path",
      *         required=true,
      *         description="Resource ID",
@@ -217,6 +217,11 @@ class ResourceController extends Controller
      *          description="Forbidden",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
+     *      @OA\Response(
+     *          response="422", 
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
@@ -232,11 +237,11 @@ class ResourceController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/core/resources/{id}/edit",
+     *      path="/api/core/resources/{resource}/edit",
      *      tags={"Resource"},
      *      summary="Get data to edit a resource",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="resource",
      *         in="path",
      *         required=true,
      *         description="Resource ID",
@@ -293,11 +298,11 @@ class ResourceController extends Controller
 
     /**
      * @OA\Put(
-     *      path="/api/core/resources/{id}",
+     *      path="/api/core/resources/{resource}",
      *      tags={"Resource"},
      *      summary="Update a resource",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="resource",
      *         in="path",
      *         required=true,
      *         description="Resource ID",
@@ -338,6 +343,11 @@ class ResourceController extends Controller
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
+     *      @OA\Response(
+     *          response="422", 
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
@@ -353,11 +363,11 @@ class ResourceController extends Controller
 
     /**
      * @OA\Delete(
-     *      path="/api/core/resources/{id}",
+     *      path="/api/core/resources/{resource}",
      *      tags={"Resource"},
      *      summary="Delete a resource",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="resource",
      *         in="path",
      *         required=true,
      *         description="Resource ID",

@@ -29,7 +29,7 @@ class {{entity}}Controller extends Controller
      * @OA\Get(
      *      path="/api/{{lower_module}}/{{lower_entity}}s",
      *      tags={"{{entity}}"},
-     *      summary="List all rows",
+     *      summary="List all {{lower_entity}}s",
      *      @OA\Parameter(name="filters[id][eq]", in="query", required=false, @OA\Schema(type="integer")),
      *      @OA\Parameter(name="filters[name][like]", in="query", required=false, @OA\Schema(type="string")),
      *      @OA\Parameter(name="filters[created_at][gte]", in="query", required=false, @OA\Schema(type="string")),

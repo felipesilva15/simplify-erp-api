@@ -12,7 +12,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
  *     type="object",
  *     allOf={
  *         @OA\Schema(
- *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/RoleResource")),
+ *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/RoleLookupResource")),
  *         ),
  *         @OA\Schema(ref="#/components/schemas/PaginatorInfo"),
  *     }

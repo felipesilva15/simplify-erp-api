@@ -83,7 +83,7 @@ class PartnerTypeController extends Controller
      * @OA\Get(
      *      path="/api/partner/partner-types",
      *      tags={"PartnerType"},
-     *      summary="List all rows",
+     *      summary="List all partner types",
      *      @OA\Parameter(name="filters[id][eq]", in="query", required=false, @OA\Schema(type="integer")),
      *      @OA\Parameter(name="filters[name][like]", in="query", required=false, @OA\Schema(type="string")),
      *      @OA\Parameter(name="filters[created_at][gte]", in="query", required=false, @OA\Schema(type="string")),
@@ -130,11 +130,11 @@ class PartnerTypeController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/partner/partner-types/{id}",
+     *      path="/api/partner/partner-types/{partner_type}",
      *      tags={"PartnerType"},
      *      summary="List a partner type by ID",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="partner_type",
      *         in="path",
      *         required=true,
      *         description="PartnerType ID",
@@ -217,6 +217,11 @@ class PartnerTypeController extends Controller
      *          description="Forbidden",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
+     *      @OA\Response(
+     *          response="422", 
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
@@ -232,11 +237,11 @@ class PartnerTypeController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/partner/partner-types/{id}/edit",
+     *      path="/api/partner/partner-types/{partner_type}/edit",
      *      tags={"PartnerType"},
      *      summary="Get data to edit a partner type",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="partner_type",
      *         in="path",
      *         required=true,
      *         description="PartnerType ID",
@@ -293,11 +298,11 @@ class PartnerTypeController extends Controller
 
     /**
      * @OA\Put(
-     *      path="/api/partner/partner-types/{id}",
+     *      path="/api/partner/partner-types/{partner_type}",
      *      tags={"PartnerType"},
      *      summary="Update a partner type",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="partner_type",
      *         in="path",
      *         required=true,
      *         description="PartnerType ID",
@@ -338,7 +343,12 @@ class PartnerTypeController extends Controller
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
-     *      security={{"bearerAuth":{}}}
+     *      @OA\Response(
+ *          response="422", 
+ *          description="Unprocessable Entity",
+ *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *      ),
+ *      security={{"bearerAuth":{}}}
      * )
      */
     public function update(PartnerType $partner_type, UpdatePartnerTypeRequest $request): JsonResponse {
@@ -353,11 +363,11 @@ class PartnerTypeController extends Controller
 
     /**
      * @OA\Delete(
-     *      path="/api/partner/partner-types/{id}",
+     *      path="/api/partner/partner-types/{partner_type}",
      *      tags={"PartnerType"},
      *      summary="Delete a partner type",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="partner_type",
      *         in="path",
      *         required=true,
      *         description="PartnerType ID",

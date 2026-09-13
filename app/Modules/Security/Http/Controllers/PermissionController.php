@@ -79,7 +79,7 @@ class PermissionController extends Controller
      * @OA\Get(
      *      path="/api/security/permissions",
      *      tags={"Permission"},
-     *      summary="List all rows",
+     *      summary="List all permissions",
      *      @OA\Parameter(name="id", in="query", required=false, @OA\Schema(type="integer")),
      *      @OA\Parameter(name="module_id", in="query", required=false, @OA\Schema(type="integer")),
      *      @OA\Parameter(name="resource", in="query", required=false, @OA\Schema(type="string")),
@@ -132,7 +132,7 @@ class PermissionController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/core/permissions/{id}",
+     *      path="/api/security/permissions/{permission}",
      *      tags={"Permission"},
      *      summary="List a permission by ID",
      *      @OA\Parameter(
@@ -186,7 +186,7 @@ class PermissionController extends Controller
 
     /**
      * @OA\Post(
-     *      path="/api/core/permissions",
+     *      path="/api/security/permissions",
      *      tags={"Permission"},
      *      summary="Registers a permission",
      *      @OA\RequestBody(
@@ -219,7 +219,12 @@ class PermissionController extends Controller
      *          description="Forbidden",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
-     *      security={{"bearerAuth":{}}}
+     *      @OA\Response(
+ *          response="422", 
+ *          description="Unprocessable Entity",
+ *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *      ),
+ *      security={{"bearerAuth":{}}}
      * )
      */
     public function store(StorePermissionRequest $request): JsonResponse {
@@ -234,11 +239,11 @@ class PermissionController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/core/permissions/{id}/edit",
+     *      path="/api/security/permissions/{permission}/edit",
      *      tags={"Permission"},
      *      summary="Get data to edit a permission",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="permission",
      *         in="path",
      *         required=true,
      *         description="Permission ID",
@@ -295,11 +300,11 @@ class PermissionController extends Controller
 
     /**
      * @OA\Put(
-     *      path="/api/core/permissions/{id}",
+     *      path="/api/security/permissions/{permission}",
      *      tags={"Permission"},
      *      summary="Update a permission",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="permission",
      *         in="path",
      *         required=true,
      *         description="Permission ID",
@@ -340,7 +345,12 @@ class PermissionController extends Controller
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
-     *      security={{"bearerAuth":{}}}
+     *      @OA\Response(
+ *          response="422", 
+ *          description="Unprocessable Entity",
+ *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *      ),
+ *      security={{"bearerAuth":{}}}
      * )
      */
     public function update(Permission $permission, UpdatePermissionRequest $request): JsonResponse {
@@ -355,11 +365,11 @@ class PermissionController extends Controller
 
     /**
      * @OA\Delete(
-     *      path="/api/core/permissions/{id}",
+     *      path="/api/security/permissions/{permission}",
      *      tags={"Permission"},
      *      summary="Delete a permission",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="permission",
      *         in="path",
      *         required=true,
      *         description="Permission ID",

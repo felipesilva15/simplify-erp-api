@@ -80,7 +80,7 @@ class UserController extends Controller
      * @OA\Get(
      *      path="/api/security/users",
      *      tags={"User"},
-     *      summary="List all rows",
+     *      summary="List all users",
      *      @OA\Parameter(name="id", in="query", required=false, @OA\Schema(type="integer")),
      *      @OA\Parameter(name="name", in="query", required=false, @OA\Schema(type="string")),
      *      @OA\Parameter(name="email", in="query", required=false, @OA\Schema(type="string")),
@@ -135,11 +135,11 @@ class UserController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/security/users/{id}",
+     *      path="/api/security/users/{user}",
      *      tags={"User"},
      *      summary="List a user by ID",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="user",
      *         in="path",
      *         required=true,
      *         description="User ID",
@@ -222,6 +222,11 @@ class UserController extends Controller
      *          description="Forbidden",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
+     *      @OA\Response(
+     *          response="422", 
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
@@ -237,11 +242,11 @@ class UserController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/security/users/{id}/edit",
+     *      path="/api/security/users/{user}/edit",
      *      tags={"User"},
      *      summary="Get data to edit a user",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="user",
      *         in="path",
      *         required=true,
      *         description="User ID",
@@ -298,11 +303,11 @@ class UserController extends Controller
 
     /**
      * @OA\Put(
-     *      path="/api/security/users/{id}",
+     *      path="/api/security/users/{user}",
      *      tags={"User"},
      *      summary="Update a user",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="user",
      *         in="path",
      *         required=true,
      *         description="User ID",
@@ -343,6 +348,11 @@ class UserController extends Controller
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
+     *      @OA\Response(
+     *          response="422", 
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
@@ -359,11 +369,11 @@ class UserController extends Controller
 
     /**
      * @OA\Delete(
-     *      path="/api/security/users/{id}",
+     *      path="/api/security/users/{user}",
      *      tags={"User"},
      *      summary="Delete a user",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="user",
      *         in="path",
      *         required=true,
      *         description="User ID",

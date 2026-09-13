@@ -12,7 +12,15 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *      @OA\Property(property="key", type="integer", example=1),
  *      @OA\Property(property="label", type="string", example="Sample", minLength=1, maxLength=80),
  *      @OA\Property(property="sublabel", type="string", example="Cod.: 1", minLength=1, maxLength=80),
- *      @OA\Property(property="meta", type="object"),
+ *      @OA\Property(
+ *          property="meta",
+ *          type="object",
+ *          @OA\Property(property="id", type="integer", example=1),
+ *          @OA\Property(property="name", type="string", example="Sample Company LTDA", minLength=1, maxLength=120),
+ *          @OA\Property(property="trade_name", type="string", example="Sample", minLength=1, maxLength=150),
+ *          @OA\Property(property="document_number", type="string", example="11.222.333/0001-81", minLength=1, maxLength=20),
+ *          @OA\Property(property="person_type", type="string", example="Pessoa Jurídica", minLength=1, maxLength=30)
+ *      )
  * )
  */
 class PartnerLookupResource extends JsonResource

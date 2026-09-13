@@ -83,7 +83,7 @@ class RoleController extends Controller
      * @OA\Get(
      *      path="/api/security/roles",
      *      tags={"Role"},
-     *      summary="List all rows",
+     *      summary="List all roles",
      *      @OA\Parameter(name="filters[id][eq]", in="query", required=false, @OA\Schema(type="integer")),
      *      @OA\Parameter(name="filters[name][like]", in="query", required=false, @OA\Schema(type="string")),
      *      @OA\Parameter(name="filters[description][like]", in="query", required=false, @OA\Schema(type="string")),
@@ -131,11 +131,11 @@ class RoleController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/core/roles/{id}",
+     *      path="/api/security/roles/{role}",
      *      tags={"Role"},
      *      summary="List a role by ID",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="role",
      *         in="path",
      *         required=true,
      *         description="Role ID",
@@ -185,7 +185,7 @@ class RoleController extends Controller
 
     /**
      * @OA\Post(
-     *      path="/api/core/roles",
+     *      path="/api/security/roles",
      *      tags={"Role"},
      *      summary="Registers a role",
      *      @OA\RequestBody(
@@ -218,6 +218,11 @@ class RoleController extends Controller
      *          description="Forbidden",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
+     *      @OA\Response(
+     *          response="422", 
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
@@ -233,11 +238,11 @@ class RoleController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/core/roles/{id}/edit",
+     *      path="/api/security/roles/{role}/edit",
      *      tags={"Role"},
      *      summary="Get data to edit a role",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="role",
      *         in="path",
      *         required=true,
      *         description="Role ID",
@@ -294,11 +299,11 @@ class RoleController extends Controller
 
     /**
      * @OA\Put(
-     *      path="/api/core/roles/{id}",
+     *      path="/api/security/roles/{role}",
      *      tags={"Role"},
      *      summary="Update a role",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="role",
      *         in="path",
      *         required=true,
      *         description="Role ID",
@@ -339,6 +344,11 @@ class RoleController extends Controller
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
+     *      @OA\Response(
+     *          response="422", 
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
@@ -354,11 +364,11 @@ class RoleController extends Controller
 
     /**
      * @OA\Delete(
-     *      path="/api/core/roles/{id}",
+     *      path="/api/security/roles/{role}",
      *      tags={"Role"},
      *      summary="Delete a role",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="role",
      *         in="path",
      *         required=true,
      *         description="Role ID",
@@ -393,11 +403,11 @@ class RoleController extends Controller
 
     /**
      * @OA\Patch(
-     *      path="/api/security/roles/{id}/permissions",
+     *      path="/api/security/roles/{role}/permissions",
      *      tags={"Role"},
      *      summary="Define role permissions",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="role",
      *         in="path",
      *         required=true,
      *         description="Role ID",
@@ -438,6 +448,11 @@ class RoleController extends Controller
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
+     *      @OA\Response(
+     *          response="422", 
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
@@ -450,6 +465,31 @@ class RoleController extends Controller
         );
     }
 
+    /**
+     * @OA\Get(
+     *      path="/api/security/roles/lookup",
+     *      tags={"Role"},
+     *      summary="Lookup roles",
+     *      @OA\Parameter(name="q", in="query", description="Query for available fields", required=false, @OA\Schema(type="string")),
+     *      @OA\Parameter(name="keys[]", in="query", description="Keys to find", required=false, @OA\Schema(type="integer")),
+     *      @OA\Response(
+     *          response="200", 
+     *          description="Role lookup list",
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(ref="#/components/schemas/RoleLookupCollection")
+     *              }
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      security={{"bearerAuth":{}}}
+     * )
+     */
     public function lookup(LookupRequest $request): JsonResponse {
         $serviceResult = $this->service->lookup($request->all());
 

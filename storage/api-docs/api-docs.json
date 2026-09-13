@@ -663,7 +663,7 @@
                 "tags": [
                     "Module"
                 ],
-                "summary": "List all rows",
+                "summary": "List all modules",
                 "operationId": "ce13b5912dfc2f202a570e07424b5e9c",
                 "parameters": [
                     {
@@ -871,6 +871,16 @@
                                 }
                             }
                         }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -880,16 +890,16 @@
                 ]
             }
         },
-        "/api/core/modules/{id}": {
+        "/api/core/modules/{module}": {
             "get": {
                 "tags": [
                     "Module"
                 ],
                 "summary": "List a module by ID",
-                "operationId": "76a6bd7f62c6259e09395979f8c0281c",
+                "operationId": "b0d07acbd04f62286fcfb937b19f7b1a",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "module",
                         "in": "path",
                         "description": "Module ID",
                         "required": true,
@@ -963,10 +973,10 @@
                     "Module"
                 ],
                 "summary": "Update a module",
-                "operationId": "64bed1b3c8e010d61d8186818246b65b",
+                "operationId": "9a95b1f980784ac0f5b69e88e1eefee6",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "module",
                         "in": "path",
                         "description": "Module ID",
                         "required": true,
@@ -1038,6 +1048,16 @@
                                 }
                             }
                         }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -1051,10 +1071,10 @@
                     "Module"
                 ],
                 "summary": "Delete a module",
-                "operationId": "839d0adb22b6510914d760617779f6f0",
+                "operationId": "8df553538be3e3e409e1ce3b51c74129",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "module",
                         "in": "path",
                         "description": "Module ID",
                         "required": true,
@@ -1105,16 +1125,16 @@
                 ]
             }
         },
-        "/api/core/modules/{id}/edit": {
+        "/api/core/modules/{module}/edit": {
             "get": {
                 "tags": [
                     "Module"
                 ],
                 "summary": "Get data to edit a module",
-                "operationId": "aee0823e24f76ea231b9456244784342",
+                "operationId": "8fc7843440ba0cd6e48020f05c0d868d",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "module",
                         "in": "path",
                         "description": "Module ID",
                         "required": true,
@@ -1201,7 +1221,7 @@
                 "tags": [
                     "Resource"
                 ],
-                "summary": "List all rows",
+                "summary": "List all resources",
                 "operationId": "717f9320e4c4b8caf00c9f864ce1fc70",
                 "parameters": [
                     {
@@ -1409,6 +1429,16 @@
                                 }
                             }
                         }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -1418,16 +1448,16 @@
                 ]
             }
         },
-        "/api/core/resources/{id}": {
+        "/api/core/resources/{resource}": {
             "get": {
                 "tags": [
                     "Resource"
                 ],
                 "summary": "List a resource by ID",
-                "operationId": "8f709576154f97a874b3c51be52cc87a",
+                "operationId": "e395aa72ba4d701d1ab970e209e75fb7",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "resource",
                         "in": "path",
                         "description": "Resource ID",
                         "required": true,
@@ -1501,10 +1531,10 @@
                     "Resource"
                 ],
                 "summary": "Update a resource",
-                "operationId": "cd0baf4e7deff9fbb351d02052a7d33b",
+                "operationId": "970ca5869b48ac9ec3feb4d9f72cc00f",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "resource",
                         "in": "path",
                         "description": "Resource ID",
                         "required": true,
@@ -1576,6 +1606,16 @@
                                 }
                             }
                         }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -1589,10 +1629,10 @@
                     "Resource"
                 ],
                 "summary": "Delete a resource",
-                "operationId": "744edec359491aa2a38672a877642937",
+                "operationId": "515764bf8d7be0863d817fe2cef7f59b",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "resource",
                         "in": "path",
                         "description": "Resource ID",
                         "required": true,
@@ -1643,16 +1683,16 @@
                 ]
             }
         },
-        "/api/core/resources/{id}/edit": {
+        "/api/core/resources/{resource}/edit": {
             "get": {
                 "tags": [
                     "Resource"
                 ],
                 "summary": "Get data to edit a resource",
-                "operationId": "7136d850ff993055b0e145bf79881a34",
+                "operationId": "fc02f103488c65e6ca4ed347ed503856",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "resource",
                         "in": "path",
                         "description": "Resource ID",
                         "required": true,
@@ -1739,7 +1779,7 @@
                 "tags": [
                     "Partner"
                 ],
-                "summary": "List all rows",
+                "summary": "List all partners",
                 "operationId": "16c737bc612c0f1da2873a9fd54afedd",
                 "parameters": [
                     {
@@ -1888,6 +1928,16 @@
                                 }
                             }
                         }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -1897,16 +1947,16 @@
                 ]
             }
         },
-        "/api/partner/partners/{id}": {
+        "/api/partner/partners/{partner}": {
             "get": {
                 "tags": [
                     "Partner"
                 ],
                 "summary": "List a partner by ID",
-                "operationId": "6b65f8d560caff29619f52cc2ad41fa6",
+                "operationId": "e120c935b5e826be2b50182d4432bf72",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "partner",
                         "in": "path",
                         "description": "Partner ID",
                         "required": true,
@@ -1980,10 +2030,10 @@
                     "Partner"
                 ],
                 "summary": "Update a partner",
-                "operationId": "e5f579baaafe9aa27929c02d8cb0b6b7",
+                "operationId": "26a1da28c1e93d463befa70131a2636d",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "partner",
                         "in": "path",
                         "description": "Partner ID",
                         "required": true,
@@ -2055,6 +2105,16 @@
                                 }
                             }
                         }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -2068,10 +2128,10 @@
                     "Partner"
                 ],
                 "summary": "Delete a partner",
-                "operationId": "0e8f7fc205850c018a0b96e2d30f9d06",
+                "operationId": "e14bab5dd3e1765c9ef7ee351b660b7b",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "partner",
                         "in": "path",
                         "description": "Partner ID",
                         "required": true,
@@ -2122,16 +2182,16 @@
                 ]
             }
         },
-        "/api/partner/partners/{id}/edit": {
+        "/api/partner/partners/{partner}/edit": {
             "get": {
                 "tags": [
                     "Partner"
                 ],
                 "summary": "Get data to edit a partner",
-                "operationId": "3b70ef9ec1bc18c3595bcc5c0143146c",
+                "operationId": "472787954cf7b2ce47d555613449e983",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "partner",
                         "in": "path",
                         "description": "Partner ID",
                         "required": true,
@@ -2281,7 +2341,7 @@
                 "tags": [
                     "PartnerType"
                 ],
-                "summary": "List all rows",
+                "summary": "List all partner types",
                 "operationId": "a5676a76eaf761f47222b7e9dfab2b23",
                 "parameters": [
                     {
@@ -2430,6 +2490,16 @@
                                 }
                             }
                         }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -2439,16 +2509,16 @@
                 ]
             }
         },
-        "/api/partner/partner-types/{id}": {
+        "/api/partner/partner-types/{partner_type}": {
             "get": {
                 "tags": [
                     "PartnerType"
                 ],
                 "summary": "List a partner type by ID",
-                "operationId": "86f74bde04197601612099cb0906761d",
+                "operationId": "d527f6a614f0a86c155a6d76a5ec465a",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "partner_type",
                         "in": "path",
                         "description": "PartnerType ID",
                         "required": true,
@@ -2522,10 +2592,10 @@
                     "PartnerType"
                 ],
                 "summary": "Update a partner type",
-                "operationId": "cce277b59f08e6291a09b6a6a0cc5527",
+                "operationId": "6fb92e2b21efcf765434dd444d23b809",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "partner_type",
                         "in": "path",
                         "description": "PartnerType ID",
                         "required": true,
@@ -2597,6 +2667,16 @@
                                 }
                             }
                         }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -2610,10 +2690,10 @@
                     "PartnerType"
                 ],
                 "summary": "Delete a partner type",
-                "operationId": "0a17c740a9e714be96e1b1bdd3a8a99e",
+                "operationId": "e8c7f6128b8da894c586fdc0315b522a",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "partner_type",
                         "in": "path",
                         "description": "PartnerType ID",
                         "required": true,
@@ -2664,16 +2744,16 @@
                 ]
             }
         },
-        "/api/partner/partner-types/{id}/edit": {
+        "/api/partner/partner-types/{partner_type}/edit": {
             "get": {
                 "tags": [
                     "PartnerType"
                 ],
                 "summary": "Get data to edit a partner type",
-                "operationId": "2d37fdbab39c8f79640316c48b65da7f",
+                "operationId": "0065448e3da9b3c2ce076fcb8fb91cb7",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "partner_type",
                         "in": "path",
                         "description": "PartnerType ID",
                         "required": true,
@@ -2849,6 +2929,16 @@
                                 }
                             }
                         }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -2884,6 +2974,16 @@
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3001,7 +3101,7 @@
                 "tags": [
                     "Permission"
                 ],
-                "summary": "List all rows",
+                "summary": "List all permissions",
                 "operationId": "188e1be9e29834321d9184877d048f19",
                 "parameters": [
                     {
@@ -3165,15 +3265,92 @@
                         "bearerAuth": []
                     }
                 ]
+            },
+            "post": {
+                "tags": [
+                    "Permission"
+                ],
+                "summary": "Registers a permission",
+                "operationId": "419439155057b862050782748050885b",
+                "requestBody": {
+                    "description": "Data for creating a new permission",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StorePermissionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Registered permission data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/PermissionResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
-        "/api/core/permissions/{id}": {
+        "/api/security/permissions/{permission}": {
             "get": {
                 "tags": [
                     "Permission"
                 ],
                 "summary": "List a permission by ID",
-                "operationId": "aa00cf258448eb53bf81ba27cbd48991",
+                "operationId": "7d0fb91b3531fff17d8f13c689804fea",
                 "parameters": [
                     {
                         "name": "id",
@@ -3250,10 +3427,10 @@
                     "Permission"
                 ],
                 "summary": "Update a permission",
-                "operationId": "3103abda88f0fb95dfccc6998d6a21a7",
+                "operationId": "0eb230af7e03b7aeb220f54d8c30f501",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "permission",
                         "in": "path",
                         "description": "Permission ID",
                         "required": true,
@@ -3325,6 +3502,16 @@
                                 }
                             }
                         }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -3338,10 +3525,10 @@
                     "Permission"
                 ],
                 "summary": "Delete a permission",
-                "operationId": "e2b693deca1cecc24377765ad8787576",
+                "operationId": "7e86453943cad53c3bf6dca82636e4a0",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "permission",
                         "in": "path",
                         "description": "Permission ID",
                         "required": true,
@@ -3392,85 +3579,16 @@
                 ]
             }
         },
-        "/api/core/permissions": {
-            "post": {
-                "tags": [
-                    "Permission"
-                ],
-                "summary": "Registers a permission",
-                "operationId": "0644afe9c306d47efe2a1d109eb7a77b",
-                "requestBody": {
-                    "description": "Data for creating a new permission",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/StorePermissionRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Registered permission data",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "allOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ApiResponse"
-                                        },
-                                        {
-                                            "properties": {
-                                                "data": {
-                                                    "$ref": "#/components/schemas/PermissionResource"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/core/permissions/{id}/edit": {
+        "/api/security/permissions/{permission}/edit": {
             "get": {
                 "tags": [
                     "Permission"
                 ],
                 "summary": "Get data to edit a permission",
-                "operationId": "ee7eb1c856939be13ed3f9ab2de7cd1b",
+                "operationId": "655d1e9d0b73ca0109f1282c54abb87f",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "permission",
                         "in": "path",
                         "description": "Permission ID",
                         "required": true,
@@ -3557,7 +3675,7 @@
                 "tags": [
                     "Role"
                 ],
-                "summary": "List all rows",
+                "summary": "List all roles",
                 "operationId": "353ba6ecbb20948929f177d9931b3ef9",
                 "parameters": [
                     {
@@ -3654,18 +3772,95 @@
                         "bearerAuth": []
                     }
                 ]
+            },
+            "post": {
+                "tags": [
+                    "Role"
+                ],
+                "summary": "Registers a role",
+                "operationId": "9c43b88da0ae4cdf61aa196ce5688d5a",
+                "requestBody": {
+                    "description": "Data for creating a new role",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreRoleRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Registered role data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/RoleResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
-        "/api/core/roles/{id}": {
+        "/api/security/roles/{role}": {
             "get": {
                 "tags": [
                     "Role"
                 ],
                 "summary": "List a role by ID",
-                "operationId": "ee3c33c18a7054d5fb7c1a39541303d8",
+                "operationId": "991546dbf685ff2dd0813a1220f51eb4",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "role",
                         "in": "path",
                         "description": "Role ID",
                         "required": true,
@@ -3739,10 +3934,10 @@
                     "Role"
                 ],
                 "summary": "Update a role",
-                "operationId": "f35b36cb596c57dceeba52ac4c0178b5",
+                "operationId": "d89e4413a8f2b35d55cf6a8c994e5d31",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "role",
                         "in": "path",
                         "description": "Role ID",
                         "required": true,
@@ -3814,6 +4009,16 @@
                                 }
                             }
                         }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -3827,10 +4032,10 @@
                     "Role"
                 ],
                 "summary": "Delete a role",
-                "operationId": "dbba9e2bc39586562a4c9cae799d31a2",
+                "operationId": "e142f7b8f373c1362bf42279372cb6fd",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "role",
                         "in": "path",
                         "description": "Role ID",
                         "required": true,
@@ -3881,85 +4086,16 @@
                 ]
             }
         },
-        "/api/core/roles": {
-            "post": {
-                "tags": [
-                    "Role"
-                ],
-                "summary": "Registers a role",
-                "operationId": "276240e17abe7c959f29ab7189322bd8",
-                "requestBody": {
-                    "description": "Data for creating a new role",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/StoreRoleRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Registered role data",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "allOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ApiResponse"
-                                        },
-                                        {
-                                            "properties": {
-                                                "data": {
-                                                    "$ref": "#/components/schemas/RoleResource"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/core/roles/{id}/edit": {
+        "/api/security/roles/{role}/edit": {
             "get": {
                 "tags": [
                     "Role"
                 ],
                 "summary": "Get data to edit a role",
-                "operationId": "33e465ada48c1cdcdb3206768a6ca438",
+                "operationId": "7235f8f118ae4093236f58d32baa00ac",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "role",
                         "in": "path",
                         "description": "Role ID",
                         "required": true,
@@ -4041,16 +4177,16 @@
                 }
             }
         },
-        "/api/security/roles/{id}/permissions": {
+        "/api/security/roles/{role}/permissions": {
             "patch": {
                 "tags": [
                     "Role"
                 ],
                 "summary": "Define role permissions",
-                "operationId": "5b50fb1469abb23814da7fd3c95dc2ef",
+                "operationId": "6043698cd809a25eca70b1dcd7ec7fb9",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "role",
                         "in": "path",
                         "description": "Role ID",
                         "required": true,
@@ -4122,6 +4258,79 @@
                                 }
                             }
                         }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/security/roles/lookup": {
+            "get": {
+                "tags": [
+                    "Role"
+                ],
+                "summary": "Lookup roles",
+                "operationId": "83e6e7b4dd61623aacc9f38e9068a78e",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Query for available fields",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "keys[]",
+                        "in": "query",
+                        "description": "Keys to find",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Role lookup list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/RoleLookupCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -4136,7 +4345,7 @@
                 "tags": [
                     "User"
                 ],
-                "summary": "List all rows",
+                "summary": "List all users",
                 "operationId": "98882bc68558a3b40840254f24b97206",
                 "parameters": [
                     {
@@ -4376,6 +4585,16 @@
                                 }
                             }
                         }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -4385,16 +4604,16 @@
                 ]
             }
         },
-        "/api/security/users/{id}": {
+        "/api/security/users/{user}": {
             "get": {
                 "tags": [
                     "User"
                 ],
                 "summary": "List a user by ID",
-                "operationId": "693aa897acc65bb130411d16bed53b4c",
+                "operationId": "8de60950aafbb2d799d10eb0f2b7f71b",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "user",
                         "in": "path",
                         "description": "User ID",
                         "required": true,
@@ -4468,10 +4687,10 @@
                     "User"
                 ],
                 "summary": "Update a user",
-                "operationId": "c82c12cf8929069c07fa535ee8824b5b",
+                "operationId": "5e3e77f7b3be4fb02ecfe083da973fde",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "user",
                         "in": "path",
                         "description": "User ID",
                         "required": true,
@@ -4543,6 +4762,16 @@
                                 }
                             }
                         }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -4556,10 +4785,10 @@
                     "User"
                 ],
                 "summary": "Delete a user",
-                "operationId": "15cbfacf68e3eb0c3d8f83fe63e5037c",
+                "operationId": "6f75c297bebbed67ff993d2e6ffb8462",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "user",
                         "in": "path",
                         "description": "User ID",
                         "required": true,
@@ -4610,16 +4839,16 @@
                 ]
             }
         },
-        "/api/security/users/{id}/edit": {
+        "/api/security/users/{user}/edit": {
             "get": {
                 "tags": [
                     "User"
                 ],
                 "summary": "Get data to edit a user",
-                "operationId": "bfb19ee00166a92478a7c52b44ac908f",
+                "operationId": "d0f369ac1a7023c166a14e8c1e936546",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "user",
                         "in": "path",
                         "description": "User ID",
                         "required": true,
@@ -4718,6 +4947,24 @@
                     "message": {
                         "type": "string",
                         "example": "Operação realizada com sucesso"
+                    },
+                    "data": {
+                        "nullable": true
+                    },
+                    "warnings": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "nullable": true
+                    },
+                    "links": {
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "meta": {
+                        "type": "object",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -5134,6 +5381,12 @@
                         "minLength": 1,
                         "example": "Sample module"
                     },
+                    "label": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
                     "slug": {
                         "type": "string",
                         "maxLength": 80,
@@ -5219,21 +5472,21 @@
                         "type": "integer",
                         "example": 1
                     },
-                    "resource": {
-                        "type": "string",
-                        "maxLength": 60,
-                        "minLength": 1,
-                        "example": "Sample module"
-                    },
-                    "action": {
-                        "type": "string",
-                        "maxLength": 120,
-                        "minLength": 1,
-                        "example": "sample"
-                    },
                     "name": {
                         "type": "string",
-                        "maxLength": 180,
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "label": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "maxLength": 80,
                         "minLength": 1,
                         "example": "Sample"
                     },
@@ -5255,7 +5508,7 @@
                             "data": {
                                 "type": "array",
                                 "items": {
-                                    "$ref": "#/components/schemas/ModuleResource"
+                                    "$ref": "#/components/schemas/ResourceResource"
                                 }
                             }
                         },
@@ -5305,6 +5558,12 @@
                         "minLength": 1,
                         "example": "Sample"
                     },
+                    "label": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
                     "description": {
                         "type": "string",
                         "maxLength": 512,
@@ -5340,10 +5599,8 @@
                         "example": "Sample",
                         "nullable": true
                     },
-                    "is_active": {
-                        "type": "boolean",
-                        "example": false,
-                        "nullable": true
+                    "module": {
+                        "$ref": "#/components/schemas/ResourceModuleResource"
                     },
                     "permissions": {
                         "type": "array",
@@ -5971,7 +6228,7 @@
                             "data": {
                                 "type": "array",
                                 "items": {
-                                    "$ref": "#/components/schemas/PartnerTypeLookupResource"
+                                    "$ref": "#/components/schemas/PartnerLookupResource"
                                 }
                             }
                         },
@@ -6001,6 +6258,36 @@
                         "example": "Cod.: 1"
                     },
                     "meta": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "maxLength": 120,
+                                "minLength": 1,
+                                "example": "Sample Company LTDA"
+                            },
+                            "trade_name": {
+                                "type": "string",
+                                "maxLength": 150,
+                                "minLength": 1,
+                                "example": "Sample"
+                            },
+                            "document_number": {
+                                "type": "string",
+                                "maxLength": 20,
+                                "minLength": 1,
+                                "example": "11.222.333/0001-81"
+                            },
+                            "person_type": {
+                                "type": "string",
+                                "maxLength": 30,
+                                "minLength": 1,
+                                "example": "Pessoa Jurídica"
+                            }
+                        },
                         "type": "object"
                     }
                 },
@@ -6051,117 +6338,100 @@
                     "identity_number": {
                         "type": "string",
                         "maxLength": 15,
-                        "minLength": 1,
                         "example": "Sample",
                         "nullable": true
                     },
                     "identity_issuer": {
                         "type": "string",
                         "maxLength": 20,
-                        "minLength": 1,
                         "example": "Sample",
                         "nullable": true
                     },
                     "partner_since": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-09T02:22:32.660898Z",
+                        "format": "date",
+                        "example": "2026-09-09",
                         "nullable": true
                     },
                     "state_registration": {
                         "type": "string",
                         "maxLength": 14,
-                        "minLength": 1,
                         "example": "Sample",
                         "nullable": true
                     },
                     "municipal_registration": {
                         "type": "string",
                         "maxLength": 15,
-                        "minLength": 1,
                         "example": "Sample",
                         "nullable": true
                     },
                     "suframa_registration": {
                         "type": "string",
                         "maxLength": 9,
-                        "minLength": 1,
                         "example": "Sample",
                         "nullable": true
                     },
                     "marital_status": {
                         "type": "string",
                         "maxLength": 30,
-                        "minLength": 1,
                         "example": "Sample",
                         "nullable": true
                     },
                     "cbo": {
                         "type": "string",
                         "maxLength": 6,
-                        "minLength": 1,
                         "example": "Sample",
                         "nullable": true
                     },
                     "gender": {
                         "type": "string",
                         "maxLength": 12,
-                        "minLength": 1,
                         "example": "Sample",
                         "nullable": true
                     },
                     "birth_date": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-09T02:22:32.660898Z",
+                        "format": "date",
+                        "example": "2026-09-09",
                         "nullable": true
                     },
                     "father_name": {
                         "type": "string",
                         "maxLength": 120,
-                        "minLength": 1,
                         "example": "Sample",
                         "nullable": true
                     },
                     "father_document": {
                         "type": "string",
                         "maxLength": 15,
-                        "minLength": 1,
                         "example": "Sample",
                         "nullable": true
                     },
                     "mother_name": {
                         "type": "string",
                         "maxLength": 120,
-                        "minLength": 1,
                         "example": "Sample",
                         "nullable": true
                     },
                     "mother_document": {
                         "type": "string",
                         "maxLength": 15,
-                        "minLength": 1,
                         "example": "Sample",
                         "nullable": true
                     },
                     "pix_type": {
                         "type": "string",
                         "maxLength": 30,
-                        "minLength": 1,
                         "example": "Sample",
                         "nullable": true
                     },
                     "pix_key": {
                         "type": "string",
-                        "maxLength": 0,
-                        "minLength": 1,
                         "example": "Sample",
                         "nullable": true
                     },
                     "notes": {
                         "type": "string",
-                        "maxLength": 0,
-                        "minLength": 1,
                         "example": "Sample",
                         "nullable": true
                     },
@@ -6243,6 +6513,24 @@
                         "example": "Cod.: 1"
                     },
                     "meta": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "maxLength": 80,
+                                "minLength": 1,
+                                "example": "Tipo de parceiro"
+                            },
+                            "code": {
+                                "type": "string",
+                                "maxLength": 20,
+                                "minLength": 1,
+                                "example": "TYP"
+                            }
+                        },
                         "type": "object"
                     }
                 },
@@ -6756,11 +7044,14 @@
                         "type": "integer",
                         "example": 1
                     },
-                    "resource": {
+                    "label": {
                         "type": "string",
-                        "maxLength": 60,
+                        "maxLength": 80,
                         "minLength": 1,
                         "example": "Sample"
+                    },
+                    "resource": {
+                        "$ref": "#/components/schemas/PermissionResourceResource"
                     },
                     "action": {
                         "type": "string",
@@ -6850,7 +7141,7 @@
                             "data": {
                                 "type": "array",
                                 "items": {
-                                    "$ref": "#/components/schemas/RoleResource"
+                                    "$ref": "#/components/schemas/RoleLookupResource"
                                 }
                             }
                         },
@@ -6863,46 +7154,36 @@
             },
             "RoleLookupResource": {
                 "properties": {
-                    "id": {
+                    "key": {
                         "type": "integer",
                         "example": 1
                     },
-                    "name": {
+                    "label": {
                         "type": "string",
                         "maxLength": 80,
                         "minLength": 1,
-                        "example": "Sample"
+                        "example": "Financeiro"
                     },
-                    "description": {
+                    "sublabel": {
                         "type": "string",
-                        "maxLength": 512,
+                        "maxLength": 80,
                         "minLength": 1,
-                        "example": "Sample",
-                        "nullable": true
+                        "example": "Cod.: 1"
                     },
-                    "permissions": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/RolePermissionResource"
-                        }
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-01T11:21:13.562558Z",
-                        "nullable": true
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-01T11:21:13.562558Z",
-                        "nullable": true
-                    },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-01T11:21:13.562558Z",
-                        "nullable": true
+                    "meta": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "maxLength": 80,
+                                "minLength": 1,
+                                "example": "Financeiro"
+                            }
+                        },
+                        "type": "object"
                     }
                 },
                 "type": "object"

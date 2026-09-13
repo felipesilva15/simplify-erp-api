@@ -78,7 +78,7 @@ class ModuleController extends Controller
      * @OA\Get(
      *      path="/api/core/modules",
      *      tags={"Module"},
-     *      summary="List all rows",
+     *      summary="List all modules",
      *      @OA\Parameter(name="id", in="query", required=false, @OA\Schema(type="integer")),
      *      @OA\Parameter(name="name", in="query", required=false, @OA\Schema(type="string")),
      *      @OA\Parameter(name="description", in="query", required=false, @OA\Schema(type="string")),
@@ -129,11 +129,11 @@ class ModuleController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/core/modules/{id}",
+     *      path="/api/core/modules/{module}",
      *      tags={"Module"},
      *      summary="List a module by ID",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="module",
      *         in="path",
      *         required=true,
      *         description="Module ID",
@@ -216,6 +216,11 @@ class ModuleController extends Controller
      *          description="Forbidden",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
+     *      @OA\Response(
+     *          response="422", 
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
@@ -231,11 +236,11 @@ class ModuleController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/core/modules/{id}/edit",
+     *      path="/api/core/modules/{module}/edit",
      *      tags={"Module"},
      *      summary="Get data to edit a module",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="module",
      *         in="path",
      *         required=true,
      *         description="Module ID",
@@ -292,11 +297,11 @@ class ModuleController extends Controller
 
     /**
      * @OA\Put(
-     *      path="/api/core/modules/{id}",
+     *      path="/api/core/modules/{module}",
      *      tags={"Module"},
      *      summary="Update a module",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="module",
      *         in="path",
      *         required=true,
      *         description="Module ID",
@@ -337,6 +342,11 @@ class ModuleController extends Controller
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
+     *      @OA\Response(
+     *          response="422", 
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
@@ -352,11 +362,11 @@ class ModuleController extends Controller
 
     /**
      * @OA\Delete(
-     *      path="/api/core/modules/{id}",
+     *      path="/api/core/modules/{module}",
      *      tags={"Module"},
      *      summary="Delete a module",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="module",
      *         in="path",
      *         required=true,
      *         description="Module ID",

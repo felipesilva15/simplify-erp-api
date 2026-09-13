@@ -8,13 +8,15 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @OA\Schema(
  *      schema="RoleLookupResource",
- *      @OA\Property(property="id", type="integer", example=1),
- *      @OA\Property(property="name", type="string", example="Sample", minLength=1, maxLength=80),
- *      @OA\Property(property="description", type="string", example="Sample", minLength=1, maxLength=512, nullable=true),
- *      @OA\Property(property="permissions", type="array", @OA\Items(ref="#/components/schemas/RolePermissionResource")),
- *      @OA\Property(property="created_at", type="string", format="date-time", example="2025-12-01T11:21:13.562558Z", nullable=true),
- *      @OA\Property(property="updated_at", type="string", format="date-time", example="2025-12-01T11:21:13.562558Z", nullable=true),
- *      @OA\Property(property="deleted_at", type="string", format="date-time", example="2025-12-01T11:21:13.562558Z", nullable=true)
+ *      @OA\Property(property="key", type="integer", example=1),
+ *      @OA\Property(property="label", type="string", example="Financeiro", minLength=1, maxLength=80),
+ *      @OA\Property(property="sublabel", type="string", example="Cod.: 1", minLength=1, maxLength=80),
+ *      @OA\Property(
+ *          property="meta",
+ *          type="object",
+ *          @OA\Property(property="id", type="integer", example=1),
+ *          @OA\Property(property="name", type="string", example="Financeiro", minLength=1, maxLength=80)
+ *      )
  * )
  */
 class RoleLookupResource extends JsonResource

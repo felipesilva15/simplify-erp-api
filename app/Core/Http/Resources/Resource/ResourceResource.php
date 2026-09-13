@@ -12,7 +12,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *      @OA\Property(property="name", type="string", example="Sample module", minLength=1, maxLength=80),
  *      @OA\Property(property="slug", type="string", example="sample", minLength=1, maxLength=80),
  *      @OA\Property(property="description", type="string", example="Sample", minLength=1, maxLength=512, nullable=true),
- *      @OA\Property(property="is_active", type="boolean", example=false, nullable=true),
+ *      @OA\Property(property="module", ref="#/components/schemas/ResourceModuleResource"),
  *      @OA\Property(property="permissions", type="array", @OA\Items(ref="#/components/schemas/ResourcePermissionResource")),
  *      @OA\Property(property="created_at", type="string", format="date-time", example="2025-12-05T00:30:46.143219Z", nullable=true),
  *      @OA\Property(property="updated_at", type="string", format="date-time", example="2025-12-05T00:30:46.143219Z", nullable=true),
