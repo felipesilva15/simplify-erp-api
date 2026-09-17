@@ -7,21 +7,21 @@ namespace App\Core\Enums;
  *   schema="ActivityActionEnum",
  *   type="string",
  *   description="Activity actions:
- *      Created = 'created'
- *      Updated = 'updated'
- *      Deleted = 'deleted'
- *      Approved = 'approved'
- *      Auth = 'auth'",
- *   enum={"created", "updated", "deleted", "approved", "auth"}
+ *      Created = 'CREATED'
+ *      Updated = 'UPDATED'
+ *      Deleted = 'DELETED'
+ *      Approved = 'APPROVED'
+ *      Auth = 'AUTH'",
+ *   enum={"CREATED", "UPDATED", "DELETED", "APPROVED", "AUTH"}
  * )
  */
 enum ActivityActionEnum: string
 {
-    case Created   = 'created';
-    case Updated   = 'updated';
-    case Deleted   = 'deleted';
-    case Approved  = 'approved';
-    case Auth  = 'auth';
+    case Created   = 'CREATED';
+    case Updated   = 'UPDATED';
+    case Deleted   = 'DELETED';
+    case Approved  = 'APPROVED';
+    case Auth  = 'AUTH';
 
     public function label(): string
     {
