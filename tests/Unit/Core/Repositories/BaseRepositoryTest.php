@@ -79,6 +79,12 @@ class BaseRepositoryTest extends TestCase
             ->once()
             ->andReturn($paginator);
 
+        // Conexão simulada (sqlite) exigida pela detecção de driver em list/lookup
+        $connectionMock = Mockery::mock(\Illuminate\Database\Connection::class);
+        $connectionMock->shouldReceive('getDriverName')->byDefault()->andReturn('sqlite');
+
+        $builderMock->shouldReceive('getConnection')->byDefault()->andReturn($connectionMock);
+
         // Permite encadeamento nos testes que adicionam where/whereIn
         $builderMock->shouldReceive('where')->byDefault()->andReturnSelf();
         $builderMock->shouldReceive('whereIn')->byDefault()->andReturnSelf();

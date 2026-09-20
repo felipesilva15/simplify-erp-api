@@ -5153,22 +5153,6 @@
                     "!="
                 ]
             },
-            "UserAgentEnum": {
-                "description": "User agents:\n *      Firefox = 'FIREFOX'\n *      Chrome = 'CHROME'\n *      Edge = 'EDGE'\n *      Safari = 'SAFARI'\n *      Postman = 'POSTMAN'\n *      Insomnia = 'INSOMNIA'\n *      Bruno = 'BRUNO'\n *      Googlebot = 'GOOGLEBOT'\n *      Bot = 'BOT'\n *      Unknown = 'UNKNOWN'",
-                "type": "string",
-                "enum": [
-                    "FIREFOX",
-                    "CHROME",
-                    "EDGE",
-                    "SAFARI",
-                    "POSTMAN",
-                    "INSOMNIA",
-                    "BRUNO",
-                    "GOOGLEBOT",
-                    "BOT",
-                    "UNKNOWN"
-                ]
-            },
             "ListRequest": {
                 "properties": {
                     "filters": {
@@ -5198,6 +5182,13 @@
                         "description": "Filter for some columns",
                         "type": "string",
                         "example": "1"
+                    },
+                    "keys": {
+                        "description": "Values of the lookup key column to filter by",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
                     },
                     "per_page": {
                         "description": "Items per page",
@@ -5912,48 +5903,6 @@
                     "EXEMPT"
                 ]
             },
-            "StorePartnerTypeRequest": {
-                "required": [
-                    "name",
-                    "code"
-                ],
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "maxLength": 60,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "code": {
-                        "type": "string",
-                        "maxLength": 3,
-                        "minLength": 1,
-                        "example": "Sample"
-                    }
-                },
-                "type": "object"
-            },
-            "UpdatePartnerTypeRequest": {
-                "required": [
-                    "name",
-                    "code"
-                ],
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "maxLength": 60,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "code": {
-                        "type": "string",
-                        "maxLength": 3,
-                        "minLength": 1,
-                        "example": "Sample"
-                    }
-                },
-                "type": "object"
-            },
             "StorePartnerRequest": {
                 "required": [
                     "partner_type_code",
@@ -6280,92 +6229,12 @@
                 },
                 "type": "object"
             },
-            "PartnerTypeCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/PartnerTypeResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "PartnerTypeLookupCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/PartnerTypeLookupResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "PartnerTypeLookupResource": {
+            "StorePartnerTypeRequest": {
+                "required": [
+                    "name",
+                    "code"
+                ],
                 "properties": {
-                    "key": {
-                        "type": "string",
-                        "example": "TYP"
-                    },
-                    "label": {
-                        "type": "string",
-                        "maxLength": 80,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "sublabel": {
-                        "type": "string",
-                        "maxLength": 80,
-                        "minLength": 1,
-                        "example": "Cod.: 1"
-                    },
-                    "meta": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 1
-                            },
-                            "name": {
-                                "type": "string",
-                                "maxLength": 80,
-                                "minLength": 1,
-                                "example": "Tipo de parceiro"
-                            },
-                            "code": {
-                                "type": "string",
-                                "maxLength": 20,
-                                "minLength": 1,
-                                "example": "TYP"
-                            }
-                        },
-                        "type": "object"
-                    }
-                },
-                "type": "object"
-            },
-            "PartnerTypeResource": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
                     "name": {
                         "type": "string",
                         "maxLength": 60,
@@ -6377,24 +6246,27 @@
                         "maxLength": 3,
                         "minLength": 1,
                         "example": "Sample"
-                    },
-                    "created_at": {
+                    }
+                },
+                "type": "object"
+            },
+            "UpdatePartnerTypeRequest": {
+                "required": [
+                    "name",
+                    "code"
+                ],
+                "properties": {
+                    "name": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
-                        "nullable": true
+                        "maxLength": 60,
+                        "minLength": 1,
+                        "example": "Sample"
                     },
-                    "updated_at": {
+                    "code": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
-                        "nullable": true
-                    },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
-                        "nullable": true
+                        "maxLength": 3,
+                        "minLength": 1,
+                        "example": "Sample"
                     }
                 },
                 "type": "object"
@@ -6649,6 +6521,125 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2026-09-09T02:22:32.660898Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "PartnerTypeCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PartnerTypeResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "PartnerTypeLookupCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PartnerTypeLookupResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "PartnerTypeLookupResource": {
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "example": "TYP"
+                    },
+                    "label": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "sublabel": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Cod.: 1"
+                    },
+                    "meta": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "maxLength": 80,
+                                "minLength": 1,
+                                "example": "Tipo de parceiro"
+                            },
+                            "code": {
+                                "type": "string",
+                                "maxLength": 20,
+                                "minLength": 1,
+                                "example": "TYP"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "PartnerTypeResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 60,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "code": {
+                        "type": "string",
+                        "maxLength": 3,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
                         "nullable": true
                     }
                 },

@@ -10,6 +10,14 @@ use Override;
 class PartnerRepository extends BaseRepository implements PartnerRepositoryInterface
 {
     #[Override]
+    public function getMaskedSearchableColumns(): array
+    {
+        return [
+            'document_number'
+        ];
+    }
+
+    #[Override]
     public function getLookupColumnsToFilter(): array
     {
         return [

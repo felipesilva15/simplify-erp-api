@@ -10,6 +10,14 @@ use Override;
 class UserRepository extends BaseRepository implements UserRepositoryInterface
 {
     #[Override]
+    public function getMaskedSearchableColumns(): array
+    {
+        return [
+            'phone_number'
+        ];
+    }
+
+    #[Override]
     public function getLookupColumnsToFilter(): array
     {
         return [
