@@ -19,7 +19,7 @@ enum PersonTypeEnum: string
     public function label(): string
     {
         return match ($this) {
-            self::Person    => 'Pessoa',
+            self::Person    => 'Pessoa física',
             self::Company   => 'Empresa',
             self::Foreign   => 'Estrangeiro',
         };

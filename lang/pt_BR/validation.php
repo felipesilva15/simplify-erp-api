@@ -1,5 +1,9 @@
 <?php
 
+use App\Core\Helpers\EnumHelpers;
+use App\Modules\Partner\Enums\PersonTypeEnum;
+use App\Modules\Partner\Enums\TaxpayerTypeEnum;
+
 return [
 
     /*
@@ -215,7 +219,25 @@ return [
         'category' => 'categoria',
         'blood_type' => 'tipo sanguíneo',
         'birth_date' => 'data de nascimento',
-        'code' => 'código'
+        'code' => 'código',
+        'document_number' => 'número de documento',
+        'partner_type_code' => 'tipo de parceiro',
+        'person_type' => 'tipo de pessoa',
+        'state_registration' => 'inscrição estadual',
+        'municipal_registration' => 'inscrição municipal',
+        'suframa_registration' => 'inscrição Suframa',
+        'taxpayer_type' => 'contribuinte',
+        'identity_number' => 'RG',
+        'identity_issuer' => 'orgão emissor',
+        'father_name' => 'nome do pai',
+        'father_document' => 'documento do pai',
+        'mother_name' => 'nome da mãe',
+        'mother_document' => 'documento da mãe',
+    ],
+
+    'values' => [
+        'person_type' => EnumHelpers::mapLabelsWithKeys(PersonTypeEnum::cases()),
+        'taxpayer_type' => EnumHelpers::mapLabelsWithKeys(TaxpayerTypeEnum::cases()),
     ],
 
 ];
