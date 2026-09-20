@@ -1,0 +1,5 @@
+    #[Override]
+    protected function getLookupKeyColumn(): string
+    {
+        return '{{lookup_key_column}}';
+    }

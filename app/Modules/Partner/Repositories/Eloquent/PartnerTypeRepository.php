@@ -19,6 +19,12 @@ class PartnerTypeRepository extends BaseRepository implements PartnerTypeReposit
     }
 
     #[Override]
+    protected function getLookupKeyColumn(): string
+    {
+        return 'code';
+    }
+
+    #[Override]
     protected function getModelClass(): string
     {
         return PartnerType::class;

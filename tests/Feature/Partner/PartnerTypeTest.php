@@ -88,6 +88,105 @@ class PartnerTypeTest extends TestCase
         $this->assertErrorResponse($response, Response::HTTP_FORBIDDEN);
     }
 
+    protected function getLookupResourceStructure(): array {
+        return [
+            'key',
+            'label',
+            'sublabel',
+            'meta' => [
+                'id',
+                'name',
+                'code'
+            ]
+        ];
+    }
+
+    public function test_lookup_returns_default_api_response_structure(): void {
+        $response = $this->getJson("{$this->endpoint}/lookup", $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK);
+        $this->assertApiResponseStructureForListing($response);
+    }
+
+    public function test_can_lookup_partner_types(): void
+    {
+        PartnerType::factory(3)->create();
+        $response = $this->getJson("{$this->endpoint}/lookup", $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonStructure([
+                'data' => [
+                    '*' => $this->getLookupResourceStructure()
+                ]
+            ])
+            ->assertJsonCount(3, 'data');
+    }
+
+    public function test_can_lookup_partner_types_with_text_filter(): void
+    {
+        $partnerType = PartnerType::factory()->createOne(['name' => 'Tipo Atacado']);
+        PartnerType::factory()->createOne(['name' => 'Tipo Varejo']);
+        $queryParams = [
+            'q' => 'Atacado'
+        ];
+
+        $response = $this->getJson(url()->query("{$this->endpoint}/lookup", $queryParams), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.key', $partnerType->code)
+            ->assertJsonPath('data.0.label', $partnerType->name)
+            ->assertJsonPath('data.0.sublabel', "Cod.: {$partnerType->code}")
+            ->assertJsonPath('data.0.meta.id', $partnerType->id);
+    }
+
+    public function test_can_lookup_partner_types_filtered_by_keys(): void
+    {
+        $partnerTypes = PartnerType::factory(3)->create();
+        $queryParams = [
+            'keys' => [
+                $partnerTypes[0]->code,
+                $partnerTypes[2]->code
+            ]
+        ];
+
+        $response = $this->getJson(url()->query("{$this->endpoint}/lookup", $queryParams), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonPath('meta.total', 2)
+            ->assertJsonFragment(['key' => $partnerTypes[0]->code])
+            ->assertJsonFragment(['key' => $partnerTypes[2]->code]);
+    }
+
+    public function test_can_lookup_partner_types_with_pagination(): void
+    {
+        PartnerType::factory(5)->create();
+        $queryParams = [
+            'per_page' => 2,
+            'page' => 2
+        ];
+
+        $response = $this->getJson(url()->query("{$this->endpoint}/lookup", $queryParams), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonPath('meta.per_page', 2)
+            ->assertJsonPath('meta.current_page', 2)
+            ->assertJsonPath('meta.last_page', 3)
+            ->assertJsonPath('meta.total', 5);
+    }
+
+    public function test_cannot_lookup_partner_types_without_authentication(): void
+    {
+        $response = $this->getJson("{$this->endpoint}/lookup");
+        $this->assertErrorResponse($response, Response::HTTP_UNAUTHORIZED);
+    }
+
     public function test_can_get_partner_type_by_id(): void
     {
         $model = PartnerType::factory()->createOne();

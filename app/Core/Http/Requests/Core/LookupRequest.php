@@ -12,6 +12,7 @@ use Illuminate\Foundation\Http\FormRequest;
  *     schema="LookupRequest",
  *     type="object",
  *     @OA\Property(property="q", type="string", example="1", description="Filter for some columns"),
+ *     @OA\Property(property="keys", type="array", @OA\Items(type="string"), description="Values of the lookup key column to filter by"),
  *     @OA\Property(property="per_page", type="integer", example=10, description="Items per page"),
  *     @OA\Property(property="page", type="integer", example=1, description="Page number")
  * )

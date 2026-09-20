@@ -426,12 +426,25 @@ class MakeModuleCrud extends Command
         }
 
         $lookupColumns = $this->renderLines($columns, indent: $this->tabs(3));
+        $lookupKeyMethod = '';
+
+        if ($this->option('lookup')) {
+            $keyName = $this->getLookupKeyField()['name'] ?? 'id';
+
+            if ($keyName !== 'id') {
+                $lookupKeyMethod = $this->replacePlaceholders(
+                    $this->readStubBlock('module.repository-lookup-key.stub'),
+                    ['{{lookup_key_column}}' => $keyName],
+                ).PHP_EOL.PHP_EOL;
+            }
+        }
 
         return [
             '{{lookup_columns}}' => $lookupColumns,
             '{{lookup_columns_method}}' => $this->option('lookup')
                 ? $this->replacePlaceholders($this->readStubBlock('module.repository-lookup.stub'), ['{{lookup_columns}}' => $lookupColumns]).PHP_EOL.PHP_EOL
                 : '',
+            '{{lookup_key_method}}' => $lookupKeyMethod,
         ];
     }
 
@@ -453,14 +466,7 @@ class MakeModuleCrud extends Command
             $labelField = $stringFields[0];
         }
 
-        $keyField = null;
-
-        foreach ($stringFields as $field) {
-            if ($field['name'] === 'code') {
-                $keyField = $field;
-                break;
-            }
-        }
+        $keyField = $this->getLookupKeyField();
 
         $usesIdAsKey = $keyField === null;
         $keyName = $usesIdAsKey ? 'id' : $keyField['name'];
@@ -512,6 +518,17 @@ class MakeModuleCrud extends Command
             '{{lookup_meta_args}}' => implode(', ', array_map(fn ($name) => "'".$name."'", $metaNames)),
             '{{lookup_meta_properties}}' => $this->renderLines($metaProperties, indent: ' * '.$this->tabs(2)),
         ];
+    }
+
+    private function getLookupKeyField(): ?array
+    {
+        foreach ($this->entityFields(skipCommon: true) as $field) {
+            if ($field['type'] === 'string' && $field['name'] === 'code') {
+                return $field;
+            }
+        }
+
+        return null;
     }
 
     private function getLookupMetaProperty(array $field): string

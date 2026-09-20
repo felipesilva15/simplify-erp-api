@@ -25,6 +25,10 @@ abstract class BaseRepository implements BaseRepositoryInterface
         ];
     }
 
+    protected function getLookupKeyColumn(): string {
+        return 'id';
+    }
+
     public function list(array $params = []): LengthAwarePaginator {
         $query = $this->model::query();
 
@@ -84,7 +88,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
         }
 
         if (isset($params['keys']) && count($params['keys']))
-            $query->whereIn('id', $params['keys']);
+            $query->whereIn($this->getLookupKeyColumn(), $params['keys']);
 
         $perPage = isset($params['per_page']) ? (int) $params['per_page'] : 30;
         $page = isset($params['page']) ? (int) $params['page'] : 1;
