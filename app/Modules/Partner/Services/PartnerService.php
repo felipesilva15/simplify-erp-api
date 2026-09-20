@@ -4,6 +4,7 @@ namespace App\Modules\Partner\Services;
 
 use App\Core\Services\ActivityLogService;
 use App\Core\Services\BaseCrudService;
+use App\Modules\Partner\Enums\PersonTypeEnum;
 use App\Modules\Partner\Enums\TaxpayerTypeEnum;
 use App\Modules\Partner\Repositories\Interfaces\PartnerRepositoryInterface;
 
@@ -15,7 +16,8 @@ class PartnerService extends BaseCrudService
     }
 
     protected function prepareData(mixed $data): mixed {
-        $data['taxpayer_type'] = TaxpayerTypeEnum::Exempt;
+        if ($data->person_type == PersonTypeEnum::Person->value)
+            $data->taxpayer_type = TaxpayerTypeEnum::Exempt->value;
 
         return $data;
     } 
