@@ -1,0 +1,2 @@
+use App\Core\Traits\HasExcelExport;
+use App\Modules\{{module}}\Exports\{{entity}}Export;

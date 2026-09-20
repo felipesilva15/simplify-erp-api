@@ -5,6 +5,7 @@ namespace App\Core\Services;
 use App\Core\DTO\ServiceResult;
 use App\Core\Enums\ActivityActionEnum;
 use App\Core\Repositories\Interfaces\BaseRepositoryInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 abstract class BaseCrudService
@@ -58,6 +59,10 @@ abstract class BaseCrudService
         return new ServiceResult(
             data: $this->repository->list($filters)
         );
+    }
+
+    public function exportQuery(array $params = []): Builder {
+        return $this->repository->getExportQuery($params);
     }
 
     public function show(Model $entity): ServiceResult {

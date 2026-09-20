@@ -27,6 +27,7 @@ class MakeModuleCrud extends Command
                             {--lookup : Whether the lookup resources should be created} 
                             {--policy : Whether the policy should be created} 
                             {--factory : Whether the factory should be created} 
+                            {--export : Whether the Excel export should be created} 
                             {--test : Whether the tests should be created}';
 
     protected $description = 'Create a new domain module files (Repository, Service, DTO, etc)';
@@ -47,6 +48,7 @@ class MakeModuleCrud extends Command
         '{{root_path}}',
         '{{root_path}}/Models',
         '{{root_path}}/Services',
+        '{{root_path}}/Exports',
         '{{root_path}}/Repositories/Eloquent',
         '{{root_path}}/Repositories/Interfaces',
         '{{root_path}}/DTO',
@@ -69,6 +71,7 @@ class MakeModuleCrud extends Command
             'option' => 'policy',
             'stub' => 'module.policy.stub',
             'path' => '{{app_path}}/Policies/{{entity}}Policy.php',
+            'replacements' => 'getPolicyReplacements',
         ],
         'factory' => [
             'option' => 'factory',
@@ -144,6 +147,12 @@ class MakeModuleCrud extends Command
             'stub' => 'module.resource-lookup-collection.stub',
             'path' => '{{root_path}}/Http/Resources/{{entity}}/{{entity}}LookupCollection.php',
         ],
+        'export' => [
+            'option' => 'export',
+            'stub' => 'module.export.stub',
+            'path' => '{{root_path}}/Exports/{{entity}}Export.php',
+            'replacements' => 'getExportReplacements',
+        ],
     ];
 
     private array $requestTypes = [
@@ -207,8 +216,9 @@ class MakeModuleCrud extends Command
 
     private function shouldGenerate(string $option): bool
     {
-        if ($option === 'lookup') {
-            return (bool) $this->option('lookup');
+        // Lookup e export são opt-in: não são implicados por --all
+        if (in_array($option, ['lookup', 'export'], true)) {
+            return (bool) $this->option($option);
         }
 
         return $this->option('all') || $this->option($option);
@@ -352,6 +362,49 @@ class MakeModuleCrud extends Command
             '{{lookup_method}}' => $this->option('lookup')
                 ? $this->replacePlaceholders($this->readStubBlock('module.controller-lookup.stub'), $base)
                 : '',
+            '{{export_imports}}' => $this->option('export')
+                ? PHP_EOL.$this->replacePlaceholders($this->readStubBlock('module.controller-export-imports.stub'), $base)
+                : '',
+            '{{export_trait}}' => $this->option('export')
+                ? PHP_EOL.'    use HasExcelExport;'
+                : '',
+            '{{export_swagger}}' => $this->option('export')
+                ? $this->replacePlaceholders($this->readStubBlock('module.controller-export-swagger.stub'), [
+                    ...$base,
+                    '{{export_filter_parameters}}' => $this->renderIndexFilterParameters(),
+                ])
+                : '',
+            '{{export_methods}}' => $this->option('export')
+                ? PHP_EOL.PHP_EOL.$this->tabs(1).$this->replacePlaceholders($this->readStubBlock('module.controller-export-methods.stub'), $base)
+                : '',
+        ];
+    }
+
+    private function getPolicyReplacements(): array
+    {
+        return [
+            '{{export_policy_method}}' => $this->option('export')
+                ? PHP_EOL.PHP_EOL.$this->tabs(1).$this->replacePlaceholders($this->readStubBlock('module.policy-export.stub'), $this->getBaseReplacements())
+                : '',
+        ];
+    }
+
+    private function getExportReplacements(): array
+    {
+        $headings = ["'ID'"];
+        $mapFields = ['$row->id'];
+
+        foreach ($this->entityFields(skipCommon: true) as $field) {
+            $headings[] = "'".Str::headline($field['name'])."'";
+
+            $mapFields[] = $field['type'] === 'Carbon'
+                ? "\$row->{$field['name']}?->format('Y-m-d H:i:s')"
+                : "\$row->{$field['name']}";
+        }
+
+        return [
+            '{{export_headings}}' => $this->renderLines($headings, indent: $this->tabs(3)),
+            '{{export_map_fields}}' => $this->renderLines($mapFields, indent: $this->tabs(3)),
         ];
     }
 
@@ -795,7 +848,7 @@ class MakeModuleCrud extends Command
             }
 
             $lineStart = strrpos(substr($content, 0, $end), "\n") + 1;
-            $routes = $this->getLookupRouteLine($routeEntity).$this->getCrudRouteLine($routeEntity);
+            $routes = $this->getLookupRouteLine($routeEntity).$this->getExportRouteLine($routeEntity).$this->getCrudRouteLine($routeEntity);
 
             $content = substr($content, 0, $lineStart)."\n".$routes.substr($content, $lineStart);
         } else {
@@ -822,6 +875,7 @@ class MakeModuleCrud extends Command
         return $this->replacePlaceholders($stub, [
             ...$this->getBaseReplacements(),
             '{{lookup_route_line}}' => $this->getLookupRouteLine($routeEntity),
+            '{{export_route_line}}' => $this->getExportRouteLine($routeEntity),
         ]);
     }
 
@@ -832,6 +886,16 @@ class MakeModuleCrud extends Command
         }
 
         return $this->tabs(2)."Route::get('{$routeEntity}/lookup', [{$this->entity}Controller::class, 'lookup'])->name('{$routeEntity}.lookup');".PHP_EOL;
+    }
+
+    private function getExportRouteLine(string $routeEntity): string
+    {
+        if (! $this->option('export')) {
+            return '';
+        }
+
+        return $this->tabs(2)."Route::get('{$routeEntity}/export', [{$this->entity}Controller::class, 'export'])->name('{$routeEntity}.export');".PHP_EOL
+            .$this->tabs(2)."Route::get('{$routeEntity}/export/{exportType}', [{$this->entity}Controller::class, 'export'])->name('{$routeEntity}.export.custom');".PHP_EOL;
     }
 
     private function getCrudRouteLine(string $routeEntity): string

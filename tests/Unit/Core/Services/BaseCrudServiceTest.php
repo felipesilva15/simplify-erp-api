@@ -7,6 +7,7 @@ use App\Core\Enums\ActivityActionEnum;
 use App\Core\Repositories\Interfaces\BaseRepositoryInterface;
 use App\Core\Services\ActivityLogService;
 use App\Core\Services\BaseCrudService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Mockery;
@@ -228,5 +229,36 @@ class BaseCrudServiceTest extends TestCase
         $this->assertInstanceOf(ServiceResult::class, $result);
         $this->assertInstanceOf(LengthAwarePaginator::class, $result->data);
         $this->assertSame($paginator, $result->data);
+    }
+
+    public function test_can_get_export_query_from_repository(): void
+    {
+        $params  = ['filters' => ['status' => ['eq' => 'active']]];
+        $builder = Mockery::mock(Builder::class);
+
+        $this->repositoryMock
+            ->shouldReceive('getExportQuery')
+            ->once()
+            ->with($params)
+            ->andReturn($builder);
+
+        $result = $this->service->exportQuery($params);
+
+        $this->assertSame($builder, $result);
+    }
+
+    public function test_can_get_export_query_without_params(): void
+    {
+        $builder = Mockery::mock(Builder::class);
+
+        $this->repositoryMock
+            ->shouldReceive('getExportQuery')
+            ->once()
+            ->with([])
+            ->andReturn($builder);
+
+        $result = $this->service->exportQuery();
+
+        $this->assertSame($builder, $result);
     }
 }

@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Modules\{{module}}\Exports;
+
+use App\Core\Exports\BaseExport;
+
+class {{entity}}Export extends BaseExport
+{
+    public function headings(): array
+    {
+        return [
+            {{export_headings}}
+        ];
+    }
+
+    public function map(mixed $row): array
+    {
+        return [
+            {{export_map_fields}}
+        ];
+    }
+}

@@ -33,5 +33,5 @@ class {{entity}}Policy
     public function delete(User $user, {{entity}} $model)
     {
         return $this->authService->hasAuthorized($user, '{{permission_entity}}.delete');
-    }
+    }{{export_policy_method}}
 }

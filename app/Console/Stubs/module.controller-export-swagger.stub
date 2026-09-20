@@ -1,0 +1,74 @@
+ * @OA\PathItem(
+ *     path="/api/{{lower_module}}/{{route_entity}}/export",
+ *     @OA\Get(
+ *         tags={"{{entity}}"},
+ *         summary="Export all {{human_entities}} to Excel",
+ *         operationId="export{{entity}}",
+ *         @OA\Parameter(
+ *             name="extension",
+ *             in="query",
+ *             required=false,
+ *             description="File extension (xlsx, xls, csv)",
+ *             @OA\Schema(type="string", enum={"xlsx","xls","csv"})
+ *         ),
+     *     {{export_filter_parameters}}
+ *         @OA\Response(
+ *             response="200",
+ *             description="Excel file with {{human_entities}}",
+ *             @OA\MediaType(
+ *                 mediaType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+ *             )
+ *         ),
+ *         @OA\Response(
+ *             response="401",
+ *             description="Unauthorized",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="403",
+ *             description="Forbidden",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         security={{"bearerAuth":{}}}
+ *     )
+ * )
+ * @OA\PathItem(
+ *     path="/api/{{lower_module}}/{{route_entity}}/export/{exportType}",
+ *     @OA\Get(
+ *         tags={"{{entity}}"},
+ *         summary="Export {{human_entities}} to Excel with custom formatting",
+ *         operationId="export{{entity}}Custom",
+ *         @OA\Parameter(
+ *             name="exportType",
+ *             in="path",
+ *             required=true,
+ *             description="Custom export type",
+ *             @OA\Schema(type="string")
+ *         ),
+ *         @OA\Parameter(
+ *             name="extension",
+ *             in="query",
+ *             required=false,
+ *             description="File extension (xlsx, xls, csv)",
+ *             @OA\Schema(type="string", enum={"xlsx","xls","csv"})
+ *         ),
+ *         @OA\Response(
+ *             response="200",
+ *             description="Excel file with {{human_entities}}",
+ *             @OA\MediaType(
+ *                 mediaType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+ *             )
+ *         ),
+ *         @OA\Response(
+ *             response="401",
+ *             description="Unauthorized",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="403",
+ *             description="Forbidden",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         security={{"bearerAuth":{}}}
+ *     )
+ * )

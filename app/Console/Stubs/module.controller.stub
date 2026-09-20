@@ -14,7 +14,7 @@ use App\Modules\{{module}}\Http\Resources\{{entity}}\{{entity}}Collection;
 use App\Modules\{{module}}\DTO\{{entity}}DTO;
 use App\Modules\{{module}}\Models\{{entity}};
 use App\Modules\{{module}}\Services\{{entity}}Service;
-use App\Core\Traits\HasActivityLogs;
+use App\Core\Traits\HasActivityLogs;{{export_imports}}
 
 /**
  * @OA\PathItem(
@@ -59,10 +59,11 @@ use App\Core\Traits\HasActivityLogs;
  *         security={{"bearerAuth":{}}}
  *     )
  * )
+{{export_swagger}}
  */
 class {{entity}}Controller extends Controller
 {
-    use HasActivityLogs;
+    use HasActivityLogs;{{export_trait}}
 
     protected {{entity}}Service $service;
 
@@ -124,7 +125,7 @@ class {{entity}}Controller extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/{{lower_module}}/{{route_entity}}/{{lower_entity}}",
+     *      path="/api/{{lower_module}}/{{route_entity}}/{{{lower_entity}}}",
      *      tags={"{{entity}}"},
      *      summary="List a {{human_entity}} by ID",
      *      @OA\Parameter(
@@ -231,7 +232,7 @@ class {{entity}}Controller extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/{{lower_module}}/{{route_entity}}/{{lower_entity}}/edit",
+     *      path="/api/{{lower_module}}/{{route_entity}}/{{{lower_entity}}}/edit",
      *      tags={"{{entity}}"},
      *      summary="Get data to edit a {{human_entity}}",
      *      @OA\Parameter(
@@ -292,7 +293,7 @@ class {{entity}}Controller extends Controller
 
     /**
      * @OA\Put(
-     *      path="/api/{{lower_module}}/{{route_entity}}/{{lower_entity}}",
+     *      path="/api/{{lower_module}}/{{route_entity}}/{{{lower_entity}}}",
      *      tags={"{{entity}}"},
      *      summary="Update a {{human_entity}}",
      *      @OA\Parameter(
@@ -357,7 +358,7 @@ class {{entity}}Controller extends Controller
 
     /**
      * @OA\Delete(
-     *      path="/api/{{lower_module}}/{{route_entity}}/{{lower_entity}}",
+     *      path="/api/{{lower_module}}/{{route_entity}}/{{{lower_entity}}}",
      *      tags={"{{entity}}"},
      *      summary="Delete a {{human_entity}}",
      *      @OA\Parameter(
@@ -392,5 +393,5 @@ class {{entity}}Controller extends Controller
     public function destroy({{entity}} ${{lower_entity}}): Response {
         $this->service->delete(${{lower_entity}});
         return response()->noContent();
-    }{{lookup_method}}
+    }{{export_methods}}{{lookup_method}}
 }

@@ -39,8 +39,24 @@ abstract class BaseRepository implements BaseRepositoryInterface
     }
 
     public function list(array $params = []): LengthAwarePaginator {
-        $query = $this->model::query();
+        $query = $this->applyListParams($this->model::query(), $params);
 
+        $perPage = isset($params['per_page']) ? (int) $params['per_page'] : 15;
+        $page = isset($params['page']) ? (int) $params['page'] : 1;
+
+        return $query->paginate(perPage: $perPage, page: $page)->withQueryString();
+    }
+
+    public function getExportQuery(array $params = []): Builder {
+        $query = $this->applyListParams($this->model::query(), $params);
+
+        // Ordenação estável para garantir consistência na exportação em chunks.
+        $query->orderBy($this->model->getKeyName());
+
+        return $query;
+    }
+
+    private function applyListParams(Builder $query, array $params): Builder {
         if (isset($params['filters']) && count($params['filters']) > 0)
             $query = ModelHelpers::setFiltersOnQuery(
                 $query,
@@ -55,10 +71,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
         if (!empty($params['sorts']))
             $query = ModelHelpers::setSortsOnQuery($query, $params['sorts']);
 
-        $perPage = isset($params['per_page']) ? (int) $params['per_page'] : 15;
-        $page = isset($params['page']) ? (int) $params['page'] : 1;
-
-        return $query->paginate(perPage: $perPage, page: $page)->withQueryString();
+        return $query;
     }
 
     public function getById(mixed $id): ?Model {
