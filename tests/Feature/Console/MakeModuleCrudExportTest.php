@@ -123,24 +123,23 @@ class MakeModuleCrudExportTest extends TestCase
         $this->assertStringContainsString('use App\Modules\Sales\Exports\VehicleExport;', $controller);
         $this->assertStringContainsString('use HasExcelExport;', $controller);
         $this->assertStringContainsString('protected function exportModelClass(): string', $controller);
-        $this->assertStringContainsString('protected function defaultExportClass(): string', $controller);
+        $this->assertStringContainsString('protected function exportClassForFormat(string $format): string', $controller);
+        $this->assertStringContainsString("'full' => VehicleExport::class", $controller);
 
         // Policy ganha o método export
         $policy = File::get(app_path('Policies/VehiclePolicy.php'));
-        $this->assertStringContainsString("public function export(User \$user)", $policy);
+        $this->assertStringContainsString('public function export(User $user)', $policy);
         $this->assertStringContainsString("'vehicles.export'", $policy);
 
-        // Rotas de export registradas antes do crudResource
+        // Rota única de export registrada antes do crudResource (sem rota custom separada)
         $routes = File::get($this->routesPath);
         $exportRoutePosition = strpos($routes, "Route::get('vehicles/export',");
-        $customExportRoutePosition = strpos($routes, "Route::get('vehicles/export/{exportType}',");
         $crudRoutePosition = strpos($routes, "Route::crudResource('vehicles',");
 
         $this->assertNotFalse($exportRoutePosition);
-        $this->assertNotFalse($customExportRoutePosition);
         $this->assertNotFalse($crudRoutePosition);
         $this->assertLessThan($crudRoutePosition, $exportRoutePosition);
-        $this->assertLessThan($crudRoutePosition, $customExportRoutePosition);
+        $this->assertStringNotContainsString("Route::get('vehicles/export/{exportType}'", $routes);
 
         // Provider do módulo registrado
         $providers = File::get($this->providersPath);

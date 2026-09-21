@@ -20,6 +20,7 @@ use App\Modules\Partner\Services\PartnerService;
 use App\Core\Traits\HasActivityLogs;
 use App\Core\Traits\HasExcelExport;
 use App\Modules\Partner\Exports\PartnerExport;
+use InvalidArgumentException;
 
 /**
  * @OA\PathItem(
@@ -70,6 +71,13 @@ use App\Modules\Partner\Exports\PartnerExport;
  *         tags={"Partner"},
  *         summary="Export all partners to Excel",
  *         operationId="exportPartner",
+ *         @OA\Parameter(
+ *             name="format",
+ *             in="query",
+ *             required=false,
+ *             description="Export format (full, summarized, detailed)",
+ *             @OA\Schema(type="string", enum={"full","summarized","detailed"})
+ *         ),
  *         @OA\Parameter(
  *             name="extension",
  *             in="query",
@@ -445,9 +453,14 @@ class PartnerController extends Controller
         return Partner::class;
     }
 
-    protected function defaultExportClass(): string
+    protected function exportClassForFormat(string $format): string
     {
-        return PartnerExport::class;
+        return match ($format) {
+            'full' => PartnerExport::class,
+            default => throw new InvalidArgumentException(
+                "Formato de exportação [{$format}] não suportado para parceiros."
+            ),
+        };
     }
 
     /**

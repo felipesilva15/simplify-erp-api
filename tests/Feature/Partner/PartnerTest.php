@@ -342,29 +342,29 @@ class PartnerTest extends TestCase
             return $export->query()->count() === 3
                 && $export->headings() === [
                     'ID',
-                    'Partner Type Code',
-                    'Name',
-                    'Trade Name',
-                    'Person Type',
-                    'Taxpayer Type',
-                    'Document Number',
-                    'Identity Number',
-                    'Identity Issuer',
-                    'Partner Since',
-                    'State Registration',
-                    'Municipal Registration',
-                    'Suframa Registration',
-                    'Marital Status',
-                    'Cbo',
-                    'Gender',
-                    'Birth Date',
-                    'Father Name',
-                    'Father Document',
-                    'Mother Name',
-                    'Mother Document',
-                    'Pix Type',
-                    'Pix Key',
-                    'Notes',
+                    'Tipo de parceiro',
+                    'Nome',
+                    'Apelido',
+                    'Tipo de pessoa',
+                    'Contribuinte',
+                    'Documento',
+                    'RG',
+                    'Órgão emissor',
+                    'Parceiro desde',
+                    'Inscrição estadual',
+                    'Inscrição municipal',
+                    'Inscrição Suframa',
+                    'Estado civíl',
+                    'CBO profissão',
+                    'Gênero',
+                    'Data de nascimento',
+                    'Nome do pai',
+                    'Documento do pai',
+                    'Nome da mãe',
+                    'Documento da mãe',
+                    'Tipo de chave PIX',
+                    'Chave PIX',
+                    'Observações',
                 ];
         });
     }
@@ -403,5 +403,29 @@ class PartnerTest extends TestCase
         $response = $this->getJson("{$this->endpoint}/export", $this->getCommomUserAuthHeaders());
 
         $this->assertErrorResponse($response, Response::HTTP_FORBIDDEN);
+    }
+
+    public function test_can_export_partners_with_explicit_format(): void
+    {
+        Partner::factory(2)->create();
+
+        Excel::fake();
+
+        $response = $this->getJson("{$this->endpoint}/export?format=full", $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK);
+
+        Excel::assertDownloaded('partner.xlsx', function (PartnerExport $export) {
+            return $export->query()->count() === 2;
+        });
+    }
+
+    public function test_cannot_export_partners_with_unsupported_extension(): void
+    {
+        Excel::fake();
+
+        $response = $this->getJson("{$this->endpoint}/export?extension=pdf", $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 }

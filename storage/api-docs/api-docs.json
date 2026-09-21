@@ -298,6 +298,110 @@
                 ]
             }
         },
+        "/api/partner/partners/export": {
+            "get": {
+                "tags": [
+                    "Partner"
+                ],
+                "summary": "Export all partners to Excel",
+                "operationId": "exportPartner",
+                "parameters": [
+                    {
+                        "name": "format",
+                        "in": "query",
+                        "description": "Export format (full, summarized, detailed)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "full",
+                                "summarized",
+                                "detailed"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "extension",
+                        "in": "query",
+                        "description": "File extension (xlsx, xls, csv)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "xlsx",
+                                "xls",
+                                "csv"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "filters[id][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[name][like]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[created_at][gte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[updated_at][lte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Excel file with partners",
+                        "content": {
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/partner/partner-types/{id}/activity-logs": {
             "get": {
                 "tags": [
@@ -5151,6 +5255,29 @@
                     ">",
                     ">=",
                     "!="
+                ]
+            },
+            "ExportRequest": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ListRequest"
+                    },
+                    {
+                        "properties": {
+                            "format": {
+                                "description": "Formato da exportação (full, summarized, detailed etc.)",
+                                "type": "string",
+                                "example": "full"
+                            },
+                            "extension": {
+                                "description": "Extensão do arquivo (xlsx, xls, csv)",
+                                "type": "string",
+                                "example": "xlsx"
+                            }
+                        },
+                        "type": "object"
+                    }
                 ]
             },
             "ListRequest": {

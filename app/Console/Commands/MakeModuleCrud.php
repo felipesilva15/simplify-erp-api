@@ -894,8 +894,7 @@ class MakeModuleCrud extends Command
             return '';
         }
 
-        return $this->tabs(2)."Route::get('{$routeEntity}/export', [{$this->entity}Controller::class, 'export'])->name('{$routeEntity}.export');".PHP_EOL
-            .$this->tabs(2)."Route::get('{$routeEntity}/export/{exportType}', [{$this->entity}Controller::class, 'export'])->name('{$routeEntity}.export.custom');".PHP_EOL;
+        return $this->tabs(2)."Route::get('{$routeEntity}/export', [{$this->entity}Controller::class, 'export'])->name('{$routeEntity}.export');".PHP_EOL;
     }
 
     private function getCrudRouteLine(string $routeEntity): string

@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
+use InvalidArgumentException;
 use Maatwebsite\Excel\Facades\Excel;
 use Tests\TestCase;
 
@@ -98,14 +99,15 @@ class GadgetController extends Controller
         return Gadget::class;
     }
 
-    protected function defaultExportClass(): string
+    protected function exportClassForFormat(string $format): string
     {
-        return GadgetExport::class;
-    }
-
-    protected function customExportSummary(Builder $query): BaseExport
-    {
-        return new GadgetSummaryExport($query);
+        return match ($format) {
+            'full' => GadgetExport::class,
+            'summarized' => GadgetSummaryExport::class,
+            default => throw new InvalidArgumentException(
+                "Formato de exportação [{$format}] não suportado."
+            ),
+        };
     }
 }
 
@@ -120,7 +122,6 @@ class ExcelExportTest extends TestCase
         Route::prefix('api')->middleware('auth')->group(function () {
             Route::prefix('gadgets')->group(function () {
                 Route::get('export', [GadgetController::class, 'export'])->name('gadgets.export');
-                Route::get('export/{exportType}', [GadgetController::class, 'export'])->name('gadgets.export.custom');
             });
         });
     }
@@ -183,17 +184,17 @@ class ExcelExportTest extends TestCase
         });
     }
 
-    public function test_can_export_with_custom_export_type(): void
+    public function test_can_export_with_custom_format(): void
     {
         $this->makeGadgets();
 
         Excel::fake();
 
-        $response = $this->getJson('/api/gadgets/export/summary', $this->getAdminAuthHeaders());
+        $response = $this->getJson('/api/gadgets/export?format=summarized', $this->getAdminAuthHeaders());
 
         $response->assertOk();
 
-        Excel::assertDownloaded('gadget-summary.xlsx', function ($export) {
+        Excel::assertDownloaded('gadget-summarized.xlsx', function ($export) {
             return $export instanceof GadgetSummaryExport
                 && $export->headings() === ['ID', 'Name'];
         });
@@ -214,17 +215,17 @@ class ExcelExportTest extends TestCase
         });
     }
 
-    public function test_can_choose_extension_on_custom_export_type(): void
+    public function test_can_choose_extension_on_custom_format(): void
     {
         $this->makeGadgets();
 
         Excel::fake();
 
-        $response = $this->getJson('/api/gadgets/export/summary?extension=csv', $this->getAdminAuthHeaders());
+        $response = $this->getJson('/api/gadgets/export?format=summarized&extension=csv', $this->getAdminAuthHeaders());
 
         $response->assertOk();
 
-        Excel::assertDownloaded('gadget-summary.csv', function ($export) {
+        Excel::assertDownloaded('gadget-summarized.csv', function ($export) {
             return $export instanceof GadgetSummaryExport
                 && $export->headings() === ['ID', 'Name'];
         });
@@ -236,14 +237,14 @@ class ExcelExportTest extends TestCase
 
         $response = $this->getJson('/api/gadgets/export?extension=pdf', $this->getAdminAuthHeaders());
 
-        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
-    public function test_cannot_export_with_unknown_custom_export_type(): void
+    public function test_cannot_export_with_unknown_format(): void
     {
         Excel::fake();
 
-        $response = $this->getJson('/api/gadgets/export/unknown', $this->getAdminAuthHeaders());
+        $response = $this->getJson('/api/gadgets/export?format=unknown', $this->getAdminAuthHeaders());
 
         $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
     }

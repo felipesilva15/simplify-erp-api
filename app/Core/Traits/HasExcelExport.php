@@ -2,56 +2,58 @@
 
 namespace App\Core\Traits;
 
-use App\Core\Exports\BaseExport;
-use App\Core\Http\Requests\Core\ListRequest;
+use App\Core\Http\Requests\Core\ExportRequest;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
-use InvalidArgumentException;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 /**
- * Disponibiliza a rota padrão de exportação Excel para o controller.
+ * Disponibiliza a rota de exportação Excel para o controller.
  *
  * A rota de exportação recebe os mesmos parâmetros do método index
- * (filters, sorts, etc.), garantindo que a planilha seja gerada com base
- * nos filtros aplicados na consulta.
+ * (filters, sorts, etc.) e ainda os parâmetros de exportação `format`
+ * e `extension`:
  *
- * Rotas:
- *  - GET /{entities}/export              → exportação padrão
- *  - GET /{entities}/export/{exportType} → exportação customizada
+ *  - GET /{entities}/export                          → exportação padrão (xlsx)
+ *  - GET /{entities}/export?format=summarized          → formato customizado
+ *  - GET /{entities}/export?format=summarized&extension=csv
  *
- * Ambas as rotas aceitam o parâmetro de query `extension` para escolher o
- * formato do arquivo entre as extensões suportadas (padrão `xlsx`). Ex.:
+ * O campo `format` informa o formato da exportação e o mapeamento
+ * formato → classe deve ser definido no controller implementando
+ * `exportClassForFormat()` com um `match`, por exemplo:
  *
- *  - GET /users/export?extension=csv
- *  - GET /users/export/summary?extension=xls
- *
- * Para exportações customizadas, implemente no controller um método
- * `customExport{Type}` recebendo a query filtrada e retornando uma
- * instância de BaseExport, por exemplo:
- *
- *     protected function customExportSummary(Builder $query): BaseExport
+ *     protected function exportClassForFormat(string $format): string
  *     {
- *         return new MySummaryExport($query);
+ *         return match ($format) {
+ *             'full' => PartnerExport::class,
+ *             'summarized' => PartnerSummaryExport::class,
+ *             'detailed' => PartnerDetailedExport::class,
+ *             default => throw new InvalidArgumentException(
+ *                 "Formato de exportação [{$format}] não suportado."
+ *             ),
+ *         };
  *     }
  *
- * As extensões permitidas podem ser ajustadas sobrescrevendo
- * `allowedExportExtensions()`.
+ * O formato padrão é `full` (ajustável sobrescrevendo
+ * `defaultExportFormat()`) e a extensão padrão é `xlsx`.
  */
 trait HasExcelExport
 {
-    public function export(ListRequest $request, ?string $exportType = null): BinaryFileResponse
+    public function export(ExportRequest $request): BinaryFileResponse
     {
         $this->authorize('export', $this->exportModelClass());
 
-        $extension = $this->resolveExtension($request);
+        $params = $request->all();
 
-        $query = $this->exportQuery($request->all());
+        $format = $params['format'] ?? $this->defaultExportFormat();
+        $extension = $params['extension'] ?? 'xlsx';
 
-        $export = $this->resolveExport($exportType, $query);
+        $query = $this->exportQuery($params);
 
-        return Excel::download($export, $this->exportFileName($exportType, $extension));
+        $exportClass = $this->exportClassForFormat($format);
+
+        return Excel::download(new $exportClass($query), $this->exportFileName($format, $extension));
     }
 
     protected function exportQuery(array $params): Builder
@@ -59,59 +61,29 @@ trait HasExcelExport
         return $this->service->exportQuery($params);
     }
 
-    protected function resolveExport(?string $exportType, Builder $query): BaseExport
+    /**
+     * Retorna a classe de exportação responsável pelo formato informado.
+     *
+     * Deve ser implementado no controller definindo o mapeamento
+     * formato → classe com um `match`.
+     */
+    abstract protected function exportClassForFormat(string $format): string;
+
+    protected function defaultExportFormat(): string
     {
-        if ($exportType === null || $exportType === '') {
-            return new ($this->defaultExportClass())($query);
-        }
-
-        $customMethod = 'customExport'.Str::studly($exportType);
-
-        if (! method_exists($this, $customMethod)) {
-            throw new InvalidArgumentException(
-                "Método de exportação customizada [{$customMethod}] não definido no controller [".static::class.']'
-            );
-        }
-
-        $export = $this->{$customMethod}($query);
-
-        if (! $export instanceof BaseExport) {
-            throw new InvalidArgumentException(
-                "O método [{$customMethod}] do controller [".static::class."] deve retornar uma instância de ".BaseExport::class.'.'
-            );
-        }
-
-        return $export;
+        return 'full';
     }
 
-    protected function allowedExportExtensions(): array
-    {
-        return ['xlsx', 'xls', 'csv'];
-    }
-
-    protected function resolveExtension(ListRequest $request): string
-    {
-        $extension = Str::lower(trim((string) $request->input('extension', 'xlsx')));
-
-        if (! in_array($extension, $this->allowedExportExtensions(), true)) {
-            throw new InvalidArgumentException(
-                "Extensão [{$extension}] não suportada para exportação. Extensões permitidas: ".implode(', ', $this->allowedExportExtensions()).'.'
-            );
-        }
-
-        return $extension;
-    }
-
-    protected function exportFileName(?string $exportType, string $extension): string
+    protected function exportFileName(string $format, string $extension): string
     {
         $fileName = Str::kebab(Str::snake(class_basename($this->exportModelClass())));
 
-        $baseName = $exportType ? "{$fileName}-{$exportType}" : $fileName;
+        $baseName = $format === $this->defaultExportFormat()
+            ? $fileName
+            : "{$fileName}-{$format}";
 
         return "{$baseName}.{$extension}";
     }
 
     abstract protected function exportModelClass(): string;
-
-    abstract protected function defaultExportClass(): string;
 }
