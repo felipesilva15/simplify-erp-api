@@ -18,6 +18,8 @@ use App\Modules\Partner\DTO\PartnerDTO;
 use App\Modules\Partner\Models\Partner;
 use App\Modules\Partner\Services\PartnerService;
 use App\Core\Traits\HasActivityLogs;
+use App\Core\Traits\HasExcelExport;
+use App\Modules\Partner\Exports\PartnerExport;
 
 /**
  * @OA\PathItem(
@@ -62,10 +64,48 @@ use App\Core\Traits\HasActivityLogs;
  *         security={{"bearerAuth":{}}}
  *     )
  * )
+ * @OA\PathItem(
+ *     path="/api/partner/partners/export",
+ *     @OA\Get(
+ *         tags={"Partner"},
+ *         summary="Export all partners to Excel",
+ *         operationId="exportPartner",
+ *         @OA\Parameter(
+ *             name="extension",
+ *             in="query",
+ *             required=false,
+ *             description="File extension (xlsx, xls, csv)",
+ *             @OA\Schema(type="string", enum={"xlsx","xls","csv"})
+ *         ),
+ *     @OA\Parameter(name="filters[id][eq]", in="query", required=false, @OA\Schema(type="integer")),
+ *     @OA\Parameter(name="filters[name][like]", in="query", required=false, @OA\Schema(type="string")),
+ *     @OA\Parameter(name="filters[created_at][gte]", in="query", required=false, @OA\Schema(type="string")),
+ *     @OA\Parameter(name="filters[updated_at][lte]", in="query", required=false, @OA\Schema(type="string")),
+ *         @OA\Response(
+ *             response="200",
+ *             description="Excel file with partners",
+ *             @OA\MediaType(
+ *                 mediaType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+ *             )
+ *         ),
+ *         @OA\Response(
+ *             response="401",
+ *             description="Unauthorized",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="403",
+ *             description="Forbidden",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         security={{"bearerAuth":{}}}
+ *     )
+ * )
  */
 class PartnerController extends Controller
 {
     use HasActivityLogs;
+    use HasExcelExport;
 
     protected PartnerService $service;
 
@@ -398,6 +438,16 @@ class PartnerController extends Controller
     public function destroy(Partner $partner): Response {
         $this->service->delete($partner);
         return response()->noContent();
+    }
+
+    protected function exportModelClass(): string
+    {
+        return Partner::class;
+    }
+
+    protected function defaultExportClass(): string
+    {
+        return PartnerExport::class;
     }
 
     /**

@@ -2,9 +2,11 @@
 
 namespace Tests\Feature\Partner;
 
+use App\Modules\Partner\Exports\PartnerExport;
 use App\Modules\Partner\Models\Partner;
-use Tests\TestCase;
 use Illuminate\Http\Response;
+use Maatwebsite\Excel\Facades\Excel;
+use Tests\TestCase;
 
 class PartnerTest extends TestCase
 {
@@ -323,6 +325,83 @@ class PartnerTest extends TestCase
         $model = Partner::factory()->createOne();
 
         $response = $this->deleteJson("{$this->endpoint}/{$model->id}", [], $this->getCommomUserAuthHeaders());
+        $this->assertErrorResponse($response, Response::HTTP_FORBIDDEN);
+    }
+
+    public function test_can_export_partners_as_default_excel_file(): void
+    {
+        Partner::factory(3)->create();
+
+        Excel::fake();
+
+        $response = $this->getJson("{$this->endpoint}/export", $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK);
+
+        Excel::assertDownloaded('partner.xlsx', function (PartnerExport $export) {
+            return $export->query()->count() === 3
+                && $export->headings() === [
+                    'ID',
+                    'Partner Type Code',
+                    'Name',
+                    'Trade Name',
+                    'Person Type',
+                    'Taxpayer Type',
+                    'Document Number',
+                    'Identity Number',
+                    'Identity Issuer',
+                    'Partner Since',
+                    'State Registration',
+                    'Municipal Registration',
+                    'Suframa Registration',
+                    'Marital Status',
+                    'Cbo',
+                    'Gender',
+                    'Birth Date',
+                    'Father Name',
+                    'Father Document',
+                    'Mother Name',
+                    'Mother Document',
+                    'Pix Type',
+                    'Pix Key',
+                    'Notes',
+                ];
+        });
+    }
+
+    public function test_can_export_partners_with_filter(): void
+    {
+        Partner::factory(3)->create();
+
+        Excel::fake();
+
+        $response = $this->getJson(
+            "{$this->endpoint}/export?filters[id][eq]=2",
+            $this->getAdminAuthHeaders()
+        );
+
+        $response->assertStatus(Response::HTTP_OK);
+
+        Excel::assertDownloaded('partner.xlsx', function (PartnerExport $export) {
+            return $export->query()->pluck('id')->all() === [2];
+        });
+    }
+
+    public function test_cannot_export_partners_without_authentication(): void
+    {
+        Excel::fake();
+
+        $response = $this->getJson("{$this->endpoint}/export");
+
+        $this->assertErrorResponse($response, Response::HTTP_UNAUTHORIZED);
+    }
+
+    public function test_cannot_export_partners_without_permission(): void
+    {
+        Excel::fake();
+
+        $response = $this->getJson("{$this->endpoint}/export", $this->getCommomUserAuthHeaders());
+
         $this->assertErrorResponse($response, Response::HTTP_FORBIDDEN);
     }
 }

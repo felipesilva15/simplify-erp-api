@@ -40,6 +40,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::crudResource('partner-types', PartnerTypeController::class);
 
         Route::get('partners/lookup', [PartnerController::class, 'lookup'])->name('partners.lookup');
+        Route::get('partners/export', [PartnerController::class, 'export'])->name('partners.export');
         Route::crudResource('partners', PartnerController::class);
     });
 });
