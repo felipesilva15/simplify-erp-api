@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Modules\{{module}}\Services;
+namespace {{module_namespace}}\Services;
 
 use App\Core\Services\ActivityLogService;
 use App\Core\Services\BaseCrudService;
-use App\Modules\{{module}}\Repositories\Interfaces\{{entity}}RepositoryInterface;
+use {{module_namespace}}\Repositories\Interfaces\{{entity}}RepositoryInterface;
 
 class {{entity}}Service extends BaseCrudService
 {

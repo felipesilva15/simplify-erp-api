@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\{{module}}\Exports;
+namespace {{module_namespace}}\Exports;
 
 use App\Core\Exports\BaseExport;
 

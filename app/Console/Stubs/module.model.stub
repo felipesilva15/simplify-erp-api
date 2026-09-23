@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\{{module}}\Models;
+namespace {{module_namespace}}\Models;
 
 use App\Core\Models\BaseModel;
 use Database\Factories\{{entity}}Factory;

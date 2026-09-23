@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Modules\{{module}}\Http\Controllers;
+namespace {{module_namespace}}\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 {{lookup_imports}}
 use App\Core\Http\Controllers\Controller;
 use App\Core\Http\Requests\Core\ListRequest;
-use App\Modules\{{module}}\Http\Requests\{{entity}}\Store{{entity}}Request;
-use App\Modules\{{module}}\Http\Requests\{{entity}}\Update{{entity}}Request;
-use App\Modules\{{module}}\Http\Resources\{{entity}}\{{entity}}Resource;
-use App\Modules\{{module}}\Http\Resources\{{entity}}\{{entity}}Collection;
-use App\Modules\{{module}}\DTO\{{entity}}DTO;
-use App\Modules\{{module}}\Models\{{entity}};
-use App\Modules\{{module}}\Services\{{entity}}Service;
+use {{module_namespace}}\Http\Requests\{{entity}}\Store{{entity}}Request;
+use {{module_namespace}}\Http\Requests\{{entity}}\Update{{entity}}Request;
+use {{module_namespace}}\Http\Resources\{{entity}}\{{entity}}Resource;
+use {{module_namespace}}\Http\Resources\{{entity}}\{{entity}}Collection;
+use {{module_namespace}}\DTO\{{entity}}DTO;
+use {{module_namespace}}\Models\{{entity}};
+use {{module_namespace}}\Services\{{entity}}Service;
 use App\Core\Traits\HasActivityLogs;{{export_imports}}
 
 /**

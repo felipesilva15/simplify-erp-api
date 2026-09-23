@@ -182,7 +182,7 @@ class MakeModuleCrud extends Command
     {
         $this->module = Str::studly($this->argument('module'));
         $this->entity = Str::studly($this->argument('entity'));
-        $this->rootPath = app_path("Modules/{$this->module}");
+        $this->rootPath = app_path($this->isCoreModule() ? 'Core' : "Modules/{$this->module}");
         $this->stubPath = app_path('Console/Stubs');
 
         $this->makeFolders();
@@ -254,6 +254,18 @@ class MakeModuleCrud extends Command
         return $replacements;
     }
 
+    private function isCoreModule(): bool
+    {
+        return $this->module === 'Core';
+    }
+
+    private function getModuleNamespace(): string
+    {
+        return $this->isCoreModule()
+            ? 'App\\Core'
+            : 'App\\Modules\\'.$this->module;
+    }
+
     private function getBaseReplacements(): array
     {
         $pluralEntity = Str::pluralStudly($this->entity);
@@ -264,6 +276,7 @@ class MakeModuleCrud extends Command
             '{{database_path}}' => database_path(),
             '{{tests_path}}' => base_path('tests'),
             '{{module}}' => $this->module,
+            '{{module_namespace}}' => $this->getModuleNamespace(),
             '{{entity}}' => $this->entity,
             '{{lower_module}}' => Str::kebab($this->module),
             '{{lower_entity}}' => Str::lower(Str::snake($this->entity)),
@@ -763,10 +776,17 @@ class MakeModuleCrud extends Command
 
     private function updateModuleProvider(): void
     {
-        $path = app_path("Providers/{$this->module}ModuleProvider.php");
-        $repository = "App\\Modules\\{$this->module}\\Repositories\\Eloquent\\{$this->entity}Repository";
-        $repositoryInterface = "App\\Modules\\{$this->module}\\Repositories\\Interfaces\\{$this->entity}RepositoryInterface";
+        $repository = "{$this->getModuleNamespace()}\\Repositories\\Eloquent\\{$this->entity}Repository";
+        $repositoryInterface = "{$this->getModuleNamespace()}\\Repositories\\Interfaces\\{$this->entity}RepositoryInterface";
         $bind = $this->tabs(2)."\$this->app->bind({$this->entity}RepositoryInterface::class, {$this->entity}Repository::class);";
+
+        if ($this->isCoreModule()) {
+            $this->updateAppCoreProvider($repository, $repositoryInterface, $bind);
+
+            return;
+        }
+
+        $path = app_path("Providers/{$this->module}ModuleProvider.php");
 
         if (! File::exists($path)) {
             $content = $this->replacePlaceholders(File::get("{$this->stubPath}/module.provider.stub"), [
@@ -800,8 +820,39 @@ class MakeModuleCrud extends Command
         }
     }
 
+    private function updateAppCoreProvider(string $repository, string $repositoryInterface, string $bind): void
+    {
+        $path = app_path('Providers/AppCoreProvider.php');
+
+        if (! File::exists($path)) {
+            return;
+        }
+
+        $content = File::get($path);
+
+        if (str_contains($content, $bind)) {
+            return;
+        }
+
+        $content = str_replace(
+            "use Illuminate\Support\ServiceProvider;",
+            "use {$repository};\nuse {$repositoryInterface};\nuse Illuminate\Support\ServiceProvider;",
+            $content,
+        );
+
+        $content = str_replace("\n".$this->tabs(1)."}\n}", "\n{$bind}\n".$this->tabs(1)."}\n}", $content, $count);
+
+        if ($count > 0) {
+            File::put($path, $content);
+        }
+    }
+
     private function registerModuleProvider(): void
     {
+        if ($this->isCoreModule()) {
+            return;
+        }
+
         $path = base_path('bootstrap/providers.php');
         $content = File::get($path);
         $provider = "App\\Providers\\{$this->module}ModuleProvider";
@@ -828,7 +879,7 @@ class MakeModuleCrud extends Command
             return;
         }
 
-        $controllerImport = "use App\\Modules\\{$this->module}\\Http\\Controllers\\{$this->entity}Controller;";
+        $controllerImport = "use {$this->getModuleNamespace()}\\Http\\Controllers\\{$this->entity}Controller;";
 
         if (! str_contains($content, $controllerImport)) {
             $content = str_replace(

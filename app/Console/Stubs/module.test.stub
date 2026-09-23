@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\{{module}};
 
-use App\Modules\{{module}}\Models\{{entity}};
+use {{module_namespace}}\Models\{{entity}};
 use Tests\TestCase;
 use Illuminate\Http\Response;
 
