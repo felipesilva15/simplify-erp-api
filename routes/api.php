@@ -9,6 +9,7 @@ use App\Modules\Security\Http\Controllers\AuthController;
 use App\Modules\Security\Http\Controllers\PermissionController;
 use App\Modules\Security\Http\Controllers\RoleController;
 use App\Modules\Security\Http\Controllers\UserController;
+use App\Core\Http\Controllers\CountryController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('security/auth/login', [AuthController::class, 'login'])->name('auth.login');
@@ -18,6 +19,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::prefix('core')->group(function() {
         Route::crudResource('modules', ModuleController::class);
         Route::crudResource('resources', ResourceController::class);
+
+        Route::get('countries/lookup', [CountryController::class, 'lookup'])->name('countries.lookup');
+        Route::resource('countries', CountryController::class)->only('index', 'show');
     });
 
     Route::prefix('security')->group(function() {

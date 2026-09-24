@@ -762,6 +762,404 @@
                 ]
             }
         },
+        "/api/core/countries": {
+            "get": {
+                "tags": [
+                    "Country"
+                ],
+                "summary": "List all countries",
+                "operationId": "8e281e70b05ea1037cb1a0bee3e7cb9f",
+                "parameters": [
+                    {
+                        "name": "filters[id][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[id][lt]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[id][lte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[id][gt]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[id][gte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[id][ne]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[iso_code][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[iso_code][like]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[iso_code][ne]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[name][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[name][like]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[name][ne]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[created_at][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[created_at][lt]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[created_at][lte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[created_at][gt]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[created_at][gte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[created_at][ne]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[updated_at][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[updated_at][lt]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[updated_at][lte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[updated_at][gt]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[updated_at][gte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[updated_at][ne]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "$ref": "#/components/parameters/sortsParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/perPageParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/pageParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Country list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/CountryCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/core/countries/{country}": {
+            "get": {
+                "tags": [
+                    "Country"
+                ],
+                "summary": "List a country by ID",
+                "operationId": "5294269a64360ddbe09fea3ddf0b3675",
+                "parameters": [
+                    {
+                        "name": "country",
+                        "in": "path",
+                        "description": "Country ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Country data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/CountryResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/core/countries/lookup": {
+            "get": {
+                "tags": [
+                    "Country"
+                ],
+                "summary": "Lookup countries",
+                "operationId": "6dc63c62e3ba466cd97fb781526fe61e",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Query for avaiable fields",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "keys[]",
+                        "in": "query",
+                        "description": "Keys to find",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "country lookup list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/CountryLookupCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/core/modules": {
             "get": {
                 "tags": [
@@ -5257,6 +5655,22 @@
                     "!="
                 ]
             },
+            "UserAgentEnum": {
+                "description": "User agents:\n *      Firefox = 'FIREFOX'\n *      Chrome = 'CHROME'\n *      Edge = 'EDGE'\n *      Safari = 'SAFARI'\n *      Postman = 'POSTMAN'\n *      Insomnia = 'INSOMNIA'\n *      Bruno = 'BRUNO'\n *      Googlebot = 'GOOGLEBOT'\n *      Bot = 'BOT'\n *      Unknown = 'UNKNOWN'",
+                "type": "string",
+                "enum": [
+                    "FIREFOX",
+                    "CHROME",
+                    "EDGE",
+                    "SAFARI",
+                    "POSTMAN",
+                    "INSOMNIA",
+                    "BRUNO",
+                    "GOOGLEBOT",
+                    "BOT",
+                    "UNKNOWN"
+                ]
+            },
             "ExportRequest": {
                 "type": "object",
                 "allOf": [
@@ -5547,6 +5961,119 @@
                 },
                 "type": "object"
             },
+            "CountryCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/CountryResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "CountryLookupCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/CountryLookupResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "CountryLookupResource": {
+                "properties": {
+                    "key": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "label": {
+                        "type": "string",
+                        "maxLength": 60,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "sublabel": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Cod.: 1"
+                    },
+                    "meta": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "maxLength": 60,
+                                "minLength": 1,
+                                "example": "Sample"
+                            },
+                            "iso_code": {
+                                "type": "string",
+                                "maxLength": 2,
+                                "minLength": 1,
+                                "example": "Sample"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "CountryResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "iso_code": {
+                        "type": "string",
+                        "maxLength": 2,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 60,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-24T03:46:27.255709Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-24T03:46:27.255709Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "ModuleCollection": {
                 "type": "object",
                 "allOf": [
@@ -5826,6 +6353,35 @@
                 },
                 "type": "object"
             },
+            "Country": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "iso_code": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-24T03:46:27.255709Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-24T03:46:27.255709Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "Module": {
                 "properties": {
                     "id": {
@@ -6029,6 +6585,48 @@
                     "NON_TAXPAYER",
                     "EXEMPT"
                 ]
+            },
+            "StorePartnerTypeRequest": {
+                "required": [
+                    "name",
+                    "code"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 60,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "code": {
+                        "type": "string",
+                        "maxLength": 3,
+                        "minLength": 1,
+                        "example": "Sample"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdatePartnerTypeRequest": {
+                "required": [
+                    "name",
+                    "code"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 60,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "code": {
+                        "type": "string",
+                        "maxLength": 3,
+                        "minLength": 1,
+                        "example": "Sample"
+                    }
+                },
+                "type": "object"
             },
             "StorePartnerRequest": {
                 "required": [
@@ -6356,33 +6954,92 @@
                 },
                 "type": "object"
             },
-            "StorePartnerTypeRequest": {
-                "required": [
-                    "name",
-                    "code"
-                ],
+            "PartnerTypeCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PartnerTypeResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "PartnerTypeLookupCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PartnerTypeLookupResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "PartnerTypeLookupResource": {
                 "properties": {
-                    "name": {
+                    "key": {
                         "type": "string",
-                        "maxLength": 60,
+                        "example": "TYP"
+                    },
+                    "label": {
+                        "type": "string",
+                        "maxLength": 80,
                         "minLength": 1,
                         "example": "Sample"
                     },
-                    "code": {
+                    "sublabel": {
                         "type": "string",
-                        "maxLength": 3,
+                        "maxLength": 80,
                         "minLength": 1,
-                        "example": "Sample"
+                        "example": "Cod.: 1"
+                    },
+                    "meta": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "maxLength": 80,
+                                "minLength": 1,
+                                "example": "Tipo de parceiro"
+                            },
+                            "code": {
+                                "type": "string",
+                                "maxLength": 20,
+                                "minLength": 1,
+                                "example": "TYP"
+                            }
+                        },
+                        "type": "object"
                     }
                 },
                 "type": "object"
             },
-            "UpdatePartnerTypeRequest": {
-                "required": [
-                    "name",
-                    "code"
-                ],
+            "PartnerTypeResource": {
                 "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
                     "name": {
                         "type": "string",
                         "maxLength": 60,
@@ -6394,6 +7051,24 @@
                         "maxLength": 3,
                         "minLength": 1,
                         "example": "Sample"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -6648,125 +7323,6 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2026-09-09T02:22:32.660898Z",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "PartnerTypeCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/PartnerTypeResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "PartnerTypeLookupCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/PartnerTypeLookupResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "PartnerTypeLookupResource": {
-                "properties": {
-                    "key": {
-                        "type": "string",
-                        "example": "TYP"
-                    },
-                    "label": {
-                        "type": "string",
-                        "maxLength": 80,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "sublabel": {
-                        "type": "string",
-                        "maxLength": 80,
-                        "minLength": 1,
-                        "example": "Cod.: 1"
-                    },
-                    "meta": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 1
-                            },
-                            "name": {
-                                "type": "string",
-                                "maxLength": 80,
-                                "minLength": 1,
-                                "example": "Tipo de parceiro"
-                            },
-                            "code": {
-                                "type": "string",
-                                "maxLength": 20,
-                                "minLength": 1,
-                                "example": "TYP"
-                            }
-                        },
-                        "type": "object"
-                    }
-                },
-                "type": "object"
-            },
-            "PartnerTypeResource": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "maxLength": 60,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "code": {
-                        "type": "string",
-                        "maxLength": 3,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
-                        "nullable": true
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
-                        "nullable": true
-                    },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
                         "nullable": true
                     }
                 },
@@ -7856,6 +8412,10 @@
     },
     "tags": [
         {
+            "name": "Country",
+            "description": "Country"
+        },
+        {
             "name": "Module",
             "description": "Module"
         },
@@ -7893,7 +8453,8 @@
             "name": "Core",
             "tags": [
                 "Module",
-                "Resource"
+                "Resource",
+                "Country"
             ]
         },
         {

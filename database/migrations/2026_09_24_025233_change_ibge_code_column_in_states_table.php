@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('states', function (Blueprint $table) {
-            $table->char('ibge_code', 2)->unique()->change();
+            $table->char('ibge_code', 2)->change();
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('states', function (Blueprint $table) {
-            $table->unsignedSmallInteger('ibge_code')->unique()->change();
+            $table->unsignedSmallInteger('ibge_code')->change();
         });
     }
 };
