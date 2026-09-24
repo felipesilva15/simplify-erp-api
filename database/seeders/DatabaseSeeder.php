@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             PartnerTypeSeeder::class,
             CountrySeeder::class,
             StateSeeder::class,
+            CitySeeder::class,
             ACLSeeder::class,
             ProfessionSeeder::class,
         ]);
