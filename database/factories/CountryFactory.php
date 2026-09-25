@@ -12,7 +12,7 @@ class CountryFactory extends Factory
     public function definition(): array
     {
         return [
-            'iso_code' => fake()->unique()->lexify('??'),
+            'iso_code' => fake()->unique()->numerify('##'),
             'name' => fake()->name()
         ];
     }

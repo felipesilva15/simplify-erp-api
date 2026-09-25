@@ -38,7 +38,7 @@ class ActivityLogTest extends TestCase
 
         $actions = collect($response->json('data'))->pluck('action')->all();
 
-        $this->assertEqualsCanonicalizing(['created', 'updated'], $actions);
+        $this->assertEqualsCanonicalizing([ActivityActionEnum::Created->value, ActivityActionEnum::Updated->value], $actions);
         $this->assertSame('user', $response->json('data.0.origin_type'));
         $this->assertSame((string) $user->id, $response->json('data.0.origin_id'));
     }
@@ -55,7 +55,7 @@ class ActivityLogTest extends TestCase
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.action', 'created')
+            ->assertJsonPath('data.0.action', ActivityActionEnum::Created->value)
             ->assertJsonPath('data.0.origin_id', (string) $user->id);
     }
 

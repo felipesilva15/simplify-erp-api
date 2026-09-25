@@ -14,7 +14,7 @@ class CityFactory extends Factory
         return [
             'state_id' => fake()->numberBetween(0, 100),
             'name' => fake()->name(),
-            'ibge_code' => fake()->unique()->lexify('???????')
+            'ibge_code' => fake()->unique()->numerify('#######')
         ];
     }
 }

@@ -15,7 +15,7 @@ class StateFactory extends Factory
             'country_id' => fake()->numberBetween(0, 100),
             'name' => fake()->name(),
             'uf' => fake()->unique()->lexify('??'),
-            'ibge_code' => fake()->unique()->lexify('??')
+            'ibge_code' => fake()->unique()->numerify('##')
         ];
     }
 }
