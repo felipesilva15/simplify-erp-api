@@ -10,6 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *      schema="PartnerResource",
  *      @OA\Property(property="id", type="integer", example=1),
  *      @OA\Property(property="partner_type_code", type="string", example="Sample", minLength=1, maxLength=20),
+ *      @OA\Property(property="partner_type_name", type="string", example="Sample", minLength=1, maxLength=80),
  *      @OA\Property(property="name", type="string", example="Sample", minLength=1, maxLength=120),
  *      @OA\Property(property="trade_name", type="string", example="Sample", minLength=1, maxLength=150),
  *      @OA\Property(property="person_type", type="string", example="Sample", minLength=1, maxLength=30),
@@ -32,6 +33,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *      @OA\Property(property="pix_type", type="string", example="Sample", maxLength=30, nullable=true),
  *      @OA\Property(property="pix_key", type="string", example="Sample", nullable=true),
  *      @OA\Property(property="notes", type="string", example="Sample", nullable=true),
+ *      @OA\Property(property="contacts", type="array", @OA\Items(ref="#/components/schemas/PartnerContactResource")),
  *      @OA\Property(property="created_at", type="string", format="date-time", example="2026-09-09T02:22:32.660898Z", nullable=true),
  *      @OA\Property(property="updated_at", type="string", format="date-time", example="2026-09-09T02:22:32.660898Z", nullable=true),
  *      @OA\Property(property="deleted_at", type="string", format="date-time", example="2026-09-09T02:22:32.660898Z", nullable=true)
@@ -43,6 +45,7 @@ class PartnerResource extends JsonResource
         return [
             'id' => $this->id,
             'partner_type_code' => $this->partner_type_code,
+            'partner_type_name' => $this?->partnerType->name,
             'name' => $this->name,
             'trade_name' => $this->trade_name,
             'person_type' => $this->person_type,
@@ -65,6 +68,7 @@ class PartnerResource extends JsonResource
             'pix_type' => $this->pix_type,
             'pix_key' => $this->pix_key,
             'notes' => $this->notes,
+            'contacts' => PartnerContactResource::collection($this->contacts),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at

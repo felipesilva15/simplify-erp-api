@@ -66,7 +66,15 @@ class StorePartnerRequest extends FormRequest
             'mother_document' => 'nullable|prohibited_if:person_type,'.PersonTypeEnum::Company->value.'|string|min:1|max:15',
             'pix_type' => ['nullable', Rule::enum(PixTypeEnum::class)],
             'pix_key' => 'nullable|string',
-            'notes' => 'nullable|string'
+            'notes' => 'nullable|string',
+            'contacts' => 'nullable|array',
+            'contacts.*.name' => 'required|string|min:1|max:120',
+            'contacts.*.department' => 'nullable|string|min:1|max:80',
+            'contacts.*.email' => 'nullable|email|min:1|max:180',
+            'contacts.*.mobile' => 'nullable|string|min:10|max:11',
+            'contacts.*.phone' => 'nullable|string|min:10|max:10',
+            'contacts.*.main' => 'boolean',
+            'contacts.*.notes' => 'nullable|string'
         ];
     }
 }

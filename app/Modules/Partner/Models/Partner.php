@@ -11,6 +11,8 @@ use App\Modules\Partner\Enums\TaxpayerTypeEnum;
 use Database\Factories\PartnerFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -86,4 +88,12 @@ class Partner extends BaseModel
         'pix_type' => PixTypeEnum::class,
         'taxpayer_type' => TaxpayerTypeEnum::class
     ];
+
+    public function partnerType(): BelongsTo {
+        return $this->belongsTo(PartnerType::class, 'partner_type_code', 'code');
+    }
+
+    public function contacts(): HasMany {
+        return $this->hasMany(Contact::class);
+    }
 }

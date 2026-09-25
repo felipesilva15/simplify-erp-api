@@ -6,6 +6,8 @@ use App\Modules\Partner\Repositories\Eloquent\PartnerRepository;
 use App\Modules\Partner\Repositories\Eloquent\PartnerTypeRepository;
 use App\Modules\Partner\Repositories\Interfaces\PartnerRepositoryInterface;
 use App\Modules\Partner\Repositories\Interfaces\PartnerTypeRepositoryInterface;
+use App\Modules\Partner\Repositories\Eloquent\ContactRepository;
+use App\Modules\Partner\Repositories\Interfaces\ContactRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class PartnerModuleProvider extends ServiceProvider
@@ -17,5 +19,6 @@ class PartnerModuleProvider extends ServiceProvider
     {
         $this->app->bind(PartnerTypeRepositoryInterface::class, PartnerTypeRepository::class);
         $this->app->bind(PartnerRepositoryInterface::class, PartnerRepository::class);
+        $this->app->bind(ContactRepositoryInterface::class, ContactRepository::class);
     }
 }

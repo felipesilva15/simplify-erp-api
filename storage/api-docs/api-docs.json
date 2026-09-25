@@ -6963,10 +6963,6 @@
                         "type": "integer",
                         "example": 1
                     },
-                    "state_id": {
-                        "type": "integer",
-                        "example": 1
-                    },
                     "name": {
                         "type": "string",
                         "maxLength": 90,
@@ -8348,6 +8344,55 @@
                     }
                 ]
             },
+            "PartnerContactResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "minLength": 1,
+                        "example": "Roberto"
+                    },
+                    "department": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "TI"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 180,
+                        "minLength": 1,
+                        "example": "roberto@email.com.br"
+                    },
+                    "mobile": {
+                        "type": "string",
+                        "maxLength": 11,
+                        "example": "11985984268",
+                        "nullable": true
+                    },
+                    "phone": {
+                        "type": "string",
+                        "maxLength": 10,
+                        "example": "1159856859",
+                        "nullable": true
+                    },
+                    "main": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Entrar em contato somente para suporte",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "PartnerLookupCollection": {
                 "type": "object",
                 "allOf": [
@@ -8430,6 +8475,12 @@
                     "partner_type_code": {
                         "type": "string",
                         "maxLength": 20,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "partner_type_name": {
+                        "type": "string",
+                        "maxLength": 80,
                         "minLength": 1,
                         "example": "Sample"
                     },
@@ -8563,6 +8614,12 @@
                         "example": "Sample",
                         "nullable": true
                     },
+                    "contacts": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PartnerContactResource"
+                        }
+                    },
                     "created_at": {
                         "type": "string",
                         "format": "date-time",
@@ -8579,6 +8636,65 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2026-09-09T02:22:32.660898Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "Contact": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "partner_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "department": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "mobile": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "main": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-25T14:06:03.522794Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-25T14:06:03.522794Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-25T14:06:03.522794Z",
                         "nullable": true
                     }
                 },
