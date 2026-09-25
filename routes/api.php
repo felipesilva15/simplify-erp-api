@@ -10,6 +10,8 @@ use App\Modules\Security\Http\Controllers\PermissionController;
 use App\Modules\Security\Http\Controllers\RoleController;
 use App\Modules\Security\Http\Controllers\UserController;
 use App\Core\Http\Controllers\CountryController;
+use App\Core\Http\Controllers\StateController;
+use App\Core\Http\Controllers\CityController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('security/auth/login', [AuthController::class, 'login'])->name('auth.login');
@@ -22,6 +24,12 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::get('countries/lookup', [CountryController::class, 'lookup'])->name('countries.lookup');
         Route::resource('countries', CountryController::class)->only('index', 'show');
+
+        Route::get('states/lookup', [StateController::class, 'lookup'])->name('states.lookup');
+        Route::resource('states', StateController::class)->only('index', 'show');
+
+        Route::get('cities/lookup', [CityController::class, 'lookup'])->name('cities.lookup');
+        Route::resource('cities', CityController::class)->only('index', 'show');
     });
 
     Route::prefix('security')->group(function() {
