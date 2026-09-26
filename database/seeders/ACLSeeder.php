@@ -77,6 +77,57 @@ class ACLSeeder extends Seeder
                                 'updated_at' => $now,
                             ],
                         ]
+                    ],
+                    [
+                        'slug' => 'partner',
+                        'name' => 'Parceiros',
+                        'description' => 'Funcionalidades para parceiros',
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                        'permissions' => [
+                            [
+                                'action' => 'viewAny',
+                                'label' => 'Listar',
+                                'description' => 'Permite realizar a consulta de todos os parceiros',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'view',
+                                'label' => 'Visualizar',
+                                'description' => 'Permite visualizar os detalhes de um parceiro',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'create',
+                                'label' => 'Criar',
+                                'description' => 'Permite realizar a criação de um parceiro',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'update',
+                                'label' => 'Editar',
+                                'description' => 'Permite realizar a edição de um parceiro',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'delete',
+                                'label' => 'Excluir',
+                                'description' => 'Permite realizar a exclusão de um parceiro',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'export',
+                                'label' => 'Exportar dados',
+                                'description' => 'Permite realizar a exportação de dados dos tipos de parceiro',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                        ]
                     ]
                 ]
             ],
