@@ -11,20 +11,39 @@ use Str;
 use ReflectionClass;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+use Illuminate\Support\Collection;
 
 class MorphMapServiceProvider extends ServiceProvider
 {
+    private const CACHE_KEY = 'morph-map';
+
     public function boot(): void
     {
-        $map = Cache::rememberForever('morph-map', fn () => $this->scanModels());
+        Relation::enforceMorphMap($this->resolveMorphMap());
+    }
 
-        Relation::enforceMorphMap($map);
+    protected function resolveMorphMap(): array
+    {
+        $signature = $this->modelFilesSignature();
+        $cached = Cache::get(self::CACHE_KEY);
+
+        if (is_array($cached) && ($cached['signature'] ?? null) === $signature) {
+            return $cached['map'];
+        }
+
+        $map = $this->scanModels();
+
+        Cache::forever(self::CACHE_KEY, [
+            'signature' => $signature,
+            'map' => $map,
+        ]);
+
+        return $map;
     }
 
     protected function scanModels(): array
     {
-        $entries = collect((new Finder())->in(app_path())->files()->name('*.php'))
-            ->filter(fn (SplFileInfo $file) => $this->isModelPath($file))
+        $entries = $this->modelFiles()
             ->map(fn (SplFileInfo $file) => $this->classFromPath($file))
             ->filter(fn (?string $class) => $class
                 && $class !== BaseModel::class
@@ -44,6 +63,20 @@ class MorphMapServiceProvider extends ServiceProvider
         return $entries
             ->mapWithKeys(fn (string $class) => [$this->morphAliasFor($class) => $class])
             ->all();
+    }
+
+    protected function modelFiles(): Collection
+    {
+        return collect((new Finder())->in(app_path())->files()->name('*.php'))
+            ->filter(fn (SplFileInfo $file) => $this->isModelPath($file))
+            ->sortBy(fn (SplFileInfo $file) => $file->getRelativePathname());
+    }
+
+    protected function modelFilesSignature(): string
+    {
+        return $this->modelFiles()
+            ->map(fn (SplFileInfo $file) => $file->getRelativePathname() . ':' . $file->getMTime())
+            ->implode('|');
     }
 
     protected function morphAliasFor(string $class): string
