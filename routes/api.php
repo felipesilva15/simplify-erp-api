@@ -38,6 +38,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('auth/me', [AuthController::class, 'me'])->name('auth.me');
 
         Route::get('users/lookup', [UserController::class, 'lookup'])->name('users.lookup');
+        Route::get('users/export', [UserController::class, 'export'])->name('users.export');
         Route::crudResource('users', UserController::class);
 
         Route::get('roles/lookup', [RoleController::class, 'lookup'])->name('roles.lookup');

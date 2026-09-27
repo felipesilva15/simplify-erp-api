@@ -2,6 +2,8 @@
 
 namespace App\Modules\Security\Http\Controllers;
 
+use App\Core\Traits\HasExcelExport;
+use App\Modules\Security\Exports\UserExport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
@@ -17,6 +19,7 @@ use App\Modules\Security\Http\Resources\User\UserLookupCollection;
 use App\Modules\Security\DTO\UserDTO;
 use App\Modules\Security\Models\User;
 use App\Modules\Security\Services\UserService;
+use InvalidArgumentException;
 
 /**
  * @OA\PathItem(
@@ -61,9 +64,54 @@ use App\Modules\Security\Services\UserService;
  *         security={{"bearerAuth":{}}}
  *     )
  * )
+ * @OA\PathItem(
+ *     path="/api/security/users/export",
+ *     @OA\Get(
+ *         tags={"Security"},
+ *         summary="Export all users to Excel",
+ *         operationId="exportUser",
+ *         @OA\Parameter(
+ *             name="format",
+ *             in="query",
+ *             required=false,
+ *             description="Export format (full, summarized, detailed)",
+ *             @OA\Schema(type="string", enum={"full","summarized","detailed"})
+ *         ),
+ *         @OA\Parameter(
+ *             name="extension",
+ *             in="query",
+ *             required=false,
+ *             description="File extension (xlsx, xls, csv)",
+ *             @OA\Schema(type="string", enum={"xlsx","xls","csv"})
+ *         ),
+ *     @OA\Parameter(name="filters[id][eq]", in="query", required=false, @OA\Schema(type="integer")),
+ *     @OA\Parameter(name="filters[name][like]", in="query", required=false, @OA\Schema(type="string")),
+ *     @OA\Parameter(name="filters[created_at][gte]", in="query", required=false, @OA\Schema(type="string")),
+ *     @OA\Parameter(name="filters[updated_at][lte]", in="query", required=false, @OA\Schema(type="string")),
+ *         @OA\Response(
+ *             response="200",
+ *             description="Excel file with users",
+ *             @OA\MediaType(
+ *                 mediaType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+ *             )
+ *         ),
+ *         @OA\Response(
+ *             response="401",
+ *             description="Unauthorized",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="403",
+ *             description="Forbidden",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         security={{"bearerAuth":{}}}
+ *     )
+ * )
  */
 class UserController extends Controller
 {
+    use HasExcelExport;
     use HasActivityLogs;
 
     protected UserService $service;
@@ -76,6 +124,21 @@ class UserController extends Controller
     protected function activityLogModelClass(): string
     {
         return User::class;
+    }
+
+    protected function exportModelClass(): string
+    {
+        return User::class;
+    }
+
+    protected function exportClassForFormat(string $format): string
+    {
+        return match ($format) {
+            'full' => UserExport::class,
+            default => throw new InvalidArgumentException(
+                "Formato de exportação [{$format}] não suportado para parceiros."
+            ),
+        };
     }
 
     /**

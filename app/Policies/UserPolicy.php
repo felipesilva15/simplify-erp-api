@@ -33,4 +33,9 @@ class UserPolicy
     {
         return $this->authService->hasAuthorized($user, 'users.delete');
     }
+
+    public function export(User $user)
+    {
+        return $this->authService->hasAuthorized($user, 'users.export');
+    }
 }

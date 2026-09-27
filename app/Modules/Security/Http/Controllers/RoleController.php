@@ -67,9 +67,9 @@ use InvalidArgumentException;
  * @OA\PathItem(
  *     path="/api/security/roles/export",
  *     @OA\Get(
- *         tags={"Partner"},
+ *         tags={"Security"},
  *         summary="Export all roles to Excel",
- *         operationId="exportPartner",
+ *         operationId="exportRole",
  *         @OA\Parameter(
  *             name="format",
  *             in="query",

@@ -10,6 +10,14 @@ use Override;
 class UserRepository extends BaseRepository implements UserRepositoryInterface
 {
     #[Override]
+    protected function withRelations(): array
+    {
+        return [
+            'roles'
+        ];
+    }
+
+    #[Override]
     public function getMaskedSearchableColumns(): array
     {
         return [
