@@ -251,6 +251,17 @@ class PartnerController extends Controller
      *                          property="data",
      *                          ref="#/components/schemas/PartnerResource"
      *                      )
+     *                  ),
+     *                  @OA\Schema(
+     *                      @OA\Property(property="meta", type="object", nullable=true,
+     *                          @OA\Property(property="children", type="object",
+     *                              @OA\Property(property="contacts", type="object",
+     *                                  @OA\Property(property="created", type="integer", example=2),
+     *                                  @OA\Property(property="updated", type="integer", example=0),
+     *                                  @OA\Property(property="deleted", type="integer", example=0)
+     *                              )
+     *                          )
+     *                      )
      *                  )
      *              }
      *          )
@@ -279,6 +290,7 @@ class PartnerController extends Controller
 
         return $this->success(
             data: new PartnerResource($serviceResult->data),
+            meta: $serviceResult->meta ?: null,
             httpStatus: Response::HTTP_CREATED
         );
     }
@@ -372,6 +384,17 @@ class PartnerController extends Controller
      *                          property="data",
      *                          ref="#/components/schemas/PartnerResource"
      *                      )
+     *                  ),
+     *                  @OA\Schema(
+     *                      @OA\Property(property="meta", type="object", nullable=true,
+     *                          @OA\Property(property="children", type="object",
+     *                              @OA\Property(property="contacts", type="object",
+     *                                  @OA\Property(property="created", type="integer", example=2),
+     *                                  @OA\Property(property="updated", type="integer", example=0),
+     *                                  @OA\Property(property="deleted", type="integer", example=0)
+     *                              )
+     *                          )
+     *                      )
      *                  )
      *              }
      *          )
@@ -405,6 +428,7 @@ class PartnerController extends Controller
 
         return $this->success(
             data: new PartnerResource($serviceResult->data),
+            meta: $serviceResult->meta ?: null,
             httpStatus: Response::HTTP_OK
         );
     }
