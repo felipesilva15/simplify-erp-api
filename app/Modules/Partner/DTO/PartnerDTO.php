@@ -31,6 +31,7 @@ class PartnerDTO
         public ?string $pix_type = null,
         public ?string $pix_key = '',
         public ?string $notes = '',
+        public ?array $contacts = null,
         public ?Carbon $created_at = null,
         public ?Carbon $updated_at = null,
         public ?Carbon $deleted_at = null
@@ -62,6 +63,7 @@ class PartnerDTO
             pix_type: $data['pix_type'] ?? null,
             pix_key: $data['pix_key'] ?? '',
             notes: $data['notes'] ?? '',
+            contacts: array_key_exists('contacts', $data) ? $data['contacts'] : null,
             created_at: $data['created_at'] ?? null,
             updated_at: $data['updated_at'] ?? null,
             deleted_at: $data['deleted_at'] ?? null
@@ -94,6 +96,7 @@ class PartnerDTO
             'pix_type' => $this->pix_type,
             'pix_key' => $this->pix_key,
             'notes' => $this->notes,
+            'contacts' => $this->contacts,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at

@@ -36,7 +36,8 @@ use Illuminate\Validation\Rule;
  *      @OA\Property(property="mother_document", type="string", example="Sample", minLength=1, maxLength=15, nullable=true),
  *      @OA\Property(property="pix_type", ref="#/components/schemas/PixTypeEnum", nullable=true),
  *      @OA\Property(property="pix_key", type="string", example="Sample", minLength=1, maxLength=0, nullable=true),
- *      @OA\Property(property="notes", type="string", example="Sample", minLength=1, maxLength=0, nullable=true)
+ *      @OA\Property(property="notes", type="string", example="Sample", minLength=1, maxLength=0, nullable=true),
+ *      @OA\Property(property="contacts", type="array", maxItems=50, nullable=true, @OA\Items(ref="#/components/schemas/ContactItem"))
  * )
  */
 class UpdatePartnerRequest extends FormRequest
@@ -49,7 +50,7 @@ class UpdatePartnerRequest extends FormRequest
             'trade_name' => 'required|string|min:1|max:150',
             'person_type' => ['required', Rule::enum(PersonTypeEnum::class)],
             'taxpayer_type' => ['required', Rule::enum(TaxpayerTypeEnum::class)],
-            'document_number' => ['required' , 'string', 'min:1', 'max:20', Rule::unique('partners', 'document_number')->ignore($this->partner)],
+            'document_number' => ['required', 'string', 'min:1', 'max:20', Rule::unique('partners', 'document_number')->ignore($this->partner)],
             'identity_number' => 'nullable|prohibited_if:person_type,'.PersonTypeEnum::Company->value.'|string|min:1|max:15',
             'identity_issuer' => 'nullable|prohibited_if:person_type,'.PersonTypeEnum::Company->value.'|string|min:1|max:20',
             'partner_since' => 'nullable|date',
@@ -66,7 +67,16 @@ class UpdatePartnerRequest extends FormRequest
             'mother_document' => 'nullable|prohibited_if:person_type,'.PersonTypeEnum::Company->value.'|string|min:1|max:15',
             'pix_type' => ['nullable', Rule::enum(PixTypeEnum::class)],
             'pix_key' => 'nullable|string',
-            'notes' => 'nullable|string'
+            'notes' => 'nullable|string',
+            'contacts' => 'nullable|array|max:50',
+            'contacts.*.id' => 'nullable|integer|min:1',
+            'contacts.*.name' => 'required|string|min:1|max:120',
+            'contacts.*.department' => 'nullable|string|min:1|max:80',
+            'contacts.*.email' => 'nullable|email|min:1|max:180',
+            'contacts.*.mobile' => 'nullable|string|min:10|max:11',
+            'contacts.*.phone' => 'nullable|string|min:10|max:10',
+            'contacts.*.main' => 'nullable|boolean',
+            'contacts.*.notes' => 'nullable|string'
         ];
     }
 }

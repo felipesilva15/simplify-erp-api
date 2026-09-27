@@ -10,6 +10,14 @@ use Override;
 class PartnerRepository extends BaseRepository implements PartnerRepositoryInterface
 {
     #[Override]
+    protected function withRelations(): array
+    {
+        return [
+            'contacts'
+        ];
+    }
+
+    #[Override]
     public function getMaskedSearchableColumns(): array
     {
         return [

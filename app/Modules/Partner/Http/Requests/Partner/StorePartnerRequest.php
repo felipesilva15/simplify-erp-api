@@ -36,7 +36,8 @@ use Illuminate\Validation\Rule;
  *      @OA\Property(property="mother_document", type="string", example="Sample", minLength=1, maxLength=15, nullable=true),
  *      @OA\Property(property="pix_type", ref="#/components/schemas/PixTypeEnum", nullable=true),
  *      @OA\Property(property="pix_key", type="string", example="Sample", minLength=1, maxLength=0, nullable=true),
- *      @OA\Property(property="notes", type="string", example="Sample", minLength=1, maxLength=0, nullable=true)
+ *      @OA\Property(property="notes", type="string", example="Sample", minLength=1, maxLength=0, nullable=true),
+ *      @OA\Property(property="contacts", type="array", maxItems=50, nullable=true, @OA\Items(ref="#/components/schemas/ContactItem")),
  * )
  */
 class StorePartnerRequest extends FormRequest
@@ -67,13 +68,14 @@ class StorePartnerRequest extends FormRequest
             'pix_type' => ['nullable', Rule::enum(PixTypeEnum::class)],
             'pix_key' => 'nullable|string',
             'notes' => 'nullable|string',
-            'contacts' => 'nullable|array',
+            'contacts' => 'nullable|array|max:50',
+            'contacts.*.id' => 'nullable|integer|min:1',
             'contacts.*.name' => 'required|string|min:1|max:120',
             'contacts.*.department' => 'nullable|string|min:1|max:80',
             'contacts.*.email' => 'nullable|email|min:1|max:180',
             'contacts.*.mobile' => 'nullable|string|min:10|max:11',
             'contacts.*.phone' => 'nullable|string|min:10|max:10',
-            'contacts.*.main' => 'boolean',
+            'contacts.*.main' => 'nullable|boolean',
             'contacts.*.notes' => 'nullable|string'
         ];
     }
