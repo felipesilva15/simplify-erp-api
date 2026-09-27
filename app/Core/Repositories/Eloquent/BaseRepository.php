@@ -38,13 +38,22 @@ abstract class BaseRepository implements BaseRepositoryInterface
         return [];
     }
 
+    protected function withRelations(): array {
+        return [];
+    }
+
     public function list(array $params = []): LengthAwarePaginator {
         $query = $this->applyListParams($this->model::query(), $params);
 
         $perPage = isset($params['per_page']) ? (int) $params['per_page'] : 15;
         $page = isset($params['page']) ? (int) $params['page'] : 1;
 
-        return $query->paginate(perPage: $perPage, page: $page)->withQueryString();
+        if ($relations = $this->withRelations()) {
+            $query = $query->with($relations);
+        }
+
+        return $query->paginate(perPage: $perPage, page: $page)
+            ->withQueryString();
     }
 
     public function getExportQuery(array $params = []): Builder {
