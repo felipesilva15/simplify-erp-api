@@ -3,8 +3,8 @@
 use App\Core\Http\Controllers\ModuleController;
 use App\Core\Http\Controllers\ResourceController;
 use App\Core\Models\ActivityLog;
-use App\Modules\Partner\Http\Controllers\PartnerController;
-use App\Modules\Partner\Http\Controllers\PartnerTypeController;
+use App\Modules\ThirdParty\Http\Controllers\PartnerController;
+use App\Modules\ThirdParty\Http\Controllers\PartnerTypeController;
 use App\Modules\Security\Http\Controllers\AuthController;
 use App\Modules\Security\Http\Controllers\PermissionController;
 use App\Modules\Security\Http\Controllers\RoleController;
@@ -47,7 +47,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::crudResource('permissions', PermissionController::class);
     });
 
-    Route::prefix('partner')->group(function() {
+    Route::prefix('third-party')->group(function() {
         Route::get('partner-types/lookup', [PartnerTypeController::class, 'lookup'])->name('partner-types.lookup');
         Route::crudResource('partner-types', PartnerTypeController::class);
 

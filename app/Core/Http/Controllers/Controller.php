@@ -22,7 +22,7 @@ use Illuminate\Routing\Controller as BaseController;
  *                 "tags"={"Authentication", "Permission", "Role", "User"}
  *             },
  *             {
- *                 "name"="Partner",
+ *                 "name"="ThirdParty",
  *                 "tags"={"PartnerType", "Partner"}
  *             }
  *         }

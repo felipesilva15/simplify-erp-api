@@ -1,8 +1,8 @@
 <?php
 
 use App\Core\Helpers\EnumHelpers;
-use App\Modules\Partner\Enums\PersonTypeEnum;
-use App\Modules\Partner\Enums\TaxpayerTypeEnum;
+use App\Modules\ThirdParty\Enums\PersonTypeEnum;
+use App\Modules\ThirdParty\Enums\TaxpayerTypeEnum;
 
 return [
 

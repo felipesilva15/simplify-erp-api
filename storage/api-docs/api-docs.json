@@ -208,290 +208,6 @@
                 ]
             }
         },
-        "/api/partner/partners/{id}/activity-logs": {
-            "get": {
-                "tags": [
-                    "Partner"
-                ],
-                "summary": "List activity logs of a partner",
-                "operationId": "b039386c06ffa20d367d804602f5f471",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Partner ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "per_page",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Partner activity logs",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "allOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ApiResponse"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/ActivityLogCollection"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Record not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/partner/partners/export": {
-            "get": {
-                "tags": [
-                    "Partner"
-                ],
-                "summary": "Export all partners to Excel",
-                "operationId": "exportPartner",
-                "parameters": [
-                    {
-                        "name": "format",
-                        "in": "query",
-                        "description": "Export format (full, summarized, detailed)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "full",
-                                "summarized",
-                                "detailed"
-                            ]
-                        }
-                    },
-                    {
-                        "name": "extension",
-                        "in": "query",
-                        "description": "File extension (xlsx, xls, csv)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "xlsx",
-                                "xls",
-                                "csv"
-                            ]
-                        }
-                    },
-                    {
-                        "name": "filters[id][eq]",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "filters[name][like]",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "filters[created_at][gte]",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "filters[updated_at][lte]",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Excel file with partners",
-                        "content": {
-                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {}
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/partner/partner-types/{id}/activity-logs": {
-            "get": {
-                "tags": [
-                    "PartnerType"
-                ],
-                "summary": "List activity logs of a partner type",
-                "operationId": "9728477260e19e5809a450795e46c365",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Partner type ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "per_page",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Partner type activity logs",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "allOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ApiResponse"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/ActivityLogCollection"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Record not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
         "/api/security/permissions/{id}/activity-logs": {
             "get": {
                 "tags": [
@@ -709,6 +425,290 @@
                 "responses": {
                     "200": {
                         "description": "User activity logs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ActivityLogCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/third-party/partners/{id}/activity-logs": {
+            "get": {
+                "tags": [
+                    "Partner"
+                ],
+                "summary": "List activity logs of a partner",
+                "operationId": "175f9c8bac17b851b59a63f1f560fee4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Partner ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Partner activity logs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ActivityLogCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/third-party/partners/export": {
+            "get": {
+                "tags": [
+                    "Partner"
+                ],
+                "summary": "Export all partners to Excel",
+                "operationId": "exportPartner",
+                "parameters": [
+                    {
+                        "name": "format",
+                        "in": "query",
+                        "description": "Export format (full, summarized, detailed)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "full",
+                                "summarized",
+                                "detailed"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "extension",
+                        "in": "query",
+                        "description": "File extension (xlsx, xls, csv)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "xlsx",
+                                "xls",
+                                "csv"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "filters[id][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[name][like]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[created_at][gte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[updated_at][lte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Excel file with partners",
+                        "content": {
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/third-party/partner-types/{id}/activity-logs": {
+            "get": {
+                "tags": [
+                    "PartnerType"
+                ],
+                "summary": "List activity logs of a partner type",
+                "operationId": "f34c155f6af5fc47bd55450af0c62cc5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Partner type ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Partner type activity logs",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3192,1196 +3192,6 @@
                 ]
             }
         },
-        "/api/partner/partners": {
-            "get": {
-                "tags": [
-                    "Partner"
-                ],
-                "summary": "List all partners",
-                "operationId": "16c737bc612c0f1da2873a9fd54afedd",
-                "parameters": [
-                    {
-                        "name": "filters[id][eq]",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "filters[name][like]",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "filters[created_at][gte]",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "filters[updated_at][lte]",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "$ref": "#/components/parameters/sortsParam"
-                    },
-                    {
-                        "$ref": "#/components/parameters/perPageParam"
-                    },
-                    {
-                        "$ref": "#/components/parameters/pageParam"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Partner list",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "allOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ApiResponse"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/PartnerCollection"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "post": {
-                "tags": [
-                    "Partner"
-                ],
-                "summary": "Registers a partner",
-                "operationId": "4dc1b2fd97a53b96705c91d6ea9cf42c",
-                "requestBody": {
-                    "description": "Data for creating a new partner",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/StorePartnerRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Registered partner data",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "allOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ApiResponse"
-                                        },
-                                        {
-                                            "properties": {
-                                                "data": {
-                                                    "$ref": "#/components/schemas/PartnerResource"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        {
-                                            "properties": {
-                                                "meta": {
-                                                    "properties": {
-                                                        "children": {
-                                                            "properties": {
-                                                                "contacts": {
-                                                                    "properties": {
-                                                                        "created": {
-                                                                            "type": "integer",
-                                                                            "example": 2
-                                                                        },
-                                                                        "updated": {
-                                                                            "type": "integer",
-                                                                            "example": 0
-                                                                        },
-                                                                        "deleted": {
-                                                                            "type": "integer",
-                                                                            "example": 0
-                                                                        }
-                                                                    },
-                                                                    "type": "object"
-                                                                }
-                                                            },
-                                                            "type": "object"
-                                                        }
-                                                    },
-                                                    "type": "object",
-                                                    "nullable": true
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/partner/partners/{partner}": {
-            "get": {
-                "tags": [
-                    "Partner"
-                ],
-                "summary": "List a partner by ID",
-                "operationId": "e120c935b5e826be2b50182d4432bf72",
-                "parameters": [
-                    {
-                        "name": "partner",
-                        "in": "path",
-                        "description": "Partner ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Partner data",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "allOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ApiResponse"
-                                        },
-                                        {
-                                            "properties": {
-                                                "data": {
-                                                    "$ref": "#/components/schemas/PartnerResource"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Record not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "put": {
-                "tags": [
-                    "Partner"
-                ],
-                "summary": "Update a partner",
-                "operationId": "26a1da28c1e93d463befa70131a2636d",
-                "parameters": [
-                    {
-                        "name": "partner",
-                        "in": "path",
-                        "description": "Partner ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "description": "Data for update partner",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/UpdatePartnerRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Updated partner data",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "allOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ApiResponse"
-                                        },
-                                        {
-                                            "properties": {
-                                                "data": {
-                                                    "$ref": "#/components/schemas/PartnerResource"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        {
-                                            "properties": {
-                                                "meta": {
-                                                    "properties": {
-                                                        "children": {
-                                                            "properties": {
-                                                                "contacts": {
-                                                                    "properties": {
-                                                                        "created": {
-                                                                            "type": "integer",
-                                                                            "example": 2
-                                                                        },
-                                                                        "updated": {
-                                                                            "type": "integer",
-                                                                            "example": 0
-                                                                        },
-                                                                        "deleted": {
-                                                                            "type": "integer",
-                                                                            "example": 0
-                                                                        }
-                                                                    },
-                                                                    "type": "object"
-                                                                }
-                                                            },
-                                                            "type": "object"
-                                                        }
-                                                    },
-                                                    "type": "object",
-                                                    "nullable": true
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Record not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Partner"
-                ],
-                "summary": "Delete a partner",
-                "operationId": "e14bab5dd3e1765c9ef7ee351b660b7b",
-                "parameters": [
-                    {
-                        "name": "partner",
-                        "in": "path",
-                        "description": "Partner ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No content"
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Record not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/partner/partners/{partner}/edit": {
-            "get": {
-                "tags": [
-                    "Partner"
-                ],
-                "summary": "Get data to edit a partner",
-                "operationId": "472787954cf7b2ce47d555613449e983",
-                "parameters": [
-                    {
-                        "name": "partner",
-                        "in": "path",
-                        "description": "Partner ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Partner data",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "allOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ApiResponse"
-                                        },
-                                        {
-                                            "properties": {
-                                                "data": {
-                                                    "$ref": "#/components/schemas/PartnerResource"
-                                                },
-                                                "warnings": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "string",
-                                                        "example": "Este recurso não pode ser editado."
-                                                    },
-                                                    "nullable": true
-                                                },
-                                                "meta": {
-                                                    "properties": {
-                                                        "editable": {
-                                                            "type": "boolean",
-                                                            "example": true
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Record not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/partner/partners/lookup": {
-            "get": {
-                "tags": [
-                    "Partner"
-                ],
-                "summary": "Lookup partners",
-                "operationId": "319efbd353ac9c33fef61c42aca06e17",
-                "parameters": [
-                    {
-                        "name": "q",
-                        "in": "query",
-                        "description": "Query for avaiable fields",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "keys[]",
-                        "in": "query",
-                        "description": "Keys to find",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Partner type lookup list",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "allOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ApiResponse"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/PartnerLookupCollection"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/partner/partner-types": {
-            "get": {
-                "tags": [
-                    "PartnerType"
-                ],
-                "summary": "List all partner types",
-                "operationId": "a5676a76eaf761f47222b7e9dfab2b23",
-                "parameters": [
-                    {
-                        "name": "filters[id][eq]",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "filters[name][like]",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "filters[created_at][gte]",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "filters[updated_at][lte]",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "$ref": "#/components/parameters/sortsParam"
-                    },
-                    {
-                        "$ref": "#/components/parameters/perPageParam"
-                    },
-                    {
-                        "$ref": "#/components/parameters/pageParam"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "PartnerType list",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "allOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ApiResponse"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/PartnerTypeCollection"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "post": {
-                "tags": [
-                    "PartnerType"
-                ],
-                "summary": "Registers a partner type",
-                "operationId": "4ddab14bbbba0663b08eb7381b0dc85f",
-                "requestBody": {
-                    "description": "Data for creating a new partner type",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/StorePartnerTypeRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Registered partner type data",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "allOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ApiResponse"
-                                        },
-                                        {
-                                            "properties": {
-                                                "data": {
-                                                    "$ref": "#/components/schemas/PartnerTypeResource"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/partner/partner-types/{partner_type}": {
-            "get": {
-                "tags": [
-                    "PartnerType"
-                ],
-                "summary": "List a partner type by ID",
-                "operationId": "d527f6a614f0a86c155a6d76a5ec465a",
-                "parameters": [
-                    {
-                        "name": "partner_type",
-                        "in": "path",
-                        "description": "PartnerType ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "PartnerType data",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "allOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ApiResponse"
-                                        },
-                                        {
-                                            "properties": {
-                                                "data": {
-                                                    "$ref": "#/components/schemas/PartnerTypeResource"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Record not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "put": {
-                "tags": [
-                    "PartnerType"
-                ],
-                "summary": "Update a partner type",
-                "operationId": "6fb92e2b21efcf765434dd444d23b809",
-                "parameters": [
-                    {
-                        "name": "partner_type",
-                        "in": "path",
-                        "description": "PartnerType ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "description": "Data for update partner type",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/UpdatePartnerTypeRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Updated partner type data",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "allOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ApiResponse"
-                                        },
-                                        {
-                                            "properties": {
-                                                "data": {
-                                                    "$ref": "#/components/schemas/PartnerTypeResource"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Record not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "PartnerType"
-                ],
-                "summary": "Delete a partner type",
-                "operationId": "e8c7f6128b8da894c586fdc0315b522a",
-                "parameters": [
-                    {
-                        "name": "partner_type",
-                        "in": "path",
-                        "description": "PartnerType ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No content"
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Record not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/partner/partner-types/{partner_type}/edit": {
-            "get": {
-                "tags": [
-                    "PartnerType"
-                ],
-                "summary": "Get data to edit a partner type",
-                "operationId": "0065448e3da9b3c2ce076fcb8fb91cb7",
-                "parameters": [
-                    {
-                        "name": "partner_type",
-                        "in": "path",
-                        "description": "PartnerType ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "PartnerType data",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "allOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ApiResponse"
-                                        },
-                                        {
-                                            "properties": {
-                                                "data": {
-                                                    "$ref": "#/components/schemas/PartnerTypeResource"
-                                                },
-                                                "warnings": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "string",
-                                                        "example": "Este recurso não pode ser editado."
-                                                    },
-                                                    "nullable": true
-                                                },
-                                                "meta": {
-                                                    "properties": {
-                                                        "editable": {
-                                                            "type": "boolean",
-                                                            "example": true
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Record not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/partner/partner-types/lookup": {
-            "get": {
-                "tags": [
-                    "PartnerType"
-                ],
-                "summary": "Lookup partner types",
-                "operationId": "e8eb67b50d46ef6ee4439a6d74d999dc",
-                "parameters": [
-                    {
-                        "name": "q",
-                        "in": "query",
-                        "description": "Query for avaiable fields",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "keys[]",
-                        "in": "query",
-                        "description": "Keys to find",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Partner type lookup list",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "allOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ApiResponse"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/PartnerTypeLookupCollection"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
         "/api/security/auth/login": {
             "post": {
                 "tags": [
@@ -6476,6 +5286,1196 @@
                     }
                 ]
             }
+        },
+        "/api/third-party/partners": {
+            "get": {
+                "tags": [
+                    "Partner"
+                ],
+                "summary": "List all partners",
+                "operationId": "22c3f663dbfaeabf77046cb0cb5fd6ae",
+                "parameters": [
+                    {
+                        "name": "filters[id][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[name][like]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[created_at][gte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[updated_at][lte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "$ref": "#/components/parameters/sortsParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/perPageParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/pageParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Partner list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/PartnerCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Partner"
+                ],
+                "summary": "Registers a partner",
+                "operationId": "82cf5d4f00cdd4b89c01ae77fbeab117",
+                "requestBody": {
+                    "description": "Data for creating a new partner",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StorePartnerRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Registered partner data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/PartnerResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "properties": {
+                                                "meta": {
+                                                    "properties": {
+                                                        "children": {
+                                                            "properties": {
+                                                                "contacts": {
+                                                                    "properties": {
+                                                                        "created": {
+                                                                            "type": "integer",
+                                                                            "example": 2
+                                                                        },
+                                                                        "updated": {
+                                                                            "type": "integer",
+                                                                            "example": 0
+                                                                        },
+                                                                        "deleted": {
+                                                                            "type": "integer",
+                                                                            "example": 0
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "type": "object",
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/third-party/partners/{partner}": {
+            "get": {
+                "tags": [
+                    "Partner"
+                ],
+                "summary": "List a partner by ID",
+                "operationId": "e51ae3e9fc2a5d518367eecb6a65a30d",
+                "parameters": [
+                    {
+                        "name": "partner",
+                        "in": "path",
+                        "description": "Partner ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Partner data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/PartnerResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Partner"
+                ],
+                "summary": "Update a partner",
+                "operationId": "f9d9c715682c8f40d152b6ab587a9979",
+                "parameters": [
+                    {
+                        "name": "partner",
+                        "in": "path",
+                        "description": "Partner ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Data for update partner",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdatePartnerRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated partner data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/PartnerResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "properties": {
+                                                "meta": {
+                                                    "properties": {
+                                                        "children": {
+                                                            "properties": {
+                                                                "contacts": {
+                                                                    "properties": {
+                                                                        "created": {
+                                                                            "type": "integer",
+                                                                            "example": 2
+                                                                        },
+                                                                        "updated": {
+                                                                            "type": "integer",
+                                                                            "example": 0
+                                                                        },
+                                                                        "deleted": {
+                                                                            "type": "integer",
+                                                                            "example": 0
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "type": "object",
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Partner"
+                ],
+                "summary": "Delete a partner",
+                "operationId": "492122e4926bd13043de3eb0132b0a8b",
+                "parameters": [
+                    {
+                        "name": "partner",
+                        "in": "path",
+                        "description": "Partner ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/third-party/partners/{partner}/edit": {
+            "get": {
+                "tags": [
+                    "Partner"
+                ],
+                "summary": "Get data to edit a partner",
+                "operationId": "4cc29969f00ac0c1c903ed61034a8b72",
+                "parameters": [
+                    {
+                        "name": "partner",
+                        "in": "path",
+                        "description": "Partner ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Partner data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/PartnerResource"
+                                                },
+                                                "warnings": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "Este recurso não pode ser editado."
+                                                    },
+                                                    "nullable": true
+                                                },
+                                                "meta": {
+                                                    "properties": {
+                                                        "editable": {
+                                                            "type": "boolean",
+                                                            "example": true
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/third-party/partners/lookup": {
+            "get": {
+                "tags": [
+                    "Partner"
+                ],
+                "summary": "Lookup partners",
+                "operationId": "d57ec9e5b158b3024fde74cab2f4df6a",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Query for avaiable fields",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "keys[]",
+                        "in": "query",
+                        "description": "Keys to find",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Partner type lookup list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/PartnerLookupCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/third-party/partner-types": {
+            "get": {
+                "tags": [
+                    "PartnerType"
+                ],
+                "summary": "List all partner types",
+                "operationId": "b35bb1ff234a3cfdcef314371babe517",
+                "parameters": [
+                    {
+                        "name": "filters[id][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[name][like]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[created_at][gte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[updated_at][lte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "$ref": "#/components/parameters/sortsParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/perPageParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/pageParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "PartnerType list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/PartnerTypeCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "PartnerType"
+                ],
+                "summary": "Registers a partner type",
+                "operationId": "f359d62834b56cdd85f1c295910a4a37",
+                "requestBody": {
+                    "description": "Data for creating a new partner type",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StorePartnerTypeRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Registered partner type data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/PartnerTypeResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/third-party/partner-types/{partner_type}": {
+            "get": {
+                "tags": [
+                    "PartnerType"
+                ],
+                "summary": "List a partner type by ID",
+                "operationId": "084f7a645546aa486142eb9d52d96dd7",
+                "parameters": [
+                    {
+                        "name": "partner_type",
+                        "in": "path",
+                        "description": "PartnerType ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "PartnerType data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/PartnerTypeResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "PartnerType"
+                ],
+                "summary": "Update a partner type",
+                "operationId": "655a81f26783f1b6db35d31ed658c783",
+                "parameters": [
+                    {
+                        "name": "partner_type",
+                        "in": "path",
+                        "description": "PartnerType ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Data for update partner type",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdatePartnerTypeRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated partner type data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/PartnerTypeResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "PartnerType"
+                ],
+                "summary": "Delete a partner type",
+                "operationId": "1fe068686777ac9b78442bd462dbefa1",
+                "parameters": [
+                    {
+                        "name": "partner_type",
+                        "in": "path",
+                        "description": "PartnerType ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/third-party/partner-types/{partner_type}/edit": {
+            "get": {
+                "tags": [
+                    "PartnerType"
+                ],
+                "summary": "Get data to edit a partner type",
+                "operationId": "af402e0968e2c5ea04e7ad69b00e6ee7",
+                "parameters": [
+                    {
+                        "name": "partner_type",
+                        "in": "path",
+                        "description": "PartnerType ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "PartnerType data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/PartnerTypeResource"
+                                                },
+                                                "warnings": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "Este recurso não pode ser editado."
+                                                    },
+                                                    "nullable": true
+                                                },
+                                                "meta": {
+                                                    "properties": {
+                                                        "editable": {
+                                                            "type": "boolean",
+                                                            "example": true
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/third-party/partner-types/lookup": {
+            "get": {
+                "tags": [
+                    "PartnerType"
+                ],
+                "summary": "Lookup partner types",
+                "operationId": "5ef504f97a94fdcad6d61dfba10170fc",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Query for avaiable fields",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "keys[]",
+                        "in": "query",
+                        "description": "Keys to find",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Partner type lookup list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/PartnerTypeLookupCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -6666,7 +6666,6 @@
                     {
                         "properties": {
                             "errors": {
-                                "description": "Violação de regra de negócio detectada na camada de Service.\n\nDiferente da ValidationException (que valida forma/formato do payload e é\nlevantada pelo Request), esta exceção carrega invariantes que só podem ser\navaliadas com acesso aos dados persistidos — por exemplo, \"apenas um contato\nprincipal por parceiro\" ou \"este item pertence a outro registro\".",
                                 "type": "object",
                                 "example": {
                                     "contacts.0.email": "Informe ao menos um meio de contato."
@@ -7881,6 +7880,873 @@
                     }
                 ]
             },
+            "LoginRequest": {
+                "required": [
+                    "username",
+                    "password"
+                ],
+                "properties": {
+                    "username": {
+                        "type": "string",
+                        "example": "felipe.silva"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "123"
+                    }
+                },
+                "type": "object"
+            },
+            "StorePermissionRequest": {
+                "required": [
+                    "resource_id",
+                    "label",
+                    "action"
+                ],
+                "properties": {
+                    "resource_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "label": {
+                        "type": "string",
+                        "maxLength": 60,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "action": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "description": {
+                        "type": "string",
+                        "maxLength": 512,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdatePermissionRequest": {
+                "required": [
+                    "resource_id",
+                    "label",
+                    "action"
+                ],
+                "properties": {
+                    "resource_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "label": {
+                        "type": "string",
+                        "maxLength": 60,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "action": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "description": {
+                        "type": "string",
+                        "maxLength": 512,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "RolePermissionsRequest": {
+                "properties": {
+                    "ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "StoreRoleRequest": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "description": {
+                        "type": "string",
+                        "maxLength": 512,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateRoleRequest": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "description": {
+                        "type": "string",
+                        "maxLength": 512,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "StoreUserRequest": {
+                "required": [
+                    "name",
+                    "email",
+                    "password",
+                    "username"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "email": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "password": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "username": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "phone_number": {
+                        "type": "string",
+                        "maxLength": 14,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "is_admin": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "roles": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "id"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 1
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateUserRequest": {
+                "required": [
+                    "name",
+                    "email",
+                    "password",
+                    "required"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "email": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "username": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "phone_number": {
+                        "type": "string",
+                        "maxLength": 14,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "is_admin": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "roles": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "id"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 1
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "TokenDetailsResource": {
+                "properties": {
+                    "access_token": {
+                        "type": "string",
+                        "example": "token123"
+                    },
+                    "token_type": {
+                        "type": "string",
+                        "example": "bearer"
+                    },
+                    "expires_in": {
+                        "type": "number",
+                        "example": 3600
+                    }
+                },
+                "type": "object"
+            },
+            "PermissionCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PermissionResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "PermissionResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "label": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "resource": {
+                        "$ref": "#/components/schemas/PermissionResourceResource"
+                    },
+                    "action": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 180,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "description": {
+                        "type": "string",
+                        "maxLength": 512,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-05T00:27:48.930766Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-05T00:27:48.930766Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-05T00:27:48.930766Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "PermissionResourceResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample"
+                    }
+                },
+                "type": "object"
+            },
+            "RoleCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/RoleResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "RoleLookupCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/RoleLookupResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "RoleLookupResource": {
+                "properties": {
+                    "key": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "label": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Financeiro"
+                    },
+                    "sublabel": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Cod.: 1"
+                    },
+                    "meta": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "maxLength": 80,
+                                "minLength": 1,
+                                "example": "Financeiro"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "RolePermissionResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "resource": {
+                        "type": "string",
+                        "maxLength": 60,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "action": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 180,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "description": {
+                        "type": "string",
+                        "maxLength": 512,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "RoleResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "description": {
+                        "type": "string",
+                        "maxLength": 512,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "permissions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RolePermissionResource"
+                        }
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-01T11:21:13.562558Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-01T11:21:13.562558Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-01T11:21:13.562558Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UserCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "UserLookupCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/UserLookupResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "UserLookupResource": {
+                "properties": {
+                    "key": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "label": {
+                        "type": "string",
+                        "maxLength": 180,
+                        "minLength": 1,
+                        "example": "Felipe Silva"
+                    },
+                    "sublabel": {
+                        "type": "string",
+                        "maxLength": 180,
+                        "minLength": 1,
+                        "example": "Cod.: 1 | Email: felipe@example.com"
+                    },
+                    "meta": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "maxLength": 180,
+                                "minLength": 1,
+                                "example": "Felipe Silva"
+                            },
+                            "email": {
+                                "type": "string",
+                                "maxLength": 180,
+                                "minLength": 1,
+                                "example": "felipe@example.com",
+                                "nullable": true
+                            },
+                            "username": {
+                                "type": "string",
+                                "maxLength": 50,
+                                "minLength": 1,
+                                "example": "felipe",
+                                "nullable": true
+                            },
+                            "phone_number": {
+                                "type": "string",
+                                "maxLength": 20,
+                                "minLength": 1,
+                                "example": "+55 11 99999-9999",
+                                "nullable": true
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "UserResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "email": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "email_verified_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-11T11:13:04.516675Z",
+                        "nullable": true
+                    },
+                    "username": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "phone_number": {
+                        "type": "string",
+                        "maxLength": 14,
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "is_admin": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "roles": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserRoleResource"
+                        }
+                    },
+                    "permissions": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "example": "users.viewAny"
+                        }
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-11T11:13:04.516675Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-11T11:13:04.516675Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-11T11:13:04.516675Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UserRoleResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample"
+                    }
+                },
+                "type": "object"
+            },
+            "Permission": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "resource_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "label": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "action": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-05T00:27:48.633261Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-05T00:27:48.633261Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-05T00:27:48.633261Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "Role": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-01T11:21:13.278086Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-01T11:21:13.278086Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-01T11:21:13.278086Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "email_verified_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-11T11:13:03.678895Z",
+                        "nullable": true
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "remember_token": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "username": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "phone_number": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-11T11:13:03.678895Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-11T11:13:03.678895Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-11T11:13:03.678895Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "AccessTokenDTO": {
+                "properties": {
+                    "access_token": {
+                        "type": "string",
+                        "example": "token123"
+                    },
+                    "token_type": {
+                        "type": "string",
+                        "example": "bearer"
+                    },
+                    "expires_in": {
+                        "type": "number",
+                        "example": 3600
+                    }
+                },
+                "type": "object"
+            },
             "GenderEnum": {
                 "description": "Gender",
                 "type": "string",
@@ -9035,873 +9901,6 @@
                     }
                 },
                 "type": "object"
-            },
-            "LoginRequest": {
-                "required": [
-                    "username",
-                    "password"
-                ],
-                "properties": {
-                    "username": {
-                        "type": "string",
-                        "example": "felipe.silva"
-                    },
-                    "password": {
-                        "type": "string",
-                        "example": "123"
-                    }
-                },
-                "type": "object"
-            },
-            "StorePermissionRequest": {
-                "required": [
-                    "resource_id",
-                    "label",
-                    "action"
-                ],
-                "properties": {
-                    "resource_id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "label": {
-                        "type": "string",
-                        "maxLength": 60,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "action": {
-                        "type": "string",
-                        "maxLength": 120,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "description": {
-                        "type": "string",
-                        "maxLength": 512,
-                        "minLength": 1,
-                        "example": "Sample",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "UpdatePermissionRequest": {
-                "required": [
-                    "resource_id",
-                    "label",
-                    "action"
-                ],
-                "properties": {
-                    "resource_id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "label": {
-                        "type": "string",
-                        "maxLength": 60,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "action": {
-                        "type": "string",
-                        "maxLength": 120,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "description": {
-                        "type": "string",
-                        "maxLength": 512,
-                        "minLength": 1,
-                        "example": "Sample",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "RolePermissionsRequest": {
-                "properties": {
-                    "ids": {
-                        "type": "array",
-                        "items": {
-                            "type": "integer"
-                        }
-                    }
-                },
-                "type": "object"
-            },
-            "StoreRoleRequest": {
-                "required": [
-                    "name"
-                ],
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "maxLength": 80,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "description": {
-                        "type": "string",
-                        "maxLength": 512,
-                        "minLength": 1,
-                        "example": "Sample",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "UpdateRoleRequest": {
-                "required": [
-                    "name"
-                ],
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "maxLength": 80,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "description": {
-                        "type": "string",
-                        "maxLength": 512,
-                        "minLength": 1,
-                        "example": "Sample",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "StoreUserRequest": {
-                "required": [
-                    "name",
-                    "email",
-                    "password",
-                    "username"
-                ],
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "maxLength": 255,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "email": {
-                        "type": "string",
-                        "maxLength": 255,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "password": {
-                        "type": "string",
-                        "maxLength": 255,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "username": {
-                        "type": "string",
-                        "maxLength": 80,
-                        "minLength": 1,
-                        "example": "Sample",
-                        "nullable": true
-                    },
-                    "phone_number": {
-                        "type": "string",
-                        "maxLength": 14,
-                        "minLength": 1,
-                        "example": "Sample",
-                        "nullable": true
-                    },
-                    "is_admin": {
-                        "type": "boolean",
-                        "example": false
-                    },
-                    "roles": {
-                        "type": "array",
-                        "items": {
-                            "required": [
-                                "id"
-                            ],
-                            "properties": {
-                                "id": {
-                                    "type": "integer",
-                                    "example": 1
-                                }
-                            },
-                            "type": "object"
-                        }
-                    }
-                },
-                "type": "object"
-            },
-            "UpdateUserRequest": {
-                "required": [
-                    "name",
-                    "email",
-                    "password",
-                    "required"
-                ],
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "maxLength": 255,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "email": {
-                        "type": "string",
-                        "maxLength": 255,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "username": {
-                        "type": "string",
-                        "maxLength": 80,
-                        "minLength": 1,
-                        "example": "Sample",
-                        "nullable": true
-                    },
-                    "phone_number": {
-                        "type": "string",
-                        "maxLength": 14,
-                        "minLength": 1,
-                        "example": "Sample",
-                        "nullable": true
-                    },
-                    "is_admin": {
-                        "type": "boolean",
-                        "example": false
-                    },
-                    "roles": {
-                        "type": "array",
-                        "items": {
-                            "required": [
-                                "id"
-                            ],
-                            "properties": {
-                                "id": {
-                                    "type": "integer",
-                                    "example": 1
-                                }
-                            },
-                            "type": "object"
-                        }
-                    }
-                },
-                "type": "object"
-            },
-            "TokenDetailsResource": {
-                "properties": {
-                    "access_token": {
-                        "type": "string",
-                        "example": "token123"
-                    },
-                    "token_type": {
-                        "type": "string",
-                        "example": "bearer"
-                    },
-                    "expires_in": {
-                        "type": "number",
-                        "example": 3600
-                    }
-                },
-                "type": "object"
-            },
-            "PermissionCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/PermissionResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "PermissionResource": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "label": {
-                        "type": "string",
-                        "maxLength": 80,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "resource": {
-                        "$ref": "#/components/schemas/PermissionResourceResource"
-                    },
-                    "action": {
-                        "type": "string",
-                        "maxLength": 120,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "name": {
-                        "type": "string",
-                        "maxLength": 180,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "description": {
-                        "type": "string",
-                        "maxLength": 512,
-                        "minLength": 1,
-                        "example": "Sample",
-                        "nullable": true
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-05T00:27:48.930766Z",
-                        "nullable": true
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-05T00:27:48.930766Z",
-                        "nullable": true
-                    },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-05T00:27:48.930766Z",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "PermissionResourceResource": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "maxLength": 80,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "slug": {
-                        "type": "string",
-                        "maxLength": 80,
-                        "minLength": 1,
-                        "example": "Sample"
-                    }
-                },
-                "type": "object"
-            },
-            "RoleCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/RoleResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "RoleLookupCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/RoleLookupResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "RoleLookupResource": {
-                "properties": {
-                    "key": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "label": {
-                        "type": "string",
-                        "maxLength": 80,
-                        "minLength": 1,
-                        "example": "Financeiro"
-                    },
-                    "sublabel": {
-                        "type": "string",
-                        "maxLength": 80,
-                        "minLength": 1,
-                        "example": "Cod.: 1"
-                    },
-                    "meta": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 1
-                            },
-                            "name": {
-                                "type": "string",
-                                "maxLength": 80,
-                                "minLength": 1,
-                                "example": "Financeiro"
-                            }
-                        },
-                        "type": "object"
-                    }
-                },
-                "type": "object"
-            },
-            "RolePermissionResource": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "resource": {
-                        "type": "string",
-                        "maxLength": 60,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "action": {
-                        "type": "string",
-                        "maxLength": 120,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "name": {
-                        "type": "string",
-                        "maxLength": 180,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "description": {
-                        "type": "string",
-                        "maxLength": 512,
-                        "minLength": 1,
-                        "example": "Sample",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "RoleResource": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "maxLength": 80,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "description": {
-                        "type": "string",
-                        "maxLength": 512,
-                        "minLength": 1,
-                        "example": "Sample",
-                        "nullable": true
-                    },
-                    "permissions": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/RolePermissionResource"
-                        }
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-01T11:21:13.562558Z",
-                        "nullable": true
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-01T11:21:13.562558Z",
-                        "nullable": true
-                    },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-01T11:21:13.562558Z",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "UserCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/UserResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "UserLookupCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/UserLookupResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "UserLookupResource": {
-                "properties": {
-                    "key": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "label": {
-                        "type": "string",
-                        "maxLength": 180,
-                        "minLength": 1,
-                        "example": "Felipe Silva"
-                    },
-                    "sublabel": {
-                        "type": "string",
-                        "maxLength": 180,
-                        "minLength": 1,
-                        "example": "Cod.: 1 | Email: felipe@example.com"
-                    },
-                    "meta": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 1
-                            },
-                            "name": {
-                                "type": "string",
-                                "maxLength": 180,
-                                "minLength": 1,
-                                "example": "Felipe Silva"
-                            },
-                            "email": {
-                                "type": "string",
-                                "maxLength": 180,
-                                "minLength": 1,
-                                "example": "felipe@example.com",
-                                "nullable": true
-                            },
-                            "username": {
-                                "type": "string",
-                                "maxLength": 50,
-                                "minLength": 1,
-                                "example": "felipe",
-                                "nullable": true
-                            },
-                            "phone_number": {
-                                "type": "string",
-                                "maxLength": 20,
-                                "minLength": 1,
-                                "example": "+55 11 99999-9999",
-                                "nullable": true
-                            }
-                        },
-                        "type": "object"
-                    }
-                },
-                "type": "object"
-            },
-            "UserResource": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "maxLength": 255,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "email": {
-                        "type": "string",
-                        "maxLength": 255,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "email_verified_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-11T11:13:04.516675Z",
-                        "nullable": true
-                    },
-                    "username": {
-                        "type": "string",
-                        "maxLength": 80,
-                        "minLength": 1,
-                        "example": "Sample",
-                        "nullable": true
-                    },
-                    "phone_number": {
-                        "type": "string",
-                        "maxLength": 14,
-                        "minLength": 1,
-                        "example": "Sample",
-                        "nullable": true
-                    },
-                    "is_admin": {
-                        "type": "boolean",
-                        "example": false
-                    },
-                    "roles": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/UserRoleResource"
-                        }
-                    },
-                    "permissions": {
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "example": "users.viewAny"
-                        }
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-11T11:13:04.516675Z",
-                        "nullable": true
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-11T11:13:04.516675Z",
-                        "nullable": true
-                    },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-11T11:13:04.516675Z",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "UserRoleResource": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "maxLength": 80,
-                        "minLength": 1,
-                        "example": "Sample"
-                    }
-                },
-                "type": "object"
-            },
-            "Permission": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "resource_id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "label": {
-                        "type": "string",
-                        "example": "Sample"
-                    },
-                    "action": {
-                        "type": "string",
-                        "example": "Sample"
-                    },
-                    "name": {
-                        "type": "string",
-                        "example": "Sample"
-                    },
-                    "description": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-05T00:27:48.633261Z",
-                        "nullable": true
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-05T00:27:48.633261Z",
-                        "nullable": true
-                    },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-05T00:27:48.633261Z",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "Role": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "example": "Sample"
-                    },
-                    "description": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-01T11:21:13.278086Z",
-                        "nullable": true
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-01T11:21:13.278086Z",
-                        "nullable": true
-                    },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-01T11:21:13.278086Z",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "User": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "example": "Sample"
-                    },
-                    "email": {
-                        "type": "string",
-                        "example": "Sample"
-                    },
-                    "email_verified_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-11T11:13:03.678895Z",
-                        "nullable": true
-                    },
-                    "password": {
-                        "type": "string",
-                        "example": "Sample"
-                    },
-                    "remember_token": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true
-                    },
-                    "username": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true
-                    },
-                    "phone_number": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-11T11:13:03.678895Z",
-                        "nullable": true
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-11T11:13:03.678895Z",
-                        "nullable": true
-                    },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-12-11T11:13:03.678895Z",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "AccessTokenDTO": {
-                "properties": {
-                    "access_token": {
-                        "type": "string",
-                        "example": "token123"
-                    },
-                    "token_type": {
-                        "type": "string",
-                        "example": "bearer"
-                    },
-                    "expires_in": {
-                        "type": "number",
-                        "example": 3600
-                    }
-                },
-                "type": "object"
             }
         },
         "parameters": {
@@ -9967,14 +9966,6 @@
             "description": "State"
         },
         {
-            "name": "Partner",
-            "description": "Partner"
-        },
-        {
-            "name": "PartnerType",
-            "description": "PartnerType"
-        },
-        {
             "name": "Authentication",
             "description": "Authentication"
         },
@@ -9989,6 +9980,14 @@
         {
             "name": "User",
             "description": "User"
+        },
+        {
+            "name": "Partner",
+            "description": "Partner"
+        },
+        {
+            "name": "PartnerType",
+            "description": "PartnerType"
         }
     ],
     "x-tagGroups": [
@@ -10012,7 +10011,7 @@
             ]
         },
         {
-            "name": "Partner",
+            "name": "ThirdParty",
             "tags": [
                 "PartnerType",
                 "Partner"

@@ -1,6 +1,6 @@
 <?php
 
-use App\Providers\PartnerModuleProvider;
+use App\Providers\ThirdPartyModuleProvider;
 
 return [
     App\Providers\AppCoreProvider::class,
@@ -9,5 +9,5 @@ return [
     App\Providers\MorphMapServiceProvider::class,
     App\Providers\RouteServiceProvider::class,
     App\Providers\SecurityModuleProvider::class,
-    App\Providers\PartnerModuleProvider::class,
+    App\Providers\ThirdPartyModuleProvider::class,
 ];

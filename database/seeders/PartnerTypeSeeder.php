@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Modules\Partner\Models\PartnerType;
+use App\Modules\ThirdParty\Models\PartnerType;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 

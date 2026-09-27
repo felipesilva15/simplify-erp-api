@@ -3,7 +3,7 @@
 namespace Tests\Unit\Core\Helpers;
 
 use App\Core\Helpers\ModelHelpers;
-use App\Modules\Partner\Models\Partner;
+use App\Modules\ThirdParty\Models\Partner;
 use App\Modules\Security\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase;

@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Modules\Partner\Models\Partner;
+use App\Modules\ThirdParty\Models\Partner;
 use App\Modules\Security\Models\User;
 use App\Modules\Security\Services\AuthService;
 

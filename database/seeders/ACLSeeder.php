@@ -20,9 +20,9 @@ class ACLSeeder extends Seeder
 
         $modules = [
             [
-                'slug' => 'partner',
-                'name' => 'Parceiro',
-                'description' => 'Módulo de parceiros do sistema',
+                'slug' => 'thirdParty',
+                'name' => 'Terceiro',
+                'description' => 'Módulo de terceiros do sistema',
                 'is_active' => true,
                 'created_at' => $now,
                 'updated_at' => $now,

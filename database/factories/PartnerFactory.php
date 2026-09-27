@@ -2,15 +2,15 @@
 
 namespace Database\Factories;
 
-use App\Modules\Partner\Enums\GenderEnum;
-use App\Modules\Partner\Enums\MaritalStatusEnum;
-use App\Modules\Partner\Enums\PersonTypeEnum;
-use App\Modules\Partner\Enums\PixTypeEnum;
-use App\Modules\Partner\Enums\TaxpayerTypeEnum;
+use App\Modules\ThirdParty\Enums\GenderEnum;
+use App\Modules\ThirdParty\Enums\MaritalStatusEnum;
+use App\Modules\ThirdParty\Enums\PersonTypeEnum;
+use App\Modules\ThirdParty\Enums\PixTypeEnum;
+use App\Modules\ThirdParty\Enums\TaxpayerTypeEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Modules\Partner\Models\Partner>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Modules\ThirdParty\Models\Partner>
  */
 class PartnerFactory extends Factory
 {
