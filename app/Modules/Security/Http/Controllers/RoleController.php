@@ -2,6 +2,8 @@
 
 namespace App\Modules\Security\Http\Controllers;
 
+use App\Core\Traits\HasExcelExport;
+use App\Modules\Security\Exports\RoleExport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use App\Core\Http\Controllers\Controller;
@@ -17,6 +19,7 @@ use App\Modules\Security\Http\Resources\Role\RoleLookupCollection;
 use App\Modules\Security\Models\Role;
 use App\Modules\Security\Services\RoleService;
 use App\Core\Traits\HasActivityLogs;
+use InvalidArgumentException;
 
 /**
  * @OA\PathItem(
@@ -61,9 +64,54 @@ use App\Core\Traits\HasActivityLogs;
  *         security={{"bearerAuth":{}}}
  *     )
  * )
+ * @OA\PathItem(
+ *     path="/api/security/roles/export",
+ *     @OA\Get(
+ *         tags={"Partner"},
+ *         summary="Export all roles to Excel",
+ *         operationId="exportPartner",
+ *         @OA\Parameter(
+ *             name="format",
+ *             in="query",
+ *             required=false,
+ *             description="Export format (full, summarized, detailed)",
+ *             @OA\Schema(type="string", enum={"full","summarized","detailed"})
+ *         ),
+ *         @OA\Parameter(
+ *             name="extension",
+ *             in="query",
+ *             required=false,
+ *             description="File extension (xlsx, xls, csv)",
+ *             @OA\Schema(type="string", enum={"xlsx","xls","csv"})
+ *         ),
+ *     @OA\Parameter(name="filters[id][eq]", in="query", required=false, @OA\Schema(type="integer")),
+ *     @OA\Parameter(name="filters[name][like]", in="query", required=false, @OA\Schema(type="string")),
+ *     @OA\Parameter(name="filters[created_at][gte]", in="query", required=false, @OA\Schema(type="string")),
+ *     @OA\Parameter(name="filters[updated_at][lte]", in="query", required=false, @OA\Schema(type="string")),
+ *         @OA\Response(
+ *             response="200",
+ *             description="Excel file with roles",
+ *             @OA\MediaType(
+ *                 mediaType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+ *             )
+ *         ),
+ *         @OA\Response(
+ *             response="401",
+ *             description="Unauthorized",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="403",
+ *             description="Forbidden",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         security={{"bearerAuth":{}}}
+ *     )
+ * )
  */
 class RoleController extends Controller
 {
+    use HasExcelExport;
     use HasActivityLogs;
 
     protected RoleService $service;
@@ -77,6 +125,21 @@ class RoleController extends Controller
     protected function activityLogModelClass(): string
     {
         return Role::class;
+    }
+
+    protected function exportModelClass(): string
+    {
+        return Role::class;
+    }
+
+    protected function exportClassForFormat(string $format): string
+    {
+        return match ($format) {
+            'full' => RoleExport::class,
+            default => throw new InvalidArgumentException(
+                "Formato de exportação [{$format}] não suportado para parceiros."
+            ),
+        };
     }
 
     /**

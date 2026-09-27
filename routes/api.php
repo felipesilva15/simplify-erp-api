@@ -41,6 +41,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::crudResource('users', UserController::class);
 
         Route::get('roles/lookup', [RoleController::class, 'lookup'])->name('roles.lookup');
+        Route::get('roles/export', [RoleController::class, 'export'])->name('roles.export');
         Route::crudResource('roles', RoleController::class);
         Route::patch('roles/{role}/permissions', [RoleController::class, 'definePermissions'])->name('roles.definePermissions');
         

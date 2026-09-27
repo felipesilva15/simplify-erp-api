@@ -37,6 +37,11 @@ class RolePolicy
         return $this->authService->hasAuthorized($user, 'roles.delete');
     }
 
+    public function export(User $user)
+    {
+        return $this->authService->hasAuthorized($user, 'roles.export');
+    }
+
     public function definePermissions(User $user, Role $model): bool
     {
         return $this->authService->hasAuthorized($user, 'roles.definePermissions');
