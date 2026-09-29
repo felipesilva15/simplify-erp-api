@@ -1,59 +1,200 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Simplify ERP API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+API REST do Simplify ERP, implementada em Laravel 12. Concentra o acesso autenticado a dados de ERP para aplicações cliente (web/mobile), com controle de acesso por permissões, registro de auditoria e um conjunto de cadastros base — módulos, recursos, permissões, perfis, usuários, tipos de parceiro, parceiros e contatos.
 
-## About Laravel
+O projeto é um **monólito**: uma única aplicação Laravel, publicada e implantada, sem microsserviços, filas de integração nem orquestração de containers no repositório.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+| Documento | Conteúdo |
+|---|---|
+| [`docs/prd.md`](docs/prd.md) | O que o sistema é, por que existe, escopo, regras de negócio e requisitos. |
+| [`docs/spec.md`](docs/spec.md) | Como o sistema está estruturado: arquitetura, contratos HTTP, autenticação, persistência, gerador de módulos e testes. |
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Stack
 
-## Learning Laravel
+| Item | Versão / valor |
+|---|---|
+| PHP | `^8.2` declarado; **`>= 8.4.1` exigida pelo `composer.lock`** (ver aviso abaixo) |
+| Laravel Framework | `^12.0` (instalado: `v12.67.0`) |
+| Autenticação | `tymon/jwt-auth` `^2.2` (JWT em cookie httpOnly) |
+| Documentação OpenAPI | `darkaonline/l5-swagger` `^9.0` + `scalar/laravel` `^0.2.1` |
+| Exportação tabular | `maatwebsite/excel` `^4.0` |
+| Persistência | MySQL (padrão em `.env.example`) ou PostgreSQL |
+| Testes | PHPUnit `^11.5` |
+| Front-end de apoio | Vite `^7`, Tailwind CSS `^4`, Axios `^1.11` (landing page e assets; a API não é SPA) |
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Pré-requisitos
 
-## Laravel Sponsors
+> **Atenção — versão real do PHP.** O `composer.json` declara `"php": "^8.2"`, mas o `composer.lock` fixa pacotes que exigem uma versão maior: `maatwebsite/excel 4.0.3` pede `^8.3` e cinco pacotes Symfony 8.1 (`clock`, `css-selector`, `event-dispatcher`, `string`, `translation`) pedem `>= 8.4.1`. O `vendor/composer/platform_check.php` gerado aborta a aplicação abaixo disso. **Use PHP 8.4.1 ou superior**, ou rode `composer update` para re-resolver as dependências.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- PHP `>= 8.4.1` na prática, conforme o `composer.lock` (o `composer.json` declara `^8.2` — ver o aviso acima). O repositório **não declara** requisitos de extensão no `composer.json`; a extensão de banco (`pdo_mysql` ou `pdo_pgsql`) precisa estar habilitada para as migrations.
+- Composer 2.
+- Node.js com npm, para o build do Vite/Tailwind. O `package.json` **não fixa** versão (`engines` ausente).
+- Um banco relacional acessível — MySQL ou PostgreSQL, conforme `config/database.php` — com o banco criado. O `.env.example` assume `simplify_erp`:
+  ```sql
+  CREATE DATABASE simplify_erp;
+  ```
+  Para MySQL com `utf8mb4`: `CREATE DATABASE simplify_erp CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`.
+- Os arquivos `storage/data/cidades.csv` e `storage/data/cbo-ocupacao.csv`, versionados no repositório, são necessários apenas para os seeders de cidade e profissão.
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Instalação
 
-## Contributing
+Atalho com os scripts do `composer.json`:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+composer setup
+```
 
-## Code of Conduct
+O script `setup` executa, em ordem: `composer install`; copia `.env.example` para `.env` (se ainda não existir); `php artisan key:generate`; `php artisan migrate --force`; `npm install`; `npm run build`.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Após o `composer setup` **ainda é preciso** gerar o segredo JWT e popular o banco, pois o script não os inclui:
 
-## Security Vulnerabilities
+```bash
+php artisan jwt:secret          # define JWT_SECRET no .env
+php artisan migrate --seed      # cria usuários, ACL e cadastros geográficos
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Passo a passo equivalente, se preferir executar manualmente:
 
-## License
+```bash
+composer install
+cp .env.example .env           # Windows: copy .env.example .env
+php artisan key:generate
+php artisan jwt:secret
+npm install
+npm run build
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Depois de ajustar as variáveis de banco no `.env`:
+
+```bash
+php artisan migrate --seed
+```
+
+---
+
+## Configuração
+
+Todas as variáveis relevantes estão em [`.env.example`](.env.example). As que precisam de ajuste ou geração manual:
+
+| Variável | Origem | Observação |
+|---|---|---|
+| `APP_KEY` | `php artisan key:generate` | gerada automaticamente. |
+| `JWT_SECRET` | `php artisan jwt:secret` | **não está no `.env.example`**; obrigatória para assinar os tokens. |
+| `DB_CONNECTION` | `.env.example` | `mysql` por padrão; o código também suporta `pgsql`. |
+| `DB_DATABASE` | `.env.example` | `simplify_erp`. |
+| `SESSION_DRIVER` / `CACHE_STORE` / `QUEUE_CONNECTION` | `.env.example` | `database` — exigem as tabelas criadas pelas migrations padrão do Laravel. |
+| `JWT_TTL` / `JWT_REFRESH_TTL` | `.env.example` | `60` e `20160` minutos. O `JWT_TTL` também define a validade do cookie. |
+| `JWT_COOKIE_NAME` | `.env.example` | `access_token`. |
+| `JWT_COOKIE_SECURE` | `.env.example` | `true`; em desenvolvimento local sobre HTTP o cookie não será enviado pelo navegador. |
+| `JWT_COOKIE_SAME_SITE` | `.env.example` | `lax`. |
+| `L5_SWAGGER_GENERATE_ALWAYS` | `.env.example` | `true` — regenera a especificação OpenAPI a cada requisição. |
+| `L5_SWAGGER_USE_ABSOLUTE_PATH` | `.env.example` | `false`. |
+| `APP_LOCALE` / `APP_FALLBACK_LOCALE` | `.env.example` | `pt_BR` — define o idioma das mensagens de validação da API. |
+
+---
+
+## Rodando em desenvolvimento
+
+Ambiente completo (servidor PHP, worker de fila e Vite) com um comando:
+
+```bash
+composer dev
+```
+
+Equivale a `php artisan serve`, `php artisan queue:listen --tries=1` e `npm run dev` em paralelo.
+
+Somente a API:
+
+```bash
+php artisan serve          # http://localhost:8000
+```
+
+Verificação de saúde da aplicação: `GET /up`.
+
+---
+
+## Testes
+
+```bash
+composer test              # artisan config:clear && artisan test
+php artisan test           # direto
+php artisan test --filter=PartnerTest
+```
+
+A suíte roda sobre SQLite em memória (`phpunit.xml` define `DB_CONNECTION=sqlite` e `DB_DATABASE=:memory:`) e aplica `RefreshDatabase` na classe base, portanto **não exige banco externo**. Detalhes da estratégia de testes em [`docs/spec.md`](docs/spec.md#16-testes).
+
+---
+
+## Documentação da API
+
+| Recurso | URL | Observação |
+|---|---|---|
+| Swagger UI | `/api/documentation` | Título configurado em `config/l5-swagger.php`. Rota pública. |
+| Scalar (API Reference) | `/api-docs` | Rota definida em `routes/web.php`. |
+| Especificação OpenAPI | `/docs?api-docs.json` | Gerada a partir das annotations `@OA` em `app/`. |
+| Arquivo gerado | `storage/api-docs/api-docs.json` | Regerada automaticamente quando `L5_SWAGGER_GENERATE_ALWAYS=true`. |
+
+Os tag groups da especificação (`Core`, `Security`, `ThirdParty`) são declarados no docblock de `app/Core/Http/Controllers/Controller.php` e são estendidos automaticamente pelo gerador de módulos.
+
+---
+
+## Gerando um módulo novo
+
+O comando `make:module-crud` cria a estrutura completa de uma entidade (model, repository, interface, service, DTO, controller, requests, resources, policy, factory, testes) e registra as rotas, os bindings e o tag group do OpenAPI:
+
+```bash
+php artisan make:module-crud Core Vehicle --all
+php artisan make:module-crud Sales Order --all --lookup --export
+```
+
+**A tabela da entidade precisa existir no banco antes da execução** — o comando lê o schema real da tabela para derivar `$fillable`, regras de validação, DTO, resources, factory e export. Contrato completo em [`docs/spec.md`](docs/spec.md#15-gerador-de-módulos).
+
+---
+
+## Estrutura do projeto
+
+```text
+app/
+  Core/                  # camada interna (framework de CRUD, contratos e utilitários)
+    DTO/  Enums/  Exceptions/  Exports/  Helpers/  OA/
+    Http/                # controllers, requests e resources compartilhados
+    Models/  Repositories/  Services/  Traits/
+  Modules/
+    Security/            # users, roles, permissions, autenticação JWT
+    ThirdParty/          # partner-types, partners, contacts
+  Console/
+    Commands/            # make:module-crud
+    Stubs/               # 26 stubs usados pelo gerador
+  Policies/              # 10 policies (uma por entidade)
+  Providers/             # registro de bindings, morph map e macro de rotas
+bootstrap/providers.php  # providers registrados
+config/                  # configs do Laravel e dos pacotes (jwt, l5-swagger, scalar, cors…)
+database/
+  migrations/ seeders/ factories/
+lang/pt_BR/              # traduções de validação e paginação
+routes/                  # api.php (API), web.php (landing e Scalar), console.php
+storage/data/            # cidades.csv e cbo-ocupacao.csv usados pelos seeders
+tests/
+  Feature/               # 302 testes de integração HTTP
+  Unit/                  # 74 testes unitários
+```
+
+`App\Core` é a camada interna do produto e é tratada como parte fundamental da arquitetura: módulos de negócio são sempre escritos estendendo `BaseCrudService`, `BaseRepository`, `ApiResponse`, `HasActivityLogs` e `HasExcelExport`. Detalhes em [`docs/spec.md`](docs/spec.md#2-camada-core).
+
+---
+
+## Definição de Pronto
+
+O que precisa acompanhar qualquer mudança neste projeto — padrões verificados no repositório e regras de processo sugeridas, a confirmar — está em [`docs/spec.md` §20](docs/spec.md#20-entregáveis-e-definição-de-pronto).
+
+---
+
+## Licença
+
+MIT — ver [`LICENSE`](LICENSE).
