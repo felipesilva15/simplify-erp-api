@@ -24,7 +24,7 @@ class {{entity}}LookupResource extends JsonResource
         return [
             'key' => {{lookup_key_accessor}},
             'label' => {{lookup_label_accessor}},
-            'sublabel' => 'Cod.: '.{{lookup_key_accessor}},
+            'sublabel' => "Cód.: {{{lookup_key_accessor}}}",
             'meta' => $this->only({{lookup_meta_args}})
         ];
     }
