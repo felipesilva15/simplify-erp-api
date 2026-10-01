@@ -1,15 +1,15 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "felipesilva15/simplify-erp-api",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "The REST API for Simplify ERP system.",
     "keywords": [
         "laravel",
         "framework"
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.4",
         "darkaonline/l5-swagger": "^9.0",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
