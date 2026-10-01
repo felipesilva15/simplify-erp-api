@@ -12,6 +12,7 @@ use App\Modules\Security\Http\Controllers\UserController;
 use App\Core\Http\Controllers\CountryController;
 use App\Core\Http\Controllers\StateController;
 use App\Core\Http\Controllers\CityController;
+use App\Modules\HR\Http\Controllers\ProfessionController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('security/auth/login', [AuthController::class, 'login'])->name('auth.login');
@@ -56,6 +57,13 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('partners/lookup', [PartnerController::class, 'lookup'])->name('partners.lookup');
         Route::get('partners/export', [PartnerController::class, 'export'])->name('partners.export');
         Route::crudResource('partners', PartnerController::class);
+    });
+
+    Route::prefix('hr')->group(function() {
+        Route::get('professions/lookup', [ProfessionController::class, 'lookup'])->name('professions.lookup');
+        Route::get('professions/export', [ProfessionController::class, 'export'])->name('professions.export');
+        Route::get('professions/{id}/activity-logs', [ProfessionController::class, 'activityLogs'])->name('professions.activityLogs');
+        Route::resource('professions', ProfessionController::class)->only('index', 'show');
     });
 });
 Route::get('test', function() {

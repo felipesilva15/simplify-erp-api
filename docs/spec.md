@@ -140,6 +140,7 @@ Cada módulo segue exatamente a mesma estrutura de pastas (`Models`, `Services`,
 |---|---|---|
 | `Security` | `User`, `Role`, `Permission` (+ pivôs `RoleUser`, `PermissionRole`) | Autenticação JWT, gestão de usuários, perfis, permissões e definição de permissões de um perfil. |
 | `ThirdParty` | `PartnerType`, `Partner`, `Contact` | Tipos de parceiro, parceiros e seus contatos, com sincronização aninhada. |
+| `HR` | `Profession` | Profissões (CBO) como catálogo **somente leitura**, com busca rápida e exportação. |
 | `Core` (entidades) | `Module`, `Resource`, `Country`, `State`, `City`, `ActivityLog` | Metadados de autorização, cadastros geográficos de consulta e auditoria. |
 
 Os módulos **não** possuem `Providers/` próprio: os providers ficam centralizados em `app/Providers/`, e o gerador de módulos mantém essa convenção ([§15](#15-gerador-de-módulos)).
@@ -169,6 +170,9 @@ Todas as rotas de API recebem o prefixo `/api` e o middleware `api` (do qual faz
 | `GET /api/third-party/partner-types/lookup` | `partner-types.lookup` | `partnerTypes.viewAny` |
 | `crudResource` `/api/third-party/partners` | — | `partners.*` |
 | `GET /api/third-party/partners/lookup` · `GET /api/third-party/partners/export` | `partners.lookup` · `partners.export` | `partners.viewAny` · `partners.export` |
+| `GET /api/hr/professions` · `GET /api/hr/professions/{profession}` | — | `professions.viewAny` / `view` |
+| `GET /api/hr/professions/lookup` · `GET /api/hr/professions/export` | `professions.lookup` · `professions.export` | `professions.viewAny` · `professions.export` |
+| `GET /api/hr/professions/{id}/activity-logs` | `professions.activityLogs` | `professions.view` |
 | `GET /api/test` | — | **sem autenticação** — ver [`prd.md` §11](prd.md#11-observações-do-código-não-determinados) |
 
 Cada linha marcada como `crudResource` representa o conjunto padrão de sete ações REST — `index`, `create`, `store`, `show`, `edit`, `update` e `destroy` — **mais** a rota `GET {recurso}/{id}/activity-logs` adicionada pela macro ([§3.2](#32-a-macro-crudresource)).
@@ -617,7 +621,7 @@ A leitura é feita pelo trait `HasActivityLogs`, que expõe `activityLogs($id, L
 
 - **Gerador:** `darkaonline/l5-swagger`, varrendo `base_path('app')` em busca de annotations `@OA` nos docblocks dos controllers.
 - **Título e servidores:** declarados no docblock `@OA\OpenApi` e `@OA\Info` de `app/Core/Http/Controllers/Controller.php` (`Simplify ERP API`, v1.0.0, servidores Local / Sandbox / Production).
-- **Tag groups:** `Core`, `Security` e `ThirdParty`, no mesmo docblock. O gerador de módulos os estende automaticamente ([§15](#15-gerador-de-módulos)).
+- **Tag groups:** `Core`, `Security`, `ThirdParty` e `HR`, no mesmo docblock. O gerador de módulos os estende automaticamente ([§15](#15-gerador-de-módulos)).
 - **Segurança:** o único `securityScheme` declarado é `bearerAuth`, do tipo `apiKey` com `in: cookie` e `name: config('jwt.cookie_name')` — coerente com o fato de que a autenticação acontece por cookie.
 - **Regeneração:** `L5_SWAGGER_GENERATE_ALWAYS=true` no `.env.example` regenera a especificação a cada requisição; o arquivo gerado fica em `storage/api-docs/api-docs.json`.
 - **Schemas reutilizáveis:** `ApiResponse`, `ApiErrorResponse`, `ApiBusinessRuleErrorResponse` (definidos nos traits e exceções de `App\Core`), os enums (definidos nos próprios enums) e `Filters` / `FieldFilter` / `FilterValue` (`app/Core/OA/Schemas`).
@@ -697,13 +701,13 @@ Além de criar arquivos, o comando **edita** quatro arquivos existentes, de form
 
 ## 16. Testes
 
-PHPUnit 11, com duas suítes declaradas em `phpunit.xml`: `Unit` (`tests/Unit`) e `Feature` (`tests/Feature`). Não há Pest. São 29 arquivos de teste e 376 métodos de teste, além de `tests/TestCase.php`.
+PHPUnit 11, com duas suítes declaradas em `phpunit.xml`: `Unit` (`tests/Unit`) e `Feature` (`tests/Feature`). Não há Pest. São 30 arquivos de teste e 398 métodos de teste, além de `tests/TestCase.php`.
 
 `tests/TestCase.php` aplica `RefreshDatabase` e usa SQLite em memória (`DB_CONNECTION=sqlite`, `DB_DATABASE=:memory:` definidos no `phpunit.xml`), portanto a suíte não depende de serviço externo. A base cria um administrador e um usuário comum por teste e gera tokens JWT reais com `JWTAuth::fromUser()`, expondo `getAdminAuthHeaders()` e `getCommomUserAuthHeaders()`. Também concentra as asserções de contrato `assertApiResponseStructureForListing()` e `assertErrorResponse()`.
 
 | Suíte | Arquivos | Métodos | Natureza |
 |---|---|---|---|
-| `tests/Feature` | 19 | 302 | Integração via HTTP real: roteamento, middleware, guard, policies, Eloquent, soft delete, auditoria, exportação. |
+| `tests/Feature` | 20 | 324 | Integração via HTTP real: roteamento, middleware, guard, policies, Eloquent, soft delete, auditoria, exportação. |
 | `tests/Unit` | 10 | 74 | Classes isoladas; 4 sem banco, 6 sobem a aplicação com banco. |
 
 Cobertura por área:
@@ -713,7 +717,8 @@ Cobertura por área:
 | CRUD completo de entidades com as 27 asserções padrão | `Feature/Core/{Module,Resource,Country,State,City}Test`, `Feature/Security/{User,Role,Permission}Test`, `Feature/ThirdParty/{Partner,PartnerType}Test` |
 | Autenticação: login por cookie, token por corpo, refresh, logout, token inválido e expirado | `Feature/Security/AuthTest` |
 | Sincronização de itens aninhados, rollback transacional, regras de canal e de contato principal, ausência de N+1 (via `DB::listen`) | `Feature/ThirdParty/PartnerContactTest` |
-| Exportação: formato, extensão, filtros, permissões | `Feature/Core/ExcelExportTest`, `Feature/ThirdParty/PartnerTest` |
+| Exportação: formato, extensão, filtros, permissões | `Feature/Core/ExcelExportTest`, `Feature/ThirdParty/PartnerTest`, `Feature/HR/ProfessionTest` |
+| Catálogo somente leitura: listagem, detalhe, lookup e exportação, com ausência das rotas de escrita | `Feature/HR/ProfessionTest` |
 | Auditoria por recurso | `Feature/Security/ActivityLogTest` |
 | Gerador de módulos (incluindo o efeito em `routes/api.php`, `bootstrap/providers.php` e `AppCoreProvider`, com snapshot e restauração) | `Feature/Console/MakeModuleCrudCoreTest`, `MakeModuleCrudExportTest` |
 | Documentação: acessibilidade das UIs, validade do JSON e consistência com as rotas | `Feature/UI/*` |
@@ -825,11 +830,11 @@ O que precisa acompanhar qualquer mudança neste repositório. Os itens do bloco
 | Padrão | Onde é exigido | Comprovação |
 |---|---|---|
 | Contrato de resposta único | Toda ação de controller | `App\Core\Traits\ApiResponse`; os controllers de entidade estendem `App\Core\Http\Controllers\Controller` e usam `success()` / `error()` ([§5](#5-contrato-de-resposta)) |
-| Autorização por policy | Todo controller com entidade | `authorizeResource(Model::class, 'recurso')` no construtor; 10 policies em `app/Policies` e `Gate::before` para `is_admin` ([§8.3](#83-autorização), [§9](#9-permissões-e-policies)) |
+| Autorização por policy | Todo controller com entidade | `authorizeResource(Model::class, 'recurso')` no construtor; 11 policies em `app/Policies` e `Gate::before` para `is_admin` ([§8.3](#83-autorização), [§9](#9-permissões-e-policies)) |
 | Validação declarativa | Toda entrada do cliente | `FormRequest` por operação em `app/Modules/*/Http/Requests` e `app/Core/Http/Requests/Core`; mensagens em `lang/pt_BR/validation.php` ([§10.3](#103-validação)) |
 | Migrations versionadas para toda mudança de schema | `database/migrations` | 28 migrations datadas; nenhum `Schema::` fora delas |
 | Docblock `@OA` em toda rota de API | Controllers | `OpenApiConsistencyTest` exige que toda rota documentável tenha operação e vice-versa ([§14](#14-documentação-openapi)) |
-| Teste automatizado para a mudança | `tests/Feature`, `tests/Unit` | 29 arquivos, 376 métodos; `phpunit.xml` declara as duas suítes ([§16](#16-testes)) |
+| Teste automatizado para a mudança | `tests/Feature`, `tests/Unit` | 30 arquivos, 398 métodos; `phpunit.xml` declara as duas suítes ([§16](#16-testes)) |
 | Suíte sem serviço externo | `phpunit.xml` | `DB_CONNECTION=sqlite` e `DB_DATABASE=:memory:`; `RefreshDatabase` em `tests/TestCase.php` |
 | Auditoria em toda escrita | Services que estendem `BaseCrudService` | `ActivityLogService::log()` em `store`, `update` e `delete` ([§13](#13-auditoria-activity-log)) |
 | Módulo novo via comando | `app/Console/Commands/MakeModuleCrud.php` | 26 stubs; testes com snapshot e restauração em `tests/Feature/Console` ([§15](#15-gerador-de-módulos)) |

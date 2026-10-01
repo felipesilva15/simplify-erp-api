@@ -249,6 +249,46 @@ class ACLSeeder extends Seeder
                         ]
                     ]
                 ]
+            ],
+            [
+                'slug' => 'hr',
+                'name' => 'Recursos Humanos',
+                'description' => 'Módulo de recursos humanos do sistema',
+                'is_active' => true,
+                'created_at' => $now,
+                'updated_at' => $now,
+                'resources' => [
+                    [
+                        'slug' => 'professions',
+                        'name' => 'Profissões',
+                        'description' => 'Funcionalidades para profissões',
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                        'permissions' => [
+                            [
+                                'action' => 'viewAny',
+                                'label' => 'Listar',
+                                'description' => 'Permite realizar a consulta de todas as profissões',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'view',
+                                'label' => 'Visualizar',
+                                'description' => 'Permite visualizar os detalhes de uma profissão',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'export',
+                                'label' => 'Exportar dados',
+                                'description' => 'Permite realizar a exportação de dados das profissões',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                        ]
+                    ]
+                ]
             ]
         ];
 

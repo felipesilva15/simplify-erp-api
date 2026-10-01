@@ -24,6 +24,10 @@ use Illuminate\Routing\Controller as BaseController;
  *             {
  *                 "name"="ThirdParty",
  *                 "tags"={"PartnerType", "Partner"}
+ *             },
+ *             {
+ *                 "name"="HR",
+ *                 "tags"={"Profession"}
  *             }
  *         }
  *     }

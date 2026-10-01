@@ -140,7 +140,7 @@ A suíte roda sobre SQLite em memória (`phpunit.xml` define `DB_CONNECTION=sqli
 | Especificação OpenAPI | `/docs?api-docs.json` | Gerada a partir das annotations `@OA` em `app/`. |
 | Arquivo gerado | `storage/api-docs/api-docs.json` | Regerada automaticamente quando `L5_SWAGGER_GENERATE_ALWAYS=true`. |
 
-Os tag groups da especificação (`Core`, `Security`, `ThirdParty`) são declarados no docblock de `app/Core/Http/Controllers/Controller.php` e são estendidos automaticamente pelo gerador de módulos.
+Os tag groups da especificação (`Core`, `Security`, `ThirdParty`, `HR`) são declarados no docblock de `app/Core/Http/Controllers/Controller.php` e são estendidos automaticamente pelo gerador de módulos.
 
 ---
 
@@ -171,7 +171,7 @@ app/
   Console/
     Commands/            # make:module-crud
     Stubs/               # 26 stubs usados pelo gerador
-  Policies/              # 10 policies (uma por entidade)
+  Policies/              # 11 policies (uma por entidade)
   Providers/             # registro de bindings, morph map e macro de rotas
 bootstrap/providers.php  # providers registrados
 config/                  # configs do Laravel e dos pacotes (jwt, l5-swagger, scalar, cors…)
@@ -181,7 +181,7 @@ lang/pt_BR/              # traduções de validação e paginação
 routes/                  # api.php (API), web.php (landing e Scalar), console.php
 storage/data/            # cidades.csv e cbo-ocupacao.csv usados pelos seeders
 tests/
-  Feature/               # 302 testes de integração HTTP
+  Feature/               # 324 testes de integração HTTP
   Unit/                  # 74 testes unitários
 ```
 

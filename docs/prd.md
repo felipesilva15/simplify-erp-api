@@ -53,6 +53,7 @@ O único consumidor com rota nominal própria no repositório é o portal de doc
 | **Cadastros geográficos** | Consulta de países, estados e cidades e busca rápida em cada um. |
 | **Parceiros** | CRUD de parceiros (pessoa física, empresa ou estrangeiro) com contatos aninhados; busca rápida; exportação. |
 | **Tipos de parceiro** | CRUD e busca rápida. |
+| **Profissões (RH)** | Consulta do catálogo CBO, busca rápida e exportação. Sem cadastro nem edição. |
 | **Auditoria** | Listagem do histórico de um registro por recurso, com autor, ação, rota, IP e user agent. |
 | **Infraestrutura de API** | Filtro, ordenação, paginação, lookup, exportação tabular, envelope de resposta, erros padronizados, documentação OpenAPI. |
 | **Geração de módulos** | Comando que produz a estrutura completa de uma entidade e a registra no projeto. |
@@ -62,7 +63,6 @@ O único consumidor com rota nominal própria no repositório é o portal de doc
 Os itens abaixo existem como estrutura de dados ou configuração **sem** rota, modelo ou fluxo próprio. Estão registrados aqui como fato, não como intenção.
 
 - Tabela `addresses` (migration `2026_09_08_004332`) — sem model, sem repository, sem rota.
-- Tabela `professions` (migration `2026_09_23_212455`) — populada por seeder, mas sem model e sem rota.
 - Integração com serviços de terceiros, mensageria, e-mail ou webhooks: nenhuma existe no código.
 
 ---
@@ -85,6 +85,7 @@ Os itens abaixo existem como estrutura de dados ou configuração **sem** rota, 
 | UC-12 | Exportar usuários, perfis ou parceiros para planilha | Usuário com permissão de exportação |
 | UC-13 | Auditar as alterações de um registro | Usuário com permissão de leitura |
 | UC-14 | Gerar um novo módulo de negócio | Desenvolvedor |
+| UC-15 | Consultar o catálogo de profissões (CBO), buscá-lo rapidamente e exportá-lo | Qualquer usuário autenticado com permissão |
 
 ---
 
@@ -146,13 +147,20 @@ Os itens abaixo existem como estrutura de dados ou configuração **sem** rota, 
 
 - Todas as listagens suportam **filtro por campo e operador**, **ordenação** e **paginação**; o contrato de parâmetros é único para todos os recursos.
 - A busca rápida (`lookup`) é um endpoint enxuto, orientado a preencher campos de seleção, e devolve `key`, `label`, `sublabel` e `meta`.
-- A exportação gera planilha a partir da **mesma** consulta da listagem, respeitando filtros e ordenação, e exige permissão de exportação específica do recurso. Somente usuários, perfis e parceiros possuem exportação.
+- A exportação gera planilha a partir da **mesma** consulta da listagem, respeitando filtros e ordenação, e exige permissão de exportação específica do recurso. Somente usuários, perfis, parceiros e profissões possuem exportação.
 
 ### 7.7 Cadastros geográficos
 
 - Países, estados e cidades são **somente leitura** pela API e não usam soft delete.
 - Estados referenciam o país por chave estrangeira; cidades referenciam o estado por chave estrangeira.
 - A carga inicial é feita por seeders: Brasil e as 27 unidades federativas de forma embutida, e as cidades importadas do IBGE a partir de `storage/data/cidades.csv`.
+
+### 7.8 Profissões (RH)
+
+- Profissões são **somente leitura** pela API: existem listagem, detalhe, busca rápida, exportação e auditoria, mas nenhuma rota de cadastro, edição ou exclusão.
+- A tabela é fixa e mantida pelo sistema: é populada por `ProfessionSeeder` a partir de `storage/data/cbo-ocupacao.csv` e não usa soft delete.
+- Cada registro é identificado pelo código CBO (6 caracteres, único) e pelo nome; o `cbo` é filtrável e indexado na busca rápida.
+- As permissões do recurso são apenas de leitura e exportação: `professions.viewAny`, `professions.view` e `professions.export`.
 
 ---
 
@@ -169,11 +177,12 @@ Os itens abaixo existem como estrutura de dados ou configuração **sem** rota, 
 | RF-07 | Consultar países, estados e cidades, com listagem e busca rápida. |
 | RF-08 | Manter tipos de parceiro, com listagem e busca rápida. |
 | RF-09 | Manter parceiros com contatos aninhados, com listagem, busca rápida e exportação. |
-| RF-10 | Consultar o histórico de auditoria de qualquer registro de recurso. |
-| RF-11 | Filtrar, ordenar e paginar qualquer listagem por um contrato único. |
-| RF-12 | Exportar usuários, perfis e parceiros em planilha respeitando os filtros da listagem. |
-| RF-13 | Gerar, a partir do schema do banco, a estrutura completa de um novo módulo de negócio. |
-| RF-14 | Publicar a especificação OpenAPI da API gerada a partir do código. |
+| RF-10 | Consultar o catálogo de profissões (CBO), com listagem, detalhe, busca rápida, exportação e auditoria, sem operações de criação, edição ou exclusão. |
+| RF-11 | Consultar o histórico de auditoria de qualquer registro de recurso. |
+| RF-12 | Filtrar, ordenar e paginar qualquer listagem por um contrato único. |
+| RF-13 | Exportar usuários, perfis, parceiros e profissões em planilha respeitando os filtros da listagem. |
+| RF-14 | Gerar, a partir do schema do banco, a estrutura completa de um novo módulo de negócio. |
+| RF-15 | Publicar a especificação OpenAPI da API gerada a partir do código. |
 
 ---
 

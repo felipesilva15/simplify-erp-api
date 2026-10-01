@@ -208,6 +208,360 @@
                 ]
             }
         },
+        "/api/hr/professions/{id}/activity-logs": {
+            "get": {
+                "tags": [
+                    "Profession"
+                ],
+                "summary": "List activity logs of a profession",
+                "operationId": "8d8f5a76d9598c4ee50006384fd1ee97",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Profession ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Profession activity logs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ActivityLogCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/hr/professions/export": {
+            "get": {
+                "tags": [
+                    "Profession"
+                ],
+                "summary": "Export all professions to Excel",
+                "operationId": "exportProfession",
+                "parameters": [
+                    {
+                        "name": "format",
+                        "in": "query",
+                        "description": "Export format (full, summarized, detailed)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "full",
+                                "summarized",
+                                "detailed"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "extension",
+                        "in": "query",
+                        "description": "File extension (xlsx, xls, csv)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "xlsx",
+                                "xls",
+                                "csv"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "filters[id][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[id][lt]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[id][lte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[id][gt]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[id][gte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[id][ne]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[cbo][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[cbo][like]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[cbo][ne]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[name][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[name][like]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[name][ne]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[created_at][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[created_at][lt]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[created_at][lte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[created_at][gt]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[created_at][gte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[created_at][ne]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[updated_at][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[updated_at][lt]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[updated_at][lte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[updated_at][gt]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[updated_at][gte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[updated_at][ne]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Excel file with professions",
+                        "content": {
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/security/permissions/{id}/activity-logs": {
             "get": {
                 "tags": [
@@ -3376,6 +3730,404 @@
                                         },
                                         {
                                             "$ref": "#/components/schemas/StateLookupCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/hr/professions": {
+            "get": {
+                "tags": [
+                    "Profession"
+                ],
+                "summary": "List all professions",
+                "operationId": "274a32a01a57fdb3ed80702e3e08d897",
+                "parameters": [
+                    {
+                        "name": "filters[id][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[id][lt]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[id][lte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[id][gt]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[id][gte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[id][ne]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[cbo][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[cbo][like]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[cbo][ne]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[name][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[name][like]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[name][ne]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[created_at][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[created_at][lt]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[created_at][lte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[created_at][gt]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[created_at][gte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[created_at][ne]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[updated_at][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[updated_at][lt]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[updated_at][lte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[updated_at][gt]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[updated_at][gte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[updated_at][ne]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "$ref": "#/components/parameters/sortsParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/perPageParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/pageParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Profession list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ProfessionCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/hr/professions/{profession}": {
+            "get": {
+                "tags": [
+                    "Profession"
+                ],
+                "summary": "List a profession by ID",
+                "operationId": "f55dfa9bc17c7a87b1c7b17c89794f37",
+                "parameters": [
+                    {
+                        "name": "profession",
+                        "in": "path",
+                        "description": "Profession ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Profession data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/ProfessionResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/hr/professions/lookup": {
+            "get": {
+                "tags": [
+                    "Profession"
+                ],
+                "summary": "Lookup professions",
+                "operationId": "988a99c0382b335cd10a9c88d2fd8bc8",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Query for avaiable fields",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "keys[]",
+                        "in": "query",
+                        "description": "Keys to find",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "profession lookup list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ProfessionLookupCollection"
                                         }
                                     ]
                                 }
@@ -8088,6 +8840,148 @@
                     }
                 ]
             },
+            "ProfessionCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ProfessionResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "ProfessionLookupCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ProfessionLookupResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "ProfessionLookupResource": {
+                "properties": {
+                    "key": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "label": {
+                        "type": "string",
+                        "maxLength": 180,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "sublabel": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Cod.: 1 | CBO: 123456"
+                    },
+                    "meta": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "maxLength": 180,
+                                "minLength": 1,
+                                "example": "Sample"
+                            },
+                            "cbo": {
+                                "type": "string",
+                                "maxLength": 6,
+                                "minLength": 1,
+                                "example": "Sample"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "ProfessionResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "cbo": {
+                        "type": "string",
+                        "maxLength": 6,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 180,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-10-01T12:41:58.875427Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-10-01T12:41:58.875427Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "Profession": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "cbo": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Sample"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-10-01T12:41:58.875427Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-10-01T12:41:58.875427Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "LoginRequest": {
                 "required": [
                     "username",
@@ -9003,6 +9897,48 @@
                     "EXEMPT"
                 ]
             },
+            "StorePartnerTypeRequest": {
+                "required": [
+                    "name",
+                    "code"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 60,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "code": {
+                        "type": "string",
+                        "maxLength": 3,
+                        "minLength": 1,
+                        "example": "Sample"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdatePartnerTypeRequest": {
+                "required": [
+                    "name",
+                    "code"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 60,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "code": {
+                        "type": "string",
+                        "maxLength": 3,
+                        "minLength": 1,
+                        "example": "Sample"
+                    }
+                },
+                "type": "object"
+            },
             "StorePartnerRequest": {
                 "required": [
                     "partner_type_code",
@@ -9345,33 +10281,92 @@
                 },
                 "type": "object"
             },
-            "StorePartnerTypeRequest": {
-                "required": [
-                    "name",
-                    "code"
-                ],
+            "PartnerTypeCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PartnerTypeResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "PartnerTypeLookupCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PartnerTypeLookupResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "PartnerTypeLookupResource": {
                 "properties": {
-                    "name": {
+                    "key": {
                         "type": "string",
-                        "maxLength": 60,
+                        "example": "TYP"
+                    },
+                    "label": {
+                        "type": "string",
+                        "maxLength": 80,
                         "minLength": 1,
                         "example": "Sample"
                     },
-                    "code": {
+                    "sublabel": {
                         "type": "string",
-                        "maxLength": 3,
+                        "maxLength": 80,
                         "minLength": 1,
-                        "example": "Sample"
+                        "example": "Cod.: 1"
+                    },
+                    "meta": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "maxLength": 80,
+                                "minLength": 1,
+                                "example": "Tipo de parceiro"
+                            },
+                            "code": {
+                                "type": "string",
+                                "maxLength": 20,
+                                "minLength": 1,
+                                "example": "TYP"
+                            }
+                        },
+                        "type": "object"
                     }
                 },
                 "type": "object"
             },
-            "UpdatePartnerTypeRequest": {
-                "required": [
-                    "name",
-                    "code"
-                ],
+            "PartnerTypeResource": {
                 "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
                     "name": {
                         "type": "string",
                         "maxLength": 60,
@@ -9383,6 +10378,24 @@
                         "maxLength": 3,
                         "minLength": 1,
                         "example": "Sample"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -9698,125 +10711,6 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2026-09-09T02:22:32.660898Z",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "PartnerTypeCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/PartnerTypeResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "PartnerTypeLookupCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/PartnerTypeLookupResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "PartnerTypeLookupResource": {
-                "properties": {
-                    "key": {
-                        "type": "string",
-                        "example": "TYP"
-                    },
-                    "label": {
-                        "type": "string",
-                        "maxLength": 80,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "sublabel": {
-                        "type": "string",
-                        "maxLength": 80,
-                        "minLength": 1,
-                        "example": "Cod.: 1"
-                    },
-                    "meta": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 1
-                            },
-                            "name": {
-                                "type": "string",
-                                "maxLength": 80,
-                                "minLength": 1,
-                                "example": "Tipo de parceiro"
-                            },
-                            "code": {
-                                "type": "string",
-                                "maxLength": 20,
-                                "minLength": 1,
-                                "example": "TYP"
-                            }
-                        },
-                        "type": "object"
-                    }
-                },
-                "type": "object"
-            },
-            "PartnerTypeResource": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "maxLength": 60,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "code": {
-                        "type": "string",
-                        "maxLength": 3,
-                        "minLength": 1,
-                        "example": "Sample"
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
-                        "nullable": true
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
-                        "nullable": true
-                    },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
                         "nullable": true
                     }
                 },
@@ -10174,6 +11068,10 @@
             "description": "State"
         },
         {
+            "name": "Profession",
+            "description": "Profession"
+        },
+        {
             "name": "Authentication",
             "description": "Authentication"
         },
@@ -10227,6 +11125,12 @@
             "tags": [
                 "PartnerType",
                 "Partner"
+            ]
+        },
+        {
+            "name": "HR",
+            "tags": [
+                "Profession"
             ]
         }
     ]

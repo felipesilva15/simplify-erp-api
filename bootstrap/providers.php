@@ -10,4 +10,5 @@ return [
     App\Providers\RouteServiceProvider::class,
     App\Providers\SecurityModuleProvider::class,
     App\Providers\ThirdPartyModuleProvider::class,
+    App\Providers\HRModuleProvider::class,
 ];
