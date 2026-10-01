@@ -289,6 +289,106 @@ class ACLSeeder extends Seeder
                         ]
                     ]
                 ]
+            ],
+            [
+                'slug' => 'geography',
+                'name' => 'Geografia',
+                'description' => 'Módulo geográfico do sistema (países, estados e cidades)',
+                'is_active' => true,
+                'created_at' => $now,
+                'updated_at' => $now,
+                'resources' => [
+                    [
+                        'slug' => 'countries',
+                        'name' => 'Países',
+                        'description' => 'Funcionalidades para países',
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                        'permissions' => [
+                            [
+                                'action' => 'viewAny',
+                                'label' => 'Listar',
+                                'description' => 'Permite realizar a consulta de todos os países',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'view',
+                                'label' => 'Visualizar',
+                                'description' => 'Permite visualizar os detalhes de um país',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'export',
+                                'label' => 'Exportar dados',
+                                'description' => 'Permite realizar a exportação de dados dos países',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                        ]
+                    ],
+                    [
+                        'slug' => 'states',
+                        'name' => 'Estados',
+                        'description' => 'Funcionalidades para estados',
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                        'permissions' => [
+                            [
+                                'action' => 'viewAny',
+                                'label' => 'Listar',
+                                'description' => 'Permite realizar a consulta de todos os estados',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'view',
+                                'label' => 'Visualizar',
+                                'description' => 'Permite visualizar os detalhes de um estado',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'export',
+                                'label' => 'Exportar dados',
+                                'description' => 'Permite realizar a exportação de dados dos estados',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                        ]
+                    ],
+                    [
+                        'slug' => 'cities',
+                        'name' => 'Cidades',
+                        'description' => 'Funcionalidades para cidades',
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                        'permissions' => [
+                            [
+                                'action' => 'viewAny',
+                                'label' => 'Listar',
+                                'description' => 'Permite realizar a consulta de todas as cidades',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'view',
+                                'label' => 'Visualizar',
+                                'description' => 'Permite visualizar os detalhes de uma cidade',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'export',
+                                'label' => 'Exportar dados',
+                                'description' => 'Permite realizar a exportação de dados das cidades',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                        ]
+                    ]
+                ]
             ]
         ];
 

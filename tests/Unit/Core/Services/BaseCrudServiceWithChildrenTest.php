@@ -5,7 +5,7 @@ namespace Tests\Unit\Core\Services;
 use App\Core\DTO\AttributesDTO;
 use App\Core\DTO\ServiceResult;
 use App\Core\Enums\ActivityActionEnum;
-use App\Core\Models\City;
+use App\Modules\Geography\Models\City;
 use App\Core\Repositories\Interfaces\BaseRepositoryInterface;
 use App\Core\Services\ActivityLogService;
 use App\Core\Services\BaseCrudService;

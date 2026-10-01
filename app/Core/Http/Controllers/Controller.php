@@ -15,7 +15,7 @@ use Illuminate\Routing\Controller as BaseController;
  *         "tagGroups"={
  *             {
  *                 "name"="Core",
- *                 "tags"={"Module", "Resource", "Country", "State", "City"}
+ *                 "tags"={"Module", "Resource"}
  *             },
  *             {
  *                 "name"="Security",
@@ -28,6 +28,10 @@ use Illuminate\Routing\Controller as BaseController;
  *             {
  *                 "name"="HR",
  *                 "tags"={"Profession"}
+ *             },
+ *             {
+ *                 "name"="Geography",
+ *                 "tags"={"Country", "State", "City"}
  *             }
  *         }
  *     }

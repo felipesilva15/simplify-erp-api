@@ -71,7 +71,7 @@ flowchart TB
 | `Http/Controllers/` | `Controller` (base com o envelope e as annotations `@OA\OpenApi` da API) e os controllers das entidades de núcleo. |
 | `Http/Requests/Core/` | `ListRequest`, `LookupRequest`, `ExportRequest` — o contrato de query compartilhado. |
 | `Http/Resources/` | Resources e Collections de núcleo, incluindo os lookups. |
-| `Models/` | `BaseModel` (rótulo de atividade e alias de morph) e as entidades `Module`, `Resource`, `Country`, `State`, `City`, `ActivityLog`. |
+| `Models/` | `BaseModel` (rótulo de atividade e alias de morph) e as entidades `Module`, `Resource`, `ActivityLog`. |
 | `OA/Schemas/` | Schemas OpenAPI reutilizáveis: `Filters`, `FieldFilter`, `FilterValue`. |
 | `Repositories/` | `BaseRepositoryInterface`, `BaseRepository` e os repositories de núcleo. |
 | `Services/` | `BaseCrudService`, `ActivityLogService` e `Children/` (`ChildRelation`, `BaseChildSync`, `ChildSyncResult`). |
@@ -141,7 +141,8 @@ Cada módulo segue exatamente a mesma estrutura de pastas (`Models`, `Services`,
 | `Security` | `User`, `Role`, `Permission` (+ pivôs `RoleUser`, `PermissionRole`) | Autenticação JWT, gestão de usuários, perfis, permissões e definição de permissões de um perfil. |
 | `ThirdParty` | `PartnerType`, `Partner`, `Contact` | Tipos de parceiro, parceiros e seus contatos, com sincronização aninhada. |
 | `HR` | `Profession` | Profissões (CBO) como catálogo **somente leitura**, com busca rápida e exportação. |
-| `Core` (entidades) | `Module`, `Resource`, `Country`, `State`, `City`, `ActivityLog` | Metadados de autorização, cadastros geográficos de consulta e auditoria. |
+| `Geography` | `Country`, `State`, `City` | Cadastros geográficos de consulta (`countries`, `states`, `cities`), somente leitura. |
+| `Core` (entidades) | `Module`, `Resource`, `ActivityLog` | Metadados de autorização e auditoria. |
 
 Os módulos **não** possuem `Providers/` próprio: os providers ficam centralizados em `app/Providers/`, e o gerador de módulos mantém essa convenção ([§15](#15-gerador-de-módulos)).
 
@@ -158,8 +159,8 @@ Todas as rotas de API recebem o prefixo `/api` e o middleware `api` (do qual faz
 | `GET /api/security/auth/me` | `auth.me` | autenticado |
 | `crudResource` `/api/core/modules` | — | `modules.*` |
 | `crudResource` `/api/core/resources` | — | `resources.*` |
-| `GET /api/core/{countries,states,cities}` | — | `{x}.viewAny` / `view` |
-| `GET /api/core/{countries,states,cities}/lookup` | `{x}.lookup` | `{x}.viewAny` |
+| `GET /api/geography/{countries,states,cities}` | — | `{x}.viewAny` / `view` |
+| `GET /api/geography/{countries,states,cities}/lookup` | `{x}.lookup` | `{x}.viewAny` |
 | `crudResource` `/api/security/users` | — | `users.*` |
 | `GET /api/security/users/lookup` · `GET /api/security/users/export` | `users.lookup` · `users.export` | `users.viewAny` · `users.export` |
 | `crudResource` `/api/security/roles` | — | `roles.*` |
@@ -447,16 +448,16 @@ A string de permissão é `{slug do resource}.{método da policy}`. Mapeamento v
 | `PermissionPolicy` | `permissions.viewAny`, `permissions.view`, `permissions.create`, `permissions.update`, `permissions.delete` |
 | `ModulePolicy` | `modules.*` (viewAny, view, create, update, delete) |
 | `ResourcePolicy` | `resources.*` |
-| `CountryPolicy` / `StatePolicy` / `CityPolicy` | `countries.*` / `states.*` / `cities.*` |
+| `CountryPolicy` / `StatePolicy` / `CityPolicy` | `countries.viewAny`, `countries.view`, `countries.create`, `countries.update`, `countries.delete` (idem `states.*` e `cities.*`) |
 | `PartnerPolicy` | `partners.viewAny`, `partners.view`, `partners.create`, `partners.update`, `partners.delete`, `partners.export` |
 | `PartnerTypePolicy` | `partnerTypes.viewAny`, `partnerTypes.view`, `partnerTypes.create`, `partnerTypes.update`, `partnerTypes.delete` |
 
 Observações de contrato:
 
 - O prefixo da permissão é o **slug do resource** (camelCase do plural no seed, por exemplo `partnerTypes`), e **não** o prefixo da rota (`partner-types`).
-- Apenas `users`, `roles` e `partners` têm `export` — coerente com as únicas rotas `*/export`.
+- Apenas `users`, `roles` e `partners` têm `export` **verificado** — coerente com as únicas rotas `*/export`. O seed de `geography` também cria `countries.export`, `states.export` e `cities.export`, mas nenhuma rota de exportação existe para essas entidades e as policies não declaram `export`: as permissões ficam prontas para quando a exportação for exposta.
+- `CountryPolicy`, `StatePolicy` e `CityPolicy` declaram `create`/`update`/`delete`, mas essas ações não têm rota — só `index` e `show` estão expostas. 
 - `RoleController` aplica, além da policy, o middleware `can:definePermissions,role` na ação `definePermissions` (verificação duplicada, deliberada).
-- `CountryPolicy`, `StatePolicy` e `CityPolicy` declaram `create`/`update`/`delete`, mas essas ações não têm rota — só `index` e `show` estão expostas.
 - O nome da permissão **não vem do cliente**: `PermissionService::prepareData()` o compõe como `{resource->slug}.{action}` a cada gravação. `permissions.name` não tem restrição de unicidade no banco.
 
 ---
@@ -621,7 +622,7 @@ A leitura é feita pelo trait `HasActivityLogs`, que expõe `activityLogs($id, L
 
 - **Gerador:** `darkaonline/l5-swagger`, varrendo `base_path('app')` em busca de annotations `@OA` nos docblocks dos controllers.
 - **Título e servidores:** declarados no docblock `@OA\OpenApi` e `@OA\Info` de `app/Core/Http/Controllers/Controller.php` (`Simplify ERP API`, v1.0.0, servidores Local / Sandbox / Production).
-- **Tag groups:** `Core`, `Security`, `ThirdParty` e `HR`, no mesmo docblock. O gerador de módulos os estende automaticamente ([§15](#15-gerador-de-módulos)).
+- **Tag groups:** `Core`, `Security`, `ThirdParty`, `HR` e `Geography`, no mesmo docblock. O gerador de módulos os estende automaticamente ([§15](#15-gerador-de-módulos)).
 - **Segurança:** o único `securityScheme` declarado é `bearerAuth`, do tipo `apiKey` com `in: cookie` e `name: config('jwt.cookie_name')` — coerente com o fato de que a autenticação acontece por cookie.
 - **Regeneração:** `L5_SWAGGER_GENERATE_ALWAYS=true` no `.env.example` regenera a especificação a cada requisição; o arquivo gerado fica em `storage/api-docs/api-docs.json`.
 - **Schemas reutilizáveis:** `ApiResponse`, `ApiErrorResponse`, `ApiBusinessRuleErrorResponse` (definidos nos traits e exceções de `App\Core`), os enums (definidos nos próprios enums) e `Filters` / `FieldFilter` / `FilterValue` (`app/Core/OA/Schemas`).
@@ -714,7 +715,7 @@ Cobertura por área:
 
 | Área | Onde |
 |---|---|
-| CRUD completo de entidades com as 27 asserções padrão | `Feature/Core/{Module,Resource,Country,State,City}Test`, `Feature/Security/{User,Role,Permission}Test`, `Feature/ThirdParty/{Partner,PartnerType}Test` |
+| CRUD completo de entidades com as 27 asserções padrão | `Feature/Core/{Module,Resource}Test`, `Feature/Geography/{Country,State,City}Test`, `Feature/Security/{User,Role,Permission}Test`, `Feature/ThirdParty/{Partner,PartnerType}Test` |
 | Autenticação: login por cookie, token por corpo, refresh, logout, token inválido e expirado | `Feature/Security/AuthTest` |
 | Sincronização de itens aninhados, rollback transacional, regras de canal e de contato principal, ausência de N+1 (via `DB::listen`) | `Feature/ThirdParty/PartnerContactTest` |
 | Exportação: formato, extensão, filtros, permissões | `Feature/Core/ExcelExportTest`, `Feature/ThirdParty/PartnerTest`, `Feature/HR/ProfessionTest` |

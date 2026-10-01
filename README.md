@@ -140,7 +140,7 @@ A suíte roda sobre SQLite em memória (`phpunit.xml` define `DB_CONNECTION=sqli
 | Especificação OpenAPI | `/docs?api-docs.json` | Gerada a partir das annotations `@OA` em `app/`. |
 | Arquivo gerado | `storage/api-docs/api-docs.json` | Regerada automaticamente quando `L5_SWAGGER_GENERATE_ALWAYS=true`. |
 
-Os tag groups da especificação (`Core`, `Security`, `ThirdParty`, `HR`) são declarados no docblock de `app/Core/Http/Controllers/Controller.php` e são estendidos automaticamente pelo gerador de módulos.
+Os tag groups da especificação (`Core`, `Security`, `ThirdParty`, `HR`, `Geography`) são declarados no docblock de `app/Core/Http/Controllers/Controller.php` e são estendidos automaticamente pelo gerador de módulos.
 
 ---
 
@@ -168,6 +168,7 @@ app/
   Modules/
     Security/            # users, roles, permissions, autenticação JWT
     ThirdParty/          # partner-types, partners, contacts
+    Geography/           # countries, states, cities
   Console/
     Commands/            # make:module-crud
     Stubs/               # 26 stubs usados pelo gerador

@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Core\Models\Country;
+use App\Modules\Geography\Models\Country;
 use App\Modules\Security\Models\User;
 use App\Modules\Security\Services\AuthService;
 

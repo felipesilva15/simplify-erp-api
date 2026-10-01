@@ -11,4 +11,5 @@ return [
     App\Providers\SecurityModuleProvider::class,
     App\Providers\ThirdPartyModuleProvider::class,
     App\Providers\HRModuleProvider::class,
+    App\Providers\GeographyModuleProvider::class,
 ];

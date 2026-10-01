@@ -3,26 +3,28 @@
 use App\Core\Http\Controllers\ModuleController;
 use App\Core\Http\Controllers\ResourceController;
 use App\Core\Models\ActivityLog;
-use App\Modules\ThirdParty\Http\Controllers\PartnerController;
-use App\Modules\ThirdParty\Http\Controllers\PartnerTypeController;
+use App\Modules\Geography\Http\Controllers\CityController;
+use App\Modules\Geography\Http\Controllers\CountryController;
+use App\Modules\Geography\Http\Controllers\StateController;
+use App\Modules\HR\Http\Controllers\ProfessionController;
 use App\Modules\Security\Http\Controllers\AuthController;
 use App\Modules\Security\Http\Controllers\PermissionController;
 use App\Modules\Security\Http\Controllers\RoleController;
 use App\Modules\Security\Http\Controllers\UserController;
-use App\Core\Http\Controllers\CountryController;
-use App\Core\Http\Controllers\StateController;
-use App\Core\Http\Controllers\CityController;
-use App\Modules\HR\Http\Controllers\ProfessionController;
+use App\Modules\ThirdParty\Http\Controllers\PartnerController;
+use App\Modules\ThirdParty\Http\Controllers\PartnerTypeController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('security/auth/login', [AuthController::class, 'login'])->name('auth.login');
 Route::post('security/auth/token', [AuthController::class, 'token'])->name('auth.token');
 
 Route::group(['middleware' => 'auth'], function () {
-    Route::prefix('core')->group(function() {
+Route::prefix('core')->group(function() {
         Route::crudResource('modules', ModuleController::class);
         Route::crudResource('resources', ResourceController::class);
+    });
 
+    Route::prefix('geography')->group(function() {
         Route::get('countries/lookup', [CountryController::class, 'lookup'])->name('countries.lookup');
         Route::resource('countries', CountryController::class)->only('index', 'show');
 
