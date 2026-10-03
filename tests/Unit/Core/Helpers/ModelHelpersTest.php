@@ -139,4 +139,121 @@ class ModelHelpersTest extends TestCase
         
         $this->assertEmpty($builder->getQuery()->orders);
     }
+
+    public function test_default_sorts_is_primary_key_descending(): void {
+        $this->assertSame('-id', ModelHelpers::DEFAULT_SORTS);
+    }
+
+    public function test_can_set_search_on_query_grouping_columns_with_or(): void {
+        $builder = User::query();
+
+        $builder = ModelHelpers::setSearchOnQuery($builder, 'FELIPE', ['id', 'name', 'email']);
+
+        $wheres = $builder->getQuery()->wheres;
+
+        $this->assertCount(1, $wheres);
+        $this->assertSame('Nested', $wheres[0]['type']);
+        $this->assertCount(3, $wheres[0]['query']->wheres);
+
+        $this->assertSame('id', $wheres[0]['query']->wheres[0]['column']);
+        $this->assertSame('=', $wheres[0]['query']->wheres[0]['operator']);
+        $this->assertSame(0, $wheres[0]['query']->wheres[0]['value']);
+
+        $this->assertSame('name', $wheres[0]['query']->wheres[1]['column']);
+        $this->assertSame('like', $wheres[0]['query']->wheres[1]['operator']);
+        $this->assertSame('%FELIPE%', $wheres[0]['query']->wheres[1]['value']);
+
+        $this->assertSame('email', $wheres[0]['query']->wheres[2]['column']);
+        $this->assertSame('like', $wheres[0]['query']->wheres[2]['operator']);
+    }
+
+    public function test_set_search_on_query_trims_the_term(): void {
+        $builder = User::query();
+
+        $builder = ModelHelpers::setSearchOnQuery($builder, '   Felipe   ', ['name']);
+
+        $this->assertSame('%Felipe%', $builder->getQuery()->wheres[0]['query']->wheres[0]['value']);
+    }
+
+    public function test_set_search_on_query_casts_integer_columns(): void {
+        $builder = User::query();
+
+        $builder = ModelHelpers::setSearchOnQuery($builder, '7', ['id']);
+
+        $nested = $builder->getQuery()->wheres[0]['query']->wheres[0];
+
+        $this->assertSame('id', $nested['column']);
+        $this->assertSame('=', $nested['operator']);
+        $this->assertSame(7, $nested['value']);
+    }
+
+    public function test_cannot_set_search_on_query_for_empty_term(): void {
+        $builder = User::query();
+
+        $builder = ModelHelpers::setSearchOnQuery($builder, '   ', ['id', 'name']);
+
+        $this->assertEmpty($builder->getQuery()->wheres);
+    }
+
+    public function test_cannot_set_search_on_query_without_columns(): void {
+        $builder = User::query();
+
+        $builder = ModelHelpers::setSearchOnQuery($builder, 'Felipe', []);
+
+        $this->assertEmpty($builder->getQuery()->wheres);
+    }
+
+    public function test_set_search_on_query_ignores_non_existent_columns(): void {
+        $builder = User::query();
+
+        $builder = ModelHelpers::setSearchOnQuery($builder, 'Felipe', ['coluna_inexistente', 'name']);
+
+        $nested = $builder->getQuery()->wheres[0]['query']->wheres;
+
+        $this->assertCount(1, $nested);
+        $this->assertSame('name', $nested[0]['column']);
+    }
+
+    public function test_set_search_on_query_skips_all_columns_when_none_exists(): void {
+        $builder = User::query();
+
+        $builder = ModelHelpers::setSearchOnQuery($builder, 'Felipe', ['coluna_inexistente']);
+
+        $this->assertEmpty($builder->getQuery()->wheres);
+    }
+
+    public function test_set_search_on_query_accepts_the_legacy_column_map(): void {
+        $builder = User::query();
+
+        $builder = ModelHelpers::setSearchOnQuery($builder, 'Felipe', ['name' => 'string', 'id' => 'int']);
+
+        $nested = $builder->getQuery()->wheres[0]['query']->wheres;
+
+        $this->assertCount(2, $nested);
+        $this->assertSame('name', $nested[0]['column']);
+        $this->assertSame('id', $nested[1]['column']);
+    }
+
+    public function test_set_search_on_query_ignores_date_columns_when_term_is_not_a_date(): void {
+        $builder = User::query();
+
+        $builder = ModelHelpers::setSearchOnQuery($builder, 'Felipe', ['created_at', 'name']);
+
+        $nested = $builder->getQuery()->wheres[0]['query']->wheres;
+
+        $this->assertCount(1, $nested);
+        $this->assertSame('name', $nested[0]['column']);
+    }
+
+    public function test_set_search_on_query_compares_date_columns_when_term_is_a_date(): void {
+        $builder = User::query();
+
+        $builder = ModelHelpers::setSearchOnQuery($builder, '2026-01-01', ['created_at']);
+
+        $nested = $builder->getQuery()->wheres[0]['query']->wheres[0];
+
+        $this->assertSame('created_at', $nested['column']);
+        $this->assertSame('=', $nested['operator']);
+        $this->assertInstanceOf(Carbon::class, $nested['value']);
+    }
 }

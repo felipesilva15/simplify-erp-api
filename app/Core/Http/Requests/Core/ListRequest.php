@@ -16,6 +16,7 @@ use Illuminate\Foundation\Http\FormRequest;
  *             "name": {"like": "Felipe"}
  *         }
  *     ),
+ *     @OA\Property(property="q", type="string", example="Felipe", description="Free text search across the searchable columns"),
  *     @OA\Property(property="sorts", type="string", example="-id", description="Fields for sorting separated by commas. Use '-' to sort descending"),
  *     @OA\Property(property="per_page", type="integer", example=10, description="Items per page"),
  *     @OA\Property(property="page", type="integer", example=1, description="Page number")
@@ -26,6 +27,7 @@ class ListRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'q' => 'nullable|string',
             'filters' => 'nullable|array',
             'filters.*' => 'array',
             'filters.*.*' => 'required',

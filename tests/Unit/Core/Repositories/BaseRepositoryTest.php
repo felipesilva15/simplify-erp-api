@@ -8,12 +8,25 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Schema;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 
 class BaseRepositoryTest extends TestCase
 {
+    /**
+     * Schema simulado: os repositórios resolvem os tipos das colunas por introspecção,
+     * então list/lookup só podem ser exercitados com uma fonte de colunas conhecida.
+     */
+    public const FAKE_SCHEMA = [
+        'gadgets' => [
+            ['name' => 'id', 'type_name' => 'integer', 'type' => 'integer', 'nullable' => false],
+            ['name' => 'name', 'type_name' => 'varchar', 'type' => 'varchar(60)', 'nullable' => false],
+            ['name' => 'sku', 'type_name' => 'varchar', 'type' => 'varchar(30)', 'nullable' => true],
+        ],
+    ];
+
     private Model|MockInterface $modelMock;
     private BaseRepository $repository;
 
@@ -21,7 +34,17 @@ class BaseRepositoryTest extends TestCase
     {
         parent::setUp();
 
+        $schemaFake = new class {
+            public function getColumns(string $table): array
+            {
+                return BaseRepositoryTest::FAKE_SCHEMA[$table] ?? [];
+            }
+        };
+
+        Schema::swap($schemaFake);
+
         $this->modelMock = Mockery::mock(Model::class);
+        $this->modelMock->shouldReceive('getTable')->byDefault()->andReturn('gadgets');
 
         $this->repository = new class($this->modelMock) extends BaseRepository {
             public function __construct(Model $model)
@@ -32,6 +55,12 @@ class BaseRepositoryTest extends TestCase
             protected function getModelClass(): string
             {
                 return Model::class;
+            }
+
+            // Expõe getListColumnsToFilter() para permitir teste da implementação padrão
+            public function getListColumnsToFilterPublic(): array
+            {
+                return $this->getListColumnsToFilter();
             }
 
             // Expõe getLookupColumnsToFilter() para permitir teste da implementação padrão
@@ -50,6 +79,8 @@ class BaseRepositoryTest extends TestCase
 
     protected function tearDown(): void
     {
+        Schema::clearResolvedInstance('db.schema');
+
         Mockery::close();
         parent::tearDown();
     }
@@ -78,6 +109,19 @@ class BaseRepositoryTest extends TestCase
         $builderMock->shouldReceive('withQueryString')
             ->once()
             ->andReturn($paginator);
+
+        // Introspecção de colunas, ordenação padrão e relações
+        $builderMock->shouldReceive('getModel')
+            ->byDefault()
+            ->andReturn($this->modelMock);
+
+        $builderMock->shouldReceive('orderBy')
+            ->byDefault()
+            ->andReturnSelf();
+
+        $builderMock->shouldReceive('with')
+            ->byDefault()
+            ->andReturnSelf();
 
         // Conexão simulada (sqlite) exigida pela detecção de driver em list/lookup
         $connectionMock = Mockery::mock(\Illuminate\Database\Connection::class);
@@ -109,9 +153,12 @@ class BaseRepositoryTest extends TestCase
 
     public function test_can_get_default_lookup_columns(): void
     {
-        $columns = $this->repository->getLookupColumnsToFilterPublic();
+        $this->assertSame(['id'], $this->repository->getLookupColumnsToFilterPublic());
+    }
 
-        $this->assertSame(['id' => 'int'], $columns);
+    public function test_can_get_default_list_columns(): void
+    {
+        $this->assertSame(['id'], $this->repository->getListColumnsToFilterPublic());
     }
 
     public function test_can_get_default_lookup_key_column(): void
@@ -148,6 +195,138 @@ class BaseRepositoryTest extends TestCase
         $result = $this->repository->list(['per_page' => 5, 'page' => 2]);
 
         $this->assertInstanceOf(LengthAwarePaginator::class, $result);
+    }
+
+    public function test_list_orders_by_primary_key_desc_by_default(): void
+    {
+        $paginator   = $this->makePaginator();
+        $builderMock = $this->makeBuilderMock($paginator);
+
+        $builderMock->shouldReceive('orderBy')
+            ->once()
+            ->with('id', 'desc')
+            ->andReturnSelf();
+
+        $this->modelMock
+            ->shouldReceive('query')
+            ->once()
+            ->andReturn($builderMock);
+
+        $result = $this->repository->list([]);
+
+        $this->assertSame($paginator, $result);
+    }
+
+    public function test_list_uses_the_informed_sorts(): void
+    {
+        $paginator   = $this->makePaginator();
+        $builderMock = $this->makeBuilderMock($paginator);
+
+        $builderMock->shouldReceive('orderBy')
+            ->once()
+            ->with('name', 'asc')
+            ->andReturnSelf();
+
+        $this->modelMock
+            ->shouldReceive('query')
+            ->once()
+            ->andReturn($builderMock);
+
+        $result = $this->repository->list(['sorts' => 'name']);
+
+        $this->assertSame($paginator, $result);
+    }
+
+    public function test_lookup_orders_by_primary_key_desc_by_default(): void
+    {
+        $paginator   = $this->makePaginator();
+        $builderMock = $this->makeBuilderMock($paginator, perPage: 30);
+
+        $builderMock->shouldReceive('orderBy')
+            ->once()
+            ->with('id', 'desc')
+            ->andReturnSelf();
+
+        $this->modelMock
+            ->shouldReceive('query')
+            ->once()
+            ->andReturn($builderMock);
+
+        $result = $this->repository->lookup([]);
+
+        $this->assertSame($paginator, $result);
+    }
+
+    public function test_lookup_uses_the_informed_sorts(): void
+    {
+        $paginator   = $this->makePaginator();
+        $builderMock = $this->makeBuilderMock($paginator, perPage: 30);
+
+        $builderMock->shouldReceive('orderBy')
+            ->once()
+            ->with('name', 'desc')
+            ->andReturnSelf();
+
+        $this->modelMock
+            ->shouldReceive('query')
+            ->once()
+            ->andReturn($builderMock);
+
+        $result = $this->repository->lookup(['sorts' => '-name']);
+
+        $this->assertSame($paginator, $result);
+    }
+
+    public function test_cannot_apply_search_for_blank_term(): void
+    {
+        $paginator   = $this->makePaginator();
+        $builderMock = $this->makeBuilderMock($paginator);
+
+        $builderMock->shouldNotReceive('where');
+
+        $this->modelMock
+            ->shouldReceive('query')
+            ->once()
+            ->andReturn($builderMock);
+
+        $result = $this->repository->list(['q' => '   ']);
+
+        $this->assertSame($paginator, $result);
+    }
+
+    public function test_can_lookup_load_relations(): void
+    {
+        $repository = new class($this->modelMock) extends BaseRepository {
+            public function __construct(Model $model)
+            {
+                $this->model = $model;
+            }
+
+            protected function getModelClass(): string
+            {
+                return Model::class;
+            }
+
+            protected function withRelations(): array
+            {
+                return ['tags'];
+            }
+        };
+
+        $paginator   = $this->makePaginator();
+        $builderMock = $this->makeBuilderMock($paginator, perPage: 30);
+
+        $builderMock->shouldReceive('with')
+            ->once()
+            ->with(['tags'])
+            ->andReturnSelf();
+
+        $this->modelMock
+            ->shouldReceive('query')
+            ->once()
+            ->andReturn($builderMock);
+
+        $this->assertSame($paginator, $repository->lookup([]));
     }
 
     public function test_can_find_entity_by_id(): void
@@ -347,9 +526,9 @@ class BaseRepositoryTest extends TestCase
             protected function getLookupColumnsToFilter(): array
             {
                 return [
-                    'name' => 'string',
-                    'id' => 'int',
-                    'external_code' => 'uuid',
+                    'name',
+                    'id',
+                    'coluna_inexistente',
                 ];
             }
         };
@@ -377,13 +556,6 @@ class BaseRepositoryTest extends TestCase
                     ->once()
                     ->ordered()
                     ->with('id', '=', 123)
-                    ->andReturnSelf();
-
-                $nestedBuilderMock
-                    ->shouldReceive('orWhere')
-                    ->once()
-                    ->ordered()
-                    ->with('external_code', '=', ' 123 ')
                     ->andReturnSelf();
 
                 return $arg($nestedBuilderMock) === $nestedBuilderMock;

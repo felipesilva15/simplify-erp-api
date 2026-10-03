@@ -19,6 +19,11 @@ class ExportableCountryRepository extends BaseRepository
     {
         return ExportableCountry::class;
     }
+
+    protected function getListColumnsToFilter(): array
+    {
+        return ['id', 'iso_code', 'name'];
+    }
 }
 
 class BaseRepositoryExportTest extends TestCase
@@ -57,19 +62,34 @@ class BaseRepositoryExportTest extends TestCase
         $this->assertCount(3, $query->get());
     }
 
-    public function test_get_export_query_returns_all_records_and_orders_by_primary_key(): void
+    public function test_get_export_query_returns_all_records_and_orders_by_primary_key_desc_by_default(): void
     {
         $this->makeCountries();
 
         $query = $this->repository->getExportQuery();
 
         $this->assertSame(
-            ['BR', 'US', 'DE'],
+            ['DE', 'US', 'BR'],
             $query->get()->pluck('iso_code')->all()
         );
-        $this->assertContains([
-            'column' => 'id',
-            'direction' => 'asc',
+        $this->assertSame([
+            ['column' => 'id', 'direction' => 'desc'],
+        ], $this->queryOrders($query));
+    }
+
+    public function test_get_export_query_keeps_primary_key_as_tiebreaker_when_sorts_are_informed(): void
+    {
+        $this->makeCountries();
+
+        $query = $this->repository->getExportQuery(['sorts' => 'name']);
+
+        $this->assertSame(
+            ['DE', 'BR', 'US'],
+            $query->get()->pluck('iso_code')->all()
+        );
+        $this->assertSame([
+            ['column' => 'name', 'direction' => 'asc'],
+            ['column' => 'id', 'direction' => 'asc'],
         ], $this->queryOrders($query));
     }
 
@@ -106,5 +126,28 @@ class BaseRepositoryExportTest extends TestCase
         $query = $this->repository->getExportQuery(['sorts' => '-id']);
 
         $this->assertSame([3, 2, 1], $query->pluck('id')->all());
+    }
+
+    public function test_get_export_query_applies_search_like_list(): void
+    {
+        $this->makeCountries();
+
+        $params = ['q' => 'il'];
+
+        $this->assertSame(
+            ['Brasil'],
+            $this->repository->getExportQuery($params)->pluck('name')->all()
+        );
+        $this->assertSame(
+            ['Brasil'],
+            $this->repository->list($params)->pluck('name')->all()
+        );
+    }
+
+    public function test_get_export_query_ignores_blank_search(): void
+    {
+        $this->makeCountries();
+
+        $this->assertSame(3, $this->repository->getExportQuery(['q' => '   '])->count());
     }
 }
