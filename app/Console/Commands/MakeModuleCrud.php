@@ -11,6 +11,8 @@ use Illuminate\Support\Str;
 
 class MakeModuleCrud extends Command
 {
+    private const SPACES_PER_TAB = 4;
+
     protected $signature = 'make:module-crud 
                             {module : Name of module} 
                             {entity : Name of entity} 
@@ -21,613 +23,1018 @@ class MakeModuleCrud extends Command
                             {--dto : Whether the DTO should be created} 
                             {--controller : Whether the controller should be created} 
                             {--request : Whether the requests should be created} 
-                            {--resource : Whether the resources should be created}
-                            {--action : Whether the actions should be created}';
-    protected $description = 'Create a new domain module files (Repository, Service, Actions, DTO, etc)';
+                            {--resource : Whether the resources should be created} 
+                            {--lookup : Whether the lookup resources should be created} 
+                            {--policy : Whether the policy should be created} 
+                            {--factory : Whether the factory should be created} 
+                            {--export : Whether the Excel export should be created} 
+                            {--test : Whether the tests should be created}';
 
-    private $rootPath = '';
-    private $module = '';
-    private $entity = '';
-    private $entityFields = [];
-    private $commomFields = ['id', 'created_at', 'updated_at', 'deleted_at'];
-    private $stubPath = '';
+    protected $description = 'Create a new domain module files (Repository, Service, DTO, etc)';
 
-    private $folders = [
-        "{{root_path}}",
-        "{{root_path}}/Models",
-        "{{root_path}}/Services",
-        "{{root_path}}/Repositories/Eloquent",
-        "{{root_path}}/Repositories/Interfaces",
-        "{{root_path}}/Actions/{{entity}}",
-        "{{root_path}}/DTO",
-        "{{root_path}}/Http/Controllers",
-        "{{root_path}}/Http/Requests/{{entity}}",
-        "{{root_path}}/Http/Resources/{{entity}}",
-    ];
-    private $stubMap = [
-        'model' => 'module.model.stub',
-        'repository' => 'module.repository.stub',
-        'repositoryInterface' => 'module.repository-interface.stub',
-        'service' => 'module.service.stub',
-        'storeAction' => 'module.action-store.stub',
-        'editAction' => 'module.action-edit.stub',
-        'updateAction' => 'module.action-update.stub',
-        'deleteAction' => 'module.action-delete.stub',
-        'showAction' => 'module.action-show.stub',
-        'listAction' => 'module.action-list.stub',
-        'dto' => 'module.dto.stub',
-        'controller' => 'module.controller.stub',
-        'storeRequest' => 'module.request-store.stub',
-        'updateRequest' => 'module.request-update.stub',
-        'listRequest' => 'module.request-list.stub',
-        'resource' => 'module.resource.stub',
-        'collection' => 'module.resource-collection.stub',
-    ];
-    private $pathMap = [
-        'model' => '{{root_path}}/Models/{{entity}}.php',
-        'repository' => '{{root_path}}/Repositories/Eloquent/{{entity}}Repository.php',
-        'repositoryInterface' => '{{root_path}}/Repositories/Interfaces/{{entity}}RepositoryInterface.php',
-        'service' => '{{root_path}}/Services/{{entity}}Service.php',
-        'storeAction' => '{{root_path}}/Actions/{{entity}}/Store{{entity}}Action.php',
-        'editAction' => '{{root_path}}/Actions/{{entity}}/Edit{{entity}}Action.php',
-        'updateAction' => '{{root_path}}/Actions/{{entity}}/Update{{entity}}Action.php',
-        'deleteAction' => '{{root_path}}/Actions/{{entity}}/Delete{{entity}}Action.php',
-        'showAction' => '{{root_path}}/Actions/{{entity}}/Show{{entity}}Action.php',
-        'listAction' => '{{root_path}}/Actions/{{entity}}/List{{entity}}Action.php',
-        'dto' => '{{root_path}}/DTO/{{entity}}DTO.php',
-        'controller' => '{{root_path}}/Http/Controllers/{{entity}}Controller.php',
-        'storeRequest' => '{{root_path}}/Http/Requests/{{entity}}/Store{{entity}}Request.php',
-        'updateRequest' => '{{root_path}}/Http/Requests/{{entity}}/Update{{entity}}Request.php',
-        'listRequest' => '{{root_path}}/Http/Requests/{{entity}}/List{{entity}}Request.php',
-        'resource' => '{{root_path}}/Http/Resources/{{entity}}/{{entity}}Resource.php',
-        'collection' => '{{root_path}}/Http/Resources/{{entity}}/{{entity}}Collection.php',
-    ];
-    private $replacements = [];
+    private string $module = '';
 
-    public function handle()
+    private string $entity = '';
+
+    private string $rootPath = '';
+
+    private string $stubPath = '';
+
+    private array $entityFields = [];
+
+    private array $commonFields = ['id', 'created_at', 'updated_at', 'deleted_at'];
+
+    private array $folders = [
+        '{{root_path}}',
+        '{{root_path}}/Models',
+        '{{root_path}}/Services',
+        '{{root_path}}/Exports',
+        '{{root_path}}/Repositories/Eloquent',
+        '{{root_path}}/Repositories/Interfaces',
+        '{{root_path}}/DTO',
+        '{{root_path}}/Http/Controllers',
+        '{{root_path}}/Http/Requests/{{entity}}',
+        '{{root_path}}/Http/Resources/{{entity}}',
+        '{{app_path}}/Policies',
+        '{{database_path}}/factories',
+        '{{tests_path}}/Feature/{{module}}',
+    ];
+
+    private array $files = [
+        'model' => [
+            'option' => 'model',
+            'stub' => 'module.model.stub',
+            'path' => '{{root_path}}/Models/{{entity}}.php',
+            'replacements' => 'getModelReplacements',
+        ],
+        'policy' => [
+            'option' => 'policy',
+            'stub' => 'module.policy.stub',
+            'path' => '{{app_path}}/Policies/{{entity}}Policy.php',
+            'replacements' => 'getPolicyReplacements',
+        ],
+        'factory' => [
+            'option' => 'factory',
+            'stub' => 'module.factory.stub',
+            'path' => '{{database_path}}/factories/{{entity}}Factory.php',
+            'replacements' => 'getFactoryReplacements',
+        ],
+        'test' => [
+            'option' => 'test',
+            'stub' => 'module.test.stub',
+            'path' => '{{tests_path}}/Feature/{{module}}/{{entity}}Test.php',
+            'replacements' => 'getTestReplacements',
+        ],
+        'service' => [
+            'option' => 'service',
+            'stub' => 'module.service.stub',
+            'path' => '{{root_path}}/Services/{{entity}}Service.php',
+        ],
+        'repository' => [
+            'option' => 'repository',
+            'stub' => 'module.repository.stub',
+            'path' => '{{root_path}}/Repositories/Eloquent/{{entity}}Repository.php',
+            'replacements' => 'getRepositoryReplacements',
+        ],
+        'repositoryInterface' => [
+            'option' => 'repository',
+            'stub' => 'module.repository-interface.stub',
+            'path' => '{{root_path}}/Repositories/Interfaces/{{entity}}RepositoryInterface.php',
+        ],
+        'dto' => [
+            'option' => 'dto',
+            'stub' => 'module.dto.stub',
+            'path' => '{{root_path}}/DTO/{{entity}}DTO.php',
+            'replacements' => 'getDtoReplacements',
+        ],
+        'controller' => [
+            'option' => 'controller',
+            'stub' => 'module.controller.stub',
+            'path' => '{{root_path}}/Http/Controllers/{{entity}}Controller.php',
+            'replacements' => 'getControllerReplacements',
+        ],
+        'storeRequest' => [
+            'option' => 'request',
+            'stub' => 'module.request-store.stub',
+            'path' => '{{root_path}}/Http/Requests/{{entity}}/Store{{entity}}Request.php',
+            'replacements' => 'getRequestReplacements',
+        ],
+        'updateRequest' => [
+            'option' => 'request',
+            'stub' => 'module.request-update.stub',
+            'path' => '{{root_path}}/Http/Requests/{{entity}}/Update{{entity}}Request.php',
+            'replacements' => 'getRequestReplacements',
+        ],
+        'resource' => [
+            'option' => 'resource',
+            'stub' => 'module.resource.stub',
+            'path' => '{{root_path}}/Http/Resources/{{entity}}/{{entity}}Resource.php',
+            'replacements' => 'getResourceReplacements',
+        ],
+        'collection' => [
+            'option' => 'resource',
+            'stub' => 'module.resource-collection.stub',
+            'path' => '{{root_path}}/Http/Resources/{{entity}}/{{entity}}Collection.php',
+        ],
+        'resourceLookup' => [
+            'option' => 'lookup',
+            'stub' => 'module.resource-lookup.stub',
+            'path' => '{{root_path}}/Http/Resources/{{entity}}/{{entity}}LookupResource.php',
+            'replacements' => 'getLookupReplacements',
+        ],
+        'lookupCollection' => [
+            'option' => 'lookup',
+            'stub' => 'module.resource-lookup-collection.stub',
+            'path' => '{{root_path}}/Http/Resources/{{entity}}/{{entity}}LookupCollection.php',
+        ],
+        'export' => [
+            'option' => 'export',
+            'stub' => 'module.export.stub',
+            'path' => '{{root_path}}/Exports/{{entity}}Export.php',
+            'replacements' => 'getExportReplacements',
+        ],
+    ];
+
+    private array $requestTypes = [
+        'string' => 'string',
+        'float' => 'decimal',
+        'int' => 'integer',
+        'Carbon' => 'date',
+        'bool' => 'boolean',
+    ];
+
+    private array $swaggerTypes;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->swaggerTypes = [
+            'string' => ['type' => 'string', 'format' => '', 'example' => '"Sample"'],
+            'float' => ['type' => 'number', 'format' => 'float', 'example' => '20.99'],
+            'int' => ['type' => 'integer', 'format' => '', 'example' => '1'],
+            'Carbon' => ['type' => 'string', 'format' => 'date-time', 'example' => '"'.Carbon::now()->toISOString().'"'],
+            'bool' => ['type' => 'boolean', 'format' => '', 'example' => 'false'],
+        ];
+    }
+
+    public function handle(): int
     {
         $this->module = Str::studly($this->argument('module'));
         $this->entity = Str::studly($this->argument('entity'));
-        $this->rootPath = app_path("Modules/{$this->module}");
+        $this->rootPath = app_path($this->isCoreModule() ? 'Core' : "Modules/{$this->module}");
         $this->stubPath = app_path('Console/Stubs');
 
         $this->makeFolders();
         $this->loadEntityFields();
 
-        if ($this->option('all') || $this->option('model')) {
-            $this->createFile('model');
-        } 
-        
-        if ($this->option('all') || $this->option('service')) {
-            $this->createFile('service');
+        $generatedOptions = [];
+
+        foreach ($this->files as $config) {
+            if (! $this->shouldGenerate($config['option'])) {
+                continue;
+            }
+
+            $this->createFile($config);
+            $generatedOptions[$config['option']] = true;
         }
 
-        if ($this->option('all') || $this->option('repository')) {
-            $this->createFile('repository');
-            $this->createFile('repositoryInterface');
+        if (isset($generatedOptions['repository'])) {
+            $this->updateModuleProvider();
         }
 
-        if ($this->option('all') || $this->option('dto')) {
-            $this->createFile('dto');
-        }
-
-        if ($this->option('all') || $this->option('controller')) {
-            $this->createFile('controller');
-        }
-
-        if ($this->option('all') || $this->option('request')) {
-            $this->createFile('storeRequest');
-            $this->createFile('updateRequest');
-            $this->createFile('listRequest');
-        }
-
-        if ($this->option('all') || $this->option('resource')) {
-            $this->createFile('resource');
-            $this->createFile('collection');
-        }
-
-        if ($this->option('all') || $this->option('action')) {
-            $this->createFile('storeAction');
-            $this->createFile('editAction');
-            $this->createFile('updateAction');
-            $this->createFile('deleteAction');
-            $this->createFile('showAction');
-            $this->createFile('listAction');
+        if (isset($generatedOptions['controller'])) {
+            $this->registerModuleProvider();
+            $this->updateModuleRoutes();
+            $this->updateSwaggerTagGroups();
         }
 
         $this->info("Module [{$this->rootPath}] created successfully for {$this->entity} Entity!");
+
+        return self::SUCCESS;
     }
 
-    private function makeFolders(): void {
+    private function shouldGenerate(string $option): bool
+    {
+        // Lookup e export são opt-in: não são implicados por --all
+        if (in_array($option, ['lookup', 'export'], true)) {
+            return (bool) $this->option($option);
+        }
+
+        return $this->option('all') || $this->option($option);
+    }
+
+    private function createFile(array $config): void
+    {
+        $stub = File::get("{$this->stubPath}/{$config['stub']}");
+        $content = $this->replacePlaceholders($stub, $this->getReplacements($config));
+
+        File::put($this->replacePlaceholders($config['path'], $this->getBaseReplacements()), $content);
+    }
+
+    private function makeFolders(): void
+    {
         foreach ($this->folders as $folder) {
-            $folder = $this->replacePathPlaceholders($folder);
+            $path = $this->replacePlaceholders($folder, $this->getBaseReplacements());
 
-            if (!File::exists($folder)) {
-                File::makeDirectory($folder, 0755, true);
+            if (! File::exists($path)) {
+                File::makeDirectory($path, 0755, true);
             }
         }
     }
 
-    private function getStubContent(string $name): string {
-        return File::get($this->stubPath . DIRECTORY_SEPARATOR . $name);
-    }
+    private function getReplacements(array $config): array
+    {
+        $replacements = $this->getBaseReplacements();
 
-    private function replacePathPlaceholders(string $path): string {
-        return str_replace(
-            [
-                '{{root_path}}',
-                '{{entity}}',
-            ],
-            [
-                $this->rootPath,
-                $this->entity,
-            ],
-            $path
-        );
-    }
-
-    private function createFile(string $type): void {
-        $stubName = $this->stubMap[$type];
-        $stub = $this->getStubContent($stubName);
-        $content = $this->replaceStubPlaceholders($stub);
-
-        $path = $this->pathMap[$type];
-        $path = $this->replacePathPlaceholders($path);
-
-        File::put($path, $content);
-    }
-
-    private function replaceStubPlaceholders(string $stub): string {
-        return str_replace(
-            [
-                '{{entity}}',
-                '{{lower_entity}}',
-                '{{module}}',
-                '{{lower_module}}'
-            ],
-            [
-                $this->entity,
-                strtolower($this->entity),
-                $this->module,
-                strtolower($this->module)
-            ],
-            $stub
-        );
-    }
-
-    private function createModel(): void {
-        $stub = $this->getStubContent('module.model.stub');
-        
-        $dynamicReplacements = $this->getModelDynamicReplacements();
-        $content = $this->replaceStubPlaceholders($stub);
-        $content = str_replace(
-            [
-                '{{fillable_fields}}',
-                '{{swagger_properties}}',
-            ],
-            [
-                $dynamicReplacements['fillable_fields'],
-                $dynamicReplacements['swagger_properties'],
-            ],
-            $content
-        );
-
-        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR . $this->entity . '.php';
-
-        File::put($path, $content);
-    }
-
-    private function loadEntityFields(): void {
-        $tableName = $this->getTableNameByEntityName($this->entity);
-        $this->entityFields = ModelHelpers::getColumnsFromTable($tableName);
-    }
-
-    private function getTableNameByEntityName(string $entityName): string {
-        $entityName = trim(strtolower($entityName));
-        $tableName = '';
-
-        if (substr($entityName, -1) == 's') {
-            $tableName = $entityName . 'es';
-        } elseif (substr($entityName, -1) == 'y') {
-            $tableName = substr($entityName, strlen($entityName - 1)) . 'ies';
-        } else {
-            $tableName = $entityName . 's';
+        if (isset($config['replacements'])) {
+            $replacements = array_merge($replacements, $this->{$config['replacements']}());
         }
 
-        return $tableName;
+        return $replacements;
     }
 
-    private function createDto(): void {
-        $stub = $this->getStubContent('module.dto.stub');
-
-        $dynamicReplacements = $this->getDtoDynamicReplacements();
-        $content = $this->replaceStubPlaceholders($stub);
-        $content = str_replace(
-            [
-                '{{constructor_properties}}',
-                '{{constructor_params}}',
-                '{{array_fields}}',
-            ],
-            [
-                $dynamicReplacements['constructor_properties'],
-                $dynamicReplacements['constructor_params'],
-                $dynamicReplacements['array_fields'],
-            ],
-            $content
-        );
-
-        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'DTO' . DIRECTORY_SEPARATOR . $this->entity . 'DTO.php';
-
-        File::put($path, $content);
+    private function isCoreModule(): bool
+    {
+        return $this->module === 'Core';
     }
 
-    private function createController(): void {
-        $stub = $this->getStubContent('module.controller.stub');
-        
-        $dynamicReplacements = $this->getControllerDynamicReplacements();
-        $content = $this->replaceStubPlaceholders($stub);
-        $content = str_replace(
-            [
-                '{{swagger_query_parameters}}',
-            ],
-            [
-                $dynamicReplacements['swagger_query_parameters'],
-            ],
-            $content
-        );
-
-        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR . $this->entity . 'Controller.php';
-
-        File::put($path, $content);
+    private function getModuleNamespace(): string
+    {
+        return $this->isCoreModule()
+            ? 'App\\Core'
+            : 'App\\Modules\\'.$this->module;
     }
 
-    private function getControllerDynamicReplacements(): array {
-        $swaggerReplacements = $this->getSwaggerFieldsAnnotation(setCommomProperties: true, setValidationAttributes: false);
+    private function getBaseReplacements(): array
+    {
+        $pluralEntity = Str::pluralStudly($this->entity);
 
         return [
-            'swagger_query_parameters' => $swaggerReplacements['query_parameters']
+            '{{root_path}}' => $this->rootPath,
+            '{{app_path}}' => app_path(),
+            '{{database_path}}' => database_path(),
+            '{{tests_path}}' => base_path('tests'),
+            '{{module}}' => $this->module,
+            '{{module_namespace}}' => $this->getModuleNamespace(),
+            '{{entity}}' => $this->entity,
+            '{{lower_module}}' => Str::kebab($this->module),
+            '{{lower_entity}}' => Str::lower(Str::snake($this->entity)),
+            '{{route_entity}}' => Str::kebab($pluralEntity),
+            '{{human_entity}}' => Str::lower(Str::headline($this->entity)),
+            '{{human_entities}}' => Str::lower(Str::headline($pluralEntity)),
+            '{{permission_entity}}' => Str::camel($pluralEntity),
+            '{{table_name}}' => $this->getTableNameByEntityName($this->entity),
         ];
     }
 
-    private function createRequests(): void {
-        $this->createStoreRequest();
-        $this->createUpdateRequest();
-        $this->createListRequest();
+    private function replacePlaceholders(string $content, array $replacements): string
+    {
+        return strtr($content, $replacements);
     }
 
-    private function createStoreRequest(): void {
-        $stub = $this->getStubContent('module.request-store.stub');
-        
-        $dynamicReplacements = $this->getRequestDynamicReplacements();
-        $content = $this->replaceStubPlaceholders($stub);
-        $content = str_replace(
-            [
-                '{{rules_definitions}}',
-                '{{swagger_required}}',
-                '{{swagger_properties}}',
-            ],
-            [
-                $dynamicReplacements['rules_definitions'],
-                $dynamicReplacements['swagger_required'],
-                $dynamicReplacements['swagger_properties'],
-            ],
-            $content
-        );
-
-        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Requests' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . 'Store' . $this->entity . 'Request.php';
-
-        File::put($path, $content);
+    private function readStubBlock(string $stub): string
+    {
+        return rtrim(File::get("{$this->stubPath}/{$stub}"));
     }
 
-    private function createUpdateRequest(): void {
-        $stub = $this->getStubContent('module.request-update.stub');
-        
-        $dynamicReplacements = $this->getRequestDynamicReplacements();
-        $content = $this->replaceStubPlaceholders($stub);
-        $content = str_replace(
-            [
-                '{{rules_definitions}}',
-                '{{swagger_required}}',
-                '{{swagger_properties}}',
-            ],
-            [
-                $dynamicReplacements['rules_definitions'],
-                $dynamicReplacements['swagger_required'],
-                $dynamicReplacements['swagger_properties'],
-            ],
-            $content
-        );
-
-        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Requests' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . 'Update' . $this->entity . 'Request.php';
-
-        File::put($path, $content);
+    private function tabs(int $levels): string
+    {
+        return str_repeat(' ', $levels * self::SPACES_PER_TAB);
     }
 
-    private function createListRequest(): void {
-        $stub = $this->getStubContent('module.request-list.stub');
-        
-        $dynamicReplacements = $this->getListRequestDynamicReplacements();
-        $content = $this->replaceStubPlaceholders($stub);
-        $content = str_replace(
-            [
-                '{{rules_definitions}}',
-                '{{swagger_properties}}',
-            ],
-            [
-                $dynamicReplacements['rules_definitions'],
-                $dynamicReplacements['swagger_properties'],
-            ],
-            $content
-        );
-
-        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Requests' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . 'List' . $this->entity . 'Request.php';
-
-        File::put($path, $content);
+    private function loadEntityFields(): void
+    {
+        $this->entityFields = ModelHelpers::getColumnsFromTable($this->getTableNameByEntityName($this->entity));
     }
 
-    private function createResources(): void {
-        $this->createResource();
-        $this->createCollection();
-    }
+    private function getTableNameByEntityName(string $entityName): string
+    {
+        $entityName = strtolower(Str::snake($entityName));
 
-    private function createResource(): void {
-        $stub = $this->getStubContent('module.resource.stub');
-        
-        $dynamicReplacements = $this->getResourceDynamicReplacements();
-        $content = $this->replaceStubPlaceholders($stub);
-        $content = str_replace(
-            [
-                '{{array_fields}}',
-                '{{swagger_properties}}',
-            ],
-            [
-                $dynamicReplacements['array_fields'],
-                $dynamicReplacements['swagger_properties'],
-            ],
-            $content
-        );
-
-        $path = $this->rootPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . $this->entity . DIRECTORY_SEPARATOR . $this->entity . 'Resource.php';
-
-        File::put($path, $content);
-    }
-
-    private function getDtoDynamicReplacements(): array {
-        $constructorProperties = '';
-        $constructorParams = '';
-        $arrayFields = '';
-
-        foreach ($this->entityFields as $index => $field) {
-            $constructorProperties = $index == 0 ? $constructorProperties : $constructorProperties . str_pad('', 4 * 2, ' ');
-            $constructorParams = $index == 0 ? $constructorParams : $constructorParams . str_pad('', 4 * 3, ' ');
-            $arrayFields = $index == 0 ? $arrayFields : $arrayFields . str_pad('', 4 * 3, ' ');
-            $literalDefaultValue = StringHelpers::toStringLiteral($field['default']);
-
-            $constructorProperties = $constructorProperties . 'public ' . ($field['nullable'] ? '?' : '') .  $field['type'] . ' $' . $field['name'] . ' = ' . $literalDefaultValue . ',' . PHP_EOL;
-            $constructorParams = $constructorParams . $field['name'] . ": \$data['" . $field['name'] . "'] ?? " . $literalDefaultValue . ',' . PHP_EOL;
-            $arrayFields = $arrayFields . "'" . $field['name'] . "' => \$this->" . $field['name'] . ',' . PHP_EOL;
+        if (str_ends_with($entityName, 's')) {
+            return $entityName.'es';
         }
 
-        $constructorProperties = substr($constructorProperties, 0, strlen($constructorProperties) - (1 + strlen(PHP_EOL)));
-        $constructorParams = substr($constructorParams, 0, strlen($constructorParams) - (1 + strlen(PHP_EOL)));
-        $arrayFields = substr($arrayFields, 0, strlen($arrayFields) - (1 + strlen(PHP_EOL)));
+        if (str_ends_with($entityName, 'y')) {
+            return substr($entityName, 0, -1).'ies';
+        }
 
+        return $entityName.'s';
+    }
+
+    private function getModelReplacements(): array
+    {
         return [
-            'constructor_properties' => $constructorProperties,
-            'constructor_params' => $constructorParams,
-            'array_fields' => $arrayFields
+            '{{fillable_fields}}' => $this->renderLines(
+                array_map(fn ($field) => "'{$field['name']}'", $this->entityFields(skipCommon: true)),
+                indent: $this->tabs(2),
+            ),
+            ...$this->getSwaggerFields(setCommonProperties: true, setValidationAttributes: false),
         ];
     }
 
-    private function getRequestDynamicReplacements(): array {
-        $rulesDefinitions = '';
+    private function getDtoReplacements(): array
+    {
+        $properties = [];
+        $params = [];
+        $arrayFields = [];
 
-        $typeRules = [
-            'string' => 'string',
-            'float' => 'decimal',
-            'int' => 'integer',
-            'Carbon' => 'datetime',
-            'bool' => 'boolean',
-        ];
+        foreach ($this->entityFields() as $field) {
+            $default = StringHelpers::toStringLiteral($field['default']);
+            $arrayFields[] = "'{$field['name']}' => \$this->{$field['name']}";
 
-        $swaggerReplacements = $this->getSwaggerFieldsAnnotation(setCommomProperties: false, setValidationAttributes: true);
+            if ($field['type'] === 'Carbon') {
+                $properties[] = "public ?Carbon \${$field['name']} = null";
+                $params[] = "{$field['name']}: !empty(\$data['{$field['name']}']) ? Carbon::parse(\$data['{$field['name']}']) : null";
 
-        foreach ($this->entityFields as $index => $field) {
-            if (in_array($field['name'], $this->commomFields)) {
                 continue;
             }
 
-            $definition = "'{$field['name']}' => '";
-            $definition .= $field['nullable'] ? 'nullable|' : 'required|';
-            $definition .= $field['type'] == 'float' ? $typeRules[$field['type']] . ':' . (string) $field['precision'] : $typeRules[$field['type']] . '|';
-            $definition .= $field['max_length'] && $field['type'] == 'string' ? 'min:1|max:' . (string) $field['max_length'] . '|' : '';
-            $definition .= str_contains($field['name'], 'mail') ? 'email|' : ''; 
-            $definition = substr($definition, 0, strlen($definition) - 1);
-            $definition .= "',";
-            $definition .= PHP_EOL;
-
-            $rulesDefinitions .= $rulesDefinitions == '' ? '' : str_pad('', 4 * 3, ' ');
-            $rulesDefinitions .= $definition;
+            $properties[] = 'public '.($field['nullable'] ? '?' : '').$field['type'].' $'.$field['name'].' = '.$default;
+            $params[] = "{$field['name']}: \$data['{$field['name']}'] ?? {$default}";
         }
 
-        $rulesDefinitions = substr($rulesDefinitions, 0, strlen($rulesDefinitions) - (1 + strlen(PHP_EOL)));
-
         return [
-            'rules_definitions' => $rulesDefinitions,
-            'swagger_required' => $swaggerReplacements['required'],
-            'swagger_properties' => $swaggerReplacements['properties'],
+            '{{dto_carbon_import}}' => $this->hasCarbonFields() ? 'use Carbon\Carbon;' : '',
+            '{{constructor_properties}}' => $this->renderLines($properties, indent: $this->tabs(2)),
+            '{{constructor_params}}' => $this->renderLines($params, indent: $this->tabs(3)),
+            '{{array_fields}}' => $this->renderLines($arrayFields, indent: $this->tabs(3)),
         ];
     }
 
-    private function getListRequestDynamicReplacements(): array {
-        $rulesDefinitions = '';
+    private function getControllerReplacements(): array
+    {
+        $base = $this->getBaseReplacements();
 
-        $typeRules = [
-            'string' => 'string',
-            'float' => 'decimal',
-            'int' => 'integer',
-            'Carbon' => 'datetime',
-            'bool' => 'boolean',
+        return [
+            '{{index_filter_parameters}}' => $this->renderIndexFilterParameters(),
+            '{{lookup_imports}}' => $this->option('lookup')
+                ? $this->replacePlaceholders($this->readStubBlock('module.controller-lookup-imports.stub'), $base).PHP_EOL
+                : '',
+            '{{lookup_method}}' => $this->option('lookup')
+                ? $this->replacePlaceholders($this->readStubBlock('module.controller-lookup.stub'), $base)
+                : '',
+            '{{export_imports}}' => $this->option('export')
+                ? PHP_EOL.$this->replacePlaceholders($this->readStubBlock('module.controller-export-imports.stub'), $base)
+                : '',
+            '{{export_trait}}' => $this->option('export')
+                ? PHP_EOL.'    use HasExcelExport;'
+                : '',
+            '{{export_swagger}}' => $this->option('export')
+                ? $this->replacePlaceholders($this->readStubBlock('module.controller-export-swagger.stub'), [
+                    ...$base,
+                    '{{export_filter_parameters}}' => $this->renderIndexFilterParameters(),
+                ])
+                : '',
+            '{{export_methods}}' => $this->option('export')
+                ? PHP_EOL.PHP_EOL.$this->tabs(1).$this->replacePlaceholders($this->readStubBlock('module.controller-export-methods.stub'), $base)
+                : '',
         ];
+    }
 
-        $swaggerReplacements = $this->getSwaggerFieldsAnnotation(setCommomProperties: true, setValidationAttributes: false);
+    private function getPolicyReplacements(): array
+    {
+        return [
+            '{{export_policy_method}}' => $this->option('export')
+                ? PHP_EOL.PHP_EOL.$this->tabs(1).$this->replacePlaceholders($this->readStubBlock('module.policy-export.stub'), $this->getBaseReplacements())
+                : '',
+        ];
+    }
 
-        foreach ($this->entityFields as $index => $field) {
-            if (in_array($field['name'], $this->commomFields)) {
-                continue;
+    private function getExportReplacements(): array
+    {
+        $headings = ["'ID'"];
+        $mapFields = ['$row->id'];
+
+        foreach ($this->entityFields(skipCommon: true) as $field) {
+            $headings[] = "'".Str::headline($field['name'])."'";
+
+            $mapFields[] = $field['type'] === 'Carbon'
+                ? "\$row->{$field['name']}?->format('Y-m-d H:i:s')"
+                : "\$row->{$field['name']}";
+        }
+
+        return [
+            '{{export_headings}}' => $this->renderLines($headings, indent: $this->tabs(3)),
+            '{{export_map_fields}}' => $this->renderLines($mapFields, indent: $this->tabs(3)),
+        ];
+    }
+
+    private function getRequestReplacements(): array
+    {
+        return [
+            '{{rules_definitions}}' => $this->renderLines(
+                array_map(
+                    fn ($field) => "'{$field['name']}' => '{$this->buildRule($field)}'",
+                    $this->entityFields(skipCommon: true),
+                ),
+                indent: $this->tabs(3),
+            ),
+            ...$this->getSwaggerFields(setCommonProperties: false, setValidationAttributes: true),
+        ];
+    }
+
+    private function getResourceReplacements(): array
+    {
+        return [
+            '{{array_fields}}' => $this->renderLines(
+                array_map(fn ($field) => "'{$field['name']}' => \$this->{$field['name']}", $this->entityFields()),
+                indent: $this->tabs(3),
+            ),
+            ...$this->getSwaggerFields(setCommonProperties: true, setValidationAttributes: true),
+        ];
+    }
+
+    private function getFactoryReplacements(): array
+    {
+        return [
+            '{{factory_attributes}}' => $this->renderLines(
+                array_map(
+                    fn ($field) => "'{$field['name']}' => {$this->fakerExpression($field)}",
+                    $this->entityFields(skipCommon: true),
+                ),
+                indent: $this->tabs(3),
+            ),
+        ];
+    }
+
+    private function getTestReplacements(): array
+    {
+        $fields = $this->entityFields(skipCommon: true);
+        $stringField = array_values(array_filter($fields, fn ($field) => $field['type'] === 'string'))[0] ?? null;
+        $requiredField = array_values(array_filter($fields, fn ($field) => ! $field['nullable']))[0] ?? null;
+
+        $displayField = $stringField['name'] ?? ($fields[0]['name'] ?? '');
+        $requiredField = $requiredField['name'] ?? $displayField;
+
+        return [
+            '{{resource_structure}}' => $this->renderLines(
+                array_map(fn ($field) => "'{$field['name']}'", $this->entityFields()),
+                indent: $this->tabs(3),
+            ),
+            '{{display_field}}' => $displayField,
+            '{{required_field}}' => $requiredField,
+        ];
+    }
+
+    private function getRepositoryReplacements(): array
+    {
+        $stringFields = array_values(array_filter(
+            $this->entityFields(skipCommon: true),
+            fn ($field) => $field['type'] === 'string',
+        ));
+
+        $columns = array_map(fn ($field) => "'{$field['name']}' => 'string'", $stringFields);
+
+        if (count($columns) === 0) {
+            $columns = ["'id' => 'int'"];
+        }
+
+        $lookupColumns = $this->renderLines($columns, indent: $this->tabs(3));
+        $lookupKeyMethod = '';
+
+        if ($this->option('lookup')) {
+            $keyName = $this->getLookupKeyField()['name'] ?? 'id';
+
+            if ($keyName !== 'id') {
+                $lookupKeyMethod = $this->replacePlaceholders(
+                    $this->readStubBlock('module.repository-lookup-key.stub'),
+                    ['{{lookup_key_column}}' => $keyName],
+                ).PHP_EOL.PHP_EOL;
+            }
+        }
+
+        return [
+            '{{lookup_columns}}' => $lookupColumns,
+            '{{lookup_columns_method}}' => $this->option('lookup')
+                ? $this->replacePlaceholders($this->readStubBlock('module.repository-lookup.stub'), ['{{lookup_columns}}' => $lookupColumns]).PHP_EOL.PHP_EOL
+                : '',
+            '{{lookup_key_method}}' => $lookupKeyMethod,
+        ];
+    }
+
+    private function getLookupReplacements(): array
+    {
+        $fields = $this->entityFields(skipCommon: true);
+        $stringFields = array_values(array_filter($fields, fn ($field) => $field['type'] === 'string'));
+
+        $labelField = null;
+
+        foreach ($stringFields as $field) {
+            if ($field['name'] === 'name') {
+                $labelField = $field;
+                break;
+            }
+        }
+
+        if ($labelField === null && count($stringFields) > 0) {
+            $labelField = $stringFields[0];
+        }
+
+        $keyField = $this->getLookupKeyField();
+
+        $usesIdAsKey = $keyField === null;
+        $keyName = $usesIdAsKey ? 'id' : $keyField['name'];
+        $labelName = $labelField['name'] ?? 'id';
+        $labelMaxLength = $labelField['max_length'] ?? 80;
+
+        $metaNames = ['id'];
+
+        foreach ([$labelName, $keyName] as $name) {
+            if (! in_array($name, $metaNames, true)) {
+                $metaNames[] = $name;
+            }
+        }
+
+        foreach ($stringFields as $field) {
+            if (! in_array($field['name'], $metaNames, true)) {
+                $metaNames[] = $field['name'];
             }
 
-            $definition = "'{$field['name']}' => 'nullable|";
-            $definition .= $field['type'] == 'float' ? $typeRules[$field['type']] . ':' . (string) $field['precision'] : $typeRules[$field['type']] . '|';
-            $definition = substr($definition, 0, strlen($definition) - 1);
-            $definition .= "',";
-            $definition .= PHP_EOL;
-
-            $rulesDefinitions .= $rulesDefinitions == '' ? '' : str_pad('', 4 * 3, ' ');
-            $rulesDefinitions .= $definition;
-        }
-
-        $rulesDefinitions = substr($rulesDefinitions, 0, strlen($rulesDefinitions) - (1 + strlen(PHP_EOL)));
-
-        return [
-            'rules_definitions' => $rulesDefinitions,
-            'swagger_properties' => $swaggerReplacements['properties'],
-        ];
-    }
-
-    private function getModelDynamicReplacements(): array {
-        $fillableFields = '';
-
-        $swaggerReplacements = $this->getSwaggerFieldsAnnotation(setCommomProperties: true, setValidationAttributes: false);
-
-        foreach ($this->entityFields as $index => $field) {
-            if (in_array($field['name'], $this->commomFields)) {
-                continue;
+            if (count($metaNames) >= 5) {
+                break;
             }
-
-            $fillableFields .= $fillableFields == '' ? '' : str_pad('', 4 * 2, ' ');
-            $fillableFields .= "'{$field['name']}',";
-            $fillableFields .= PHP_EOL;
         }
 
-        $fillableFields = substr($fillableFields, 0, strlen($fillableFields) - (1 + strlen(PHP_EOL)));
+        $allFields = $this->entityFields();
+        $metaProperties = [];
 
-        return [
-            'fillable_fields' => $fillableFields,
-            'swagger_properties' => $swaggerReplacements['properties'],
-        ];
-    }
+        foreach ($metaNames as $name) {
+            $metaField = null;
 
-    private function getResourceDynamicReplacements(): array {
-        $arrayFields = '';
-
-        $swaggerReplacements = $this->getSwaggerFieldsAnnotation(setCommomProperties: true, setValidationAttributes: true);
-
-        foreach ($this->entityFields as $index => $field) {
-            $arrayFields = $index == 0 ? $arrayFields : $arrayFields . str_pad('', 4 * 3, ' ');
-
-            $arrayFields = $arrayFields . "'" . $field['name'] . "' => \$this->" . $field['name'] . ',' . PHP_EOL;
-        }
-        
-        $arrayFields = substr($arrayFields, 0, strlen($arrayFields) - (1 + strlen(PHP_EOL)));
-
-        return [
-            'array_fields' => $arrayFields,
-            'swagger_properties' => $swaggerReplacements['properties'],
-        ];
-    }
-
-    private function getSwaggerFieldsAnnotation(bool $setCommomProperties = true, bool $setValidationAttributes = false): array {
-        $required = '';
-        $properties = '';
-        $queryParameters = '';
-
-        $typeMap = [
-            'string' => [
-                'type' => 'string',
-                'format' => '', 
-                'example' => '"Sample"'
-            ],
-            'float' => [
-                'type' => 'number', 
-                'format' => 'float', 
-                'example' => '20.99'
-            ],
-            'int' => [
-                'type' => 'integer', 
-                'format' => '', 
-                'example' => '1'
-            ],
-            'Carbon' => [
-                'type' => 'string', 
-                'format' => 'date-time', 
-                'example' => '"' . Carbon::now()->toISOString(). '"'
-            ],
-            'bool' => [
-                'type' => 'boolean', 
-                'format' => '', 
-                'example' => 'false'
-            ],
-        ];
-        
-        foreach ($this->entityFields as $field) {
-            if (!$setCommomProperties && in_array($field['name'], $this->commomFields)) {
-                continue;
-            }
-
-            $queryParameter = '';
-            $property = '';
-
-            if ($properties != '')
-                $property .= ' *  ' . str_pad('', 4 * 1, ' ');
-
-            if ($queryParameters != '')
-                $queryParameter .= '     *  ' . str_pad('', 4 * 1, ' ');
-
-            $type = $typeMap[$field['type']];
-
-            $property .= "@OA\Property(property=\"{$field['name']}\", type=\"{$type['type']}\"";
-            $queryParameter .= "@OA\Parameter(name=\"{$field['name']}\", in=\"query\", required=false, @OA\Schema(type=\"{$type['type']}\")";
-
-            if ($type['format'] ?? '')
-                $property .= ", format=\"{$type['format']}\"";
-
-            $property .= ', example=' . $type['example'];
-
-            if ($setValidationAttributes) {
-                if (!$field['nullable'])
-                    $required .= ',"'. $field['name'] .'"';
-
-                switch ($field['type']) {
-                    case 'string':
-                        $property .= ', minLength=1, maxLength=' . $field['max_length'];
-                        break;
-
-                    case 'float':
-                        $property .= ', minimum=0.' . str_pad('', $field['precision'] - 1, '0') . '1';
-                        $property .= ', maximum=' . str_pad('', $field['max_length'] - $field['precision'], '9') . '.' . str_pad('', $field['precision'], '9');
-                        break;
+            foreach ($allFields as $field) {
+                if ($field['name'] === $name) {
+                    $metaField = $field;
+                    break;
                 }
             }
 
-            if ($field['nullable'])
-                $property .= ', nullable=true';
-
-            $property .= '),' . PHP_EOL;
-            $queryParameter .= '),' . PHP_EOL;
-
-            $properties .= $property;
-            $queryParameters .= $queryParameter;
+            $metaProperties[] = $this->getLookupMetaProperty(
+                $metaField ?? ['name' => $name, 'type' => 'string', 'nullable' => false, 'max_length' => $labelMaxLength],
+            );
         }
 
-        $required = substr($required, 1);
-        $properties = substr($properties, 0, strlen($properties) - (1 + strlen(PHP_EOL)));
-        $queryParameters = substr($queryParameters, 0, strlen($queryParameters) - (1 + strlen(PHP_EOL)));
+        return [
+            '{{lookup_key_type}}' => $usesIdAsKey ? 'integer' : 'string',
+            '{{lookup_key_example}}' => $usesIdAsKey ? '1' : '"Sample"',
+            '{{lookup_label_max_length}}' => $labelMaxLength,
+            '{{lookup_key_accessor}}' => $usesIdAsKey ? '$this->id' : '$this->'.$keyName,
+            '{{lookup_label_accessor}}' => '$this->'.$labelName,
+            '{{lookup_meta_args}}' => implode(', ', array_map(fn ($name) => "'".$name."'", $metaNames)),
+            '{{lookup_meta_properties}}' => $this->renderLines($metaProperties, indent: ' * '.$this->tabs(2)),
+        ];
+    }
+
+    private function getLookupKeyField(): ?array
+    {
+        foreach ($this->entityFields(skipCommon: true) as $field) {
+            if ($field['type'] === 'string' && $field['name'] === 'code') {
+                return $field;
+            }
+        }
+
+        return null;
+    }
+
+    private function getLookupMetaProperty(array $field): string
+    {
+        if ($field['name'] === 'id') {
+            return '@OA\Property(property="id", type="integer", example=1)';
+        }
+
+        return $this->getSwaggerProperty($field, true);
+    }
+
+    private function renderIndexFilterParameters(): string
+    {
+        $lines = [];
+
+        foreach ($this->entityFields() as $field) {
+            $schemaType = match ($field['type']) {
+                'int' => 'integer',
+                'float' => 'number',
+                'bool' => 'boolean',
+                'Carbon' => 'string',
+                default => 'string',
+            };
+
+            foreach ($this->filterOperatorsForType($field['type']) as $operator) {
+                $lines[] = '@OA\Parameter(name="filters['.$field['name'].']['.$operator.']", in="query", required=false, @OA\Schema(type="'.$schemaType.'"))';
+            }
+        }
+
+        $rendered = '';
+        $prefix = $this->tabs(1).' * '.$this->tabs(1);
+
+        foreach ($lines as $index => $line) {
+            $rendered .= ($index > 0 ? $prefix : '').$line.','.PHP_EOL;
+        }
+
+        return rtrim($rendered, PHP_EOL);
+    }
+
+    private function filterOperatorsForType(string $type): array
+    {
+        return match ($type) {
+            'string' => ['eq', 'like', 'ne'],
+            'bool' => ['eq', 'ne'],
+            default => ['eq', 'lt', 'lte', 'gt', 'gte', 'ne'],
+        };
+    }
+
+    private function fakerExpression(array $field): string
+    {
+        if (str_contains($field['name'], 'mail')) {
+            return 'fake()->unique()->safeEmail()';
+        }
+
+        if (str_contains($field['name'], 'slug')) {
+            return 'strtolower(fake()->name())';
+        }
+
+        if (str_contains($field['name'], 'phone')) {
+            return "fake()->numerify('###########')";
+        }
+
+        return match ($field['type']) {
+            'string' => 'fake()->name()',
+            'int' => 'fake()->numberBetween(0, 100)',
+            'float' => 'fake()->randomFloat(2, 0, 9999)',
+            'bool' => 'fake()->boolean()',
+            'Carbon' => "fake()->date('Y-m-d H:i:s')",
+            default => 'fake()->name()',
+        };
+    }
+
+    private function buildRule(array $field): string
+    {
+        $rules = [$field['nullable'] ? 'nullable' : 'required'];
+
+        $typeRule = $this->requestTypes[$field['type']];
+        $rules[] = $field['type'] === 'float' ? "{$typeRule}:{$field['precision']}" : $typeRule;
+
+        if ($field['max_length'] && $field['type'] === 'string') {
+            $rules[] = 'min:1';
+            $rules[] = "max:{$field['max_length']}";
+        }
+
+        if (str_contains($field['name'], 'mail')) {
+            $rules[] = 'email';
+        }
+
+        return implode('|', $rules);
+    }
+
+    private function getSwaggerFields(bool $setCommonProperties, bool $setValidationAttributes): array
+    {
+        $properties = [];
+        $required = [];
+
+        foreach ($this->entityFields(skipCommon: ! $setCommonProperties) as $field) {
+            $properties[] = $this->getSwaggerProperty($field, $setValidationAttributes);
+
+            if ($setValidationAttributes && ! $field['nullable']) {
+                $required[] = '"'.$field['name'].'"';
+            }
+        }
 
         return [
-            'required' => $required,
-            'properties' => $properties,
-            'query_parameters' => $queryParameters
+            '{{swagger_properties}}' => $this->renderLines($properties, indent: ' * '.$this->tabs(1)),
+            '{{swagger_required}}' => implode(',', $required),
         ];
+    }
+
+    private function getSwaggerProperty(array $field, bool $setValidationAttributes): string
+    {
+        $type = $this->swaggerTypes[$field['type']];
+        $property = "@OA\Property(property=\"{$field['name']}\", type=\"{$type['type']}\"";
+
+        if ($type['format']) {
+            $property .= ", format=\"{$type['format']}\"";
+        }
+
+        $property .= ", example={$type['example']}";
+
+        if ($setValidationAttributes) {
+            switch ($field['type']) {
+                case 'string':
+                    $property .= ', minLength=1, maxLength='.$field['max_length'];
+                    break;
+
+                case 'float':
+                    $property .= ', minimum=0.'.str_pad('', $field['precision'] - 1, '0').'1';
+                    $property .= ', maximum='.str_pad('', $field['max_length'] - $field['precision'], '9').'.'.str_pad('', $field['precision'], '9');
+                    break;
+            }
+        }
+
+        if ($field['nullable']) {
+            $property .= ', nullable=true';
+        }
+
+        return $property.')';
+    }
+
+    private function entityFields(bool $skipCommon = false): array
+    {
+        if (! $skipCommon) {
+            return $this->entityFields;
+        }
+
+        return array_values(array_filter(
+            $this->entityFields,
+            fn ($field) => ! in_array($field['name'], $this->commonFields),
+        ));
+    }
+
+    private function hasCarbonFields(): bool
+    {
+        foreach ($this->entityFields as $field) {
+            if ($field['type'] === 'Carbon') {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function renderLines(array $lines, string $indent, bool $trailingComma = true): string
+    {
+        $output = '';
+        $lastIndex = count($lines) - 1;
+
+        foreach ($lines as $index => $line) {
+            $output .= $index > 0 ? $indent : '';
+            $output .= $line;
+            $output .= $index < $lastIndex && $trailingComma ? ',' : '';
+            $output .= PHP_EOL;
+        }
+
+        return rtrim($output, PHP_EOL);
+    }
+
+    private function updateModuleProvider(): void
+    {
+        $repository = "{$this->getModuleNamespace()}\\Repositories\\Eloquent\\{$this->entity}Repository";
+        $repositoryInterface = "{$this->getModuleNamespace()}\\Repositories\\Interfaces\\{$this->entity}RepositoryInterface";
+        $bind = $this->tabs(2)."\$this->app->bind({$this->entity}RepositoryInterface::class, {$this->entity}Repository::class);";
+
+        if ($this->isCoreModule()) {
+            $this->updateAppCoreProvider($repository, $repositoryInterface, $bind);
+
+            return;
+        }
+
+        $path = app_path("Providers/{$this->module}ModuleProvider.php");
+
+        if (! File::exists($path)) {
+            $content = $this->replacePlaceholders(File::get("{$this->stubPath}/module.provider.stub"), [
+                ...$this->getBaseReplacements(),
+                '{{repository_class}}' => $repository,
+                '{{repository_interface_class}}' => $repositoryInterface,
+                '{{binding}}' => $bind,
+            ]);
+
+            File::put($path, $content);
+
+            return;
+        }
+
+        $content = File::get($path);
+
+        if (str_contains($content, $bind)) {
+            return;
+        }
+
+        $content = str_replace(
+            "use Illuminate\Support\ServiceProvider;",
+            "use {$repository};\nuse {$repositoryInterface};\nuse Illuminate\Support\ServiceProvider;",
+            $content,
+        );
+
+        $content = str_replace("\n".$this->tabs(1)."}\n}", "\n{$bind}\n".$this->tabs(1)."}\n}", $content, $count);
+
+        if ($count > 0) {
+            File::put($path, $content);
+        }
+    }
+
+    private function updateAppCoreProvider(string $repository, string $repositoryInterface, string $bind): void
+    {
+        $path = app_path('Providers/AppCoreProvider.php');
+
+        if (! File::exists($path)) {
+            return;
+        }
+
+        $content = File::get($path);
+
+        if (str_contains($content, $bind)) {
+            return;
+        }
+
+        $content = str_replace(
+            "use Illuminate\Support\ServiceProvider;",
+            "use {$repository};\nuse {$repositoryInterface};\nuse Illuminate\Support\ServiceProvider;",
+            $content,
+        );
+
+        $content = str_replace("\n".$this->tabs(1)."}\n}", "\n{$bind}\n".$this->tabs(1)."}\n}", $content, $count);
+
+        if ($count > 0) {
+            File::put($path, $content);
+        }
+    }
+
+    private function registerModuleProvider(): void
+    {
+        if ($this->isCoreModule()) {
+            return;
+        }
+
+        $path = base_path('bootstrap/providers.php');
+        $content = File::get($path);
+        $provider = "App\\Providers\\{$this->module}ModuleProvider";
+
+        if (str_contains($content, "{$provider}::class")) {
+            return;
+        }
+
+        if (! str_contains($content, "{$provider}::class")) {
+            $content = str_replace('];', $this->tabs(1)."{$provider}::class,\n];", $content);
+        }
+
+        File::put($path, $content);
+    }
+
+    private function updateModuleRoutes(): void
+    {
+        $path = base_path('routes/api.php');
+        $content = File::get($path);
+        $kebabModule = Str::kebab($this->module);
+        $routeEntity = Str::kebab(Str::pluralStudly($this->entity));
+
+        if (str_contains($content, "Route::crudResource('{$routeEntity}',")) {
+            return;
+        }
+
+        $controllerImport = "use {$this->getModuleNamespace()}\\Http\\Controllers\\{$this->entity}Controller;";
+
+        if (! str_contains($content, $controllerImport)) {
+            $content = str_replace(
+                "use Illuminate\Support\Facades\Route;",
+                "{$controllerImport}\nuse Illuminate\Support\Facades\Route;",
+                $content,
+            );
+        }
+
+        $prefixOpen = "Route::prefix('{$kebabModule}')->group(function() {";
+
+        if (str_contains($content, $prefixOpen)) {
+            $end = $this->findGroupEnd($content, $prefixOpen);
+
+            if ($end === null) {
+                return;
+            }
+
+            $lineStart = strrpos(substr($content, 0, $end), "\n") + 1;
+            $routes = $this->getLookupRouteLine($routeEntity).$this->getExportRouteLine($routeEntity).$this->getCrudRouteLine($routeEntity);
+
+            $content = substr($content, 0, $lineStart)."\n".$routes.substr($content, $lineStart);
+        } else {
+            $group = $this->buildModuleRouteGroup($routeEntity);
+            $authOpen = "Route::group(['middleware' => 'auth'], function () {";
+            $end = $this->findGroupEnd($content, $authOpen);
+
+            if ($end === null) {
+                return;
+            }
+
+            $lineStart = strrpos(substr($content, 0, $end), "\n") + 1;
+
+            $content = substr($content, 0, $lineStart)."\n".$group."\n".substr($content, $lineStart);
+        }
+
+        File::put($path, $content);
+    }
+
+    private function buildModuleRouteGroup(string $routeEntity): string
+    {
+        $stub = File::get("{$this->stubPath}/module.route-group.stub");
+
+        return $this->replacePlaceholders($stub, [
+            ...$this->getBaseReplacements(),
+            '{{lookup_route_line}}' => $this->getLookupRouteLine($routeEntity),
+            '{{export_route_line}}' => $this->getExportRouteLine($routeEntity),
+        ]);
+    }
+
+    private function getLookupRouteLine(string $routeEntity): string
+    {
+        if (! $this->option('lookup')) {
+            return '';
+        }
+
+        return $this->tabs(2)."Route::get('{$routeEntity}/lookup', [{$this->entity}Controller::class, 'lookup'])->name('{$routeEntity}.lookup');".PHP_EOL;
+    }
+
+    private function getExportRouteLine(string $routeEntity): string
+    {
+        if (! $this->option('export')) {
+            return '';
+        }
+
+        return $this->tabs(2)."Route::get('{$routeEntity}/export', [{$this->entity}Controller::class, 'export'])->name('{$routeEntity}.export');".PHP_EOL;
+    }
+
+    private function getCrudRouteLine(string $routeEntity): string
+    {
+        return $this->tabs(2)."Route::crudResource('{$routeEntity}', {$this->entity}Controller::class);".PHP_EOL;
+    }
+
+    private function findGroupEnd(string $content, string $openNeedle): ?int
+    {
+        $openPosition = strpos($content, $openNeedle);
+
+        if ($openPosition === false) {
+            return null;
+        }
+
+        $start = (int) strpos($content, '{', $openPosition);
+        $depth = 0;
+        $length = strlen($content);
+
+        for ($i = $start; $i < $length; $i++) {
+            $character = $content[$i];
+
+            if ($character === '{') {
+                $depth++;
+            }
+
+            if ($character === '}') {
+                $depth--;
+
+                if ($depth === 0) {
+                    return $i;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private function updateSwaggerTagGroups(): void
+    {
+        $path = app_path('Core/Http/Controllers/Controller.php');
+        $content = File::get($path);
+        $moduleTag = '"name"="'.$this->module.'"';
+
+        if (str_contains($content, $moduleTag)) {
+            $modulePosition = strpos($content, $moduleTag);
+            $tagsPosition = strpos($content, '"tags"={', $modulePosition);
+
+            if ($tagsPosition === false) {
+                return;
+            }
+
+            $tagsEnd = strpos($content, '}', $tagsPosition);
+
+            if ($tagsEnd === false) {
+                return;
+            }
+
+            $tags = substr($content, $tagsPosition, $tagsEnd - $tagsPosition + 1);
+
+            if (str_contains($tags, '"'.$this->entity.'"')) {
+                return;
+            }
+
+            $newTags = substr_replace($tags, ', "'.$this->entity.'"', -1, 0);
+
+            $content = substr_replace($content, $newTags, $tagsPosition, strlen($tags));
+        } else {
+            if (str_contains($content, '"'.$this->entity.'"')) {
+                return;
+            }
+
+            $prefix = ' * ';
+            $needle = $prefix.$this->tabs(3)."}\n".$prefix.$this->tabs(2)."}\n".$prefix.$this->tabs(1).'}';
+            $replacement = $prefix.$this->tabs(3)."},\n"
+                .$prefix.$this->tabs(3)."{\n"
+                .$prefix.$this->tabs(4)."\"name\"=\"{$this->module}\",\n"
+                .$prefix.$this->tabs(4)."\"tags\"={\"{$this->entity}\"}\n"
+                .$prefix.$this->tabs(3)."}\n"
+                .$prefix.$this->tabs(2)."}\n"
+                .$prefix.$this->tabs(1).'}';
+
+            $content = str_replace($needle, $replacement, $content, $count);
+
+            if ($count === 0) {
+                return;
+            }
+        }
+
+        File::put($path, $content);
     }
 }

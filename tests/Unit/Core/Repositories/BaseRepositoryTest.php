@@ -39,6 +39,12 @@ class BaseRepositoryTest extends TestCase
             {
                 return $this->getLookupColumnsToFilter();
             }
+
+            // Expõe getLookupKeyColumn() para permitir teste da implementação padrão
+            public function getLookupKeyColumnPublic(): string
+            {
+                return $this->getLookupKeyColumn();
+            }
         };
     }
 
@@ -73,6 +79,12 @@ class BaseRepositoryTest extends TestCase
             ->once()
             ->andReturn($paginator);
 
+        // Conexão simulada (sqlite) exigida pela detecção de driver em list/lookup
+        $connectionMock = Mockery::mock(\Illuminate\Database\Connection::class);
+        $connectionMock->shouldReceive('getDriverName')->byDefault()->andReturn('sqlite');
+
+        $builderMock->shouldReceive('getConnection')->byDefault()->andReturn($connectionMock);
+
         // Permite encadeamento nos testes que adicionam where/whereIn
         $builderMock->shouldReceive('where')->byDefault()->andReturnSelf();
         $builderMock->shouldReceive('whereIn')->byDefault()->andReturnSelf();
@@ -100,6 +112,11 @@ class BaseRepositoryTest extends TestCase
         $columns = $this->repository->getLookupColumnsToFilterPublic();
 
         $this->assertSame(['id' => 'int'], $columns);
+    }
+
+    public function test_can_get_default_lookup_key_column(): void
+    {
+        $this->assertSame('id', $this->repository->getLookupKeyColumnPublic());
     }
 
     public function test_can_list_without_filters(): void
@@ -399,6 +416,43 @@ class BaseRepositoryTest extends TestCase
             ->andReturn($builderMock);
 
         $result = $this->repository->lookup(['keys' => [1, 2, 3]]);
+
+        $this->assertInstanceOf(LengthAwarePaginator::class, $result);
+    }
+
+    public function test_can_lookup_filtered_by_custom_key_column(): void
+    {
+        $repository = new class($this->modelMock) extends BaseRepository {
+            public function __construct(Model $model)
+            {
+                $this->model = $model;
+            }
+
+            protected function getModelClass(): string
+            {
+                return Model::class;
+            }
+
+            protected function getLookupKeyColumn(): string
+            {
+                return 'code';
+            }
+        };
+
+        $paginator   = $this->makePaginator();
+        $builderMock = $this->makeBuilderMock($paginator, perPage: 30);
+
+        $builderMock->shouldReceive('whereIn')
+            ->once()
+            ->with('code', ['TYP', 'CLI'])
+            ->andReturnSelf();
+
+        $this->modelMock
+            ->shouldReceive('query')
+            ->once()
+            ->andReturn($builderMock);
+
+        $result = $repository->lookup(['keys' => ['TYP', 'CLI']]);
 
         $this->assertInstanceOf(LengthAwarePaginator::class, $result);
     }

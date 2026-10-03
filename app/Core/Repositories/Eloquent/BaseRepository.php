@@ -3,6 +3,7 @@
 namespace App\Core\Repositories\Eloquent;
 
 use Illuminate\Pagination\LengthAwarePaginator;
+use App\Core\Enums\SqlQueryOperatorsEnum;
 use App\Core\Helpers\ModelHelpers;
 use App\Core\Repositories\Interfaces\BaseRepositoryInterface;
 use Exception;
@@ -25,19 +26,61 @@ abstract class BaseRepository implements BaseRepositoryInterface
         ];
     }
 
+    protected function getLookupKeyColumn(): string {
+        return 'id';
+    }
+
+    protected function getMaskedSearchableColumns(): array {
+        return [];
+    }
+
+    protected function getNonNormalizedSearchableColumns(): array {
+        return [];
+    }
+
+    protected function withRelations(): array {
+        return [];
+    }
+
     public function list(array $params = []): LengthAwarePaginator {
-        $query = $this->model::query();
-
-        if (isset($params['filters']) && count($params['filters']) > 0)
-            $query = ModelHelpers::setFiltersOnQuery($query, $params['filters']);
-
-        if (!empty($params['sorts']))
-            $query = ModelHelpers::setSortsOnQuery($query, $params['sorts']);
+        $query = $this->applyListParams($this->model::query(), $params);
 
         $perPage = isset($params['per_page']) ? (int) $params['per_page'] : 15;
         $page = isset($params['page']) ? (int) $params['page'] : 1;
 
-        return $query->paginate(perPage: $perPage, page: $page)->withQueryString();
+        if ($relations = $this->withRelations()) {
+            $query = $query->with($relations);
+        }
+
+        return $query->paginate(perPage: $perPage, page: $page)
+            ->withQueryString();
+    }
+
+    public function getExportQuery(array $params = []): Builder {
+        $query = $this->applyListParams($this->model::query(), $params);
+
+        // Ordenação estável para garantir consistência na exportação em chunks.
+        $query->orderBy($this->model->getKeyName());
+
+        return $query;
+    }
+
+    private function applyListParams(Builder $query, array $params): Builder {
+        if (isset($params['filters']) && count($params['filters']) > 0)
+            $query = ModelHelpers::setFiltersOnQuery(
+                $query,
+                $params['filters'],
+                [],
+                [
+                    'masked_columns' => $this->getMaskedSearchableColumns(),
+                    'not_normalized_columns' => $this->getNonNormalizedSearchableColumns(),
+                ]
+            );
+
+        if (!empty($params['sorts']))
+            $query = ModelHelpers::setSortsOnQuery($query, $params['sorts']);
+
+        return $query;
     }
 
     public function getById(mixed $id): ?Model {
@@ -69,11 +112,16 @@ abstract class BaseRepository implements BaseRepositoryInterface
 
         if (isset($params['q']) && $params['q'] != '') {
             $filter = $params['q'];
+            $isPgsql = ModelHelpers::isPgsql($query);
 
-            $query->where(function (Builder $query) use ($filter) {
+            $query->where(function (Builder $query) use ($filter, $isPgsql) {
+                $maskedColumns = $this->getMaskedSearchableColumns();
+
                 foreach ($this->getLookupColumnsToFilter() as $columnName => $type) {
                     match ($type) {
-                        'string' => $query->orWhere($columnName, 'like', "%".trim($filter)."%"),
+                        'string' => $isPgsql
+                            ? $this->addPgsqlStringLookupFilter($query, $columnName, $filter, $maskedColumns)
+                            : $query->orWhere($columnName, 'like', "%".trim($filter)."%"),
                         'int' => $query->orWhere($columnName, '=', (int) $filter),
                         default => $query->orWhere($columnName, '=', $filter),
                     };
@@ -84,12 +132,29 @@ abstract class BaseRepository implements BaseRepositoryInterface
         }
 
         if (isset($params['keys']) && count($params['keys']))
-            $query->whereIn('id', $params['keys']);
+            $query->whereIn($this->getLookupKeyColumn(), $params['keys']);
 
         $perPage = isset($params['per_page']) ? (int) $params['per_page'] : 30;
         $page = isset($params['page']) ? (int) $params['page'] : 1;
 
         return $query->paginate(perPage: $perPage, page: $page)->withQueryString();
+    }
+
+    /**
+     * Aplica um filtro de texto (LIKE) em uma coluna string no PostgreSQL, de forma
+     * case-insensitive, unaccent-insensitive e removendo a máscara quando aplicável.
+     */
+    private function addPgsqlStringLookupFilter(Builder $query, string $columnName, string $filter, array $maskedColumns): void {
+        $isMasked = in_array($columnName, $maskedColumns, true);
+
+        ModelHelpers::addStringSearchToWhere(
+            $query,
+            $columnName,
+            SqlQueryOperatorsEnum::Like->value,
+            trim($filter),
+            $isMasked,
+            'or',
+        );
     }
 
     public function sync(Model $entity, string $relationMethodName, array $ids = []): ?Model {

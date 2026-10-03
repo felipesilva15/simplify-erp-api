@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Modules\{{module}}\Http\Requests\{{entity}};
+namespace {{module_namespace}}\Http\Requests\{{entity}};
 
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * @OA\Schema(
- *      schema="Update{{entity}}Request",
- *      required={{{swagger_required}}},
- *      {{swagger_properties}}
+ *     schema="Update{{entity}}Request",
+ *     required={{{swagger_required}}},
+ *     {{swagger_properties}}
  * )
  */
 class Update{{entity}}Request extends FormRequest

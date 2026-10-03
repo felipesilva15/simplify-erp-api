@@ -9,8 +9,9 @@ use Override;
 
 class ResourceService extends BaseCrudService
 {
-    public function __construct(ResourceRepositoryInterface $repository)
+    public function __construct(ResourceRepositoryInterface $repository, ActivityLogService $activity)
     {
         $this->repository = $repository;
+        $this->activity = $activity;
     }
 }

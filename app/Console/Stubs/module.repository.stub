@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Modules\{{module}}\Repositories\Eloquent;
+namespace {{module_namespace}}\Repositories\Eloquent;
 
-use App\Modules\{{module}}\Models\{{entity}};
-use App\Modules\{{module}}\Repositories\Interfaces\{{entity}}RepositoryInterface;
+use {{module_namespace}}\Models\{{entity}};
+use {{module_namespace}}\Repositories\Interfaces\{{entity}}RepositoryInterface;
 use App\Core\Repositories\Eloquent\BaseRepository;
 use Override;
 
 class {{entity}}Repository extends BaseRepository implements {{entity}}RepositoryInterface
 {
-    #[Override]
+{{lookup_columns_method}}{{lookup_key_method}}    #[Override]
     protected function getModelClass(): string
     {
         return {{entity}}::class;

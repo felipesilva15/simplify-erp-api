@@ -1,0 +1,2 @@
+use App\Core\Http\Requests\Core\LookupRequest;
+use {{module_namespace}}\Http\Resources\{{entity}}\{{entity}}LookupCollection;

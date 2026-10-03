@@ -3,11 +3,14 @@
 namespace App\Core\Repositories\Interfaces;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 interface BaseRepositoryInterface
 {
     public function list(array $filters = []): LengthAwarePaginator;
+
+    public function getExportQuery(array $params = []): Builder;
 
     public function getById(mixed $id): ?Model;
 

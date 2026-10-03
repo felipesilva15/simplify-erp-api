@@ -6,31 +6,81 @@ use App\Core\Http\Controllers\Controller;
 use App\Core\Http\Requests\Core\ListRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-
-use App\Modules\Security\Actions\Permission\StorePermissionAction;
-use App\Modules\Security\Actions\Permission\UpdatePermissionAction;
-use App\Modules\Security\Actions\Permission\DeletePermissionAction;
-use App\Modules\Security\Actions\Permission\EditPermissionAction;
-use App\Modules\Security\Actions\Permission\ShowPermissionAction;
-use App\Modules\Security\Actions\Permission\ListPermissionAction;
 use App\Modules\Security\Http\Requests\Permission\StorePermissionRequest;
 use App\Modules\Security\Http\Requests\Permission\UpdatePermissionRequest;
 use App\Modules\Security\Http\Resources\Permission\PermissionResource;
 use App\Modules\Security\Http\Resources\Permission\PermissionCollection;
 use App\Modules\Security\DTO\PermissionDTO;
 use App\Modules\Security\Models\Permission;
+use App\Modules\Security\Services\PermissionService;
+use App\Core\Traits\HasActivityLogs;
 
+/**
+ * @OA\PathItem(
+ *     path="/api/security/permissions/{id}/activity-logs",
+ *     @OA\Get(
+ *         tags={"Permission"},
+ *         summary="List activity logs of a permission",
+ *         operationId="listPermissionActivityLogs",
+ *         @OA\Parameter(
+ *             name="id",
+ *             in="path",
+ *             required=true,
+ *             description="Permission ID",
+ *             @OA\Schema(type="integer")
+ *         ),
+ *         @OA\Parameter(name="per_page", in="query", required=false, @OA\Schema(type="integer")),
+ *         @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer")),
+ *         @OA\Response(
+ *             response="200",
+ *             description="Permission activity logs",
+ *             @OA\JsonContent(
+ *                 allOf={
+ *                     @OA\Schema(ref="#/components/schemas/ApiResponse"),
+ *                     @OA\Schema(ref="#/components/schemas/ActivityLogCollection")
+ *                 }
+ *             )
+ *         ),
+ *         @OA\Response(
+ *             response="401",
+ *             description="Unauthorized",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="403",
+ *             description="Forbidden",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="404",
+ *             description="Record not found",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         security={{"bearerAuth":{}}}
+ *     )
+ * )
+ */
 class PermissionController extends Controller
 {
-    public function __construct() {
+    use HasActivityLogs;
+
+    protected PermissionService $service;
+
+    public function __construct(PermissionService $service) {
+        $this->service = $service;
         $this->authorizeResource(Permission::class, 'permission');
+    }
+
+    protected function activityLogModelClass(): string
+    {
+        return Permission::class;
     }
 
     /**
      * @OA\Get(
      *      path="/api/security/permissions",
      *      tags={"Permission"},
-     *      summary="List all rows",
+     *      summary="List all permissions",
      *      @OA\Parameter(name="id", in="query", required=false, @OA\Schema(type="integer")),
      *      @OA\Parameter(name="module_id", in="query", required=false, @OA\Schema(type="integer")),
      *      @OA\Parameter(name="resource", in="query", required=false, @OA\Schema(type="string")),
@@ -67,8 +117,8 @@ class PermissionController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function index(ListRequest $request, ListPermissionAction $action): JsonResponse {
-        $serviceResult = $action->execute($request->all());
+    public function index(ListRequest $request): JsonResponse {
+        $serviceResult = $this->service->list($request->all());
 
         $paginated = new PermissionCollection($serviceResult->data);
         $paginated = $paginated->toArray($request);
@@ -83,7 +133,7 @@ class PermissionController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/core/permissions/{id}",
+     *      path="/api/security/permissions/{permission}",
      *      tags={"Permission"},
      *      summary="List a permission by ID",
      *      @OA\Parameter(
@@ -126,8 +176,8 @@ class PermissionController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function show(Permission $permission, ShowPermissionAction $action): JsonResponse {
-        $serviceResult = $action->execute($permission);
+    public function show(Permission $permission): JsonResponse {
+        $serviceResult = $this->service->show($permission);
 
         return $this->success(
             data: new PermissionResource($serviceResult->data),
@@ -137,7 +187,7 @@ class PermissionController extends Controller
 
     /**
      * @OA\Post(
-     *      path="/api/core/permissions",
+     *      path="/api/security/permissions",
      *      tags={"Permission"},
      *      summary="Registers a permission",
      *      @OA\RequestBody(
@@ -170,12 +220,17 @@ class PermissionController extends Controller
      *          description="Forbidden",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
-     *      security={{"bearerAuth":{}}}
+     *      @OA\Response(
+ *          response="422", 
+ *          description="Unprocessable Entity",
+ *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *      ),
+ *      security={{"bearerAuth":{}}}
      * )
      */
-    public function store(StorePermissionRequest $request, StorePermissionAction $action): JsonResponse {
+    public function store(StorePermissionRequest $request): JsonResponse {
         $dto = PermissionDTO::fromArray($request->validated());
-        $serviceResult = $action->execute($dto);
+        $serviceResult = $this->service->store($dto);
 
         return $this->success(
             data: new PermissionResource($serviceResult->data),
@@ -185,11 +240,11 @@ class PermissionController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/core/permissions/{id}/edit",
+     *      path="/api/security/permissions/{permission}/edit",
      *      tags={"Permission"},
      *      summary="Get data to edit a permission",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="permission",
      *         in="path",
      *         required=true,
      *         description="Permission ID",
@@ -233,8 +288,8 @@ class PermissionController extends Controller
      *      )
      * )
      */
-    public function edit(Permission $permission, EditPermissionAction $action): JsonResponse {
-        $serviceResult = $action->execute($permission);
+    public function edit(Permission $permission): JsonResponse {
+        $serviceResult = $this->service->edit($permission);
 
         return $this->success(
             data: new PermissionResource($serviceResult->data),
@@ -246,11 +301,11 @@ class PermissionController extends Controller
 
     /**
      * @OA\Put(
-     *      path="/api/core/permissions/{id}",
+     *      path="/api/security/permissions/{permission}",
      *      tags={"Permission"},
      *      summary="Update a permission",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="permission",
      *         in="path",
      *         required=true,
      *         description="Permission ID",
@@ -291,12 +346,17 @@ class PermissionController extends Controller
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
-     *      security={{"bearerAuth":{}}}
+     *      @OA\Response(
+ *          response="422", 
+ *          description="Unprocessable Entity",
+ *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *      ),
+ *      security={{"bearerAuth":{}}}
      * )
      */
-    public function update(Permission $permission, UpdatePermissionRequest $request, UpdatePermissionAction $action): JsonResponse {
+    public function update(Permission $permission, UpdatePermissionRequest $request): JsonResponse {
         $dto = PermissionDTO::fromArray($request->validated());
-        $serviceResult = $action->execute($permission, $dto);
+        $serviceResult = $this->service->update($permission, $dto);
 
         return $this->success(
             data: new PermissionResource($serviceResult->data),
@@ -306,11 +366,11 @@ class PermissionController extends Controller
 
     /**
      * @OA\Delete(
-     *      path="/api/core/permissions/{id}",
+     *      path="/api/security/permissions/{permission}",
      *      tags={"Permission"},
      *      summary="Delete a permission",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="permission",
      *         in="path",
      *         required=true,
      *         description="Permission ID",
@@ -338,8 +398,8 @@ class PermissionController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function destroy(Permission $permission, DeletePermissionAction $action): Response {
-        $action->execute($permission);
+    public function destroy(Permission $permission): Response {
+        $this->service->delete($permission);
         return response()->noContent();
     }
 }

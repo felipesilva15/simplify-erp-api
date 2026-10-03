@@ -13,18 +13,74 @@ use App\Core\Http\Requests\Core\ListRequest;
 use App\Core\Http\Resources\Resource\ResourceResource;
 use App\Core\Models\Resource;
 use App\Core\Services\ResourceService;
+use App\Core\Traits\HasActivityLogs;
 
+/**
+ * @OA\PathItem(
+ *     path="/api/core/resources/{id}/activity-logs",
+ *     @OA\Get(
+ *         tags={"Resource"},
+ *         summary="List activity logs of a resource",
+ *         operationId="listResourceActivityLogs",
+ *         @OA\Parameter(
+ *             name="id",
+ *             in="path",
+ *             required=true,
+ *             description="Resource ID",
+ *             @OA\Schema(type="integer")
+ *         ),
+ *         @OA\Parameter(name="per_page", in="query", required=false, @OA\Schema(type="integer")),
+ *         @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer")),
+ *         @OA\Response(
+ *             response="200",
+ *             description="Resource activity logs",
+ *             @OA\JsonContent(
+ *                 allOf={
+ *                     @OA\Schema(ref="#/components/schemas/ApiResponse"),
+ *                     @OA\Schema(ref="#/components/schemas/ActivityLogCollection")
+ *                 }
+ *             )
+ *         ),
+ *         @OA\Response(
+ *             response="401",
+ *             description="Unauthorized",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="403",
+ *             description="Forbidden",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="404",
+ *             description="Record not found",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         security={{"bearerAuth":{}}}
+ *     )
+ * )
+ */
 class ResourceController extends Controller
 {
-    public function __construct() {
+    use HasActivityLogs;
+
+    protected ResourceService $service;
+
+    public function __construct(ResourceService $service) {
+        $this->service = $service;
         $this->authorizeResource(Resource::class, 'resource');
+    }
+
+    protected function activityLogModelClass(): string
+    {
+        return Resource::class;
     }
 
     /**
      * @OA\Get(
      *      path="/api/core/resources",
      *      tags={"Resource"},
-     *      summary="List all rows",
+     *      summary="List all resources",
      *      @OA\Parameter(name="id", in="query", required=false, @OA\Schema(type="integer")),
      *      @OA\Parameter(name="name", in="query", required=false, @OA\Schema(type="string")),
      *      @OA\Parameter(name="description", in="query", required=false, @OA\Schema(type="string")),
@@ -59,8 +115,8 @@ class ResourceController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function index(ListRequest $request, ResourceService $service): JsonResponse {
-        $serviceResult = $service->list($request->all());
+    public function index(ListRequest $request): JsonResponse {
+        $serviceResult = $this->service->list($request->all());
 
         $paginated = new ResourceCollection($serviceResult->data);
         $paginated = $paginated->toArray($request);
@@ -75,11 +131,11 @@ class ResourceController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/core/resources/{id}",
+     *      path="/api/core/resources/{resource}",
      *      tags={"Resource"},
      *      summary="List a resource by ID",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="resource",
      *         in="path",
      *         required=true,
      *         description="Resource ID",
@@ -118,8 +174,8 @@ class ResourceController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function show(Resource $resource, ResourceService $service): JsonResponse {
-        $serviceResult = $service->show($resource);
+    public function show(Resource $resource): JsonResponse {
+        $serviceResult = $this->service->show($resource);
         
         return $this->success(
             data: new ResourceResource($serviceResult->data),
@@ -162,12 +218,17 @@ class ResourceController extends Controller
      *          description="Forbidden",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
+     *      @OA\Response(
+     *          response="422", 
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function store(StoreResourceRequest $request, ResourceService $service): JsonResponse {
+    public function store(StoreResourceRequest $request): JsonResponse {
         $dto = ResourceDTO::fromArray($request->validated());
-        $serviceResult = $service->store($dto);
+        $serviceResult = $this->service->store($dto);
 
         return $this->success(
             data: new ResourceResource($serviceResult->data),
@@ -177,11 +238,11 @@ class ResourceController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/core/resources/{id}/edit",
+     *      path="/api/core/resources/{resource}/edit",
      *      tags={"Resource"},
      *      summary="Get data to edit a resource",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="resource",
      *         in="path",
      *         required=true,
      *         description="Resource ID",
@@ -225,8 +286,8 @@ class ResourceController extends Controller
      *      )
      * )
      */
-    public function edit(Resource $resource, ResourceService $service): JsonResponse {
-        $serviceResult = $service->edit($resource);
+    public function edit(Resource $resource): JsonResponse {
+        $serviceResult = $this->service->edit($resource);
 
         return $this->success(
             data: new ResourceResource($serviceResult->data),
@@ -238,11 +299,11 @@ class ResourceController extends Controller
 
     /**
      * @OA\Put(
-     *      path="/api/core/resources/{id}",
+     *      path="/api/core/resources/{resource}",
      *      tags={"Resource"},
      *      summary="Update a resource",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="resource",
      *         in="path",
      *         required=true,
      *         description="Resource ID",
@@ -283,12 +344,17 @@ class ResourceController extends Controller
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
+     *      @OA\Response(
+     *          response="422", 
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function update(Resource $resource, UpdateResourceRequest $request, ResourceService $service): JsonResponse {
+    public function update(Resource $resource, UpdateResourceRequest $request): JsonResponse {
         $dto = ResourceDTO::fromArray($request->validated());
-        $serviceResult = $service->update($resource, $dto);
+        $serviceResult = $this->service->update($resource, $dto);
 
         return $this->success(
             data: new ResourceResource($serviceResult->data),
@@ -298,11 +364,11 @@ class ResourceController extends Controller
 
     /**
      * @OA\Delete(
-     *      path="/api/core/resources/{id}",
+     *      path="/api/core/resources/{resource}",
      *      tags={"Resource"},
      *      summary="Delete a resource",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="resource",
      *         in="path",
      *         required=true,
      *         description="Resource ID",
@@ -330,8 +396,8 @@ class ResourceController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function destroy(Resource $resource, ResourceService $service): Response {
-        $service->delete($resource);
+    public function destroy(Resource $resource): Response {
+        $this->service->delete($resource);
         return response()->noContent();
     }
 }

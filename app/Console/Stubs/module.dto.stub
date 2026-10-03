@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Modules\{{module}}\DTO;
+namespace {{module_namespace}}\DTO;
 
-use Carbon\Carbon;
+{{dto_carbon_import}}
 
 class {{entity}}DTO
 {

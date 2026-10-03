@@ -12,7 +12,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection as LaravelResourceCollecti
  *     type="object",
  *     allOf={
  *         @OA\Schema(
- *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/ModuleResource")),
+ *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/ResourceResource")),
  *         ),
  *         @OA\Schema(ref="#/components/schemas/PaginatorInfo"),
  *     }

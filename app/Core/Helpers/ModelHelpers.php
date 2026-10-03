@@ -28,9 +28,11 @@ class ModelHelpers
         $typesMap = [
             'varchar' => ['type' => 'string', 'default' => ''],
             'char' => ['type' => 'string', 'default' => ''],
+            'bpchar' => ['type' => 'string', 'default' => ''],
             'text' => ['type' => 'string', 'default' => ''],
             'blob' => ['type' => 'string', 'default' => ''],
             'int' => ['type' => 'int', 'default' => 0],
+            'int8' => ['type' => 'int', 'default' => 0],
             'integer' => ['type' => 'int', 'default' => 0],
             'bigint' => ['type' => 'int', 'default' => 0],
             'float' => ['type' => 'float', 'default' => 0],
@@ -64,9 +66,17 @@ class ModelHelpers
         return $fields;
     }
 
-    public static function setFiltersOnQuery(Builder $query, array $filters = [], array $columnsToFilter = []): Builder {
+    public static function isPgsql(Builder $query): bool {
+        return $query->getConnection()->getDriverName() === 'pgsql';
+    }
+
+    public static function setFiltersOnQuery(Builder $query, array $filters = [], array $columnsToFilter = [], array $options = []): Builder {
         $columns = ModelHelpers::getColumnsFromTable($query->getModel()->getTable());
         $columns = collect($columns);
+
+        $isPgsql = ModelHelpers::isPgsql($query);
+        $maskedColumns = $options['masked_columns'] ?? [];
+        $nonNormalizedColumns = $options['not_normalized_columns'] ?? [];
 
         foreach ($filters as $columnName => $operations) {
             if (count($columnsToFilter) > 0 && !in_array($columnName, $columnsToFilter)) {
@@ -88,6 +98,20 @@ class ModelHelpers
 
                 $sqlOperatorEnum = self::$operatorDictionary[$operatorEnum->value];
 
+                if ($isPgsql && $column['type'] === 'string' && !in_array($columnName, $nonNormalizedColumns, true)) {
+                    $isMasked = in_array($columnName, $maskedColumns, true);
+
+                    self::addStringSearchToWhere(
+                        $query,
+                        $column['name'],
+                        $sqlOperatorEnum->value,
+                        $value,
+                        $isMasked,
+                    );
+
+                    continue;
+                }
+
                 if ($column['type'] == 'Carbon') {
                     $value = Carbon::parse($value);
                 } elseif ($sqlOperatorEnum == SqlQueryOperatorsEnum::Like) {
@@ -99,6 +123,25 @@ class ModelHelpers
         }
         
         return $query;
+    }
+
+    public static function addStringSearchToWhere(Builder $query, string $columnName, string $sqlOperator, mixed $value, bool $masked = false, string $boolean = 'and'): void {
+        $wrappedColumn = $query->getQuery()->getGrammar()->wrap($columnName);
+
+        $columnExpression = $masked ? "REGEXP_REPLACE($wrappedColumn, '[^[:alnum:]]', '', 'g')": $wrappedColumn;
+
+        $columnExpression = "unaccent(LOWER($columnExpression))";
+        $valueExpression = $masked ? "REGEXP_REPLACE(?, '[^[:alnum:]]', '', 'g')" : '?';
+        $valueExpression = "unaccent(LOWER($valueExpression))";
+
+        $sql = match ($sqlOperator) {
+            SqlQueryOperatorsEnum::Like->value => "$columnExpression LIKE '%' || $valueExpression || '%'",
+            SqlQueryOperatorsEnum::Equal->value => "$columnExpression = $valueExpression",
+            SqlQueryOperatorsEnum::NotEqual->value => "$columnExpression <> $valueExpression",
+            default => "$columnExpression $sqlOperator $valueExpression",
+        };
+
+        $query->whereRaw($sql, [$value], $boolean);
     }
 
     public static function setSortsOnQuery(Builder $query, string $sortOptions): Builder {

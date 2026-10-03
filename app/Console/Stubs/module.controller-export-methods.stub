@@ -1,0 +1,14 @@
+protected function exportModelClass(): string
+    {
+        return {{entity}}::class;
+    }
+
+    protected function exportClassForFormat(string $format): string
+    {
+        return match ($format) {
+            'full' => {{entity}}Export::class,
+            default => throw new InvalidArgumentException(
+                "Formato de exportação [{$format}] não suportado."
+            ),
+        };
+    }

@@ -1,0 +1,4 @@
+public function export(User $user)
+    {
+        return $this->authService->hasAuthorized($user, '{{permission_entity}}.export');
+    }

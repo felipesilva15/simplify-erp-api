@@ -2,35 +2,151 @@
 
 namespace App\Modules\Security\Http\Controllers;
 
+use App\Core\Traits\HasExcelExport;
+use App\Modules\Security\Exports\UserExport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 use App\Core\Http\Controllers\Controller;
 use App\Core\Http\Requests\Core\ListRequest;
-use App\Modules\Security\Actions\User\StoreUserAction;
-use App\Modules\Security\Actions\User\UpdateUserAction;
-use App\Modules\Security\Actions\User\DeleteUserAction;
-use App\Modules\Security\Actions\User\EditUserAction;
-use App\Modules\Security\Actions\User\ShowUserAction;
-use App\Modules\Security\Actions\User\ListUserAction;
+use App\Core\Http\Requests\Core\LookupRequest;
+use App\Core\Traits\HasActivityLogs;
 use App\Modules\Security\Http\Requests\User\StoreUserRequest;
 use App\Modules\Security\Http\Requests\User\UpdateUserRequest;
 use App\Modules\Security\Http\Resources\User\UserResource;
 use App\Modules\Security\Http\Resources\User\UserCollection;
+use App\Modules\Security\Http\Resources\User\UserLookupCollection;
 use App\Modules\Security\DTO\UserDTO;
 use App\Modules\Security\Models\User;
+use App\Modules\Security\Services\UserService;
+use InvalidArgumentException;
 
+/**
+ * @OA\PathItem(
+ *     path="/api/security/users/{id}/activity-logs",
+ *     @OA\Get(
+ *         tags={"User"},
+ *         summary="List activity logs of a user",
+ *         operationId="listUserActivityLogs",
+ *         @OA\Parameter(
+ *             name="id",
+ *             in="path",
+ *             required=true,
+ *             description="User ID",
+ *             @OA\Schema(type="integer")
+ *         ),
+ *         @OA\Parameter(name="per_page", in="query", required=false, @OA\Schema(type="integer")),
+ *         @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer")),
+ *         @OA\Response(
+ *             response="200",
+ *             description="User activity logs",
+ *             @OA\JsonContent(
+ *                 allOf={
+ *                     @OA\Schema(ref="#/components/schemas/ApiResponse"),
+ *                     @OA\Schema(ref="#/components/schemas/ActivityLogCollection")
+ *                 }
+ *             )
+ *         ),
+ *         @OA\Response(
+ *             response="401",
+ *             description="Unauthorized",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="403",
+ *             description="Forbidden",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="404",
+ *             description="Record not found",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         security={{"bearerAuth":{}}}
+ *     )
+ * )
+ * @OA\PathItem(
+ *     path="/api/security/users/export",
+ *     @OA\Get(
+ *         tags={"Security"},
+ *         summary="Export all users to Excel",
+ *         operationId="exportUser",
+ *         @OA\Parameter(
+ *             name="format",
+ *             in="query",
+ *             required=false,
+ *             description="Export format (full, summarized, detailed)",
+ *             @OA\Schema(type="string", enum={"full","summarized","detailed"})
+ *         ),
+ *         @OA\Parameter(
+ *             name="extension",
+ *             in="query",
+ *             required=false,
+ *             description="File extension (xlsx, xls, csv)",
+ *             @OA\Schema(type="string", enum={"xlsx","xls","csv"})
+ *         ),
+ *     @OA\Parameter(name="filters[id][eq]", in="query", required=false, @OA\Schema(type="integer")),
+ *     @OA\Parameter(name="filters[name][like]", in="query", required=false, @OA\Schema(type="string")),
+ *     @OA\Parameter(name="filters[created_at][gte]", in="query", required=false, @OA\Schema(type="string")),
+ *     @OA\Parameter(name="filters[updated_at][lte]", in="query", required=false, @OA\Schema(type="string")),
+ *         @OA\Response(
+ *             response="200",
+ *             description="Excel file with users",
+ *             @OA\MediaType(
+ *                 mediaType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+ *             )
+ *         ),
+ *         @OA\Response(
+ *             response="401",
+ *             description="Unauthorized",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="403",
+ *             description="Forbidden",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         security={{"bearerAuth":{}}}
+ *     )
+ * )
+ */
 class UserController extends Controller
 {
-    public function __construct() {
+    use HasExcelExport;
+    use HasActivityLogs;
+
+    protected UserService $service;
+
+    public function __construct(UserService $service) {
+        $this->service = $service;
         $this->authorizeResource(User::class, 'user');
+    }
+
+    protected function activityLogModelClass(): string
+    {
+        return User::class;
+    }
+
+    protected function exportModelClass(): string
+    {
+        return User::class;
+    }
+
+    protected function exportClassForFormat(string $format): string
+    {
+        return match ($format) {
+            'full' => UserExport::class,
+            default => throw new InvalidArgumentException(
+                "Formato de exportação [{$format}] não suportado para parceiros."
+            ),
+        };
     }
 
     /**
      * @OA\Get(
      *      path="/api/security/users",
      *      tags={"User"},
-     *      summary="List all rows",
+     *      summary="List all users",
      *      @OA\Parameter(name="id", in="query", required=false, @OA\Schema(type="integer")),
      *      @OA\Parameter(name="name", in="query", required=false, @OA\Schema(type="string")),
      *      @OA\Parameter(name="email", in="query", required=false, @OA\Schema(type="string")),
@@ -69,8 +185,8 @@ class UserController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function index(ListRequest $request, ListUserAction $action): JsonResponse {
-        $serviceResult = $action->execute($request->all());
+    public function index(ListRequest $request): JsonResponse {
+        $serviceResult = $this->service->list($request->all());
 
         $paginated = new UserCollection($serviceResult->data);
         $paginated = $paginated->toArray($request);
@@ -85,11 +201,11 @@ class UserController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/security/users/{id}",
+     *      path="/api/security/users/{user}",
      *      tags={"User"},
      *      summary="List a user by ID",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="user",
      *         in="path",
      *         required=true,
      *         description="User ID",
@@ -128,8 +244,8 @@ class UserController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function show(User $user, ShowUserAction $action): JsonResponse {
-        $serviceResult = $action->execute($user);
+    public function show(User $user): JsonResponse {
+        $serviceResult = $this->service->show($user);
 
         return $this->success(
             data: new UserResource($serviceResult->data),
@@ -172,12 +288,17 @@ class UserController extends Controller
      *          description="Forbidden",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
+     *      @OA\Response(
+     *          response="422", 
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function store(StoreUserRequest $request, StoreUserAction $action): JsonResponse {
+    public function store(StoreUserRequest $request): JsonResponse {
         $dto = UserDTO::fromArray($request->validated());
-        $serviceResult = $action->execute($dto);
+        $serviceResult = $this->service->store($dto);
 
         return $this->success(
             data: new UserResource($serviceResult->data),
@@ -187,11 +308,11 @@ class UserController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/security/users/{id}/edit",
+     *      path="/api/security/users/{user}/edit",
      *      tags={"User"},
      *      summary="Get data to edit a user",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="user",
      *         in="path",
      *         required=true,
      *         description="User ID",
@@ -235,8 +356,8 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function edit(User $user, EditUserAction $action): JsonResponse {
-        $serviceResult = $action->execute($user);
+    public function edit(User $user): JsonResponse {
+        $serviceResult = $this->service->edit($user);
 
         return $this->success(
             data: new UserResource($serviceResult->data),
@@ -248,11 +369,11 @@ class UserController extends Controller
 
     /**
      * @OA\Put(
-     *      path="/api/security/users/{id}",
+     *      path="/api/security/users/{user}",
      *      tags={"User"},
      *      summary="Update a user",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="user",
      *         in="path",
      *         required=true,
      *         description="User ID",
@@ -293,13 +414,18 @@ class UserController extends Controller
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
+     *      @OA\Response(
+     *          response="422", 
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function update(User $user, UpdateUserRequest $request, UpdateUserAction $action): JsonResponse {
+    public function update(User $user, UpdateUserRequest $request): JsonResponse {
         $dto = UserDTO::fromArray($request->validated());
         $dto->fieldsToUse = array_keys($request->validated());
-        $serviceResult = $action->execute($user, $dto);
+        $serviceResult = $this->service->update($user, $dto);
 
         return $this->success(
             data: new UserResource($serviceResult->data),
@@ -309,11 +435,11 @@ class UserController extends Controller
 
     /**
      * @OA\Delete(
-     *      path="/api/security/users/{id}",
+     *      path="/api/security/users/{user}",
      *      tags={"User"},
      *      summary="Delete a user",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="user",
      *         in="path",
      *         required=true,
      *         description="User ID",
@@ -341,8 +467,47 @@ class UserController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function destroy(User $user, DeleteUserAction $action): Response {
-        $action->execute($user);
+    public function destroy(User $user): Response {
+        $this->service->delete($user);
         return response()->noContent();
+    }
+
+    /**
+     * @OA\Get(
+     *      path="/api/security/users/lookup",
+     *      tags={"User"},
+     *      summary="Lookup users",
+     *      @OA\Parameter(name="q", in="query", description="Query for available fields", required=false, @OA\Schema(type="string")),
+     *      @OA\Parameter(name="keys[]", in="query", description="Keys to find", required=false, @OA\Schema(type="integer")),
+     *      @OA\Response(
+     *          response="200", 
+     *          description="User lookup list",
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(ref="#/components/schemas/UserLookupCollection")
+     *              }
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      security={{"bearerAuth":{}}}
+     * )
+     */
+    public function lookup(LookupRequest $request): JsonResponse {
+        $serviceResult = $this->service->lookup($request->all());
+
+        $paginated = new UserLookupCollection($serviceResult->data);
+        $paginated = $paginated->toArray($request);
+
+        return $this->success(
+            data: $paginated['data'],
+            links: $paginated['links'],
+            meta: $paginated['meta'],
+            httpStatus: Response::HTTP_OK
+        );
     }
 }

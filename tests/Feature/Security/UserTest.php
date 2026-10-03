@@ -34,6 +34,109 @@ class UserTest extends TestCase
         ];
     }
 
+    protected function getLookupResourceStructure(): array {
+        return [
+            'key',
+            'label',
+            'sublabel',
+            'meta' => [
+                'id',
+                'name',
+                'email',
+                'username',
+                'phone_number'
+            ]
+        ];
+    }
+
+    public function test_lookup_returns_default_api_response_structure(): void {
+        $response = $this->getJson("{$this->endpoint}/lookup", $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK);
+        $this->assertApiResponseStructureForListing($response);
+    }
+
+    public function test_can_lookup_users(): void
+    {
+        User::factory(3)->create();
+        $response = $this->getJson("{$this->endpoint}/lookup", $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonStructure([
+                'data' => [
+                    '*' => $this->getLookupResourceStructure()
+                ]
+            ])
+            ->assertJsonCount(5, 'data');
+    }
+
+    public function test_can_lookup_users_with_text_filter(): void
+    {
+        $user = User::factory()->createOne(['name' => 'Felipe Oliveira']);
+        User::factory()->createOne(['name' => 'Maria Silva']);
+        $queryParams = [
+            'q' => 'Felipe'
+        ];
+
+        $response = $this->getJson(url()->query("{$this->endpoint}/lookup", $queryParams), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.key', $user->id)
+            ->assertJsonPath('data.0.label', $user->name)
+            ->assertJsonPath('data.0.sublabel', "Cod.: {$user->id} | Email: {$user->email}")
+            ->assertJsonPath('data.0.meta.id', $user->id)
+            ->assertJsonPath('data.0.meta.name', $user->name)
+            ->assertJsonPath('data.0.meta.email', $user->email);
+    }
+
+    public function test_can_lookup_users_filtered_by_keys(): void
+    {
+        $users = User::factory(3)->create();
+        $queryParams = [
+            'keys' => [
+                $users[0]->id,
+                $users[2]->id
+            ]
+        ];
+
+        $response = $this->getJson(url()->query("{$this->endpoint}/lookup", $queryParams), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonPath('meta.total', 2)
+            ->assertJsonFragment(['key' => $users[0]->id])
+            ->assertJsonFragment(['key' => $users[2]->id]);
+    }
+
+    public function test_can_lookup_users_with_pagination(): void
+    {
+        User::factory(5)->create();
+        $queryParams = [
+            'per_page' => 2,
+            'page' => 2
+        ];
+
+        $response = $this->getJson(url()->query("{$this->endpoint}/lookup", $queryParams), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonPath('meta.per_page', 2)
+            ->assertJsonPath('meta.current_page', 2)
+            ->assertJsonPath('meta.last_page', 4)
+            ->assertJsonPath('meta.total', 7);
+    }
+
+    public function test_cannot_lookup_users_without_authentication(): void
+    {
+        $response = $this->getJson("{$this->endpoint}/lookup");
+        $this->assertErrorResponse($response, Response::HTTP_UNAUTHORIZED);
+    }
+
     public function test_listing_returns_default_api_response_structure(): void {
         $response = $this->getJson($this->endpoint, $this->getAdminAuthHeaders());
 

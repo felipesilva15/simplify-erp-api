@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Policies;
+
+use {{module_namespace}}\Models\{{entity}};
+use App\Modules\Security\Models\User;
+use App\Modules\Security\Services\AuthService;
+
+class {{entity}}Policy
+{
+    public function __construct(protected AuthService $authService) { }
+
+    public function viewAny(User $user)
+    {
+        return $this->authService->hasAuthorized($user, '{{permission_entity}}.viewAny');
+    }
+
+    public function view(User $user, {{entity}} $model)
+    {
+        return $this->authService->hasAuthorized($user, '{{permission_entity}}.view');
+    }
+
+    public function create(User $user)
+    {
+        return $this->authService->hasAuthorized($user, '{{permission_entity}}.create');
+    }
+
+    public function update(User $user, {{entity}} $model)
+    {
+        return $this->authService->hasAuthorized($user, '{{permission_entity}}.update');
+    }
+
+    public function delete(User $user, {{entity}} $model)
+    {
+        return $this->authService->hasAuthorized($user, '{{permission_entity}}.delete');
+    }{{export_policy_method}}
+}

@@ -1,0 +1,7 @@
+    #[Override]
+    public function getLookupColumnsToFilter(): array
+    {
+        return [
+            {{lookup_columns}}
+        ];
+    }

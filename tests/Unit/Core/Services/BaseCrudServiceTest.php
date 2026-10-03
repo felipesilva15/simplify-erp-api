@@ -3,8 +3,11 @@
 namespace Tests\Unit\Core\Services;
 
 use App\Core\DTO\ServiceResult;
+use App\Core\Enums\ActivityActionEnum;
 use App\Core\Repositories\Interfaces\BaseRepositoryInterface;
+use App\Core\Services\ActivityLogService;
 use App\Core\Services\BaseCrudService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Mockery;
@@ -14,6 +17,7 @@ use Tests\TestCase;
 class BaseCrudServiceTest extends TestCase
 {
     private BaseRepositoryInterface|MockInterface $repositoryMock;
+    private ActivityLogService|MockInterface $activityMock;
     private BaseCrudService $service;
 
     protected function setUp(): void
@@ -21,11 +25,13 @@ class BaseCrudServiceTest extends TestCase
         parent::setUp();
 
         $this->repositoryMock = Mockery::mock(BaseRepositoryInterface::class);
+        $this->activityMock   = Mockery::mock(ActivityLogService::class);
 
-        $this->service = new class($this->repositoryMock) extends BaseCrudService {
-            public function __construct(BaseRepositoryInterface $repository)
+        $this->service = new class($this->repositoryMock, $this->activityMock) extends BaseCrudService {
+            public function __construct(BaseRepositoryInterface $repository, ActivityLogService $activity)
             {
                 $this->repository = $repository;
+                $this->activity = $activity;
             }
         };
     }
@@ -46,6 +52,11 @@ class BaseCrudServiceTest extends TestCase
             ->once()
             ->with($data)
             ->andReturn($entity);
+
+        $this->activityMock
+            ->shouldReceive('log')
+            ->once()
+            ->with($entity, ActivityActionEnum::Created);
 
         $result = $this->service->store($data);
 
@@ -77,6 +88,11 @@ class BaseCrudServiceTest extends TestCase
             ->with($entity, $data)
             ->andReturn($updatedEntity);
 
+        $this->activityMock
+            ->shouldReceive('log')
+            ->once()
+            ->with($updatedEntity, ActivityActionEnum::Updated);
+
         $result = $this->service->update($entity, $data);
 
         $this->assertInstanceOf(ServiceResult::class, $result);
@@ -92,6 +108,11 @@ class BaseCrudServiceTest extends TestCase
             ->once()
             ->with($entity)
             ->andReturn(true);
+
+        $this->activityMock
+            ->shouldReceive('log')
+            ->once()
+            ->with($entity, ActivityActionEnum::Deleted);
 
         $result = $this->service->delete($entity);
 
@@ -109,6 +130,11 @@ class BaseCrudServiceTest extends TestCase
             ->once()
             ->with($entity)
             ->andReturn(false);
+
+        $this->activityMock
+            ->shouldReceive('log')
+            ->once()
+            ->with($entity, ActivityActionEnum::Deleted);
 
         $result = $this->service->delete($entity);
 
@@ -203,5 +229,36 @@ class BaseCrudServiceTest extends TestCase
         $this->assertInstanceOf(ServiceResult::class, $result);
         $this->assertInstanceOf(LengthAwarePaginator::class, $result->data);
         $this->assertSame($paginator, $result->data);
+    }
+
+    public function test_can_get_export_query_from_repository(): void
+    {
+        $params  = ['filters' => ['status' => ['eq' => 'active']]];
+        $builder = Mockery::mock(Builder::class);
+
+        $this->repositoryMock
+            ->shouldReceive('getExportQuery')
+            ->once()
+            ->with($params)
+            ->andReturn($builder);
+
+        $result = $this->service->exportQuery($params);
+
+        $this->assertSame($builder, $result);
+    }
+
+    public function test_can_get_export_query_without_params(): void
+    {
+        $builder = Mockery::mock(Builder::class);
+
+        $this->repositoryMock
+            ->shouldReceive('getExportQuery')
+            ->once()
+            ->with([])
+            ->andReturn($builder);
+
+        $result = $this->service->exportQuery();
+
+        $this->assertSame($builder, $result);
     }
 }

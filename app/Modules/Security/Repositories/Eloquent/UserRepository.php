@@ -10,6 +10,33 @@ use Override;
 class UserRepository extends BaseRepository implements UserRepositoryInterface
 {
     #[Override]
+    protected function withRelations(): array
+    {
+        return [
+            'roles'
+        ];
+    }
+
+    #[Override]
+    public function getMaskedSearchableColumns(): array
+    {
+        return [
+            'phone_number'
+        ];
+    }
+
+    #[Override]
+    public function getLookupColumnsToFilter(): array
+    {
+        return [
+            'id' => 'int',
+            'name' => 'string',
+            'email' => 'string',
+            'username' => 'string'
+        ];
+    }
+
+    #[Override]
     protected function getModelClass(): string
     {
         return User::class;

@@ -2,16 +2,8 @@
 
 namespace App\Core\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-
-use App\Core\Actions\Module\StoreModuleAction;
-use App\Core\Actions\Module\UpdateModuleAction;
-use App\Core\Actions\Module\DeleteModuleAction;
-use App\Core\Actions\Module\EditModuleAction;
-use App\Core\Actions\Module\ShowModuleAction;
-use App\Core\Actions\Module\ListModuleAction;
 use App\Core\Http\Requests\Module\StoreModuleRequest;
 use App\Core\Http\Requests\Module\UpdateModuleRequest;
 use App\Core\Http\Resources\Module\ModuleResource;
@@ -19,18 +11,75 @@ use App\Core\Http\Resources\Module\ModuleCollection;
 use App\Core\DTO\ModuleDTO;
 use App\Core\Http\Requests\Core\ListRequest;
 use App\Core\Models\Module;
+use App\Core\Services\ModuleService;
+use App\Core\Traits\HasActivityLogs;
 
+/**
+ * @OA\PathItem(
+ *     path="/api/core/modules/{id}/activity-logs",
+ *     @OA\Get(
+ *         tags={"Module"},
+ *         summary="List activity logs of a module",
+ *         operationId="listModuleActivityLogs",
+ *         @OA\Parameter(
+ *             name="id",
+ *             in="path",
+ *             required=true,
+ *             description="Module ID",
+ *             @OA\Schema(type="integer")
+ *         ),
+ *         @OA\Parameter(name="per_page", in="query", required=false, @OA\Schema(type="integer")),
+ *         @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer")),
+ *         @OA\Response(
+ *             response="200",
+ *             description="Module activity logs",
+ *             @OA\JsonContent(
+ *                 allOf={
+ *                     @OA\Schema(ref="#/components/schemas/ApiResponse"),
+ *                     @OA\Schema(ref="#/components/schemas/ActivityLogCollection")
+ *                 }
+ *             )
+ *         ),
+ *         @OA\Response(
+ *             response="401",
+ *             description="Unauthorized",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="403",
+ *             description="Forbidden",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="404",
+ *             description="Record not found",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         security={{"bearerAuth":{}}}
+ *     )
+ * )
+ */
 class ModuleController extends Controller
 {
-    public function __construct() {
+    use HasActivityLogs;
+
+    protected ModuleService $service;
+
+    public function __construct(ModuleService $service) {
+        $this->service = $service;
         $this->authorizeResource(Module::class, 'module');
+    }
+
+    protected function activityLogModelClass(): string
+    {
+        return Module::class;
     }
 
     /**
      * @OA\Get(
      *      path="/api/core/modules",
      *      tags={"Module"},
-     *      summary="List all rows",
+     *      summary="List all modules",
      *      @OA\Parameter(name="id", in="query", required=false, @OA\Schema(type="integer")),
      *      @OA\Parameter(name="name", in="query", required=false, @OA\Schema(type="string")),
      *      @OA\Parameter(name="description", in="query", required=false, @OA\Schema(type="string")),
@@ -65,8 +114,8 @@ class ModuleController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function index(ListRequest $request, ListModuleAction $action): JsonResponse {
-        $serviceResult = $action->execute($request->all());
+    public function index(ListRequest $request): JsonResponse {
+        $serviceResult = $this->service->list($request->all());
 
         $paginated = new ModuleCollection($serviceResult->data);
         $paginated = $paginated->toArray($request);
@@ -81,11 +130,11 @@ class ModuleController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/core/modules/{id}",
+     *      path="/api/core/modules/{module}",
      *      tags={"Module"},
      *      summary="List a module by ID",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="module",
      *         in="path",
      *         required=true,
      *         description="Module ID",
@@ -124,8 +173,8 @@ class ModuleController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function show(Module $module, ShowModuleAction $action): JsonResponse {
-        $serviceResult = $action->execute($module);
+    public function show(Module $module): JsonResponse {
+        $serviceResult = $this->service->show($module);
 
         return $this->success(
             data: new ModuleResource($serviceResult->data),
@@ -168,12 +217,17 @@ class ModuleController extends Controller
      *          description="Forbidden",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
+     *      @OA\Response(
+     *          response="422", 
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function store(StoreModuleRequest $request, StoreModuleAction $action): JsonResponse {
+    public function store(StoreModuleRequest $request): JsonResponse {
         $dto = ModuleDTO::fromArray($request->validated());
-        $serviceResult = $action->execute($dto);
+        $serviceResult = $this->service->store($dto);
 
         return $this->success(
             data: new ModuleResource($serviceResult->data),
@@ -183,11 +237,11 @@ class ModuleController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/core/modules/{id}/edit",
+     *      path="/api/core/modules/{module}/edit",
      *      tags={"Module"},
      *      summary="Get data to edit a module",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="module",
      *         in="path",
      *         required=true,
      *         description="Module ID",
@@ -231,8 +285,8 @@ class ModuleController extends Controller
      *      )
      * )
      */
-    public function edit(Module $module, EditModuleAction $action): JsonResponse {
-        $serviceResult = $action->execute($module);
+    public function edit(Module $module): JsonResponse {
+        $serviceResult = $this->service->edit($module);
 
         return $this->success(
             data: new ModuleResource($serviceResult->data),
@@ -244,11 +298,11 @@ class ModuleController extends Controller
 
     /**
      * @OA\Put(
-     *      path="/api/core/modules/{id}",
+     *      path="/api/core/modules/{module}",
      *      tags={"Module"},
      *      summary="Update a module",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="module",
      *         in="path",
      *         required=true,
      *         description="Module ID",
@@ -289,12 +343,17 @@ class ModuleController extends Controller
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
+     *      @OA\Response(
+     *          response="422", 
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function update(Module $module, UpdateModuleRequest $request, UpdateModuleAction $action): JsonResponse {
+    public function update(Module $module, UpdateModuleRequest $request): JsonResponse {
         $dto = ModuleDTO::fromArray($request->validated());
-        $serviceResult = $action->execute($module, $dto);
+        $serviceResult = $this->service->update($module, $dto);
 
         return $this->success(
             data: new ModuleResource($serviceResult->data),
@@ -304,11 +363,11 @@ class ModuleController extends Controller
 
     /**
      * @OA\Delete(
-     *      path="/api/core/modules/{id}",
+     *      path="/api/core/modules/{module}",
      *      tags={"Module"},
      *      summary="Delete a module",
      *      @OA\Parameter(
-     *         name="id",
+     *         name="module",
      *         in="path",
      *         required=true,
      *         description="Module ID",
@@ -336,8 +395,8 @@ class ModuleController extends Controller
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function destroy(Module $module, DeleteModuleAction $action): Response {
-        $action->execute($module);
+    public function destroy(Module $module): Response {
+        $this->service->delete($module);
         return response()->noContent();
     }
 }

@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Modules\{{module}}\Http\Resources\{{entity}};
+namespace {{module_namespace}}\Http\Resources\{{entity}};
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @OA\Schema(
- *      schema="{{entity}}Resource",
- *      {{swagger_properties}}
+ *     schema="{{entity}}Resource",
+ *     {{swagger_properties}}
  * )
  */
 class {{entity}}Resource extends JsonResource

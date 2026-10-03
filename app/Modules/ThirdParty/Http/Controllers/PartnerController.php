@@ -1,0 +1,529 @@
+<?php
+
+namespace App\Modules\ThirdParty\Http\Controllers;
+
+
+use App\Core\Http\Requests\Core\LookupRequest;
+use App\Modules\ThirdParty\Http\Resources\Partner\PartnerLookupCollection;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
+
+use App\Core\Http\Controllers\Controller;
+use App\Core\Http\Requests\Core\ListRequest;
+use App\Modules\ThirdParty\Http\Requests\Partner\StorePartnerRequest;
+use App\Modules\ThirdParty\Http\Requests\Partner\UpdatePartnerRequest;
+use App\Modules\ThirdParty\Http\Resources\Partner\PartnerResource;
+use App\Modules\ThirdParty\Http\Resources\Partner\PartnerCollection;
+use App\Modules\ThirdParty\DTO\PartnerDTO;
+use App\Modules\ThirdParty\Models\Partner;
+use App\Modules\ThirdParty\Services\PartnerService;
+use App\Core\Traits\HasActivityLogs;
+use App\Core\Traits\HasExcelExport;
+use App\Modules\ThirdParty\Exports\PartnerExport;
+use InvalidArgumentException;
+
+/**
+ * @OA\PathItem(
+ *     path="/api/third-party/partners/{id}/activity-logs",
+ *     @OA\Get(
+ *         tags={"Partner"},
+ *         summary="List activity logs of a partner",
+ *         operationId="listPartnerActivityLogs",
+ *         @OA\Parameter(
+ *             name="id",
+ *             in="path",
+ *             required=true,
+ *             description="Partner ID",
+ *             @OA\Schema(type="integer")
+ *         ),
+ *         @OA\Parameter(name="per_page", in="query", required=false, @OA\Schema(type="integer")),
+ *         @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer")),
+ *         @OA\Response(
+ *             response="200",
+ *             description="Partner activity logs",
+ *             @OA\JsonContent(
+ *                 allOf={
+ *                     @OA\Schema(ref="#/components/schemas/ApiResponse"),
+ *                     @OA\Schema(ref="#/components/schemas/ActivityLogCollection")
+ *                 }
+ *             )
+ *         ),
+ *         @OA\Response(
+ *             response="401",
+ *             description="Unauthorized",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="403",
+ *             description="Forbidden",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="404",
+ *             description="Record not found",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         security={{"bearerAuth":{}}}
+ *     )
+ * )
+ * @OA\PathItem(
+ *     path="/api/third-party/partners/export",
+ *     @OA\Get(
+ *         tags={"Partner"},
+ *         summary="Export all partners to Excel",
+ *         operationId="exportPartner",
+ *         @OA\Parameter(
+ *             name="format",
+ *             in="query",
+ *             required=false,
+ *             description="Export format (full, summarized, detailed)",
+ *             @OA\Schema(type="string", enum={"full","summarized","detailed"})
+ *         ),
+ *         @OA\Parameter(
+ *             name="extension",
+ *             in="query",
+ *             required=false,
+ *             description="File extension (xlsx, xls, csv)",
+ *             @OA\Schema(type="string", enum={"xlsx","xls","csv"})
+ *         ),
+ *     @OA\Parameter(name="filters[id][eq]", in="query", required=false, @OA\Schema(type="integer")),
+ *     @OA\Parameter(name="filters[name][like]", in="query", required=false, @OA\Schema(type="string")),
+ *     @OA\Parameter(name="filters[created_at][gte]", in="query", required=false, @OA\Schema(type="string")),
+ *     @OA\Parameter(name="filters[updated_at][lte]", in="query", required=false, @OA\Schema(type="string")),
+ *         @OA\Response(
+ *             response="200",
+ *             description="Excel file with partners",
+ *             @OA\MediaType(
+ *                 mediaType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+ *             )
+ *         ),
+ *         @OA\Response(
+ *             response="401",
+ *             description="Unauthorized",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="403",
+ *             description="Forbidden",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         security={{"bearerAuth":{}}}
+ *     )
+ * )
+ */
+class PartnerController extends Controller
+{
+    use HasActivityLogs;
+    use HasExcelExport;
+
+    protected PartnerService $service;
+
+    public function __construct(PartnerService $service) {
+        $this->service = $service;
+        $this->authorizeResource(Partner::class, 'partner');
+    }
+
+    protected function activityLogModelClass(): string
+    {
+        return Partner::class;
+    }
+
+    /**
+     * @OA\Get(
+     *      path="/api/third-party/partners",
+     *      tags={"Partner"},
+     *      summary="List all partners",
+     *      @OA\Parameter(name="filters[id][eq]", in="query", required=false, @OA\Schema(type="integer")),
+     *      @OA\Parameter(name="filters[name][like]", in="query", required=false, @OA\Schema(type="string")),
+     *      @OA\Parameter(name="filters[created_at][gte]", in="query", required=false, @OA\Schema(type="string")),
+     *      @OA\Parameter(name="filters[updated_at][lte]", in="query", required=false, @OA\Schema(type="string")),
+     *      @OA\Parameter(ref="#/components/parameters/sortsParam"),
+     *      @OA\Parameter(ref="#/components/parameters/perPageParam"),
+     *      @OA\Parameter(ref="#/components/parameters/pageParam"),
+     *      @OA\Response(
+     *          response="200", 
+     *          description="Partner list",
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(ref="#/components/schemas/PartnerCollection")
+     *              }
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      security={{"bearerAuth":{}}}
+     * )
+     */
+    public function index(ListRequest $request): JsonResponse {
+        $serviceResult = $this->service->list($request->all());
+
+        $paginated = new PartnerCollection($serviceResult->data);
+        $paginated = $paginated->toArray($request);
+
+        return $this->success(
+            data: $paginated['data'],
+            links: $paginated['links'],
+            meta: $paginated['meta'],
+            httpStatus: Response::HTTP_OK
+        );
+    }
+
+    /**
+     * @OA\Get(
+     *      path="/api/third-party/partners/{partner}",
+     *      tags={"Partner"},
+     *      summary="List a partner by ID",
+     *      @OA\Parameter(
+     *         name="partner",
+     *         in="path",
+     *         required=true,
+     *         description="Partner ID",
+     *         @OA\Schema(type="integer")
+     *      ),
+     *      @OA\Response(
+     *          response="200", 
+     *          description="Partner data",
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/PartnerResource"
+     *                      )
+     *                  )
+     *              }
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="404", 
+     *          description="Record not found",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      security={{"bearerAuth":{}}}
+     * )
+     */
+    public function show(Partner $partner): JsonResponse {
+        $serviceResult = $this->service->show($partner);
+
+        return $this->success(
+            data: new PartnerResource($serviceResult->data),
+            httpStatus: Response::HTTP_OK
+        );
+    }
+
+    /**
+     * @OA\Post(
+     *      path="/api/third-party/partners",
+     *      tags={"Partner"},
+     *      summary="Registers a partner",
+     *      @OA\RequestBody(
+     *         required=true,
+     *         description="Data for creating a new partner",
+     *         @OA\JsonContent(ref="#/components/schemas/StorePartnerRequest")
+     *      ),
+     *      @OA\Response(
+     *          response="201", 
+     *          description="Registered partner data",
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/PartnerResource"
+     *                      )
+     *                  ),
+     *                  @OA\Schema(
+     *                      @OA\Property(property="meta", type="object", nullable=true,
+     *                          @OA\Property(property="children", type="object",
+     *                              @OA\Property(property="contacts", type="object",
+     *                                  @OA\Property(property="created", type="integer", example=2),
+     *                                  @OA\Property(property="updated", type="integer", example=0),
+     *                                  @OA\Property(property="deleted", type="integer", example=0)
+     *                              )
+     *                          )
+     *                      )
+     *                  )
+     *              }
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="422", 
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      security={{"bearerAuth":{}}}
+     * )
+     */
+    public function store(StorePartnerRequest $request): JsonResponse {
+        $dto = PartnerDTO::fromArray($request->validated());
+        $serviceResult = $this->service->store($dto);
+
+        return $this->success(
+            data: new PartnerResource($serviceResult->data),
+            meta: $serviceResult->meta ?: null,
+            httpStatus: Response::HTTP_CREATED
+        );
+    }
+
+    /**
+     * @OA\Get(
+     *      path="/api/third-party/partners/{partner}/edit",
+     *      tags={"Partner"},
+     *      summary="Get data to edit a partner",
+     *      @OA\Parameter(
+     *         name="partner",
+     *         in="path",
+     *         required=true,
+     *         description="Partner ID",
+     *         @OA\Schema(type="integer")
+     *      ),
+     *      @OA\Response(
+     *          response="200", 
+     *          description="Partner data",
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/PartnerResource"
+     *                      ),
+     *                      @OA\Property(property="warnings", type="array", @OA\Items(type="string", example="Este recurso não pode ser editado."), nullable=true),
+     *                      @OA\Property(
+     *                          property="meta", 
+     *                          type="object", 
+     *                          @OA\Property(property="editable", type="boolean", example=true)
+     *                      )
+     *                  )
+     *              }
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="404", 
+     *          description="Record not found",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      )
+     * )
+     */
+    public function edit(Partner $partner): JsonResponse {
+        $serviceResult = $this->service->edit($partner);
+
+        return $this->success(
+            data: new PartnerResource($serviceResult->data),
+            warnings: $serviceResult->warnings,
+            meta: $serviceResult->meta,
+            httpStatus: Response::HTTP_OK
+        );
+    }
+
+    /**
+     * @OA\Put(
+     *      path="/api/third-party/partners/{partner}",
+     *      tags={"Partner"},
+     *      summary="Update a partner",
+     *      @OA\Parameter(
+     *         name="partner",
+     *         in="path",
+     *         required=true,
+     *         description="Partner ID",
+     *         @OA\Schema(type="integer")
+     *      ),
+     *      @OA\RequestBody(
+     *         required=true,
+     *         description="Data for update partner",
+     *         @OA\JsonContent(ref="#/components/schemas/UpdatePartnerRequest")
+     *      ),
+     *      @OA\Response(
+     *          response="200", 
+     *          description="Updated partner data",
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(
+     *                      @OA\Property(
+     *                          property="data",
+     *                          ref="#/components/schemas/PartnerResource"
+     *                      )
+     *                  ),
+     *                  @OA\Schema(
+     *                      @OA\Property(property="meta", type="object", nullable=true,
+     *                          @OA\Property(property="children", type="object",
+     *                              @OA\Property(property="contacts", type="object",
+     *                                  @OA\Property(property="created", type="integer", example=2),
+     *                                  @OA\Property(property="updated", type="integer", example=0),
+     *                                  @OA\Property(property="deleted", type="integer", example=0)
+     *                              )
+     *                          )
+     *                      )
+     *                  )
+     *              }
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="404", 
+     *          description="Record not found",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="422", 
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      security={{"bearerAuth":{}}}
+     * )
+     */
+    public function update(Partner $partner, UpdatePartnerRequest $request): JsonResponse {
+        $dto = PartnerDTO::fromArray($request->validated());
+        $serviceResult = $this->service->update($partner, $dto);
+
+        return $this->success(
+            data: new PartnerResource($serviceResult->data),
+            meta: $serviceResult->meta ?: null,
+            httpStatus: Response::HTTP_OK
+        );
+    }
+
+    /**
+     * @OA\Delete(
+     *      path="/api/third-party/partners/{partner}",
+     *      tags={"Partner"},
+     *      summary="Delete a partner",
+     *      @OA\Parameter(
+     *         name="partner",
+     *         in="path",
+     *         required=true,
+     *         description="Partner ID",
+     *         @OA\Schema(type="integer")
+     *      ),
+     *      @OA\Response(
+     *          response="204", 
+     *          description="No content"
+     *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="403", 
+     *          description="Forbidden",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      @OA\Response(
+     *          response="404", 
+     *          description="Record not found",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      security={{"bearerAuth":{}}}
+     * )
+     */
+    public function destroy(Partner $partner): Response {
+        $this->service->delete($partner);
+        return response()->noContent();
+    }
+
+    protected function exportModelClass(): string
+    {
+        return Partner::class;
+    }
+
+    protected function exportClassForFormat(string $format): string
+    {
+        return match ($format) {
+            'full' => PartnerExport::class,
+            default => throw new InvalidArgumentException(
+                "Formato de exportação [{$format}] não suportado para parceiros."
+            ),
+        };
+    }
+
+    /**
+     * @OA\Get(
+     *      path="/api/third-party/partners/lookup",
+     *      tags={"Partner"},
+     *      summary="Lookup partners",
+     *      @OA\Parameter(name="q", in="query", description="Query for avaiable fields", required=false, @OA\Schema(type="string")),
+     *      @OA\Parameter(name="keys[]", in="query", description="Keys to find", required=false, @OA\Schema(type="integer")),
+     *      @OA\Response(
+     *          response="200", 
+     *          description="Partner type lookup list",
+     *          @OA\JsonContent(
+     *              allOf={
+     *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                  @OA\Schema(ref="#/components/schemas/PartnerLookupCollection")
+     *              }
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response="401", 
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+     *      ),
+     *      security={{"bearerAuth":{}}}
+     * )
+     */
+    public function lookup(LookupRequest $request): JsonResponse {
+        $serviceResult = $this->service->lookup($request->all());
+
+        $paginated = new PartnerLookupCollection($serviceResult->data);
+        $paginated = $paginated->toArray($request);
+
+        return $this->success(
+            data: $paginated['data'],
+            links: $paginated['links'],
+            meta: $paginated['meta'],
+            httpStatus: Response::HTTP_OK
+        );
+    }
+}
