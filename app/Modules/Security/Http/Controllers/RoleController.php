@@ -27,6 +27,7 @@ use InvalidArgumentException;
  *     @OA\Get(
  *         tags={"Role"},
  *         summary="List activity logs of a role",
+ *         operationId="listRoleActivityLogs",
  *         @OA\Parameter(
  *             name="id",
  *             in="path",

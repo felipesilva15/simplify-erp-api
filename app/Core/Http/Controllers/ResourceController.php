@@ -21,6 +21,7 @@ use App\Core\Traits\HasActivityLogs;
  *     @OA\Get(
  *         tags={"Resource"},
  *         summary="List activity logs of a resource",
+ *         operationId="listResourceActivityLogs",
  *         @OA\Parameter(
  *             name="id",
  *             in="path",

@@ -20,6 +20,7 @@ use App\Core\Traits\HasActivityLogs;
  *     @OA\Get(
  *         tags={"Module"},
  *         summary="List activity logs of a module",
+ *         operationId="listModuleActivityLogs",
  *         @OA\Parameter(
  *             name="id",
  *             in="path",
