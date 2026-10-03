@@ -4,6 +4,10 @@
  *         tags={"{{entity}}"},
  *         summary="Export all {{human_entities}} to Excel",
  *         operationId="export{{entity}}",
+ *         @OA\Parameter(ref="#/components/parameters/qParam"),
+ *         @OA\Parameter(ref="#/components/parameters/sortsParam"),
+ *         @OA\Parameter(ref="#/components/parameters/perPageParam"),
+ *         @OA\Parameter(ref="#/components/parameters/pageParam"),
  *         @OA\Parameter(
  *             name="format",
  *             in="query",

@@ -1,0 +1,43 @@
+public function test_can_export_{{lower_entity}}s(): void
+    {
+        {{entity}}::factory(3)->create();
+
+        Excel::fake();
+
+        $response = $this->getJson("{$this->endpoint}/export", $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK);
+
+        Excel::assertDownloaded('{{lower_entity}}.xlsx', function ({{entity}}Export $export) {
+            return $export->query()->pluck('id')->all() === [3, 2, 1];
+        });
+    }
+
+    public function test_can_export_{{lower_entity}}s_with_search(): void
+    {
+        $models = {{entity}}::factory(3)->create();
+
+        Excel::fake();
+
+        $response = $this->getJson(
+            "{$this->endpoint}/export?q=".urlencode((string) $models->first()->{{display_field}}),
+            $this->getAdminAuthHeaders()
+        );
+
+        $response->assertStatus(Response::HTTP_OK);
+
+        Excel::assertDownloaded('{{lower_entity}}.xlsx', function ({{entity}}Export $export) use ($models) {
+            return $export->query()->pluck('id')->all() === [$models->first()->id];
+        });
+    }
+
+    public function test_cannot_export_{{lower_entity}}s_without_authentication(): void
+    {
+        {{entity}}::factory(3)->create();
+
+        Excel::fake();
+
+        $response = $this->getJson("{$this->endpoint}/export");
+
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+    }

@@ -2,8 +2,7 @@
 
 namespace Tests\Feature\{{module}};
 
-use {{module_namespace}}\Models\{{entity}};
-use Tests\TestCase;
+use {{module_namespace}}\Models\{{entity}};{{test_imports}}use Tests\TestCase;
 use Illuminate\Http\Response;
 
 class {{entity}}Test extends TestCase
@@ -69,6 +68,22 @@ class {{entity}}Test extends TestCase
             ->assertJsonIsObject()
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.id', 2);
+    }
+
+    public function test_can_list_{{lower_entity}}s_with_search(): void
+    {
+        $models = {{entity}}::factory(3)->create();
+
+        $queryParams = [
+            'q' => $models->first()->{{display_field}}
+        ];
+
+        $response = $this->getJson(url()->query($this->endpoint, $queryParams), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.id', $models->first()->id);
     }
 
     public function test_cannot_list_{{lower_entity}}s_without_authentication(): void
@@ -298,5 +313,5 @@ class {{entity}}Test extends TestCase
 
         $response = $this->deleteJson("{$this->endpoint}/{$model->id}", [], $this->getCommomUserAuthHeaders());
         $this->assertErrorResponse($response, Response::HTTP_FORBIDDEN);
-    }
+    }{{export_tests}}{{lookup_tests}}
 }

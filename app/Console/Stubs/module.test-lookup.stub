@@ -1,0 +1,60 @@
+public function test_can_lookup_{{lower_entity}}s(): void
+    {
+        {{entity}}::factory(3)->create();
+
+        $response = $this->getJson("{$this->endpoint}/lookup", $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonStructure([
+                'data' => [
+                    '*' => [
+                        'key',
+                        'label',
+                        'sublabel',
+                        'meta'
+                    ]
+                ]
+            ])
+            ->assertJsonCount(3, 'data');
+    }
+
+    public function test_can_lookup_{{lower_entity}}s_with_search(): void
+    {
+        $models = {{entity}}::factory(3)->create();
+
+        $queryParams = [
+            'q' => $models->first()->{{display_field}}
+        ];
+
+        $response = $this->getJson(url()->query("{$this->endpoint}/lookup", $queryParams), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.key', $models->first()->{{lookup_key_attribute}});
+    }
+
+    public function test_can_lookup_{{lower_entity}}s_with_sort(): void
+    {
+        $models = {{entity}}::factory(3)->create();
+
+        $queryParams = [
+            'sorts' => '-id'
+        ];
+
+        $response = $this->getJson(url()->query("{$this->endpoint}/lookup", $queryParams), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonPath('data.0.key', $models->last()->{{lookup_key_attribute}});
+    }
+
+    public function test_cannot_lookup_{{lower_entity}}s_without_authentication(): void
+    {
+        {{entity}}::factory(3)->create();
+
+        $response = $this->getJson("{$this->endpoint}/lookup");
+
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+    }

@@ -1,0 +1,7 @@
+    #[Override]
+    protected function getListColumnsToFilter(): array
+    {
+        return [
+            {{list_columns}}
+        ];
+    }

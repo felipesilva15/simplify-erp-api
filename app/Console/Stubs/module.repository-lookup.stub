@@ -1,5 +1,5 @@
     #[Override]
-    public function getLookupColumnsToFilter(): array
+    protected function getLookupColumnsToFilter(): array
     {
         return [
             {{lookup_columns}}

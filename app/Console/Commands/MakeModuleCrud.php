@@ -461,6 +461,23 @@ class MakeModuleCrud extends Command
 
     private function getTestReplacements(): array
     {
+        return [
+            '{{resource_structure}}' => $this->renderLines(
+                array_map(fn ($field) => "'{$field['name']}'", $this->entityFields()),
+                indent: $this->tabs(3),
+            ),
+            ...$this->getTestCaseReplacements(),
+            '{{export_tests}}' => $this->renderTestBlock('module.test-export.stub', 'export'),
+            '{{lookup_tests}}' => $this->renderTestBlock('module.test-lookup.stub', 'lookup'),
+        ];
+    }
+
+    /**
+     * Substituições aplicáveis também aos blocos opcionais de teste, para que
+     * renderTestBlock() não dependa de getTestReplacements() (que o invoca).
+     */
+    private function getTestCaseReplacements(): array
+    {
         $fields = $this->entityFields(skipCommon: true);
         $stringField = array_values(array_filter($fields, fn ($field) => $field['type'] === 'string'))[0] ?? null;
         $requiredField = array_values(array_filter($fields, fn ($field) => ! $field['nullable']))[0] ?? null;
@@ -469,32 +486,44 @@ class MakeModuleCrud extends Command
         $requiredField = $requiredField['name'] ?? $displayField;
 
         return [
-            '{{resource_structure}}' => $this->renderLines(
-                array_map(fn ($field) => "'{$field['name']}'", $this->entityFields()),
-                indent: $this->tabs(3),
-            ),
             '{{display_field}}' => $displayField,
             '{{required_field}}' => $requiredField,
+            '{{lookup_key_attribute}}' => $this->getLookupKeyField()['name'] ?? 'id',
+            '{{test_imports}}' => $this->option('export')
+                ? PHP_EOL.'use '.$this->getModuleNamespace().'\\Exports\\'.$this->entity.'Export;'
+                    .PHP_EOL.'use Maatwebsite\\Excel\\Facades\\Excel;'
+                : '',
         ];
+    }
+
+    /**
+     * Renderiza um bloco de casos de teste opcional (`export`/`lookup`), prefixado
+     * de quebra de linha para manter a formatação válida quando não solicitado.
+     */
+    private function renderTestBlock(string $stub, string $option): string
+    {
+        if (! $this->option($option)) {
+            return '';
+        }
+
+        return PHP_EOL.PHP_EOL.$this->tabs(1).$this->replacePlaceholders(
+            $this->readStubBlock($stub),
+            [
+                ...$this->getBaseReplacements(),
+                ...$this->getTestCaseReplacements(),
+            ],
+        );
     }
 
     private function getRepositoryReplacements(): array
     {
-        $stringFields = array_values(array_filter(
-            $this->entityFields(skipCommon: true),
-            fn ($field) => $field['type'] === 'string',
-        ));
+        $columns = $this->renderLines($this->getSearchableColumnNames(), indent: $this->tabs(3));
 
-        $columns = array_map(fn ($field) => "'{$field['name']}' => 'string'", $stringFields);
-
-        if (count($columns) === 0) {
-            $columns = ["'id' => 'int'"];
-        }
-
-        $lookupColumns = $this->renderLines($columns, indent: $this->tabs(3));
+        $lookupColumns = '';
         $lookupKeyMethod = '';
 
         if ($this->option('lookup')) {
+            $lookupColumns = $this->renderLines($this->getSearchableColumnNames(), indent: $this->tabs(3));
             $keyName = $this->getLookupKeyField()['name'] ?? 'id';
 
             if ($keyName !== 'id') {
@@ -506,12 +535,42 @@ class MakeModuleCrud extends Command
         }
 
         return [
+            '{{list_columns}}' => $columns,
+            '{{list_columns_method}}' => $this->replacePlaceholders(
+                $this->readStubBlock('module.repository-list-columns.stub'),
+                ['{{list_columns}}' => $columns],
+            ).PHP_EOL.PHP_EOL,
             '{{lookup_columns}}' => $lookupColumns,
             '{{lookup_columns_method}}' => $this->option('lookup')
-                ? $this->replacePlaceholders($this->readStubBlock('module.repository-lookup.stub'), ['{{lookup_columns}}' => $lookupColumns]).PHP_EOL.PHP_EOL
+                ? $this->replacePlaceholders(
+                    $this->readStubBlock('module.repository-lookup.stub'),
+                    ['{{lookup_columns}}' => $lookupColumns],
+                ).PHP_EOL.PHP_EOL
                 : '',
             '{{lookup_key_method}}' => $lookupKeyMethod,
         ];
+    }
+
+    /**
+     * Colunas de busca textual (`q`) da entidade: todas as colunas string, com `id`
+     * como fallback. Os tipos são resolvidos por introspecção do schema em runtime,
+     * por isso o repositório devolve apenas os nomes das colunas.
+     */
+    private function getSearchableColumnNames(): array
+    {
+        $names = array_map(
+            fn ($field) => "'{$field['name']}'",
+            array_values(array_filter(
+                $this->entityFields(skipCommon: true),
+                fn ($field) => $field['type'] === 'string',
+            )),
+        );
+
+        if (! in_array("'id'", $names, true)) {
+            array_unshift($names, "'id'");
+        }
+
+        return $names;
     }
 
     private function getLookupReplacements(): array

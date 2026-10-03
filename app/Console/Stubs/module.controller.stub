@@ -84,6 +84,7 @@ class {{entity}}Controller extends Controller
      *      tags={"{{entity}}"},
      *      summary="List all {{human_entities}}",
      *     {{index_filter_parameters}}
+     *     @OA\Parameter(ref="#/components/parameters/qParam"),
      *     @OA\Parameter(ref="#/components/parameters/sortsParam"),
      *     @OA\Parameter(ref="#/components/parameters/perPageParam"),
      *     @OA\Parameter(ref="#/components/parameters/pageParam"),
