@@ -22,6 +22,7 @@ use App\Core\Traits\HasActivityLogs;{{export_imports}}
  *     @OA\Get(
  *         tags={"{{entity}}"},
  *         summary="List activity logs of a {{human_entity}}",
+ *         operationId="list{{entity}}ActivityLogs",
  *         @OA\Parameter(
  *             name="id",
  *             in="path",

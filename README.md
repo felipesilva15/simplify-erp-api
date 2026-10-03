@@ -1,6 +1,6 @@
 # Simplify ERP API
 
-API REST do Simplify ERP, implementada em Laravel 12. Concentra o acesso autenticado a dados de ERP para aplicações cliente (web/mobile), com controle de acesso por permissões, registro de auditoria e um conjunto de cadastros base — módulos, recursos, permissões, perfis, usuários, tipos de parceiro, parceiros e contatos.
+API REST do Simplify ERP, implementada em Laravel 13. Concentra o acesso autenticado a dados de ERP para aplicações cliente (web/mobile), com controle de acesso por permissões, registro de auditoria e um conjunto de cadastros base — módulos, recursos, permissões, perfis, usuários, tipos de parceiro, parceiros e contatos.
 
 O projeto é um **monólito**: uma única aplicação Laravel, publicada e implantada, sem microsserviços, filas de integração nem orquestração de containers no repositório.
 
@@ -15,24 +15,22 @@ O projeto é um **monólito**: uma única aplicação Laravel, publicada e impla
 
 | Item | Versão / valor |
 |---|---|
-| PHP | `^8.2` declarado; **`>= 8.4.1` exigida pelo `composer.lock`** (ver aviso abaixo) |
-| Laravel Framework | `^12.0` (instalado: `v12.67.0`) |
+| PHP | `^8.4` (instalado: `8.4.25`) |
+| Laravel Framework | `^13.0` (instalado: `v13.34.0`) |
 | Autenticação | `tymon/jwt-auth` `^2.2` (JWT em cookie httpOnly) |
-| Documentação OpenAPI | `darkaonline/l5-swagger` `^9.0` + `scalar/laravel` `^0.2.1` |
+| Documentação OpenAPI | `darkaonline/l5-swagger` `^11.1` + `zircote/swagger-php` `6.11` + `scalar/laravel` `^0.4` |
 | Exportação tabular | `maatwebsite/excel` `^4.0` |
 | Persistência | MySQL (padrão em `.env.example`) ou PostgreSQL |
-| Testes | PHPUnit `^11.5` |
-| Front-end de apoio | Vite `^7`, Tailwind CSS `^4`, Axios `^1.11` (landing page e assets; a API não é SPA) |
+| Testes | PHPUnit `^12.5` |
+| Front-end de apoio | Vite `^8`, Tailwind CSS `^4` (landing page e assets; a API não é SPA) |
 
 ---
 
 ## Pré-requisitos
 
-> **Atenção — versão real do PHP.** O `composer.json` declara `"php": "^8.2"`, mas o `composer.lock` fixa pacotes que exigem uma versão maior: `maatwebsite/excel 4.0.3` pede `^8.3` e cinco pacotes Symfony 8.1 (`clock`, `css-selector`, `event-dispatcher`, `string`, `translation`) pedem `>= 8.4.1`. O `vendor/composer/platform_check.php` gerado aborta a aplicação abaixo disso. **Use PHP 8.4.1 ou superior**, ou rode `composer update` para re-resolver as dependências.
-
-- PHP `>= 8.4.1` na prática, conforme o `composer.lock` (o `composer.json` declara `^8.2` — ver o aviso acima). O repositório **não declara** requisitos de extensão no `composer.json`; a extensão de banco (`pdo_mysql` ou `pdo_pgsql`) precisa estar habilitada para as migrations.
+- PHP `^8.4` — declarado no `composer.json` e refletido pelo `composer.lock` (instalado com PHP `8.4.25`). O repositório **não declara** requisitos de extensão no `composer.json`; a extensão de banco (`pdo_mysql` ou `pdo_pgsql`) precisa estar habilitada para as migrations.
 - Composer 2.
-- Node.js com npm, para o build do Vite/Tailwind. O `package.json` **não fixa** versão (`engines` ausente).
+- Node.js com npm, para o build do Vite/Tailwind. O `package.json` **não fixa** versão, mas o Vite 8 exige Node `^20.19.0 || >= 22.12.0`.
 - Um banco relacional acessível — MySQL ou PostgreSQL, conforme `config/database.php` — com o banco criado. O `.env.example` assume `simplify_erp`:
   ```sql
   CREATE DATABASE simplify_erp;
@@ -135,12 +133,14 @@ A suíte roda sobre SQLite em memória (`phpunit.xml` define `DB_CONNECTION=sqli
 
 | Recurso | URL | Observação |
 |---|---|---|
-| Swagger UI | `/api/documentation` | Título configurado em `config/l5-swagger.php`. Rota pública. |
+| Swagger UI | `/api/documentation` | Título/versão definidos nas anotações `@OA\Info` do controller base. Rota pública. |
 | Scalar (API Reference) | `/api-docs` | Rota definida em `routes/web.php`. |
 | Especificação OpenAPI | `/docs?api-docs.json` | Gerada a partir das annotations `@OA` em `app/`. |
 | Arquivo gerado | `storage/api-docs/api-docs.json` | Regerada automaticamente quando `L5_SWAGGER_GENERATE_ALWAYS=true`. |
 
 Os tag groups da especificação (`Core`, `Security`, `ThirdParty`, `HR`, `Geography`) são declarados no docblock de `app/Core/Http/Controllers/Controller.php` e são estendidos automaticamente pelo gerador de módulos.
+
+> **Anotações `@OA` no l5-swagger 11.** O l5-swagger 11 passa a analisar apenas atributos PHP e descarta as anotações `@OA` em docblock. O projeto mantém os docblocks em funcionamento por meio de `App\Core\Services\SwaggerGeneratorFactory`, registrado em `AppServiceProvider`; as anotações estão depreciadas no swagger-php 6.11 e serão removidas no 8.0. Detalhes em [`docs/spec.md` §14](docs/spec.md#14-documentação-openapi).
 
 ---
 

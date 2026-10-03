@@ -25,6 +25,7 @@ use App\Core\Traits\HasActivityLogs;
  *     @OA\Get(
  *         tags={"PartnerType"},
  *         summary="List activity logs of a partner type",
+ *         operationId="listPartnerTypeActivityLogs",
  *         @OA\Parameter(
  *             name="id",
  *             in="path",

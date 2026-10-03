@@ -17,7 +17,6 @@ class OpenApiConsistencyTest extends TestCase
     private const EXCLUDED_ROUTES = [
         '/api/documentation',
         '/api/oauth2-callback',
-        '/api/test',
     ];
 
     private function documentedOperations(): array {

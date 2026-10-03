@@ -28,6 +28,7 @@ use InvalidArgumentException;
  *     @OA\Get(
  *         tags={"Partner"},
  *         summary="List activity logs of a partner",
+ *         operationId="listPartnerActivityLogs",
  *         @OA\Parameter(
  *             name="id",
  *             in="path",

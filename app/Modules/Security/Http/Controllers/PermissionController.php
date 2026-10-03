@@ -21,6 +21,7 @@ use App\Core\Traits\HasActivityLogs;
  *     @OA\Get(
  *         tags={"Permission"},
  *         summary="List activity logs of a permission",
+ *         operationId="listPermissionActivityLogs",
  *         @OA\Parameter(
  *             name="id",
  *             in="path",
