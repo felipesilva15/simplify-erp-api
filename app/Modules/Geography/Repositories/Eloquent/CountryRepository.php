@@ -10,11 +10,21 @@ use Override;
 class CountryRepository extends BaseRepository implements CountryRepositoryInterface
 {
     #[Override]
-    public function getLookupColumnsToFilter(): array
+    protected function getListColumnsToFilter(): array
     {
         return [
-            'iso_code' => 'string',
-            'name' => 'string'
+            'id',
+            'iso_code',
+            'name'
+        ];
+    }
+
+    #[Override]
+    protected function getLookupColumnsToFilter(): array
+    {
+        return [
+            'iso_code',
+            'name'
         ];
     }
 

@@ -10,11 +10,20 @@ use Override;
 class RoleRepository extends BaseRepository implements RoleRepositoryInterface
 {
     #[Override]
-    public function getLookupColumnsToFilter(): array
+    protected function getListColumnsToFilter(): array
     {
         return [
-            'id' => 'int',
-            'name' => 'string'
+            'id',
+            'name'
+        ];
+    }
+
+    #[Override]
+    protected function getLookupColumnsToFilter(): array
+    {
+        return [
+            'id',
+            'name'
         ];
     }
 

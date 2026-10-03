@@ -67,6 +67,11 @@ class MakeModuleCrudExportTest extends TestCase
 
     private function snapshotFiles(): void
     {
+        // Snapshot único por teste: evita restaurar um arquivo já alterado pelo comando
+        if ($this->snapshots !== []) {
+            return;
+        }
+
         $this->snapshots = [
             $this->routesPath => File::get($this->routesPath),
             $this->providersPath => File::get($this->providersPath),
@@ -178,5 +183,44 @@ class MakeModuleCrudExportTest extends TestCase
         $this->assertStringContainsString('public function map(mixed $row): array', $export);
         $this->assertStringContainsString("'ID'", $export);
         $this->assertStringContainsString("'Name'", $export);
+    }
+
+    public function test_command_generates_export_test_cases_without_unresolved_placeholders(): void
+    {
+        $this->runModuleCrud('Vehicle', ['--all' => true, '--export' => true]);
+
+        $test = File::get(base_path('tests/Feature/Sales/VehicleTest.php'));
+
+        $this->assertStringContainsString('use App\Modules\Sales\Exports\VehicleExport;', $test);
+        $this->assertStringContainsString('use Maatwebsite\Excel\Facades\Excel;', $test);
+        $this->assertStringContainsString('public function test_can_export_vehicles(): void', $test);
+        $this->assertStringContainsString('public function test_can_export_vehicles_with_search(): void', $test);
+        $this->assertStringContainsString('public function test_cannot_export_vehicles_without_authentication(): void', $test);
+        $this->assertStringContainsString("assertDownloaded('vehicle.xlsx'", $test);
+        $this->assertStringNotContainsString('{{', $test);
+    }
+
+    public function test_command_omits_lookup_test_cases_without_lookup_flag(): void
+    {
+        $this->runModuleCrud('Vehicle', ['--all' => true, '--export' => true]);
+
+        $test = File::get(base_path('tests/Feature/Sales/VehicleTest.php'));
+
+        $this->assertStringNotContainsString('public function test_can_lookup_vehicles', $test);
+    }
+
+    public function test_command_generates_lookup_test_cases_with_lookup_flag(): void
+    {
+        $exitCode = $this->runModuleCrud('Vehicle', ['--all' => true, '--export' => true, '--lookup' => true]);
+
+        $this->assertSame(0, $exitCode);
+
+        $withLookup = File::get(base_path('tests/Feature/Sales/VehicleTest.php'));
+
+        $this->assertStringContainsString('public function test_can_lookup_vehicles(): void', $withLookup);
+        $this->assertStringContainsString('public function test_can_lookup_vehicles_with_search(): void', $withLookup);
+        $this->assertStringContainsString('public function test_can_lookup_vehicles_with_sort(): void', $withLookup);
+        $this->assertStringContainsString('public function test_cannot_lookup_vehicles_without_authentication(): void', $withLookup);
+        $this->assertStringNotContainsString('{{', $withLookup);
     }
 }

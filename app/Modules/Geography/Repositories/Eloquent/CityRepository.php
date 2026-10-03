@@ -10,11 +10,21 @@ use Override;
 class CityRepository extends BaseRepository implements CityRepositoryInterface
 {
     #[Override]
-    public function getLookupColumnsToFilter(): array
+    protected function getListColumnsToFilter(): array
     {
         return [
-            'name' => 'string',
-            'ibge_code' => 'string'
+            'id',
+            'name',
+            'ibge_code'
+        ];
+    }
+
+    #[Override]
+    protected function getLookupColumnsToFilter(): array
+    {
+        return [
+            'name',
+            'ibge_code'
         ];
     }
 

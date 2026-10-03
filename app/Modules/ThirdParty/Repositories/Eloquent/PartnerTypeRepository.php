@@ -10,11 +10,21 @@ use Override;
 class PartnerTypeRepository extends BaseRepository implements PartnerTypeRepositoryInterface
 {
     #[Override]
-    public function getLookupColumnsToFilter(): array
+    protected function getListColumnsToFilter(): array
     {
         return [
-            'name' => 'string',
-            'code' => 'string'
+            'id',
+            'name',
+            'code'
+        ];
+    }
+
+    #[Override]
+    protected function getLookupColumnsToFilter(): array
+    {
+        return [
+            'name',
+            'code'
         ];
     }
 

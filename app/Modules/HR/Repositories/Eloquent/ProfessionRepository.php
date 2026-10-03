@@ -10,11 +10,21 @@ use Override;
 class ProfessionRepository extends BaseRepository implements ProfessionRepositoryInterface
 {
     #[Override]
-    public function getLookupColumnsToFilter(): array
+    protected function getListColumnsToFilter(): array
     {
         return [
-            'cbo' => 'string',
-            'name' => 'string'
+            'id',
+            'cbo',
+            'name'
+        ];
+    }
+
+    #[Override]
+    protected function getLookupColumnsToFilter(): array
+    {
+        return [
+            'cbo',
+            'name'
         ];
     }
 

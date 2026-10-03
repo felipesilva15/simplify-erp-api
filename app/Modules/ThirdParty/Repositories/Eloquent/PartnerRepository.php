@@ -26,13 +26,24 @@ class PartnerRepository extends BaseRepository implements PartnerRepositoryInter
     }
 
     #[Override]
-    public function getLookupColumnsToFilter(): array
+    protected function getListColumnsToFilter(): array
     {
         return [
-            'id' => 'string',
-            'name' => 'string',
-            'trade_name' => 'string',
-            'document_number' => 'string'
+            'id',
+            'name',
+            'trade_name',
+            'document_number'
+        ];
+    }
+
+    #[Override]
+    protected function getLookupColumnsToFilter(): array
+    {
+        return [
+            'id',
+            'name',
+            'trade_name',
+            'document_number'
         ];
     }
 

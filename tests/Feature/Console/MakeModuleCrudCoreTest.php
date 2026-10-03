@@ -63,6 +63,11 @@ class MakeModuleCrudCoreTest extends TestCase
 
     private function snapshotFiles(): void
     {
+        // Snapshot único por teste: evita restaurar um arquivo já alterado pelo comando
+        if ($this->snapshots !== []) {
+            return;
+        }
+
         $this->snapshots = [
             $this->routesPath => File::get($this->routesPath),
             $this->providersPath => File::get($this->providersPath),
@@ -174,5 +179,33 @@ class MakeModuleCrudCoreTest extends TestCase
         $swagger = File::get($this->controllerPath);
         $this->assertStringContainsString('"name"="Core"', $swagger);
         $this->assertStringContainsString('"tags"={"Module", "Resource", "Widget"}', $swagger);
+    }
+
+    public function test_command_generates_searchable_column_hooks_returning_column_names(): void
+    {
+        $this->runCoreCrud('Widget', ['--all' => true]);
+
+        $repository = File::get(app_path('Core/Repositories/Eloquent/WidgetRepository.php'));
+
+        $this->assertStringContainsString('protected function getListColumnsToFilter(): array', $repository);
+        $this->assertStringContainsString("'id',", $repository);
+        $this->assertStringContainsString("'name'", $repository);
+        $this->assertStringNotContainsString("'id' => ", $repository);
+        $this->assertStringNotContainsString("'name' => ", $repository);
+
+        // Sem --lookup o hook de lookup não é gerado
+        $this->assertStringNotContainsString('getLookupColumnsToFilter', $repository);
+    }
+
+    public function test_command_generates_search_test_and_omits_lookup_tests_without_flag(): void
+    {
+        $this->runCoreCrud('Widget', ['--all' => true]);
+
+        $test = File::get(base_path('tests/Feature/Core/WidgetTest.php'));
+
+        $this->assertStringContainsString('public function test_can_list_widgets_with_search', $test);
+        $this->assertStringNotContainsString('public function test_can_lookup', $test);
+        $this->assertStringNotContainsString('public function test_can_export', $test);
+        $this->assertStringNotContainsString('{{', $test);
     }
 }

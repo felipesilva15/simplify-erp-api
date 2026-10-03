@@ -90,8 +90,8 @@ class PermissionController extends Controller
      *      @OA\Parameter(name="created_at", in="query", required=false, @OA\Schema(type="string")),
      *      @OA\Parameter(name="updated_at", in="query", required=false, @OA\Schema(type="string")),
      *      @OA\Parameter(name="deleted_at", in="query", required=false, @OA\Schema(type="string")),
-     *      @OA\Parameter(name="sort_by[]", in="query", description="Fields name's to sort", required=false, @OA\Schema(type="array", @OA\Items(type="string", example="id"))),
-     *      @OA\Parameter(name="sort_dir[]", in="query", description="Directions to sort: Ascending = 'asc'; Descending = 'desc'", required=false, @OA\Schema(type="array", @OA\Items(type="string", example="desc"))),
+     *      @OA\Parameter(ref="#/components/parameters/qParam"),
+     *      @OA\Parameter(ref="#/components/parameters/sortsParam"),
      *      @OA\Parameter(name="per_page", in="query", description="Items per page", required=false, @OA\Schema(type="integer")),
      *      @OA\Parameter(name="page", in="query", description="Page number", required=false, @OA\Schema(type="integer")),
      *      @OA\Response(

@@ -10,12 +10,23 @@ use Override;
 class StateRepository extends BaseRepository implements StateRepositoryInterface
 {
     #[Override]
-    public function getLookupColumnsToFilter(): array
+    protected function getListColumnsToFilter(): array
     {
         return [
-            'name' => 'string',
-            'uf' => 'string',
-            'ibge_code' => 'string'
+            'id',
+            'name',
+            'uf',
+            'ibge_code'
+        ];
+    }
+
+    #[Override]
+    protected function getLookupColumnsToFilter(): array
+    {
+        return [
+            'name',
+            'uf',
+            'ibge_code'
         ];
     }
 

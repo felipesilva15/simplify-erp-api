@@ -26,13 +26,24 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     }
 
     #[Override]
-    public function getLookupColumnsToFilter(): array
+    protected function getListColumnsToFilter(): array
     {
         return [
-            'id' => 'int',
-            'name' => 'string',
-            'email' => 'string',
-            'username' => 'string'
+            'id',
+            'name',
+            'email',
+            'username'
+        ];
+    }
+
+    #[Override]
+    protected function getLookupColumnsToFilter(): array
+    {
+        return [
+            'id',
+            'name',
+            'email',
+            'username'
         ];
     }
 
