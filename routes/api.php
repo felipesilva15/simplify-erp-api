@@ -2,7 +2,6 @@
 
 use App\Core\Http\Controllers\ModuleController;
 use App\Core\Http\Controllers\ResourceController;
-use App\Core\Models\ActivityLog;
 use App\Modules\Geography\Http\Controllers\CityController;
 use App\Modules\Geography\Http\Controllers\CountryController;
 use App\Modules\Geography\Http\Controllers\StateController;
@@ -67,7 +66,4 @@ Route::prefix('core')->group(function() {
         Route::get('professions/{id}/activity-logs', [ProfessionController::class, 'activityLogs'])->name('professions.activityLogs');
         Route::resource('professions', ProfessionController::class)->only('index', 'show');
     });
-});
-Route::get('test', function() {
-    return ActivityLog::orderByDesc('created_at')->get();
 });
