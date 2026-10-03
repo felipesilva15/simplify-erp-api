@@ -127,6 +127,20 @@ php artisan test --filter=PartnerTest
 
 A suíte roda sobre SQLite em memória (`phpunit.xml` define `DB_CONNECTION=sqlite` e `DB_DATABASE=:memory:`) e aplica `RefreshDatabase` na classe base, portanto **não exige banco externo**. Detalhes da estratégia de testes em [`docs/spec.md`](docs/spec.md#16-testes).
 
+### Contrato de consulta
+
+Todas as listagens, buscas rápidas e exportações compartilham o mesmo contrato:
+
+| Parâmetro | Onde | Observação |
+|---|---|---|
+| `q` | `index`, `lookup`, `export` | Busca textual livre sobre as colunas pesquisáveis do recurso (definidas no repository, não pelo cliente). |
+| `filters[coluna][operador]` | `index`, `export` | `eq`, `ne`, `lt`, `lte`, `gt`, `gte`, `like`. |
+| `sorts` | `index`, `lookup`, `export` | CSV com `-` para decrescente, ex. `name,-created_at`. Padrão: `-id`. |
+| `keys[]` | `lookup` | Coluna alvo configurável (`id` por padrão, `code` em tipos de parceiro). |
+| `per_page` / `page` | `index`, `lookup`, `export` | `per_page` padrão 15 (30 no lookup); a exportação não pagina. |
+
+Detalhes em [`docs/spec.md` §6](docs/spec.md#6-paginação-filtro-ordenação-e-busca-rápida).
+
 ---
 
 ## Documentação da API
@@ -153,7 +167,7 @@ php artisan make:module-crud Core Vehicle --all
 php artisan make:module-crud Sales Order --all --lookup --export
 ```
 
-**A tabela da entidade precisa existir no banco antes da execução** — o comando lê o schema real da tabela para derivar `$fillable`, regras de validação, DTO, resources, factory e export. Contrato completo em [`docs/spec.md`](docs/spec.md#15-gerador-de-módulos).
+**A tabela da entidade precisa existir no banco antes da execução** — o comando lê o schema real da tabela para derivar `$fillable`, regras de validação, DTO, resources, factory e export. O repository gerado recebe os hooks `getListColumnsToFilter()` (e `getLookupColumnsToFilter()` com `--lookup`) com as colunas pesquisáveis; os casos de teste de lookup e exportação só são gerados com as respectivas flags. Contrato completo em [`docs/spec.md`](docs/spec.md#15-gerador-de-módulos).
 
 ---
 
@@ -171,7 +185,7 @@ app/
     Geography/           # countries, states, cities
   Console/
     Commands/            # make:module-crud
-    Stubs/               # 26 stubs usados pelo gerador
+    Stubs/               # 29 stubs usados pelo gerador
   Policies/              # 11 policies (uma por entidade)
   Providers/             # registro de bindings, morph map e macro de rotas
 bootstrap/providers.php  # providers registrados

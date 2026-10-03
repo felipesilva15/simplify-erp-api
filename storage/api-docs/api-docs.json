@@ -525,6 +525,18 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "$ref": "#/components/parameters/qParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sortsParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/perPageParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/pageParam"
                     }
                 ],
                 "responses": {
@@ -809,6 +821,18 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "$ref": "#/components/parameters/qParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sortsParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/perPageParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/pageParam"
                     }
                 ],
                 "responses": {
@@ -1003,6 +1027,18 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "$ref": "#/components/parameters/qParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sortsParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/perPageParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/pageParam"
                     }
                 ],
                 "responses": {
@@ -1197,6 +1233,18 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "$ref": "#/components/parameters/qParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sortsParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/perPageParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/pageParam"
                     }
                 ],
                 "responses": {
@@ -1389,30 +1437,10 @@
                         }
                     },
                     {
-                        "name": "sort_by[]",
-                        "in": "query",
-                        "description": "Fields name's to sort",
-                        "required": false,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string",
-                                "example": "id"
-                            }
-                        }
+                        "$ref": "#/components/parameters/qParam"
                     },
                     {
-                        "name": "sort_dir[]",
-                        "in": "query",
-                        "description": "Directions to sort: Ascending = 'asc'; Descending = 'desc'",
-                        "required": false,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string",
-                                "example": "desc"
-                            }
-                        }
+                        "$ref": "#/components/parameters/sortsParam"
                     },
                     {
                         "name": "per_page",
@@ -1947,30 +1975,10 @@
                         }
                     },
                     {
-                        "name": "sort_by[]",
-                        "in": "query",
-                        "description": "Fields name's to sort",
-                        "required": false,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string",
-                                "example": "id"
-                            }
-                        }
+                        "$ref": "#/components/parameters/qParam"
                     },
                     {
-                        "name": "sort_dir[]",
-                        "in": "query",
-                        "description": "Directions to sort: Ascending = 'asc'; Descending = 'desc'",
-                        "required": false,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string",
-                                "example": "desc"
-                            }
-                        }
+                        "$ref": "#/components/parameters/sortsParam"
                     },
                     {
                         "name": "per_page",
@@ -2689,6 +2697,9 @@
                         }
                     },
                     {
+                        "$ref": "#/components/parameters/qParam"
+                    },
+                    {
                         "$ref": "#/components/parameters/sortsParam"
                     },
                     {
@@ -2832,13 +2843,16 @@
                 "operationId": "f3ad959da19a2d9e733c251a2c4ec667",
                 "parameters": [
                     {
-                        "name": "q",
-                        "in": "query",
-                        "description": "Query for avaiable fields",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
+                        "$ref": "#/components/parameters/qParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sortsParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/perPageParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/pageParam"
                     },
                     {
                         "name": "keys[]",
@@ -3087,6 +3101,9 @@
                         }
                     },
                     {
+                        "$ref": "#/components/parameters/qParam"
+                    },
+                    {
                         "$ref": "#/components/parameters/sortsParam"
                     },
                     {
@@ -3230,13 +3247,16 @@
                 "operationId": "01adb3158e22d4a64f638f30382c2944",
                 "parameters": [
                     {
-                        "name": "q",
-                        "in": "query",
-                        "description": "Query for avaiable fields",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
+                        "$ref": "#/components/parameters/qParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sortsParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/perPageParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/pageParam"
                     },
                     {
                         "name": "keys[]",
@@ -3557,6 +3577,9 @@
                         }
                     },
                     {
+                        "$ref": "#/components/parameters/qParam"
+                    },
+                    {
                         "$ref": "#/components/parameters/sortsParam"
                     },
                     {
@@ -3700,13 +3723,16 @@
                 "operationId": "15fc7ae0ef1210ba53377b1bab29be49",
                 "parameters": [
                     {
-                        "name": "q",
-                        "in": "query",
-                        "description": "Query for avaiable fields",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
+                        "$ref": "#/components/parameters/qParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sortsParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/perPageParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/pageParam"
                     },
                     {
                         "name": "keys[]",
@@ -3955,6 +3981,9 @@
                         }
                     },
                     {
+                        "$ref": "#/components/parameters/qParam"
+                    },
+                    {
                         "$ref": "#/components/parameters/sortsParam"
                     },
                     {
@@ -4098,13 +4127,16 @@
                 "operationId": "988a99c0382b335cd10a9c88d2fd8bc8",
                 "parameters": [
                     {
-                        "name": "q",
-                        "in": "query",
-                        "description": "Query for avaiable fields",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
+                        "$ref": "#/components/parameters/qParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sortsParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/perPageParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/pageParam"
                     },
                     {
                         "name": "keys[]",
@@ -4431,30 +4463,10 @@
                         }
                     },
                     {
-                        "name": "sort_by[]",
-                        "in": "query",
-                        "description": "Fields name's to sort",
-                        "required": false,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string",
-                                "example": "id"
-                            }
-                        }
+                        "$ref": "#/components/parameters/qParam"
                     },
                     {
-                        "name": "sort_dir[]",
-                        "in": "query",
-                        "description": "Directions to sort: Ascending = 'asc'; Descending = 'desc'",
-                        "required": false,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string",
-                                "example": "desc"
-                            }
-                        }
+                        "$ref": "#/components/parameters/sortsParam"
                     },
                     {
                         "name": "per_page",
@@ -4971,6 +4983,9 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "$ref": "#/components/parameters/qParam"
                     },
                     {
                         "$ref": "#/components/parameters/sortsParam"
@@ -5540,13 +5555,16 @@
                 "operationId": "83e6e7b4dd61623aacc9f38e9068a78e",
                 "parameters": [
                     {
-                        "name": "q",
-                        "in": "query",
-                        "description": "Query for available fields",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
+                        "$ref": "#/components/parameters/qParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sortsParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/perPageParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/pageParam"
                     },
                     {
                         "name": "keys[]",
@@ -5691,48 +5709,16 @@
                         }
                     },
                     {
-                        "name": "sort_by[]",
-                        "in": "query",
-                        "description": "Fields name's to sort",
-                        "required": false,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string",
-                                "example": "id"
-                            }
-                        }
+                        "$ref": "#/components/parameters/qParam"
                     },
                     {
-                        "name": "sort_dir[]",
-                        "in": "query",
-                        "description": "Directions to sort: Ascending = 'asc'; Descending = 'desc'",
-                        "required": false,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string",
-                                "example": "desc"
-                            }
-                        }
+                        "$ref": "#/components/parameters/sortsParam"
                     },
                     {
-                        "name": "per_page",
-                        "in": "query",
-                        "description": "Items per page",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
+                        "$ref": "#/components/parameters/perPageParam"
                     },
                     {
-                        "name": "page",
-                        "in": "query",
-                        "description": "Page number",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
+                        "$ref": "#/components/parameters/pageParam"
                     }
                 ],
                 "responses": {
@@ -6193,13 +6179,16 @@
                 "operationId": "76eb77b551e8e52e157579d7ca710cd0",
                 "parameters": [
                     {
-                        "name": "q",
-                        "in": "query",
-                        "description": "Query for available fields",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
+                        "$ref": "#/components/parameters/qParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sortsParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/perPageParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/pageParam"
                     },
                     {
                         "name": "keys[]",
@@ -6286,6 +6275,9 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "$ref": "#/components/parameters/qParam"
                     },
                     {
                         "$ref": "#/components/parameters/sortsParam"
@@ -6821,13 +6813,16 @@
                 "operationId": "d57ec9e5b158b3024fde74cab2f4df6a",
                 "parameters": [
                     {
-                        "name": "q",
-                        "in": "query",
-                        "description": "Query for avaiable fields",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
+                        "$ref": "#/components/parameters/qParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sortsParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/perPageParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/pageParam"
                     },
                     {
                         "name": "keys[]",
@@ -6914,6 +6909,9 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "$ref": "#/components/parameters/qParam"
                     },
                     {
                         "$ref": "#/components/parameters/sortsParam"
@@ -7383,13 +7381,16 @@
                 "operationId": "5ef504f97a94fdcad6d61dfba10170fc",
                 "parameters": [
                     {
-                        "name": "q",
-                        "in": "query",
-                        "description": "Query for avaiable fields",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
+                        "$ref": "#/components/parameters/qParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sortsParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/perPageParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/pageParam"
                     },
                     {
                         "name": "keys[]",
@@ -7665,6 +7666,11 @@
                     "filters": {
                         "$ref": "#/components/schemas/Filters"
                     },
+                    "q": {
+                        "description": "Free text search across the searchable columns",
+                        "type": "string",
+                        "example": "Felipe"
+                    },
                     "sorts": {
                         "description": "Fields for sorting separated by commas. Use '-' to sort descending",
                         "type": "string",
@@ -7686,7 +7692,7 @@
             "LookupRequest": {
                 "properties": {
                     "q": {
-                        "description": "Filter for some columns",
+                        "description": "Free text search across the searchable columns",
                         "type": "string",
                         "example": "1"
                     },
@@ -7696,6 +7702,11 @@
                         "items": {
                             "type": "string"
                         }
+                    },
+                    "sorts": {
+                        "description": "Fields for sorting separated by commas. Use '-' to sort descending",
+                        "type": "string",
+                        "example": "-id"
                     },
                     "per_page": {
                         "description": "Items per page",
@@ -11006,6 +11017,16 @@
             }
         },
         "parameters": {
+            "qParam": {
+                "name": "q",
+                "in": "query",
+                "description": "Free text search across the searchable columns",
+                "required": false,
+                "schema": {
+                    "type": "string"
+                },
+                "example": "Felipe"
+            },
             "sortsParam": {
                 "name": "sorts",
                 "in": "query",

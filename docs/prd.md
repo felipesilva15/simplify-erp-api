@@ -144,9 +144,11 @@ Os itens abaixo existem como estrutura de dados ou configuração **sem** rota, 
 
 ### 7.6 Consultas, busca rápida e exportação
 
-- Todas as listagens suportam **filtro por campo e operador**, **ordenação** e **paginação**; o contrato de parâmetros é único para todos os recursos.
-- A busca rápida (`lookup`) é um endpoint enxuto, orientado a preencher campos de seleção, e devolve `key`, `label`, `sublabel` e `meta`.
-- A exportação gera planilha a partir da **mesma** consulta da listagem, respeitando filtros e ordenação, e exige permissão de exportação específica do recurso. Somente usuários, perfis, parceiros e profissões possuem exportação.
+- Todas as listagens suportam **busca textual (`q`)**, **filtro por campo e operador**, **ordenação** e **paginação**; o contrato de parâmetros é único para todos os recursos.
+- A busca textual (`q`) é livre: casa as colunas pesquisáveis do recurso em um único agrupamento `OR`, ignorando maiúsculas, minúsculas e acentos, e as colunas são definidas por recurso, não pelo cliente.
+- A ordenação é múltipla (`sorts=name,-created_at`); quando o cliente não a informa, a listagem assume `-id` como padrão determinístico.
+- A busca rápida (`lookup`) é um endpoint enxuto, orientado a preencher campos de seleção, e devolve `key`, `label`, `sublabel` e `meta`. Aceita `q`, `sorts`, `keys[]` e paginação, e ordena por padrão em `-id`.
+- A exportação gera planilha a partir da **mesma** consulta da listagem — mesma busca, mesmos filtros e mesma ordenação — e exige permissão de exportação específica do recurso. Somente usuários, perfis, parceiros e profissões possuem exportação.
 
 ### 7.7 Cadastros geográficos
 
@@ -178,7 +180,7 @@ Os itens abaixo existem como estrutura de dados ou configuração **sem** rota, 
 | RF-09 | Manter parceiros com contatos aninhados, com listagem, busca rápida e exportação. |
 | RF-10 | Consultar o catálogo de profissões (CBO), com listagem, detalhe, busca rápida, exportação e auditoria, sem operações de criação, edição ou exclusão. |
 | RF-11 | Consultar o histórico de auditoria de qualquer registro de recurso. |
-| RF-12 | Filtrar, ordenar e paginar qualquer listagem por um contrato único. |
+| RF-12 | Buscar por texto livre, filtrar, ordenar e paginar qualquer listagem por um contrato único. |
 | RF-13 | Exportar usuários, perfis, parceiros e profissões em planilha respeitando os filtros da listagem. |
 | RF-14 | Gerar, a partir do schema do banco, a estrutura completa de um novo módulo de negócio. |
 | RF-15 | Publicar a especificação OpenAPI da API gerada a partir do código. |
@@ -236,7 +238,7 @@ Fatos observados que não constituem requisito e não têm confirmação no cód
 O comportamento descrito acima é verificado pela suíte de testes do próprio projeto. Para cada entidade com CRUD, o conjunto exigido é:
 
 1. Listagem responde no envelope padrão e pagina corretamente.
-2. Listagem funciona com ordenação e com filtro.
+2. Listagem funciona com ordenação, com filtro e com busca textual (`q`).
 3. Listagem, detalhe e edição exigem autenticação.
 4. Listagem, detalhe e edição exigem a permissão correspondente; usuário sem permissão recebe `403`.
 5. Detalhe com identificador inexistente responde `404`.
@@ -248,7 +250,7 @@ O comportamento descrito acima é verificado pela suíte de testes do próprio p
 11. Exclusão válida responde `204` e o registro fica excluído logicamente.
 12. Exclusão com identificador inexistente responde `404`.
 13. Exclusão sem autenticação ou sem permissão é rejeitada.
-14. Quando a entidade possui busca rápida: estrutura padrão, busca por texto, busca por chaves, paginação e rejeição sem autenticação.
+14. Quando a entidade possui busca rápida: estrutura padrão, busca por texto, busca por chaves, ordenação, paginação e rejeição sem autenticação.
 15. Quando a entidade possui exportação: planilha padrão, com filtros, com formato e extensão explícitos, e rejeição de extensão/formato desconhecidos e sem permissão.
 16. Quando a entidade possui itens aninhados: criação, alteração, preservação por omissão, remoção por lista vazia, restauração, rollback em item inválido e ausência de consulta em excesso (N+1).
 

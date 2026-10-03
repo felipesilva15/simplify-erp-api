@@ -120,11 +120,14 @@ sync(Model $entity, string $relationMethodName, array $ids = []): ?Model
 
 | Método | Padrão | Finalidade |
 |---|---|---|
-| `getLookupColumnsToFilter(): array` | `['id' => 'int']` | Colunas e tipos usados pela busca textual. |
+| `getListColumnsToFilter(): array` | `['id']` | Colunas usadas por `q` em `list` e `getExportQuery`. |
+| `getLookupColumnsToFilter(): array` | `['id']` | Colunas usadas por `q` em `lookup`. |
 | `getLookupKeyColumn(): string` | `'id'` | Coluna alvo de `keys[]`. |
-| `withRelations(): array` | `[]` | Eager loading da listagem. |
+| `withRelations(): array` | `[]` | Eager loading da listagem **e** do lookup. |
 | `getMaskedSearchableColumns(): array` | `[]` | Colunas comparadas sem máscara (PostgreSQL). |
 | `getNonNormalizedSearchableColumns(): array` | `[]` | Colunas que **não** devem ser normalizadas na busca. |
+
+Os dois hooks de busca devolvem **apenas os nomes das colunas**: o tipo é resolvido em runtime por `ModelHelpers::getColumnsCollection()` (introspecção de `Schema::getColumns`), e colunas inexistentes no schema são ignoradas. O mapa legado (`['name' => 'string']`) continua aceito por compatibilidade.
 
 `store` e `update` exigem que `$data` exponha `toArray()`, removem a chave `id` e delegam ao Eloquent — o `$fillable` e o `$casts` do model são a última fronteira de segurança. `update` devolve `$entity->fresh()`.
 
@@ -297,12 +300,13 @@ Duas respostas fogem do envelope e são **exceções observadas no código**: `a
 
 | Parâmetro | Formato | Validação |
 |---|---|---|
+| `q` | texto livre | `nullable\|string` |
 | `filters[coluna][operador]` | `filters[created_at][gte]=2026-01-01` | `nullable\|array`; `filters.*` array; `filters.*.*` required |
 | `sorts` | `name,-created_at` (CSV; prefixo `-` = decrescente) | `nullable\|string` |
 | `per_page` | inteiro | `nullable\|integer\|max:100` |
 | `page` | inteiro | `nullable\|integer\|min:1` |
 
-`LookupRequest` (busca rápida) aceita `q` (string), `keys` (array), `per_page` e `page`. `ExportRequest` estende `ListRequest` e acrescenta `format` (string) e `extension` (`in:xlsx,xls,csv`).
+`LookupRequest` (busca rápida) aceita `q` (string), `sorts` (string), `keys` (array), `per_page` e `page`. `ExportRequest` estende `ListRequest` e acrescenta `format` (string) e `extension` (`in:xlsx,xls,csv`).
 
 Operadores de filtro, mapeados para SQL em `ModelHelpers::$operatorDictionary`:
 
@@ -316,15 +320,31 @@ Operadores de filtro, mapeados para SQL em `ModelHelpers::$operatorDictionary`:
 
 ### 6.2 Implementação dos filtros
 
-`ModelHelpers::setFiltersOnQuery()` obtém o tipo de cada coluna por introspecção do schema (`Schema::getColumns`) e classifica em `string`, `int`, `float`, `bool` e `Carbon`.
+`ModelHelpers::setFiltersOnQuery()` obtém o tipo de cada coluna por introspecção do schema (`Schema::getColumns`) e classifica em `string`, `int`, `float`, `bool` e `Carbon`. A mesma introspecção alimenta `setSearchOnQuery()` e `setSortsOnQuery()`, e `ModelHelpers::getColumnsCollection()` é chamada **uma única vez por requisição** por `BaseRepository`, somente quando `q`, `filters` ou `sorts` foram enviados.
 
 - Uma coluna que **não existe na tabela** é silenciosamente ignorada, assim como um operador desconhecido.
 - Colunas de data têm o valor convertido por `Carbon::parse` antes da comparação.
 - Em **PostgreSQL** (`ModelHelpers::isPgsql()`), colunas `string` passam por `unaccent(LOWER(...))`, tornando a busca insensível a caixa e acento. Colunas declaradas em `getMaskedSearchableColumns()` têm a máscara removida dos dois lados com `REGEXP_REPLACE(coluna, '[^[:alnum:]]', '', 'g')` — é assim que `document_number` e `phone_number` são buscados ignorando pontuação. Colunas em `getNonNormalizedSearchableColumns()` dispensam essa normalização.
 
+### 6.2.1 Busca textual (`q`)
+
+`ModelHelpers::setSearchOnQuery($query, $q, $columnsToSearch, $options)` monta **um único grupo `where` com `orWhere`** sobre as colunas informadas pelo repositório:
+
+| Tipo resolvido | Condição gerada |
+|---|---|
+| `string` | `like '%termo%'` (ou `unaccent(LOWER(...))` em PostgreSQL) |
+| `int` | `= (int) $termo` |
+| `bool` | `= (bool) $termo` |
+| `Carbon` | `= Carbon::parse($termo)` quando o termo é uma data válida |
+| demais | `= $termo` |
+
+O termo é normalizado com `trim()` e convertido para string; `q` vazio (ou composto só de espaços) **não produz filtro algum**. Se nenhuma das colunas informadas existir no schema, a busca é ignorada. `q` é combinado com `filters` por `and` — os dois parâmetros podem ser enviados na mesma requisição.
+
 ### 6.3 Ordenação
 
-`ModelHelpers::setSortsOnQuery()` aplica ordenação múltipla por CSV, com `-` indicando `desc`. Coluna inexistente é ignorada. Sem o parâmetro `sorts`, a listagem **não tem ordenação padrão**; a exportação ordena pela chave primária; o histórico de auditoria ordena por `created_at desc`.
+`ModelHelpers::setSortsOnQuery()` aplica ordenação múltipla por CSV, com `-` indicando `desc`. Coluna inexistente é ignorada.
+
+Sem o parâmetro `sorts`, listagem, lookup e exportação assumem `ModelHelpers::DEFAULT_SORTS` (`-id`); quando `sorts` é informado, ele **substitui** o padrão. O histórico de auditoria mantém `created_at desc`.
 
 ### 6.4 Paginação
 
@@ -348,10 +368,11 @@ Pensada para preencher campos de seleção, usa um recurso dedicado com quatro c
 { "key": 12, "label": "São Paulo", "sublabel": "Cod.: 12 | UF: SP | Código IBGE: 3550308", "meta": { "id": 12, "name": "São Paulo" } }
 ```
 
-- `q` produz um `orWhere` agrupado sobre as colunas de `getLookupColumnsToFilter()`, respeitando o tipo declarado (`int` vira igualdade, `string` vira `like`).
+- `q` produz um `orWhere` agrupado sobre as colunas de `getLookupColumnsToFilter()`, respeitando o tipo resolvido no schema (`int` vira igualdade, `string` vira `like`).
 - `keys[]` aplica `whereIn` **em conjunto com** (`and`) o resultado de `q`.
 - A coluna alvo de `keys` é configurável: `id` por padrão, `code` para tipos de parceiro — e o `key` devolvido acompanha a mesma coluna.
-- `sorts` é declarado no docblock OpenAPI do `LookupRequest`, mas não é validado nem aplicado em `lookup()`.
+- `sorts` é validado e aplicado em `lookup()`, com o mesmo padrão `-id` da listagem.
+- `withRelations()` também é aplicado ao lookup, garantindo que o `LookupResource` não sofra N+1.
 
 ---
 
@@ -370,7 +391,7 @@ abstract protected function exportModelClass(): string
 
 Fluxo: `authorize('export', Model::class)` → resolução da classe de exportação pelo `format` (somente `full` está mapeado; qualquer outro valor lança `InvalidArgumentException`) → `exportQuery()` → `Excel::download()`.
 
-`BaseRepository::getExportQuery()` reaplica **os mesmos filtros e ordenações** da listagem, ordena pela chave primária (para permitir leitura em chunks) e **não pagina nem carrega relações** — a planilha contém todos os registros que atendem ao filtro.
+`BaseRepository::getExportQuery()` reaplica **a mesma busca (`q`), os mesmos filtros e as mesmas ordenações** da listagem e **não pagina nem carrega relações** — a planilha contém todos os registros que atendem ao filtro. A ordenação padrão é `-id`; quando `sorts` é informado, a chave primária é acrescentada ao final como *tie-breaker* ascendente, garantindo leitura estável em chunks.
 
 `BaseExport` implementa `FromQuery`, `WithHeadings`, `WithMapping`, `WithStyles` e `ShouldAutoSize`, e define apenas o estilo da primeira linha (negrito + fundo `FFDDEBF7`). `heading()` e `map()` são implementados pela subclasse.
 
@@ -626,6 +647,7 @@ A leitura é feita pelo trait `HasActivityLogs`, que expõe `activityLogs($id, L
 - **Segurança:** o único `securityScheme` declarado é `bearerAuth`, do tipo `apiKey` com `in: cookie` e `name: config('jwt.cookie_name')` — coerente com o fato de que a autenticação acontece por cookie.
 - **Regeneração:** `L5_SWAGGER_GENERATE_ALWAYS=true` no `.env.example` regenera a especificação a cada requisição; o arquivo gerado fica em `storage/api-docs/api-docs.json`.
 - **Schemas reutilizáveis:** `ApiResponse`, `ApiErrorResponse`, `ApiBusinessRuleErrorResponse` (definidos nos traits e exceções de `App\Core`), os enums (definidos nos próprios enums) e `Filters` / `FieldFilter` / `FilterValue` (`app/Core/OA/Schemas`).
+- **Parâmetros reutilizáveis:** `qParam`, `sortsParam`, `perPageParam` e `pageParam` são declarados em `app/Core/Http/Requests/Core/LookupRequest.php` e referenciados por `ref` em **todas** as operações `index`, `lookup` e `export` — inclusive as que não declaram filtros —, de modo que `q` e `sorts` apareçam no Swagger/Scalar com a mesma descrição em qualquer módulo.
 - **Interfaces web:** Swagger UI em `/api/documentation` (l5-swagger) e Scalar em `/api-docs` (rota em `routes/web.php`). Ambas sem middleware.
 - **Consistência verificada por teste:** `tests/Feature/UI/OpenApiConsistencyTest.php` garante que toda operação documentada tem rota correspondente e que toda rota de API documentável está documentada, excluindo `/api/documentation` e `/api/oauth2-callback`.
 
@@ -643,8 +665,10 @@ A leitura é feita pelo trait `HasActivityLogs`, que expõe `activityLogs($id, L
 |---|---|
 | `--all` | Gera tudo **exceto** `--lookup` e `--export`. |
 | `--model` `--service` `--repository` `--dto` `--controller` `--request` `--resource` `--policy` `--factory` `--test` | Geram apenas o artefato indicado. |
-| `--lookup` | **Opt-in**: cria `{Entity}LookupResource` e `{Entity}LookupCollection`, o método `lookup()` no controller, a rota `*/lookup` e o override de `getLookupColumnsToFilter()`. |
-| `--export` | **Opt-in**: cria `{Entity}Export`, o trait `HasExcelExport`, `exportModelClass()`, `exportClassForFormat()`, o método `export()` na policy e a rota `*/export`. |
+| `--lookup` | **Opt-in**: cria `{Entity}LookupResource` e `{Entity}LookupCollection`, o método `lookup()` no controller, a rota `*/lookup`, o override de `getLookupColumnsToFilter()` e os casos de teste `test_can_lookup_*`. |
+| `--export` | **Opt-in**: cria `{Entity}Export`, o trait `HasExcelExport`, `exportModelClass()`, `exportClassForFormat()`, o método `export()` na policy, a rota `*/export` e os casos de teste `test_can_export_*`. |
+
+O repository gerado sempre inclui `getListColumnsToFilter()` (colunas `string` da tabela, com `id` como fallback) e, com `--lookup`, `getLookupColumnsToFilter()`. Os dois hooks devolvem **apenas nomes de coluna**, porque os tipos são resolvidos em runtime por introspecção do schema.
 
 ### 15.2 Artefatos gerados
 
@@ -670,7 +694,7 @@ database/factories/OrderFactory.php
 tests/Feature/Sales/OrderTest.php
 ```
 
-São 26 stubs em `app/Console/Stubs`, todos com placeholders `{{snake_case}}` substituídos por `strtr` (substituição simultânea, não recursiva).
+São 29 stubs em `app/Console/Stubs`, todos com placeholders `{{snake_case}}` substituídos por `strtr` (substituição simultânea, não recursiva). Os blocos opcionais de repository (`module.repository-list-columns.stub`, `module.repository-lookup.stub`) e de teste (`module.test-export.stub`, `module.test-lookup.stub`) são renderizados apenas quando a flag correspondente está ativa.
 
 ### 15.3 Efeitos colaterais em outros arquivos
 
@@ -702,14 +726,14 @@ Além de criar arquivos, o comando **edita** quatro arquivos existentes, de form
 
 ## 16. Testes
 
-PHPUnit 12, com duas suítes declaradas em `phpunit.xml`: `Unit` (`tests/Unit`) e `Feature` (`tests/Feature`). Não há Pest. São 30 arquivos de teste e 398 métodos de teste, além de `tests/TestCase.php`.
+PHPUnit 12, com duas suítes declaradas em `phpunit.xml`: `Unit` (`tests/Unit`) e `Feature` (`tests/Feature`). Não há Pest. São 31 arquivos de teste e 444 métodos de teste, além de `tests/TestCase.php`.
 
 `tests/TestCase.php` aplica `RefreshDatabase` e usa SQLite em memória (`DB_CONNECTION=sqlite`, `DB_DATABASE=:memory:` definidos no `phpunit.xml`), portanto a suíte não depende de serviço externo. A base cria um administrador e um usuário comum por teste e gera tokens JWT reais com `JWTAuth::fromUser()`, expondo `getAdminAuthHeaders()` e `getCommomUserAuthHeaders()`. Também concentra as asserções de contrato `assertApiResponseStructureForListing()` e `assertErrorResponse()`.
 
 | Suíte | Arquivos | Métodos | Natureza |
 |---|---|---|---|
-| `tests/Feature` | 20 | 324 | Integração via HTTP real: roteamento, middleware, guard, policies, Eloquent, soft delete, auditoria, exportação. |
-| `tests/Unit` | 10 | 74 | Classes isoladas; 4 sem banco, 6 sobem a aplicação com banco. |
+| `tests/Feature` | 20 | 340 | Integração via HTTP real: roteamento, middleware, guard, policies, Eloquent, soft delete, auditoria, exportação. |
+| `tests/Unit` | 11 | 104 | Classes isoladas; 4 sem banco, 7 sobem a aplicação com banco. |
 
 Cobertura por área:
 
@@ -724,6 +748,7 @@ Cobertura por área:
 | Gerador de módulos (incluindo o efeito em `routes/api.php`, `bootstrap/providers.php` e `AppCoreProvider`, com snapshot e restauração) | `Feature/Console/MakeModuleCrudCoreTest`, `MakeModuleCrudExportTest` |
 | Documentação: acessibilidade das UIs, validade do JSON e consistência com as rotas | `Feature/UI/*` |
 | Filtros, ordenação, paginação, detecção de driver e SQL específico de PostgreSQL | `Unit/Core/Helpers/*`, `Unit/Core/Repositories/*`, `Unit/Core/Services/*` |
+| Busca textual (`q`) e ordenação padrão `-id` em `list`, `lookup` e `getExportQuery`, inclusive o *tie-breaker* da exportação | `Unit/Core/Repositories/BaseRepositoryTest`, `BaseRepositorySearchTest`, `BaseRepositoryExportTest`, `Unit/Core/Helpers/ModelHelpersTest` |
 
 Dublês utilizados: `Mockery` (nos testes unitários de `BaseRepository`, `BaseCrudService` e `BaseChildSync`) e `Excel::fake()` (nos testes de exportação). Não há uso de `Http::fake`, `Queue::fake`, `Event::fake`, `Bus::fake` ou `Mail::fake` em nenhum teste.
 
@@ -839,7 +864,7 @@ O que precisa acompanhar qualquer mudança neste repositório. Os itens do bloco
 | Teste automatizado para a mudança | `tests/Feature`, `tests/Unit` | 30 arquivos, 398 métodos; `phpunit.xml` declara as duas suítes ([§16](#16-testes)) |
 | Suíte sem serviço externo | `phpunit.xml` | `DB_CONNECTION=sqlite` e `DB_DATABASE=:memory:`; `RefreshDatabase` em `tests/TestCase.php` |
 | Auditoria em toda escrita | Services que estendem `BaseCrudService` | `ActivityLogService::log()` em `store`, `update` e `delete` ([§13](#13-auditoria-activity-log)) |
-| Módulo novo via comando | `app/Console/Commands/MakeModuleCrud.php` | 26 stubs; testes com snapshot e restauração em `tests/Feature/Console` ([§15](#15-gerador-de-módulos)) |
+| Módulo novo via comando | `app/Console/Commands/MakeModuleCrud.php` | 29 stubs; testes com snapshot e restauração em `tests/Feature/Console` ([§15](#15-gerador-de-módulos)) |
 | Formatação com Laravel Pint | `laravel/pint ^1.27` | Declarado em `require-dev`; binário em `vendor/bin/pint`. Não há `pint.json` nem script no `composer.json`, então vale a configuração padrão do Pint e a execução é manual. Observação: a execução atual acusa estilo fora do padrão em boa parte de `app/` e `tests/`, ou seja, o Pint **não** é aplicado como gate hoje |
 | Padrão de código em `app/` | `.editorconfig` | UTF-8, LF, indentação de 4 espaços, newline final, sem espaço no fim da linha |
 | Padrão de commits Conventional Commits | Histórico do Git | 169 dos 171 commits usam prefixo `tipo:` — `feat` (79), `refactor` (41), `test` (20), `fix` (18), `docs` (5), `chore` (3), `config` (2), `style` (1). Os 2 restantes são commits iniciais. Não há `commitlint` nem hook configurado que imponha o padrão |
