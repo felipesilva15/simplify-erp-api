@@ -27,7 +27,6 @@ O problema é a dispersão dessas decisões e a consequente inconsistência entr
 |---|---|---|
 | Aplicação web do ERP | REST `/api/*` | `config/cors.php` libera `http://localhost:4200` com `supports_credentials: true`, o que indica um cliente SPA com cookies. |
 | Aplicação mobile do ERP | REST `/api/*` | Não há rota mobile específica no repositório. |
-| Integrações / scripts | `GET /api/test` | Rota de depuração que devolve todos os registros de auditoria. Sem autenticação — ver [§11](#11-observações-do-código-não-determinados). |
 
 O único consumidor com rota nominal própria no repositório é o portal de documentação (Swagger UI e Scalar), que é público.
 
@@ -223,15 +222,12 @@ Os itens abaixo existem como estrutura de dados ou configuração **sem** rota, 
 
 Fatos observados que não constituem requisito e não têm confirmação no código de que sejam intencionais. Listados aqui para que não sejam interpretados como comportamento desejado:
 
-1. `GET /api/test` está registrada fora do grupo de autenticação e devolve **todos** os registros de auditoria sem exigir token. É excluída da especificação OpenAPI por teste, mas permanece registrada.
-2. O seeder de ACL cria 25 permissões, porém **não cria perfis** nem os vínculos `role_user` / `permission_role`. Em uma instalação recém-populada, o acesso administrativo depende exclusivamente de `users.is_admin`.
-3. A relação de perfis para usuários (`Role::users()`) referencia o pivô `PermissionRole` em vez de `RoleUser`; as duas tabelas existem e são distintas.
-4. `config/scalar.php` declara o caminho `/scalar`, mas a rota que serve a interface Scalar é `/api-docs`. O caminho `/scalar` não está registrado.
-5. As migrations de `permission_role` e `role_user` não declaram chaves estrangeiras.
-6. A tabela `addresses` e a tabela `professions` existem, mas não há rota, modelo ou fluxo que as utilize.
-7. O nome do cookie removido no logout (`token`) está fixo no código, enquanto o cookie emitido no login usa `JWT_COOKIE_NAME`. Alterar essa variável quebra o logout.
-8. A validação do código do tipo de parceiro limita a 3 caracteres, enquanto a coluna no banco é `char(20)`.
-9. O `composer.json` declara `"php": "^8.2"`, mas o `composer.lock` fixa dependências que exigem PHP 8.3+ (`maatwebsite/excel`) e 8.4.1+ (cinco pacotes Symfony 8.1). O `vendor/composer/platform_check.php` gerado aborta a aplicação abaixo de 8.4.1.
+1. O seeder de ACL cria 25 permissões, porém **não cria perfis** nem os vínculos `role_user` / `permission_role`. Em uma instalação recém-populada, o acesso administrativo depende exclusivamente de `users.is_admin`.
+2. `config/scalar.php` declara o caminho `/scalar`, mas a rota que serve a interface Scalar é `/api-docs`. O caminho `/scalar` não está registrado.
+3. As migrations de `permission_role` e `role_user` não declaram chaves estrangeiras.
+4. A tabela `addresses` existe, mas não há rota, modelo ou fluxo que a utilize.
+5. O nome do cookie removido no logout (`token`) está fixo no código, enquanto o cookie emitido no login usa `JWT_COOKIE_NAME`. Alterar essa variável quebra o logout.
+6. A validação do código do tipo de parceiro limita a 3 caracteres, enquanto a coluna no banco é `char(20)`.
 
 ---
 
