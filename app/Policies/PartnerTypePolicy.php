@@ -34,4 +34,9 @@ class PartnerTypePolicy
     {
         return $this->authService->hasAuthorized($user, 'partnerTypes.delete');
     }
+
+    public function export(User $user)
+    {
+        return $this->authService->hasAuthorized($user, 'partnersTypes.export');
+    }
 }

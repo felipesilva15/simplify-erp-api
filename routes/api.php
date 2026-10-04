@@ -50,7 +50,8 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::prefix('third-party')->group(function() {
-        Route::get('partner-types/lookup', [PartnerTypeController::class, 'lookup'])->name('partner-types.lookup');
+        Route::get('partner-types/lookup', [PartnerTypeController::class, 'lookup'])->name('partnerTypes.lookup');
+        Route::get('partner-types/export', [PartnerTypeController::class, 'export'])->name('partnerTypes.export');
         Route::crudResource('partner-types', PartnerTypeController::class);
 
         Route::get('partners/lookup', [PartnerController::class, 'lookup'])->name('partners.lookup');

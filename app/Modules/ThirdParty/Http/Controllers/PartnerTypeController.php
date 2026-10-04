@@ -4,6 +4,8 @@ namespace App\Modules\ThirdParty\Http\Controllers;
 
 
 use App\Core\Http\Requests\Core\LookupRequest;
+use App\Core\Traits\HasExcelExport;
+use App\Modules\ThirdParty\Exports\PartnerTypeExport;
 use App\Modules\ThirdParty\Http\Resources\PartnerType\PartnerTypeLookupCollection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -18,6 +20,7 @@ use App\Modules\ThirdParty\DTO\PartnerTypeDTO;
 use App\Modules\ThirdParty\Models\PartnerType;
 use App\Modules\ThirdParty\Services\PartnerTypeService;
 use App\Core\Traits\HasActivityLogs;
+use InvalidArgumentException;
 
 /**
  * @OA\PathItem(
@@ -63,10 +66,58 @@ use App\Core\Traits\HasActivityLogs;
  *         security={{"bearerAuth":{}}}
  *     )
  * )
+ * @OA\PathItem(
+ *     path="/api/third-party/partner-types/export",
+ *     @OA\Get(
+ *         tags={"Partner"},
+ *         summary="Export all partner types to Excel",
+ *         operationId="exportPartnerType",
+ *         @OA\Parameter(
+ *             name="format",
+ *             in="query",
+ *             required=false,
+ *             description="Export format (full, summarized, detailed)",
+ *             @OA\Schema(type="string", enum={"full","summarized","detailed"})
+ *         ),
+ *         @OA\Parameter(
+ *             name="extension",
+ *             in="query",
+ *             required=false,
+ *             description="File extension (xlsx, xls, csv)",
+ *             @OA\Schema(type="string", enum={"xlsx","xls","csv"})
+ *         ),
+ *     @OA\Parameter(name="filters[id][eq]", in="query", required=false, @OA\Schema(type="integer")),
+ *     @OA\Parameter(name="filters[name][like]", in="query", required=false, @OA\Schema(type="string")),
+ *     @OA\Parameter(name="filters[created_at][gte]", in="query", required=false, @OA\Schema(type="string")),
+ *     @OA\Parameter(name="filters[updated_at][lte]", in="query", required=false, @OA\Schema(type="string")),
+ *     @OA\Parameter(ref="#/components/parameters/qParam"),
+ *     @OA\Parameter(ref="#/components/parameters/sortsParam"),
+ *     @OA\Parameter(ref="#/components/parameters/perPageParam"),
+ *     @OA\Parameter(ref="#/components/parameters/pageParam"),
+ *         @OA\Response(
+ *             response="200",
+ *             description="Excel file with partners",
+ *             @OA\MediaType(
+ *                 mediaType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+ *             )
+ *         ),
+ *         @OA\Response(
+ *             response="401",
+ *             description="Unauthorized",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         @OA\Response(
+ *             response="403",
+ *             description="Forbidden",
+ *             @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
+ *         ),
+ *         security={{"bearerAuth":{}}}
+ *     )
+ * )
  */
 class PartnerTypeController extends Controller
 {
-    use HasActivityLogs;
+    use HasActivityLogs, HasExcelExport;
 
     protected PartnerTypeService $service;
 
@@ -78,6 +129,21 @@ class PartnerTypeController extends Controller
     protected function activityLogModelClass(): string
     {
         return PartnerType::class;
+    }
+
+    protected function exportModelClass(): string
+    {
+        return PartnerType::class;
+    }
+
+    protected function exportClassForFormat(string $format): string
+    {
+        return match ($format) {
+            'full' => PartnerTypeExport::class,
+            default => throw new InvalidArgumentException(
+                "Formato de exportação [{$format}] não suportado para parceiros."
+            ),
+        };
     }
 
     /**
