@@ -15,11 +15,11 @@ use Illuminate\Routing\Controller as BaseController;
  *         "tagGroups"={
  *             {
  *                 "name"="Core",
- *                 "tags"={"Module", "Resource"}
+ *                 "tags"={}
  *             },
  *             {
  *                 "name"="Security",
- *                 "tags"={"Authentication", "Permission", "Role", "User"}
+ *                 "tags"={"Authentication", "Permission", "Role", "User", "Module", "Resource"}
  *             },
  *             {
  *                 "name"="ThirdParty",
