@@ -2,10 +2,10 @@
 
 namespace App\Modules\Security\Services;
 
-use App\Core\Models\Resource;
+use App\Modules\Security\Models\Resource;
 use App\Core\Services\ActivityLogService;
 use App\Core\Services\BaseCrudService;
-use App\Core\Services\ResourceService;
+use App\Modules\Security\Services\ResourceService;
 use App\Modules\Security\Repositories\Interfaces\PermissionRepositoryInterface;
 
 class PermissionService extends BaseCrudService

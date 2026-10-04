@@ -1,31 +1,31 @@
 <?php
 
-namespace App\Core\Http\Resources\Resource;
+namespace App\Modules\Security\Http\Resources\Module;
 
 use App\Core\Helpers\PaginatorHelpers;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\ResourceCollection as LaravelResourceCollection;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 /**
  * @OA\Schema(
- *     schema="ResourceCollection",
+ *     schema="ModuleCollection",
  *     type="object",
  *     allOf={
  *         @OA\Schema(
- *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/ResourceResource")),
+ *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/ModuleResource")),
  *         ),
  *         @OA\Schema(ref="#/components/schemas/PaginatorInfo"),
  *     }
  * )
  */
-class ResourceCollection extends LaravelResourceCollection
+class ModuleCollection extends ResourceCollection
 {
     public function toArray(Request $request): array
     {
         $info = PaginatorHelpers::getInfoFromPaginator($this->resource)->toArray();
 
         return [
-            'data' => ResourceResource::collection($this->collection),
+            'data' => ModuleResource::collection($this->collection),
             ...$info
         ];
     }

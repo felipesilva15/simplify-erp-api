@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Core\Models;
+namespace App\Modules\Security\Models;
 
-use App\Modules\Security\Models\Permission;
+use App\Core\Models\BaseModel;
 use Database\Factories\ResourceFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

@@ -3,8 +3,8 @@
 namespace App\Modules\Security\Models;
 
 use App\Core\Models\BaseModel;
-use App\Core\Models\Module;
-use App\Core\Models\Resource;
+use App\Modules\Security\Models\Module;
+use App\Modules\Security\Models\Resource;
 use Database\Factories\PermissionFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

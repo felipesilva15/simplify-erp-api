@@ -1,15 +1,15 @@
 <?php
 
-namespace Tests\Feature\Core;
+namespace Tests\Feature\Security;
 
-use App\Core\Models\Resource;
+use App\Modules\Security\Models\Resource;
 use App\Modules\Security\Models\Permission;
 use Tests\TestCase;
 use Illuminate\Http\Response;
 
 class ResourceTest extends TestCase
 {
-    protected string $endpoint = '/api/core/resources';
+    protected string $endpoint = '/api/security/resources';
 
     protected function getResourceStructure(): array {
         return [
@@ -249,7 +249,7 @@ class ResourceTest extends TestCase
     public function test_can_update_resource(): void
     {
         $resource = Resource::factory()->forModule()->createOne();
-        
+
         $data = $resource->toArray();
         $data['name'] = 'New name';
 
@@ -266,7 +266,7 @@ class ResourceTest extends TestCase
     public function test_cannot_update_resource_with_invalid_payload(): void
     {
         $resource = Resource::factory()->forModule()->createOne();
-        
+
         $data = $resource->toArray();
         unset($data['name']);
 
@@ -279,7 +279,7 @@ class ResourceTest extends TestCase
     public function test_cannot_update_resource_with_invalid_id(): void
     {
         $resource = Resource::factory()->forModule()->createOne();
-        
+
         $data = $resource->toArray();
         $data['name'] = 'New name';
 

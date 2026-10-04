@@ -1,7 +1,7 @@
 <?php
 
-use App\Core\Http\Controllers\ModuleController;
-use App\Core\Http\Controllers\ResourceController;
+use App\Modules\Security\Http\Controllers\ModuleController;
+use App\Modules\Security\Http\Controllers\ResourceController;
 use App\Modules\Geography\Http\Controllers\CityController;
 use App\Modules\Geography\Http\Controllers\CountryController;
 use App\Modules\Geography\Http\Controllers\StateController;
@@ -18,22 +18,6 @@ Route::post('security/auth/login', [AuthController::class, 'login'])->name('auth
 Route::post('security/auth/token', [AuthController::class, 'token'])->name('auth.token');
 
 Route::group(['middleware' => 'auth'], function () {
-Route::prefix('core')->group(function() {
-        Route::crudResource('modules', ModuleController::class);
-        Route::crudResource('resources', ResourceController::class);
-    });
-
-    Route::prefix('geography')->group(function() {
-        Route::get('countries/lookup', [CountryController::class, 'lookup'])->name('countries.lookup');
-        Route::resource('countries', CountryController::class)->only('index', 'show');
-
-        Route::get('states/lookup', [StateController::class, 'lookup'])->name('states.lookup');
-        Route::resource('states', StateController::class)->only('index', 'show');
-
-        Route::get('cities/lookup', [CityController::class, 'lookup'])->name('cities.lookup');
-        Route::resource('cities', CityController::class)->only('index', 'show');
-    });
-
     Route::prefix('security')->group(function() {
         Route::post('auth/logout', [AuthController::class, 'logout'])->name('auth.logout');
         Route::post('auth/refresh', [AuthController::class, 'refresh'])->name('auth.refresh');
@@ -47,8 +31,22 @@ Route::prefix('core')->group(function() {
         Route::get('roles/export', [RoleController::class, 'export'])->name('roles.export');
         Route::crudResource('roles', RoleController::class);
         Route::patch('roles/{role}/permissions', [RoleController::class, 'definePermissions'])->name('roles.definePermissions');
-        
+
         Route::crudResource('permissions', PermissionController::class);
+
+        Route::crudResource('modules', ModuleController::class);
+        Route::crudResource('resources', ResourceController::class);
+    });
+
+    Route::prefix('geography')->group(function() {
+        Route::get('countries/lookup', [CountryController::class, 'lookup'])->name('countries.lookup');
+        Route::resource('countries', CountryController::class)->only('index', 'show');
+
+        Route::get('states/lookup', [StateController::class, 'lookup'])->name('states.lookup');
+        Route::resource('states', StateController::class)->only('index', 'show');
+
+        Route::get('cities/lookup', [CityController::class, 'lookup'])->name('cities.lookup');
+        Route::resource('cities', CityController::class)->only('index', 'show');
     });
 
     Route::prefix('third-party')->group(function() {

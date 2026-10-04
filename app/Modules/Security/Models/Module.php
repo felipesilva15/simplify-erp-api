@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Core\Models;
+namespace App\Modules\Security\Models;
 
+use App\Core\Models\BaseModel;
 use Database\Factories\ModuleFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

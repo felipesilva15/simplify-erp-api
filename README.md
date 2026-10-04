@@ -152,7 +152,7 @@ Detalhes em [`docs/spec.md` §6](docs/spec.md#6-paginação-filtro-ordenação-e
 | Especificação OpenAPI | `/docs?api-docs.json` | Gerada a partir das annotations `@OA` em `app/`. |
 | Arquivo gerado | `storage/api-docs/api-docs.json` | Regerada automaticamente quando `L5_SWAGGER_GENERATE_ALWAYS=true`. |
 
-Os tag groups da especificação (`Core`, `Security`, `ThirdParty`, `HR`, `Geography`) são declarados no docblock de `app/Core/Http/Controllers/Controller.php` e são estendidos automaticamente pelo gerador de módulos.
+Os tag groups da especificação (`Security`, `ThirdParty`, `HR`, `Geography`) são declarados no docblock de `app/Core/Http/Controllers/Controller.php` e são estendidos automaticamente pelo gerador de módulos.
 
 > **Anotações `@OA` no l5-swagger 11.** O l5-swagger 11 passa a analisar apenas atributos PHP e descarta as anotações `@OA` em docblock. O projeto mantém os docblocks em funcionamento por meio de `App\Core\Services\SwaggerGeneratorFactory`, registrado em `AppServiceProvider`; as anotações estão depreciadas no swagger-php 6.11 e serão removidas no 8.0. Detalhes em [`docs/spec.md` §14](docs/spec.md#14-documentação-openapi).
 
@@ -180,7 +180,7 @@ app/
     Http/                # controllers, requests e resources compartilhados
     Models/  Repositories/  Services/  Traits/
   Modules/
-    Security/            # users, roles, permissions, autenticação JWT
+    Security/            # users, roles, permissions, modules, resources, autenticação JWT
     ThirdParty/          # partner-types, partners, contacts
     Geography/           # countries, states, cities
   Console/

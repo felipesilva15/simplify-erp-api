@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Core\Services;
+namespace App\Modules\Security\Services;
 
 use App\Core\DTO\ServiceResult;
-use App\Core\Repositories\Interfaces\ModuleRepositoryInterface;
+use App\Core\Services\BaseCrudService;
+use App\Core\Services\ActivityLogService;
+use App\Modules\Security\Repositories\Interfaces\ModuleRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
 use Override;
 

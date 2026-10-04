@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Core\Models\Module;
-use App\Core\Models\Resource;
+use App\Modules\Security\Models\Module;
+use App\Modules\Security\Models\Resource;
 use App\Modules\Security\Models\Permission;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;

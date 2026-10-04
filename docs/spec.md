@@ -71,7 +71,7 @@ flowchart TB
 | `Http/Controllers/` | `Controller` (base com o envelope e as annotations `@OA\OpenApi` da API) e os controllers das entidades de núcleo. |
 | `Http/Requests/Core/` | `ListRequest`, `LookupRequest`, `ExportRequest` — o contrato de query compartilhado. |
 | `Http/Resources/` | Resources e Collections de núcleo, incluindo os lookups. |
-| `Models/` | `BaseModel` (rótulo de atividade e alias de morph) e as entidades `Module`, `Resource`, `ActivityLog`. |
+| `Models/` | `BaseModel` (rótulo de atividade e alias de morph) e a entidade `ActivityLog`. |
 | `OA/Schemas/` | Schemas OpenAPI reutilizáveis: `Filters`, `FieldFilter`, `FilterValue`. |
 | `Repositories/` | `BaseRepositoryInterface`, `BaseRepository` e os repositories de núcleo. |
 | `Services/` | `BaseCrudService`, `ActivityLogService`, `SwaggerGeneratorFactory` e `Children/` (`ChildRelation`, `BaseChildSync`, `ChildSyncResult`). |
@@ -141,11 +141,11 @@ Cada módulo segue exatamente a mesma estrutura de pastas (`Models`, `Services`,
 
 | Módulo | Entidades | Responsabilidade |
 |---|---|---|
-| `Security` | `User`, `Role`, `Permission` (+ pivôs `RoleUser`, `PermissionRole`) | Autenticação JWT, gestão de usuários, perfis, permissões e definição de permissões de um perfil. |
+| `Security` | `User`, `Role`, `Permission`, `Module`, `Resource` (+ pivôs `RoleUser`, `PermissionRole`) | Autenticação JWT, gestão de usuários, perfis, permissões, módulos, recursos e definição de permissões de um perfil. |
 | `ThirdParty` | `PartnerType`, `Partner`, `Contact` | Tipos de parceiro, parceiros e seus contatos, com sincronização aninhada. |
 | `HR` | `Profession` | Profissões (CBO) como catálogo **somente leitura**, com busca rápida e exportação. |
 | `Geography` | `Country`, `State`, `City` | Cadastros geográficos de consulta (`countries`, `states`, `cities`), somente leitura. |
-| `Core` (entidades) | `Module`, `Resource`, `ActivityLog` | Metadados de autorização e auditoria. |
+| `Core` (entidades) | `ActivityLog` | Metadados de auditoria. |
 
 Os módulos **não** possuem `Providers/` próprio: os providers ficam centralizados em `app/Providers/`, e o gerador de módulos mantém essa convenção ([§15](#15-gerador-de-módulos)).
 
@@ -160,8 +160,8 @@ Todas as rotas de API recebem o prefixo `/api` e o middleware `api` (do qual faz
 | `POST /api/security/auth/logout` | `auth.logout` | autenticado |
 | `POST /api/security/auth/refresh` | `auth.refresh` | autenticado |
 | `GET /api/security/auth/me` | `auth.me` | autenticado |
-| `crudResource` `/api/core/modules` | — | `modules.*` |
-| `crudResource` `/api/core/resources` | — | `resources.*` |
+| `crudResource` `/api/security/modules` | — | `modules.*` |
+| `crudResource` `/api/security/resources` | — | `resources.*` |
 | `GET /api/geography/{countries,states,cities}` | — | `{x}.viewAny` / `view` |
 | `GET /api/geography/{countries,states,cities}/lookup` | `{x}.lookup` | `{x}.viewAny` |
 | `crudResource` `/api/security/users` | — | `users.*` |
@@ -563,7 +563,7 @@ O morph map é o que permite gravar `activity_logs.origin_type` como alias legí
 | `Permission` | `SoftDeletes`, `HasFactory` | `resource()` para o `Resource` de `Core`. |
 | `Partner` | `SoftDeletes`, `HasFactory` | casts para os cinco enums; `partnerType()` liga por **`code`**, não por `id`; `contacts()` é 1:N. |
 | `Contact` | `SoftDeletes`, `HasFactory` | cast booleano em `main`. |
-| `Module`, `Resource`, `PartnerType` | `SoftDeletes`, `HasFactory` | — |
+| `Module`, `Resource`, `PartnerType` | `SoftDeletes`, `HasFactory` | `Module` e `Resource` pertencem ao módulo `Security`. |
 | `Country`, `State`, `City` | `HasFactory` | somente leitura, sem soft delete. |
 | `ActivityLog` | — | estende `Model` (não `BaseModel`); sem `updated_at`; `$appends` de `origin_label` e `action_label`. |
 
@@ -643,7 +643,7 @@ A leitura é feita pelo trait `HasActivityLogs`, que expõe `activityLogs($id, L
 
 - **Gerador:** `darkaonline/l5-swagger ^11.1` sobre `zircote/swagger-php 6.11`, varrendo `base_path('app')` em busca de annotations `@OA` nos docblocks dos controllers. O l5-swagger 11 passa a analisar **somente atributos PHP** e descarta docblocks; o parser de docblock também só é habilitado quando `doctrine/annotations` está instalado. Para preservar as anotações existentes, o projeto registra `App\Core\Services\SwaggerGeneratorFactory` em `AppServiceProvider::register()` (binding de `L5Swagger\GeneratorFactory`), injetando um `OpenApi\Analysers\ReflectionAnalyser` com `AttributeAnnotationFactory` e `DocBlockAnnotationFactory` em `scanOptions.analyser`. A dependência `doctrine/annotations ^2.0` existe apenas para isso. As annotations `@OA` estão **depreciadas** no swagger-php 6.11 e serão removidas no 8.0 — migrar para atributos PHP é o caminho futuro.
 - **Título e servidores:** declarados no docblock `@OA\OpenApi` e `@OA\Info` de `app/Core/Http/Controllers/Controller.php` (`Simplify ERP API`, v1.0.0, servidores Local / Sandbox / Production).
-- **Tag groups:** `Core`, `Security`, `ThirdParty`, `HR` e `Geography`, no mesmo docblock. O gerador de módulos os estende automaticamente ([§15](#15-gerador-de-módulos)).
+- **Tag groups:** `Security`, `ThirdParty`, `HR` e `Geography`, no mesmo docblock. O gerador de módulos os estende automaticamente ([§15](#15-gerador-de-módulos)).
 - **Segurança:** o único `securityScheme` declarado é `bearerAuth`, do tipo `apiKey` com `in: cookie` e `name: config('jwt.cookie_name')` — coerente com o fato de que a autenticação acontece por cookie.
 - **Regeneração:** `L5_SWAGGER_GENERATE_ALWAYS=true` no `.env.example` regenera a especificação a cada requisição; o arquivo gerado fica em `storage/api-docs/api-docs.json`.
 - **Schemas reutilizáveis:** `ApiResponse`, `ApiErrorResponse`, `ApiBusinessRuleErrorResponse` (definidos nos traits e exceções de `App\Core`), os enums (definidos nos próprios enums) e `Filters` / `FieldFilter` / `FilterValue` (`app/Core/OA/Schemas`).
@@ -739,10 +739,10 @@ Cobertura por área:
 
 | Área | Onde |
 |---|---|
-| CRUD completo de entidades com as 27 asserções padrão | `Feature/Core/{Module,Resource}Test`, `Feature/Geography/{Country,State,City}Test`, `Feature/Security/{User,Role,Permission}Test`, `Feature/ThirdParty/{Partner,PartnerType}Test` |
+| CRUD completo de entidades com as 27 asserções padrão | `Feature/Security/{Module,Resource,User,Role,Permission}Test`, `Feature/Geography/{Country,State,City}Test`, `Feature/ThirdParty/{Partner,PartnerType}Test` |
 | Autenticação: login por cookie, token por corpo, refresh, logout, token inválido e expirado | `Feature/Security/AuthTest` |
 | Sincronização de itens aninhados, rollback transacional, regras de canal e de contato principal, ausência de N+1 (via `DB::listen`) | `Feature/ThirdParty/PartnerContactTest` |
-| Exportação: formato, extensão, filtros, permissões | `Feature/Core/ExcelExportTest`, `Feature/ThirdParty/PartnerTest`, `Feature/HR/ProfessionTest` |
+| Exportação: formato, extensão, filtros, permissões | `Feature/Security/ExcelExportTest`, `Feature/ThirdParty/PartnerTest`, `Feature/HR/ProfessionTest` |
 | Catálogo somente leitura: listagem, detalhe, lookup e exportação, com ausência das rotas de escrita | `Feature/HR/ProfessionTest` |
 | Auditoria por recurso | `Feature/Security/ActivityLogTest` |
 | Gerador de módulos (incluindo o efeito em `routes/api.php`, `bootstrap/providers.php` e `AppCoreProvider`, com snapshot e restauração) | `Feature/Console/MakeModuleCrudCoreTest`, `MakeModuleCrudExportTest` |

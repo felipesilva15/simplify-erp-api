@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\DTO;
+namespace App\Modules\Security\DTO;
 
 use Carbon\Carbon;
 

@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Security;
 
-use App\Core\Models\Resource;
+use App\Modules\Security\Models\Resource;
 use App\Modules\Security\Models\Permission;
 use App\Modules\Security\Models\Role;
 use Tests\TestCase;

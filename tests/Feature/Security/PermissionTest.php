@@ -3,7 +3,7 @@
 namespace Tests\Feature\Security;
 
 use App\Core\Enums\SqlOrderDirectionEnum;
-use App\Core\Models\Resource;
+use App\Modules\Security\Models\Resource;
 use App\Modules\Security\Models\Permission;
 use Tests\TestCase;
 use Illuminate\Http\Response;

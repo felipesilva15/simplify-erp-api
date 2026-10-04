@@ -1,17 +1,17 @@
 <?php
 
-namespace Tests\Feature\Core;
+namespace Tests\Feature\Security;
 
 use App\Core\Enums\SqlOrderDirectionEnum;
-use App\Core\Models\Module;
-use App\Core\Models\Resource;
+use App\Modules\Security\Models\Module;
+use App\Modules\Security\Models\Resource;
 use App\Modules\Security\Models\Permission;
 use Tests\TestCase;
 use Illuminate\Http\Response;
 
 class ModuleTest extends TestCase
 {
-    protected string $endpoint = '/api/core/modules';
+    protected string $endpoint = '/api/security/modules';
 
     protected function getResourceStructure(): array {
         return [
@@ -222,7 +222,7 @@ class ModuleTest extends TestCase
         $response = $this->postJson($this->endpoint, $data, $this->getAdminAuthHeaders());
 
         $response->assertStatus(Response::HTTP_CREATED)
-            ->assertJsonIsObject()
+                ->assertJsonIsObject()
             ->assertJsonStructure([
                 'data' => $this->getResourceStructure()
             ])
@@ -266,7 +266,7 @@ class ModuleTest extends TestCase
     public function test_can_update_module(): void
     {
         $module = Module::factory()->createOne();
-        
+
         $data = $module->toArray();
         $data['name'] = 'New name';
 
@@ -283,7 +283,7 @@ class ModuleTest extends TestCase
     public function test_cannot_update_module_with_invalid_payload(): void
     {
         $module = Module::factory()->createOne();
-        
+
         $data = $module->toArray();
         unset($data['name']);
 
@@ -296,7 +296,7 @@ class ModuleTest extends TestCase
     public function test_cannot_update_module_with_invalid_id(): void
     {
         $module = Module::factory()->createOne();
-        
+
         $data = $module->toArray();
         $data['name'] = 'New name';
 

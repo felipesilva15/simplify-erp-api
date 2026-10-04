@@ -5,7 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Core\Models\Resource>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Modules\Security\Models\Resource>
  */
 class ResourceFactory extends Factory
 {

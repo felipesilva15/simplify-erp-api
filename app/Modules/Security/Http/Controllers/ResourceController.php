@@ -1,38 +1,40 @@
 <?php
 
-namespace App\Core\Http\Controllers;
+namespace App\Modules\Security\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use App\Core\Http\Requests\Module\StoreModuleRequest;
-use App\Core\Http\Requests\Module\UpdateModuleRequest;
-use App\Core\Http\Resources\Module\ModuleResource;
-use App\Core\Http\Resources\Module\ModuleCollection;
-use App\Core\DTO\ModuleDTO;
+
+use App\Modules\Security\Http\Requests\Resource\StoreResourceRequest;
+use App\Modules\Security\Http\Requests\Resource\UpdateResourceRequest;
+use App\Modules\Security\Http\Resources\Resource\ResourceCollection;
+use App\Modules\Security\DTO\ResourceDTO;
 use App\Core\Http\Requests\Core\ListRequest;
-use App\Core\Models\Module;
-use App\Core\Services\ModuleService;
+use App\Modules\Security\Http\Resources\Resource\ResourceResource;
+use App\Modules\Security\Models\Resource;
+use App\Modules\Security\Services\ResourceService;
+use App\Core\Http\Controllers\Controller;
 use App\Core\Traits\HasActivityLogs;
 
 /**
  * @OA\PathItem(
- *     path="/api/core/modules/{id}/activity-logs",
+ *     path="/api/security/resources/{id}/activity-logs",
  *     @OA\Get(
- *         tags={"Module"},
- *         summary="List activity logs of a module",
- *         operationId="listModuleActivityLogs",
+ *         tags={"Resource"},
+ *         summary="List activity logs of a resource",
+ *         operationId="listResourceActivityLogs",
  *         @OA\Parameter(
  *             name="id",
  *             in="path",
  *             required=true,
- *             description="Module ID",
+ *             description="Resource ID",
  *             @OA\Schema(type="integer")
  *         ),
  *         @OA\Parameter(name="per_page", in="query", required=false, @OA\Schema(type="integer")),
  *         @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer")),
  *         @OA\Response(
  *             response="200",
- *             description="Module activity logs",
+ *             description="Resource activity logs",
  *             @OA\JsonContent(
  *                 allOf={
  *                     @OA\Schema(ref="#/components/schemas/ApiResponse"),
@@ -59,27 +61,27 @@ use App\Core\Traits\HasActivityLogs;
  *     )
  * )
  */
-class ModuleController extends Controller
+class ResourceController extends Controller
 {
     use HasActivityLogs;
 
-    protected ModuleService $service;
+    protected ResourceService $service;
 
-    public function __construct(ModuleService $service) {
+    public function __construct(ResourceService $service) {
         $this->service = $service;
-        $this->authorizeResource(Module::class, 'module');
+        $this->authorizeResource(Resource::class, 'resource');
     }
 
     protected function activityLogModelClass(): string
     {
-        return Module::class;
+        return Resource::class;
     }
 
     /**
      * @OA\Get(
-     *      path="/api/core/modules",
-     *      tags={"Module"},
-     *      summary="List all modules",
+     *      path="/api/security/resources",
+     *      tags={"Resource"},
+     *      summary="List all resources",
      *      @OA\Parameter(name="id", in="query", required=false, @OA\Schema(type="integer")),
      *      @OA\Parameter(name="name", in="query", required=false, @OA\Schema(type="string")),
      *      @OA\Parameter(name="description", in="query", required=false, @OA\Schema(type="string")),
@@ -92,22 +94,22 @@ class ModuleController extends Controller
      *      @OA\Parameter(name="per_page", in="query", description="Items per page", required=false, @OA\Schema(type="integer")),
      *      @OA\Parameter(name="page", in="query", description="Page number", required=false, @OA\Schema(type="integer")),
      *      @OA\Response(
-     *          response="200", 
-     *          description="Module list",
+     *          response="200",
+     *          description="Resource list",
      *          @OA\JsonContent(
      *              allOf={
      *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
-     *                  @OA\Schema(ref="#/components/schemas/ModuleCollection")
+     *                  @OA\Schema(ref="#/components/schemas/ResourceCollection")
      *              }
      *          )
      *      ),
      *      @OA\Response(
-     *          response="401", 
+     *          response="401",
      *          description="Unauthorized",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
-     *          response="403", 
+     *          response="403",
      *          description="Forbidden",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
@@ -117,7 +119,7 @@ class ModuleController extends Controller
     public function index(ListRequest $request): JsonResponse {
         $serviceResult = $this->service->list($request->all());
 
-        $paginated = new ModuleCollection($serviceResult->data);
+        $paginated = new ResourceCollection($serviceResult->data);
         $paginated = $paginated->toArray($request);
 
         return $this->success(
@@ -130,138 +132,138 @@ class ModuleController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/core/modules/{module}",
-     *      tags={"Module"},
-     *      summary="List a module by ID",
+     *      path="/api/security/resources/{resource}",
+     *      tags={"Resource"},
+     *      summary="List a resource by ID",
      *      @OA\Parameter(
-     *         name="module",
+     *         name="resource",
      *         in="path",
      *         required=true,
-     *         description="Module ID",
+     *         description="Resource ID",
      *         @OA\Schema(type="integer")
      *      ),
      *      @OA\Response(
-     *          response="200", 
-     *          description="Module data",
+     *          response="200",
+     *          description="Resource data",
      *          @OA\JsonContent(
      *              allOf={
      *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
      *                  @OA\Schema(
      *                      @OA\Property(
      *                          property="data",
-     *                          ref="#/components/schemas/ModuleResource"
+     *                          ref="#/components/schemas/ResourceResource"
      *                      )
      *                  )
      *              }
      *          )
      *      ),
      *      @OA\Response(
-     *          response="401", 
+     *          response="401",
      *          description="Unauthorized",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
-     *          response="403", 
+     *          response="403",
      *          description="Forbidden",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
-     *          response="404", 
+     *          response="404",
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function show(Module $module): JsonResponse {
-        $serviceResult = $this->service->show($module);
+    public function show(Resource $resource): JsonResponse {
+        $serviceResult = $this->service->show($resource);
 
         return $this->success(
-            data: new ModuleResource($serviceResult->data),
+            data: new ResourceResource($serviceResult->data),
             httpStatus: Response::HTTP_OK
         );
     }
 
     /**
      * @OA\Post(
-     *      path="/api/core/modules",
-     *      tags={"Module"},
-     *      summary="Registers a module",
+     *      path="/api/security/resources",
+     *      tags={"Resource"},
+     *      summary="Registers a resource",
      *      @OA\RequestBody(
      *         required=true,
-     *         description="Data for creating a new module",
-     *         @OA\JsonContent(ref="#/components/schemas/StoreModuleRequest")
+     *         description="Data for creating a new resource",
+     *         @OA\JsonContent(ref="#/components/schemas/StoreResourceRequest")
      *      ),
      *      @OA\Response(
-     *          response="201", 
-     *          description="Registered module data",
+     *          response="201",
+     *          description="Registered resource data",
      *          @OA\JsonContent(
      *              allOf={
      *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
      *                  @OA\Schema(
      *                      @OA\Property(
      *                          property="data",
-     *                          ref="#/components/schemas/ModuleResource"
+     *                          ref="#/components/schemas/ResourceResource"
      *                      )
      *                  )
      *              }
      *          )
      *      ),
      *      @OA\Response(
-     *          response="401", 
+     *          response="401",
      *          description="Unauthorized",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
-     *          response="403", 
+     *          response="403",
      *          description="Forbidden",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
-     *          response="422", 
+     *          response="422",
      *          description="Unprocessable Entity",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function store(StoreModuleRequest $request): JsonResponse {
-        $dto = ModuleDTO::fromArray($request->validated());
+    public function store(StoreResourceRequest $request): JsonResponse {
+        $dto = ResourceDTO::fromArray($request->validated());
         $serviceResult = $this->service->store($dto);
 
         return $this->success(
-            data: new ModuleResource($serviceResult->data),
+            data: new ResourceResource($serviceResult->data),
             httpStatus: Response::HTTP_CREATED
         );
     }
 
     /**
      * @OA\Get(
-     *      path="/api/core/modules/{module}/edit",
-     *      tags={"Module"},
-     *      summary="Get data to edit a module",
+     *      path="/api/security/resources/{resource}/edit",
+     *      tags={"Resource"},
+     *      summary="Get data to edit a resource",
      *      @OA\Parameter(
-     *         name="module",
+     *         name="resource",
      *         in="path",
      *         required=true,
-     *         description="Module ID",
+     *         description="Resource ID",
      *         @OA\Schema(type="integer")
      *      ),
      *      @OA\Response(
-     *          response="200", 
-     *          description="Module data",
+     *          response="200",
+     *          description="Resource data",
      *          @OA\JsonContent(
      *              allOf={
      *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
      *                  @OA\Schema(
      *                      @OA\Property(
      *                          property="data",
-     *                          ref="#/components/schemas/ModuleResource"
+     *                          ref="#/components/schemas/ResourceResource"
      *                      ),
      *                      @OA\Property(property="warnings", type="array", @OA\Items(type="string", example="Este recurso não pode ser editado."), nullable=true),
      *                      @OA\Property(
-     *                          property="meta", 
-     *                          type="object", 
+     *                          property="meta",
+     *                          type="object",
      *                          @OA\Property(property="editable", type="boolean", example=true)
      *                      )
      *                  )
@@ -269,27 +271,27 @@ class ModuleController extends Controller
      *          )
      *      ),
      *      @OA\Response(
-     *          response="401", 
+     *          response="401",
      *          description="Unauthorized",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
-     *          response="403", 
+     *          response="403",
      *          description="Forbidden",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
-     *          response="404", 
+     *          response="404",
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      )
      * )
      */
-    public function edit(Module $module): JsonResponse {
-        $serviceResult = $this->service->edit($module);
+    public function edit(Resource $resource): JsonResponse {
+        $serviceResult = $this->service->edit($resource);
 
         return $this->success(
-            data: new ModuleResource($serviceResult->data),
+            data: new ResourceResource($serviceResult->data),
             warnings: $serviceResult->warnings,
             meta: $serviceResult->meta,
             httpStatus: Response::HTTP_OK
@@ -298,105 +300,105 @@ class ModuleController extends Controller
 
     /**
      * @OA\Put(
-     *      path="/api/core/modules/{module}",
-     *      tags={"Module"},
-     *      summary="Update a module",
+     *      path="/api/security/resources/{resource}",
+     *      tags={"Resource"},
+     *      summary="Update a resource",
      *      @OA\Parameter(
-     *         name="module",
+     *         name="resource",
      *         in="path",
      *         required=true,
-     *         description="Module ID",
+     *         description="Resource ID",
      *         @OA\Schema(type="integer")
      *      ),
      *      @OA\RequestBody(
      *         required=true,
-     *         description="Data for update module",
-     *         @OA\JsonContent(ref="#/components/schemas/UpdateModuleRequest")
+     *         description="Data for update resource",
+     *         @OA\JsonContent(ref="#/components/schemas/UpdateResourceRequest")
      *      ),
      *      @OA\Response(
-     *          response="200", 
-     *          description="Updated module data",
+     *          response="200",
+     *          description="Updated resource data",
      *          @OA\JsonContent(
      *              allOf={
      *                  @OA\Schema(ref="#/components/schemas/ApiResponse"),
      *                  @OA\Schema(
      *                      @OA\Property(
      *                          property="data",
-     *                          ref="#/components/schemas/ModuleResource"
+     *                          ref="#/components/schemas/ResourceResource"
      *                      )
      *                  )
      *              }
      *          )
      *      ),
      *      @OA\Response(
-     *          response="401", 
+     *          response="401",
      *          description="Unauthorized",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
-     *          response="403", 
+     *          response="403",
      *          description="Forbidden",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
-     *          response="404", 
+     *          response="404",
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
-     *          response="422", 
+     *          response="422",
      *          description="Unprocessable Entity",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function update(Module $module, UpdateModuleRequest $request): JsonResponse {
-        $dto = ModuleDTO::fromArray($request->validated());
-        $serviceResult = $this->service->update($module, $dto);
+    public function update(Resource $resource, UpdateResourceRequest $request): JsonResponse {
+        $dto = ResourceDTO::fromArray($request->validated());
+        $serviceResult = $this->service->update($resource, $dto);
 
         return $this->success(
-            data: new ModuleResource($serviceResult->data),
+            data: new ResourceResource($serviceResult->data),
             httpStatus: Response::HTTP_OK
         );
     }
 
     /**
      * @OA\Delete(
-     *      path="/api/core/modules/{module}",
-     *      tags={"Module"},
-     *      summary="Delete a module",
+     *      path="/api/security/resources/{resource}",
+     *      tags={"Resource"},
+     *      summary="Delete a resource",
      *      @OA\Parameter(
-     *         name="module",
+     *         name="resource",
      *         in="path",
      *         required=true,
-     *         description="Module ID",
+     *         description="Resource ID",
      *         @OA\Schema(type="integer")
      *      ),
      *      @OA\Response(
-     *          response="204", 
+     *          response="204",
      *          description="No content"
      *      ),
      *      @OA\Response(
-     *          response="401", 
+     *          response="401",
      *          description="Unauthorized",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
-     *          response="403", 
+     *          response="403",
      *          description="Forbidden",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      @OA\Response(
-     *          response="404", 
+     *          response="404",
      *          description="Record not found",
      *          @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")
      *      ),
      *      security={{"bearerAuth":{}}}
      * )
      */
-    public function destroy(Module $module): Response {
-        $this->service->delete($module);
+    public function destroy(Resource $resource): Response {
+        $this->service->delete($resource);
         return response()->noContent();
     }
 }
