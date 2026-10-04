@@ -7921,15 +7921,15 @@
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 90,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "sublabel": {
                         "type": "string",
-                        "example": "Cod.: 1",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Cod.: 1"
                     },
                     "meta": {
                         "properties": {
@@ -7939,15 +7939,15 @@
                             },
                             "name": {
                                 "type": "string",
-                                "example": "Sample",
                                 "maxLength": 90,
-                                "minLength": 1
+                                "minLength": 1,
+                                "example": "Sample"
                             },
                             "ibge_code": {
                                 "type": "string",
-                                "example": "Sample",
                                 "maxLength": 7,
-                                "minLength": 1
+                                "minLength": 1,
+                                "example": "Sample"
                             }
                         },
                         "type": "object"
@@ -7963,15 +7963,15 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 90,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "ibge_code": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 7,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "state": {
                         "$ref": "#/components/schemas/CityStateResource"
@@ -7999,15 +7999,15 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "uf": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 2,
-                        "minLength": 2
+                        "minLength": 2,
+                        "example": "Sample"
                     }
                 },
                 "type": "object"
@@ -8058,15 +8058,15 @@
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 60,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "sublabel": {
                         "type": "string",
-                        "example": "Cod.: 1",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Cod.: 1"
                     },
                     "meta": {
                         "properties": {
@@ -8076,15 +8076,15 @@
                             },
                             "name": {
                                 "type": "string",
-                                "example": "Sample",
                                 "maxLength": 60,
-                                "minLength": 1
+                                "minLength": 1,
+                                "example": "Sample"
                             },
                             "iso_code": {
                                 "type": "string",
-                                "example": "Sample",
                                 "maxLength": 2,
-                                "minLength": 1
+                                "minLength": 1,
+                                "example": "Sample"
                             }
                         },
                         "type": "object"
@@ -8100,15 +8100,15 @@
                     },
                     "iso_code": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 2,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 60,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "created_at": {
                         "type": "string",
@@ -8171,15 +8171,15 @@
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "sublabel": {
                         "type": "string",
-                        "example": "Cod.: 1",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Cod.: 1"
                     },
                     "meta": {
                         "properties": {
@@ -8189,21 +8189,21 @@
                             },
                             "name": {
                                 "type": "string",
-                                "example": "Sample",
                                 "maxLength": 80,
-                                "minLength": 1
+                                "minLength": 1,
+                                "example": "Sample"
                             },
                             "uf": {
                                 "type": "string",
-                                "example": "Sample",
                                 "maxLength": 2,
-                                "minLength": 1
+                                "minLength": 1,
+                                "example": "Sample"
                             },
                             "ibge_code": {
                                 "type": "string",
-                                "example": "Sample",
                                 "maxLength": 2,
-                                "minLength": 1
+                                "minLength": 1,
+                                "example": "Sample"
                             }
                         },
                         "type": "object"
@@ -8223,21 +8223,21 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "uf": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 2,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "ibge_code": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 2,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "created_at": {
                         "type": "string",
@@ -8399,15 +8399,15 @@
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 180,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "sublabel": {
                         "type": "string",
-                        "example": "Cod.: 1 | CBO: 123456",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Cod.: 1 | CBO: 123456"
                     },
                     "meta": {
                         "properties": {
@@ -8417,15 +8417,15 @@
                             },
                             "name": {
                                 "type": "string",
-                                "example": "Sample",
                                 "maxLength": 180,
-                                "minLength": 1
+                                "minLength": 1,
+                                "example": "Sample"
                             },
                             "cbo": {
                                 "type": "string",
-                                "example": "Sample",
                                 "maxLength": 6,
-                                "minLength": 1
+                                "minLength": 1,
+                                "example": "Sample"
                             }
                         },
                         "type": "object"
@@ -8441,15 +8441,15 @@
                     },
                     "cbo": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 6,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 180,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "created_at": {
                         "type": "string",
@@ -8520,22 +8520,22 @@
                 "properties": {
                     "name": {
                         "type": "string",
-                        "example": "Sample module",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample module"
                     },
                     "slug": {
                         "type": "string",
-                        "example": "sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "sample"
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 512,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "is_active": {
                         "type": "boolean",
@@ -8553,22 +8553,22 @@
                 "properties": {
                     "name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "slug": {
                         "type": "string",
-                        "example": "sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "sample"
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 512,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "is_active": {
                         "type": "boolean",
@@ -8591,22 +8591,22 @@
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 60,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "action": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 120,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 512,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -8624,22 +8624,22 @@
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 60,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "action": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 120,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 512,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -8652,22 +8652,22 @@
                 "properties": {
                     "name": {
                         "type": "string",
-                        "example": "Sample module",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample module"
                     },
                     "slug": {
                         "type": "string",
-                        "example": "sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "sample"
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 512,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "module_id": {
                         "type": "integer",
@@ -8684,22 +8684,22 @@
                 "properties": {
                     "name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "slug": {
                         "type": "string",
-                        "example": "sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "sample"
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 512,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "module_id": {
                         "type": "integer",
@@ -8726,16 +8726,16 @@
                 "properties": {
                     "name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 512,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -8747,16 +8747,16 @@
                 "properties": {
                     "name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 512,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -8771,35 +8771,35 @@
                 "properties": {
                     "name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 255,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "email": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 255,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "password": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 255,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "username": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "phone_number": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 14,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "is_admin": {
                         "type": "boolean",
@@ -8833,29 +8833,29 @@
                 "properties": {
                     "name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 255,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "email": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 255,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "username": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "phone_number": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 14,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "is_admin": {
                         "type": "boolean",
@@ -8923,28 +8923,28 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample module",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample module"
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "slug": {
                         "type": "string",
-                        "example": "sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "sample"
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 512,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "is_active": {
                         "type": "boolean",
@@ -8986,28 +8986,28 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "sample",
                         "maxLength": 120,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "sample"
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 180,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 512,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "action": {
                         "type": "string",
+                        "maxLength": 80,
                         "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 80
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -9020,28 +9020,28 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "slug": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 512,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -9073,31 +9073,31 @@
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "resource": {
                         "$ref": "#/components/schemas/PermissionResourceResource"
                     },
                     "action": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 120,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 180,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 512,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "created_at": {
                         "type": "string",
@@ -9128,15 +9128,15 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "slug": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     }
                 },
                 "type": "object"
@@ -9168,15 +9168,15 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "slug": {
                         "type": "string",
-                        "example": "sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "sample"
                     }
                 },
                 "type": "object"
@@ -9189,28 +9189,28 @@
                     },
                     "action": {
                         "type": "string",
-                        "example": "sample",
                         "maxLength": 120,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "sample"
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 180,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 512,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -9223,22 +9223,22 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample module",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample module"
                     },
                     "slug": {
                         "type": "string",
-                        "example": "sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "sample"
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 512,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "module": {
                         "$ref": "#/components/schemas/ResourceModuleResource"
@@ -9316,15 +9316,15 @@
                     },
                     "label": {
                         "type": "string",
-                        "example": "Financeiro",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Financeiro"
                     },
                     "sublabel": {
                         "type": "string",
-                        "example": "Cod.: 1",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Cod.: 1"
                     },
                     "meta": {
                         "properties": {
@@ -9334,9 +9334,9 @@
                             },
                             "name": {
                                 "type": "string",
-                                "example": "Financeiro",
                                 "maxLength": 80,
-                                "minLength": 1
+                                "minLength": 1,
+                                "example": "Financeiro"
                             }
                         },
                         "type": "object"
@@ -9352,28 +9352,28 @@
                     },
                     "resource": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 60,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "action": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 120,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 180,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 512,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -9386,16 +9386,16 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 512,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "permissions": {
                         "type": "array",
@@ -9470,15 +9470,15 @@
                     },
                     "label": {
                         "type": "string",
-                        "example": "Felipe Silva",
                         "maxLength": 180,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Felipe Silva"
                     },
                     "sublabel": {
                         "type": "string",
-                        "example": "Cod.: 1 | Email: felipe@example.com",
                         "maxLength": 180,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Cod.: 1 | Email: felipe@example.com"
                     },
                     "meta": {
                         "properties": {
@@ -9488,30 +9488,30 @@
                             },
                             "name": {
                                 "type": "string",
-                                "example": "Felipe Silva",
                                 "maxLength": 180,
-                                "minLength": 1
+                                "minLength": 1,
+                                "example": "Felipe Silva"
                             },
                             "email": {
                                 "type": "string",
-                                "example": "felipe@example.com",
-                                "nullable": true,
                                 "maxLength": 180,
-                                "minLength": 1
+                                "minLength": 1,
+                                "example": "felipe@example.com",
+                                "nullable": true
                             },
                             "username": {
                                 "type": "string",
-                                "example": "felipe",
-                                "nullable": true,
                                 "maxLength": 50,
-                                "minLength": 1
+                                "minLength": 1,
+                                "example": "felipe",
+                                "nullable": true
                             },
                             "phone_number": {
                                 "type": "string",
-                                "example": "+55 11 99999-9999",
-                                "nullable": true,
                                 "maxLength": 20,
-                                "minLength": 1
+                                "minLength": 1,
+                                "example": "+55 11 99999-9999",
+                                "nullable": true
                             }
                         },
                         "type": "object"
@@ -9527,15 +9527,15 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 255,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "email": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 255,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "email_verified_at": {
                         "type": "string",
@@ -9545,17 +9545,17 @@
                     },
                     "username": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "phone_number": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 14,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "is_admin": {
                         "type": "boolean",
@@ -9603,9 +9603,9 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     }
                 },
                 "type": "object"
@@ -9908,48 +9908,6 @@
                     "EXEMPT"
                 ]
             },
-            "StorePartnerTypeRequest": {
-                "required": [
-                    "name",
-                    "code"
-                ],
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 60,
-                        "minLength": 1
-                    },
-                    "code": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 3,
-                        "minLength": 1
-                    }
-                },
-                "type": "object"
-            },
-            "UpdatePartnerTypeRequest": {
-                "required": [
-                    "name",
-                    "code"
-                ],
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 60,
-                        "minLength": 1
-                    },
-                    "code": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 3,
-                        "minLength": 1
-                    }
-                },
-                "type": "object"
-            },
             "StorePartnerRequest": {
                 "required": [
                     "partner_type_code",
@@ -9962,21 +9920,21 @@
                 "properties": {
                     "partner_type_code": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 20,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 120,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "trade_name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 150,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "person_type": {
                         "$ref": "#/components/schemas/PersonTypeEnum"
@@ -9986,23 +9944,23 @@
                     },
                     "document_number": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 20,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "identity_number": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 15,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "identity_issuer": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 20,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "partner_since": {
                         "type": "string",
@@ -10012,24 +9970,24 @@
                     },
                     "state_registration": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 14,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "municipal_registration": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 15,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "suframa_registration": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 9,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "marital_status": {
                         "oneOf": [
@@ -10041,10 +9999,10 @@
                     },
                     "cbo": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 6,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "gender": {
                         "oneOf": [
@@ -10062,31 +10020,31 @@
                     },
                     "father_name": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 120,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "father_document": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 15,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "mother_name": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 120,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "mother_document": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 15,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "pix_type": {
                         "oneOf": [
@@ -10098,25 +10056,25 @@
                     },
                     "pix_key": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 0,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "notes": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 0,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "contacts": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/ContactItem"
                         },
-                        "nullable": true,
-                        "maxItems": 50
+                        "maxItems": 50,
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -10133,21 +10091,21 @@
                 "properties": {
                     "partner_type_code": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 20,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 120,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "trade_name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 150,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "person_type": {
                         "$ref": "#/components/schemas/PersonTypeEnum"
@@ -10157,23 +10115,23 @@
                     },
                     "document_number": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 20,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "identity_number": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 15,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "identity_issuer": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 20,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "partner_since": {
                         "type": "string",
@@ -10183,24 +10141,24 @@
                     },
                     "state_registration": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 14,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "municipal_registration": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 15,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "suframa_registration": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 9,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "marital_status": {
                         "oneOf": [
@@ -10212,10 +10170,10 @@
                     },
                     "cbo": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 6,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "gender": {
                         "oneOf": [
@@ -10233,31 +10191,31 @@
                     },
                     "father_name": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 120,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "father_document": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 15,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "mother_name": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 120,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "mother_document": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 15,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "pix_type": {
                         "oneOf": [
@@ -10269,25 +10227,383 @@
                     },
                     "pix_key": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 0,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "notes": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
                         "maxLength": 0,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample",
+                        "nullable": true
                     },
                     "contacts": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/ContactItem"
                         },
-                        "nullable": true,
-                        "maxItems": 50
+                        "maxItems": 50,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "StorePartnerTypeRequest": {
+                "required": [
+                    "name",
+                    "code"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 60,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "code": {
+                        "type": "string",
+                        "maxLength": 3,
+                        "minLength": 1,
+                        "example": "Sample"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdatePartnerTypeRequest": {
+                "required": [
+                    "name",
+                    "code"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 60,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "code": {
+                        "type": "string",
+                        "maxLength": 3,
+                        "minLength": 1,
+                        "example": "Sample"
+                    }
+                },
+                "type": "object"
+            },
+            "PartnerCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PartnerResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "PartnerContactResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "minLength": 1,
+                        "example": "Roberto"
+                    },
+                    "department": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "TI"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 180,
+                        "minLength": 1,
+                        "example": "roberto@email.com.br"
+                    },
+                    "mobile": {
+                        "type": "string",
+                        "maxLength": 11,
+                        "example": "11985984268",
+                        "nullable": true
+                    },
+                    "phone": {
+                        "type": "string",
+                        "maxLength": 10,
+                        "example": "1159856859",
+                        "nullable": true
+                    },
+                    "main": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Entrar em contato somente para suporte",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "PartnerLookupCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PartnerLookupResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "PartnerLookupResource": {
+                "properties": {
+                    "key": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "label": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "sublabel": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Cod.: 1"
+                    },
+                    "meta": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "maxLength": 120,
+                                "minLength": 1,
+                                "example": "Sample Company LTDA"
+                            },
+                            "trade_name": {
+                                "type": "string",
+                                "maxLength": 150,
+                                "minLength": 1,
+                                "example": "Sample"
+                            },
+                            "document_number": {
+                                "type": "string",
+                                "maxLength": 20,
+                                "minLength": 1,
+                                "example": "11.222.333/0001-81"
+                            },
+                            "person_type": {
+                                "type": "string",
+                                "maxLength": 30,
+                                "minLength": 1,
+                                "example": "Pessoa Jurídica"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "PartnerResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "partner_type_code": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "partner_type_name": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "trade_name": {
+                        "type": "string",
+                        "maxLength": 150,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "person_type": {
+                        "type": "string",
+                        "maxLength": 30,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "taxpayer_type": {
+                        "type": "string",
+                        "maxLength": 30,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "document_number": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "minLength": 1,
+                        "example": "Sample"
+                    },
+                    "identity_number": {
+                        "type": "string",
+                        "maxLength": 15,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "identity_issuer": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "partner_since": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-09-09",
+                        "nullable": true
+                    },
+                    "state_registration": {
+                        "type": "string",
+                        "maxLength": 14,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "municipal_registration": {
+                        "type": "string",
+                        "maxLength": 15,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "suframa_registration": {
+                        "type": "string",
+                        "maxLength": 9,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "marital_status": {
+                        "type": "string",
+                        "maxLength": 30,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "cbo": {
+                        "type": "string",
+                        "maxLength": 6,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "gender": {
+                        "type": "string",
+                        "maxLength": 12,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "birth_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-09-09",
+                        "nullable": true
+                    },
+                    "father_name": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "father_document": {
+                        "type": "string",
+                        "maxLength": 15,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "mother_name": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "mother_document": {
+                        "type": "string",
+                        "maxLength": 15,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "pix_type": {
+                        "type": "string",
+                        "maxLength": 30,
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "pix_key": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Sample",
+                        "nullable": true
+                    },
+                    "contacts": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PartnerContactResource"
+                        }
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-09T02:22:32.660898Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-09T02:22:32.660898Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-09T02:22:32.660898Z",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -10338,15 +10654,15 @@
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "sublabel": {
                         "type": "string",
-                        "example": "Cod.: 1",
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Cod.: 1"
                     },
                     "meta": {
                         "properties": {
@@ -10356,15 +10672,15 @@
                             },
                             "name": {
                                 "type": "string",
-                                "example": "Tipo de parceiro",
                                 "maxLength": 80,
-                                "minLength": 1
+                                "minLength": 1,
+                                "example": "Tipo de parceiro"
                             },
                             "code": {
                                 "type": "string",
-                                "example": "TYP",
                                 "maxLength": 20,
-                                "minLength": 1
+                                "minLength": 1,
+                                "example": "TYP"
                             }
                         },
                         "type": "object"
@@ -10380,15 +10696,15 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 60,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "code": {
                         "type": "string",
-                        "example": "Sample",
                         "maxLength": 3,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Sample"
                     },
                     "created_at": {
                         "type": "string",
@@ -10406,322 +10722,6 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2026-09-05T06:33:15.515561Z",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "PartnerCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/PartnerResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "PartnerContactResource": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "example": "Roberto",
-                        "maxLength": 120,
-                        "minLength": 1
-                    },
-                    "department": {
-                        "type": "string",
-                        "example": "TI",
-                        "maxLength": 80,
-                        "minLength": 1
-                    },
-                    "email": {
-                        "type": "string",
-                        "format": "email",
-                        "example": "roberto@email.com.br",
-                        "maxLength": 180,
-                        "minLength": 1
-                    },
-                    "mobile": {
-                        "type": "string",
-                        "example": "11985984268",
-                        "nullable": true,
-                        "maxLength": 11
-                    },
-                    "phone": {
-                        "type": "string",
-                        "example": "1159856859",
-                        "nullable": true,
-                        "maxLength": 10
-                    },
-                    "main": {
-                        "type": "boolean",
-                        "example": true
-                    },
-                    "notes": {
-                        "type": "string",
-                        "example": "Entrar em contato somente para suporte",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "PartnerLookupCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/PartnerLookupResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "PartnerLookupResource": {
-                "properties": {
-                    "key": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "label": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 80,
-                        "minLength": 1
-                    },
-                    "sublabel": {
-                        "type": "string",
-                        "example": "Cod.: 1",
-                        "maxLength": 80,
-                        "minLength": 1
-                    },
-                    "meta": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 1
-                            },
-                            "name": {
-                                "type": "string",
-                                "example": "Sample Company LTDA",
-                                "maxLength": 120,
-                                "minLength": 1
-                            },
-                            "trade_name": {
-                                "type": "string",
-                                "example": "Sample",
-                                "maxLength": 150,
-                                "minLength": 1
-                            },
-                            "document_number": {
-                                "type": "string",
-                                "example": "11.222.333/0001-81",
-                                "maxLength": 20,
-                                "minLength": 1
-                            },
-                            "person_type": {
-                                "type": "string",
-                                "example": "Pessoa Jurídica",
-                                "maxLength": 30,
-                                "minLength": 1
-                            }
-                        },
-                        "type": "object"
-                    }
-                },
-                "type": "object"
-            },
-            "PartnerResource": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "partner_type_code": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 20,
-                        "minLength": 1
-                    },
-                    "partner_type_name": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 80,
-                        "minLength": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 120,
-                        "minLength": 1
-                    },
-                    "trade_name": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 150,
-                        "minLength": 1
-                    },
-                    "person_type": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 30,
-                        "minLength": 1
-                    },
-                    "taxpayer_type": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 30,
-                        "minLength": 1
-                    },
-                    "document_number": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 20,
-                        "minLength": 1
-                    },
-                    "identity_number": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 15
-                    },
-                    "identity_issuer": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 20
-                    },
-                    "partner_since": {
-                        "type": "string",
-                        "format": "date",
-                        "example": "2026-09-09",
-                        "nullable": true
-                    },
-                    "state_registration": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 14
-                    },
-                    "municipal_registration": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 15
-                    },
-                    "suframa_registration": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 9
-                    },
-                    "marital_status": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 30
-                    },
-                    "cbo": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 6
-                    },
-                    "gender": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 12
-                    },
-                    "birth_date": {
-                        "type": "string",
-                        "format": "date",
-                        "example": "2026-09-09",
-                        "nullable": true
-                    },
-                    "father_name": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 120
-                    },
-                    "father_document": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 15
-                    },
-                    "mother_name": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 120
-                    },
-                    "mother_document": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 15
-                    },
-                    "pix_type": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 30
-                    },
-                    "pix_key": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true
-                    },
-                    "notes": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true
-                    },
-                    "contacts": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/PartnerContactResource"
-                        }
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-09T02:22:32.660898Z",
-                        "nullable": true
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-09T02:22:32.660898Z",
-                        "nullable": true
-                    },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-09T02:22:32.660898Z",
                         "nullable": true
                     }
                 },
@@ -10796,38 +10796,38 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Roberto",
                         "maxLength": 120,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "Roberto"
                     },
                     "department": {
                         "type": "string",
-                        "example": "TI",
-                        "nullable": true,
                         "maxLength": 80,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "TI",
+                        "nullable": true
                     },
                     "email": {
                         "type": "string",
                         "format": "email",
-                        "example": "roberto@email.com.br",
-                        "nullable": true,
                         "maxLength": 180,
-                        "minLength": 1
+                        "minLength": 1,
+                        "example": "roberto@email.com.br",
+                        "nullable": true
                     },
                     "mobile": {
                         "type": "string",
-                        "example": "11985984268",
-                        "nullable": true,
                         "maxLength": 11,
-                        "minLength": 10
+                        "minLength": 10,
+                        "example": "11985984268",
+                        "nullable": true
                     },
                     "phone": {
                         "type": "string",
-                        "example": "1159856859",
-                        "nullable": true,
                         "maxLength": 10,
-                        "minLength": 10
+                        "minLength": 10,
+                        "example": "1159856859",
+                        "nullable": true
                     },
                     "main": {
                         "type": "boolean",
