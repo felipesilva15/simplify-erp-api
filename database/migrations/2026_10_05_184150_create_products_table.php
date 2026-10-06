@@ -48,9 +48,8 @@ return new class extends Migration
             DB::statement('CREATE UNIQUE INDEX products_sku_unique ON products (lower(sku)) WHERE deleted_at IS NULL');
             DB::statement('CREATE UNIQUE INDEX products_gtin_unique ON products (gtin) WHERE deleted_at IS NULL AND gtin IS NOT NULL');
         } else {
-            DB::statement('ALTER TABLE products
-                ADD COLUMN sku_active VARCHAR(40) GENERATED ALWAYS AS (IF(deleted_at IS NULL, sku, NULL)) VIRTUAL,
-                ADD COLUMN gtin_active VARCHAR(14) GENERATED ALWAYS AS (IF(deleted_at IS NULL, gtin, NULL)) VIRTUAL');
+            DB::statement('ALTER TABLE products ADD COLUMN sku_active VARCHAR(40) GENERATED ALWAYS AS (IF(deleted_at IS NULL, sku, NULL)) VIRTUAL');
+            DB::statement('ALTER TABLE products ADD COLUMN gtin_active VARCHAR(14) GENERATED ALWAYS AS (IF(deleted_at IS NULL, gtin, NULL)) VIRTUAL');
             DB::statement('CREATE UNIQUE INDEX products_sku_unique ON products (sku_active)');
             DB::statement('CREATE UNIQUE INDEX products_gtin_unique ON products (gtin_active)');
         }
