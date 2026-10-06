@@ -8,7 +8,7 @@ namespace App\Core\Enums;
  *   type="string",
  *   description="Product types:
  *      Product = 'PRODUCT'
- *      Service = 'SERVICE'"
+ *      Service = 'SERVICE'",
  *   enum={"PRODUCT", "SERVICE"}
  * )
  */

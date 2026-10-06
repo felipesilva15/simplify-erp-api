@@ -9,7 +9,7 @@ namespace App\Core\Enums;
  *   description="Product applicabilities:
  *      Product = 'PRODUCT'
  *      Service = 'SERVICE'
- *      Both = 'BOTH'"
+ *      Both = 'BOTH'",
  *   enum={"PRODUCT", "SERVICE", "BOTH"}
  * )
  */

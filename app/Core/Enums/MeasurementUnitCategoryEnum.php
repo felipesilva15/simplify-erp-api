@@ -12,7 +12,7 @@ namespace App\Core\Enums;
  *      Volume = 'VOLUME'
  *      Length = 'LENGTH'
  *      Area = 'AREA'
- *      Time = 'TIME'"
+ *      Time = 'TIME'",
  *   enum={"COUNT", "MASS", "VOLUME", "LENGTH", "AREA", "TIME"}
  * )
  */
