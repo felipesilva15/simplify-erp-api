@@ -214,6 +214,10 @@ class ModelHelpers
                     continue;
                 }
 
+                if ($value && $value === "null") {
+                    $value = null;
+                }
+
                 $sqlOperatorEnum = self::$operatorDictionary[$operatorEnum->value];
 
                 if (self::isNormalizedStringColumn($columnName, $column['type'], $searchOptions)) {
