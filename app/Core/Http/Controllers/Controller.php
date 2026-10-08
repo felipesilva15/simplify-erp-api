@@ -32,6 +32,10 @@ use Illuminate\Routing\Controller as BaseController;
  *             {
  *                 "name"="Geography",
  *                 "tags"={"Country", "State", "City"}
+ *             },
+ *             {
+ *                 "name"="Catalog",
+ *                 "tags"={"ProductCategory"}
  *             }
  *         }
  *     }

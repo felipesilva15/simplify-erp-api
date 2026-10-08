@@ -12,6 +12,7 @@ use App\Modules\Security\Http\Controllers\RoleController;
 use App\Modules\Security\Http\Controllers\UserController;
 use App\Modules\ThirdParty\Http\Controllers\PartnerController;
 use App\Modules\ThirdParty\Http\Controllers\PartnerTypeController;
+use App\Modules\Catalog\Http\Controllers\ProductCategoryController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('security/auth/login', [AuthController::class, 'login'])->name('auth.login');
@@ -64,5 +65,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('professions/export', [ProfessionController::class, 'export'])->name('professions.export');
         Route::get('professions/{id}/activity-logs', [ProfessionController::class, 'activityLogs'])->name('professions.activityLogs');
         Route::resource('professions', ProfessionController::class)->only('index', 'show');
+    });
+
+    Route::prefix('catalog')->group(function() {
+        Route::get('product-categories/lookup', [ProductCategoryController::class, 'lookup'])->name('product-categories.lookup');
+        Route::get('product-categories/export', [ProductCategoryController::class, 'export'])->name('product-categories.export');
+        Route::crudResource('product-categories', ProductCategoryController::class);
     });
 });

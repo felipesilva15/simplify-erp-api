@@ -12,4 +12,5 @@ return [
     App\Providers\ThirdPartyModuleProvider::class,
     App\Providers\HRModuleProvider::class,
     App\Providers\GeographyModuleProvider::class,
+    App\Providers\CatalogModuleProvider::class,
 ];
