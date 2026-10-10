@@ -166,7 +166,7 @@ abstract class BaseChildSync
     {
         $id = $payload[$this->identityKey()] ?? null;
 
-        if ($id === null || $id === '') {
+        if (empty($id)) {
             return null;
         }
 
@@ -177,7 +177,7 @@ abstract class BaseChildSync
     {
         $id = $payload[$this->identityKey()] ?? null;
 
-        if ($id === null || $id === '') {
+        if (empty($id)) {
             return null;
         }
 

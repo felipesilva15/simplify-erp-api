@@ -12476,7 +12476,7 @@
                 "type": "object"
             },
             "ContactItem": {
-                "description": "Item da lista contacts enviada junto do parceiro. O id ausente indica um contato novo; ausente no payload remove o contato existente.",
+                "description": "Item da lista contacts enviada junto do parceiro. O id ausente ou zero (0) indica um contato novo; ausente no payload remove o contato existente.",
                 "properties": {
                     "id": {
                         "type": "integer",

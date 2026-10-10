@@ -5,6 +5,7 @@ namespace Tests\Unit\Core\Services;
 use App\Core\DTO\AttributesDTO;
 use App\Core\DTO\ServiceResult;
 use App\Core\Enums\ActivityActionEnum;
+use App\Core\Exceptions\BusinessRuleException;
 use App\Modules\Geography\Models\City;
 use App\Core\Repositories\Interfaces\BaseRepositoryInterface;
 use App\Core\Services\ActivityLogService;
@@ -115,6 +116,86 @@ class BaseCrudServiceWithChildrenTest extends TestCase
             $result->meta
         );
         $this->assertSame([['name' => 'A']], SpyChildSync::$calls);
+    }
+
+    public function test_store_treats_zero_id_child_as_new_item(): void
+    {
+        $header = $this->headerMockExpectingEagerLoad();
+
+        $this->repositoryMock
+            ->shouldReceive('store')
+            ->once()
+            ->with(Mockery::on(fn ($arg): bool => $arg instanceof AttributesDTO && $arg->toArray() === ['name' => 'Teste']))
+            ->andReturn($header);
+
+        $this->activityMock->shouldReceive('log')->once()->with($header, ActivityActionEnum::Created);
+
+        $result = $this->serviceWithChildren()->store(new HeaderDTO('Teste', [['id' => 0, 'name' => 'A']]));
+
+        $this->assertSame(
+            ['children' => ['children' => ['created' => 1, 'updated' => 0, 'deleted' => 0]]],
+            $result->meta
+        );
+        $this->assertSame([['id' => 0, 'name' => 'A']], SpyChildSync::$calls);
+    }
+
+    public function test_store_treats_string_zero_id_child_as_new_item(): void
+    {
+        $header = $this->headerMockExpectingEagerLoad();
+
+        $this->repositoryMock
+            ->shouldReceive('store')
+            ->once()
+            ->with(Mockery::on(fn ($arg): bool => $arg instanceof AttributesDTO && $arg->toArray() === ['name' => 'Teste']))
+            ->andReturn($header);
+
+        $this->activityMock->shouldReceive('log')->once()->with($header, ActivityActionEnum::Created);
+
+        $result = $this->serviceWithChildren()->store(new HeaderDTO('Teste', [['id' => '0', 'name' => 'A']]));
+
+        $this->assertSame(
+            ['children' => ['children' => ['created' => 1, 'updated' => 0, 'deleted' => 0]]],
+            $result->meta
+        );
+        $this->assertSame([['id' => '0', 'name' => 'A']], SpyChildSync::$calls);
+    }
+
+    public function test_store_treats_empty_string_id_child_as_new_item(): void
+    {
+        $header = $this->headerMockExpectingEagerLoad();
+
+        $this->repositoryMock
+            ->shouldReceive('store')
+            ->once()
+            ->with(Mockery::on(fn ($arg): bool => $arg instanceof AttributesDTO && $arg->toArray() === ['name' => 'Teste']))
+            ->andReturn($header);
+
+        $this->activityMock->shouldReceive('log')->once()->with($header, ActivityActionEnum::Created);
+
+        $result = $this->serviceWithChildren()->store(new HeaderDTO('Teste', [['id' => '', 'name' => 'A']]));
+
+        $this->assertSame(
+            ['children' => ['children' => ['created' => 1, 'updated' => 0, 'deleted' => 0]]],
+            $result->meta
+        );
+        $this->assertSame([['id' => '', 'name' => 'A']], SpyChildSync::$calls);
+    }
+
+    public function test_sync_rejects_child_with_foreign_id(): void
+    {
+        $sync = new SpyChildSync(
+            header: Mockery::mock(Model::class),
+            definition: new ChildRelation(
+                relation: 'children',
+                model: City::class,
+                sync: SpyChildSync::class,
+            ),
+            activity: $this->activityMock,
+        );
+
+        $this->expectException(BusinessRuleException::class);
+
+        $sync->sync([['id' => 99, 'name' => 'A']]);
     }
 
     public function test_store_skips_sync_when_children_key_is_absent(): void

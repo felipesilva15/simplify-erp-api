@@ -27,7 +27,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @OA\Schema(
  *     schema="ContactItem",
- *     description="Item da lista contacts enviada junto do parceiro. O id ausente indica um contato novo; ausente no payload remove o contato existente.",
+ *     description="Item da lista contacts enviada junto do parceiro. O id ausente ou zero (0) indica um contato novo; ausente no payload remove o contato existente.",
  *     @OA\Property(property="id", type="integer", example=1, nullable=true),
  *     @OA\Property(property="name", type="string", example="Roberto", minLength=1, maxLength=120),
  *     @OA\Property(property="department", type="string", example="TI", minLength=1, maxLength=80, nullable=true),

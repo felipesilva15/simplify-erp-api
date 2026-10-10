@@ -135,6 +135,52 @@ class PartnerContactTest extends TestCase
         $this->assertDatabaseHas('contacts', ['name' => 'Novo contato']);
     }
 
+    public function test_update_creates_contact_when_id_is_zero(): void
+    {
+        $partner = $this->createPartnerWithThreeContacts();
+        [$first] = $partner->contacts()->orderBy('id')->get()->all();
+
+        $response = $this->putJson("{$this->endpoint}/{$partner->id}", $this->partnerPayload([
+            'contacts' => [
+                $this->unchangedPayloadFor($first),
+                ['id' => 0, ...$this->contactPayload(['name' => 'Contato novo com id zero'])],
+            ],
+        ]), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonPath('meta.children.contacts.created', 1)
+            ->assertJsonPath('meta.children.contacts.updated', 0)
+            ->assertJsonPath('meta.children.contacts.deleted', 2)
+            ->assertJsonCount(2, 'data.contacts');
+
+        $this->assertDatabaseHas('contacts', [
+            'partner_id' => $partner->id,
+            'name' => 'Contato novo com id zero',
+        ]);
+    }
+
+    public function test_update_creates_contact_when_id_is_string_zero(): void
+    {
+        $partner = $this->createPartnerWithThreeContacts();
+        [$first] = $partner->contacts()->orderBy('id')->get()->all();
+
+        $response = $this->putJson("{$this->endpoint}/{$partner->id}", $this->partnerPayload([
+            'contacts' => [
+                $this->unchangedPayloadFor($first),
+                ['id' => '0', ...$this->contactPayload(['name' => 'Contato novo com string zero'])],
+            ],
+        ]), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonPath('meta.children.contacts.created', 1)
+            ->assertJsonCount(2, 'data.contacts');
+
+        $this->assertDatabaseHas('contacts', [
+            'partner_id' => $partner->id,
+            'name' => 'Contato novo com string zero',
+        ]);
+    }
+
     public function test_update_without_contacts_key_preserves_children(): void
     {
         $partner = $this->createPartnerWithThreeContacts();

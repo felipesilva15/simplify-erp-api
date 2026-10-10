@@ -614,7 +614,7 @@ protected function childRelations(): array
 1. **Normalização** — `contacts` pode ser array, `Arrayable` ou objeto; qualquer outro formato gera `BusinessRuleException` com o caminho `contacts.0.*`.
 2. **Estado atual** — itens existentes indexados pela chave, incluindo os soft-deleted (via `withTrashed`).
 3. **Validação em lote** — gancho `validatePayload()`, recebe todos os payloads e os itens existentes.
-4. **Por item**: se o payload traz `id` e ele não está entre os itens atuais, lança `BusinessRuleException` (`contacts.{índice}.id`) com a mensagem de que o item não pertence ao registro. Sem correspondência, cria; com correspondência, atualiza.
+4. **Por item**: `id` nulo, vazio (`''`) ou `0` no payload significa item novo e dispara a criação. Um `id` preenchido que não esteja entre os itens atuais lança `BusinessRuleException` (`contacts.{índice}.id`) com a mensagem de que o item não pertence ao registro. Sem correspondência, cria; com correspondência, atualiza.
 5. **Remoção** — itens existentes não enviados são soft-deleted.
 6. **Ganchos por item** — `validateItem()`; `activityDescription()`; `log()` de cada criação, alteração e remoção.
 
