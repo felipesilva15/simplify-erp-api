@@ -4,6 +4,7 @@ namespace Tests\Unit\Core\Services;
 
 use App\Core\DTO\ServiceResult;
 use App\Core\Enums\ActivityActionEnum;
+use App\Core\Exceptions\BusinessRuleException;
 use App\Core\Repositories\Interfaces\BaseRepositoryInterface;
 use App\Core\Services\ActivityLogService;
 use App\Core\Services\BaseCrudService;
@@ -17,7 +18,9 @@ use Tests\TestCase;
 class BaseCrudServiceTest extends TestCase
 {
     private BaseRepositoryInterface|MockInterface $repositoryMock;
+
     private ActivityLogService|MockInterface $activityMock;
+
     private BaseCrudService $service;
 
     protected function setUp(): void
@@ -25,9 +28,10 @@ class BaseCrudServiceTest extends TestCase
         parent::setUp();
 
         $this->repositoryMock = Mockery::mock(BaseRepositoryInterface::class);
-        $this->activityMock   = Mockery::mock(ActivityLogService::class);
+        $this->activityMock = Mockery::mock(ActivityLogService::class);
 
-        $this->service = new class($this->repositoryMock, $this->activityMock) extends BaseCrudService {
+        $this->service = new class($this->repositoryMock, $this->activityMock) extends BaseCrudService
+        {
             public function __construct(BaseRepositoryInterface $repository, ActivityLogService $activity)
             {
                 $this->repository = $repository;
@@ -44,7 +48,7 @@ class BaseCrudServiceTest extends TestCase
 
     public function test_can_store(): void
     {
-        $data   = ['name' => 'Teste'];
+        $data = ['name' => 'Teste'];
         $entity = Mockery::mock(Model::class);
 
         $this->repositoryMock
@@ -78,8 +82,8 @@ class BaseCrudServiceTest extends TestCase
 
     public function test_can_update_an_entity(): void
     {
-        $data          = ['name' => 'Atualizado'];
-        $entity        = Mockery::mock(Model::class);
+        $data = ['name' => 'Atualizado'];
+        $entity = Mockery::mock(Model::class);
         $updatedEntity = Mockery::mock(Model::class);
 
         $this->repositoryMock
@@ -145,11 +149,11 @@ class BaseCrudServiceTest extends TestCase
 
     public function test_can_list_and_return_paginator(): void
     {
-        $filters    = ['status' => 'active'];
+        $filters = ['status' => 'active'];
         $paginator = new LengthAwarePaginator(
-            items:       [Mockery::mock(Model::class)],
-            total:       1,
-            perPage:     15,
+            items: [Mockery::mock(Model::class)],
+            total: 1,
+            perPage: 15,
             currentPage: 1,
         );
 
@@ -210,11 +214,11 @@ class BaseCrudServiceTest extends TestCase
 
     public function test_can_get_data_for_lookup(): void
     {
-        $params     = ['key' => 'value'];
+        $params = ['key' => 'value'];
         $paginator = new LengthAwarePaginator(
-            items:       [Mockery::mock(Model::class)],
-            total:       1,
-            perPage:     15,
+            items: [Mockery::mock(Model::class)],
+            total: 1,
+            perPage: 15,
             currentPage: 1,
         );
 
@@ -233,7 +237,7 @@ class BaseCrudServiceTest extends TestCase
 
     public function test_can_get_export_query_from_repository(): void
     {
-        $params  = ['filters' => ['status' => ['eq' => 'active']]];
+        $params = ['filters' => ['status' => ['eq' => 'active']]];
         $builder = Mockery::mock(Builder::class);
 
         $this->repositoryMock
@@ -260,5 +264,183 @@ class BaseCrudServiceTest extends TestCase
         $result = $this->service->exportQuery();
 
         $this->assertSame($builder, $result);
+    }
+
+    public function test_before_store_hook_blocks_creation(): void
+    {
+        $service = $this->hookService([
+            'beforeStore' => function (mixed $data): void {
+                throw new BusinessRuleException('Inclusão bloqueada.', ['name' => 'Inválido.']);
+            },
+        ]);
+
+        $this->repositoryMock->shouldNotReceive('store');
+
+        $this->expectException(BusinessRuleException::class);
+
+        $service->store(['name' => 'Teste']);
+    }
+
+    public function test_before_update_hook_receives_entity_and_blocks_alteration(): void
+    {
+        $entity = Mockery::mock(Model::class);
+        $service = $this->hookService([
+            'beforeUpdate' => function (Model $received, mixed $data) use ($entity): void {
+                self::assertSame($entity, $received);
+                throw new BusinessRuleException('Alteração bloqueada.', ['name' => 'Inválido.']);
+            },
+        ]);
+
+        $this->repositoryMock->shouldNotReceive('update');
+
+        $this->expectException(BusinessRuleException::class);
+
+        $service->update($entity, ['name' => 'Novo']);
+    }
+
+    public function test_before_delete_hook_blocks_exclusion(): void
+    {
+        $entity = Mockery::mock(Model::class);
+        $service = $this->hookService([
+            'beforeDelete' => function (Model $received) use ($entity): void {
+                self::assertSame($entity, $received);
+                throw new BusinessRuleException('Exclusão bloqueada.', ['id' => 'Inativo.']);
+            },
+        ]);
+
+        $this->repositoryMock->shouldNotReceive('delete');
+
+        $this->expectException(BusinessRuleException::class);
+
+        $service->delete($entity);
+    }
+
+    public function test_after_store_hook_can_replace_entity(): void
+    {
+        $stored = Mockery::mock(Model::class);
+        $replaced = Mockery::mock(Model::class);
+
+        $this->repositoryMock
+            ->shouldReceive('store')
+            ->once()
+            ->with(['name' => 'Teste'])
+            ->andReturn($stored);
+
+        $this->activityMock
+            ->shouldReceive('log')
+            ->once()
+            ->with($replaced, ActivityActionEnum::Created);
+
+        $service = $this->hookService([
+            'afterStore' => fn (Model $entity, mixed $data): Model => $replaced,
+        ]);
+
+        $result = $service->store(['name' => 'Teste']);
+
+        $this->assertSame($replaced, $result->data);
+    }
+
+    public function test_after_delete_hook_runs_inside_delete(): void
+    {
+        $entity = Mockery::mock(Model::class);
+        $spy = new class
+        {
+            public bool $hit = false;
+        };
+
+        $this->repositoryMock
+            ->shouldReceive('delete')
+            ->once()
+            ->with($entity)
+            ->andReturn(true);
+
+        $this->activityMock
+            ->shouldReceive('log')
+            ->once()
+            ->with($entity, ActivityActionEnum::Deleted);
+
+        $service = $this->hookService([
+            'afterDelete' => function (Model $received) use ($entity, $spy): void {
+                self::assertSame($entity, $received);
+                $spy->hit = true;
+            },
+        ]);
+
+        $service->delete($entity);
+
+        $this->assertTrue($spy->hit);
+    }
+
+    public function test_edit_reports_can_edit_and_warnings(): void
+    {
+        $entity = Mockery::mock(Model::class);
+
+        $service = $this->hookService([
+            'canEdit' => fn (Model $received): bool => false,
+            'editWarnings' => fn (Model $received): array => ['Registro inativo.'],
+        ]);
+
+        $result = $service->edit($entity);
+
+        $this->assertFalse($result->meta['editable']);
+        $this->assertSame(['Registro inativo.'], $result->warnings);
+        $this->assertSame(['Registro inativo.'], $result->meta['warnings']);
+    }
+
+    private function hookService(array $hooks): BaseCrudService
+    {
+        return new HookAwareService($this->repositoryMock, $this->activityMock, $hooks);
+    }
+}
+
+class HookAwareService extends BaseCrudService
+{
+    public function __construct(
+        BaseRepositoryInterface $repository,
+        ActivityLogService $activity,
+        private readonly array $hooks = [],
+    ) {
+        $this->repository = $repository;
+        $this->activity = $activity;
+    }
+
+    protected function beforeStore(mixed $data): void
+    {
+        ($this->hooks['beforeStore'] ?? null)?->__invoke($data);
+    }
+
+    protected function beforeUpdate(Model $entity, mixed $data): void
+    {
+        ($this->hooks['beforeUpdate'] ?? null)?->__invoke($entity, $data);
+    }
+
+    protected function beforeDelete(Model $entity): void
+    {
+        ($this->hooks['beforeDelete'] ?? null)?->__invoke($entity);
+    }
+
+    protected function afterStore(Model $entity, mixed $data): Model
+    {
+        return ($this->hooks['afterStore'] ?? null)?->__invoke($entity, $data) ?? $entity;
+    }
+
+    protected function afterUpdate(Model $entity, mixed $data): Model
+    {
+        return ($this->hooks['afterUpdate'] ?? null)?->__invoke($entity, $data) ?? $entity;
+    }
+
+    protected function afterDelete(Model $entity): void
+    {
+        ($this->hooks['afterDelete'] ?? null)?->__invoke($entity);
+    }
+
+    protected function canEdit(Model $entity): bool
+    {
+        return ($this->hooks['canEdit'] ?? null)?->__invoke($entity) ?? true;
+    }
+
+    protected function editWarnings(Model $entity): array
+    {
+        return ($this->hooks['editWarnings'] ?? null)?->__invoke($entity) ?? [];
     }
 }

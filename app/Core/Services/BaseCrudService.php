@@ -7,7 +7,6 @@ use App\Core\DTO\ServiceResult;
 use App\Core\Enums\ActivityActionEnum;
 use App\Core\Exceptions\BusinessRuleException;
 use App\Core\Repositories\Interfaces\BaseRepositoryInterface;
-use App\Core\Services\Children\ChildRelation;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -16,15 +15,21 @@ use Illuminate\Support\Facades\DB;
 abstract class BaseCrudService
 {
     protected BaseRepositoryInterface $repository;
+
     protected ActivityLogService $activity;
 
-    public function store(mixed $data): ServiceResult {
+    public function store(mixed $data): ServiceResult
+    {
         $data = $this->prepareData($data);
+
+        $this->beforeStore($data);
 
         [$entity, $children] = DB::transaction(function () use ($data): array {
             $entity = $this->repository->store($this->extractHeaderData($data));
 
             $children = $this->syncChildren($entity, $data);
+
+            $entity = $this->afterStore($entity, $data);
 
             $this->activity->log($entity, ActivityActionEnum::Created);
 
@@ -37,23 +42,32 @@ abstract class BaseCrudService
         );
     }
 
-    public function edit(Model $entity): ServiceResult {
+    public function edit(Model $entity): ServiceResult
+    {
+        $warnings = $this->editWarnings($entity);
+
         return new ServiceResult(
             data: $this->loadChildren($entity),
+            warnings: $warnings,
             meta: [
-                'editable' => true,
-                'warnings' => []
+                'editable' => $this->canEdit($entity),
+                'warnings' => $warnings,
             ]
         );
     }
 
-    public function update(Model $entity, mixed $data): ServiceResult {
+    public function update(Model $entity, mixed $data): ServiceResult
+    {
         $data = $this->prepareData($data);
+
+        $this->beforeUpdate($entity, $data);
 
         [$entity, $children] = DB::transaction(function () use ($entity, $data): array {
             $entity = $this->repository->update($entity, $this->extractHeaderData($data));
 
             $children = $this->syncChildren($entity, $data);
+
+            $entity = $this->afterUpdate($entity, $data);
 
             $this->activity->log($entity, ActivityActionEnum::Updated);
 
@@ -66,58 +80,125 @@ abstract class BaseCrudService
         );
     }
 
-    public function delete(Model $entity): ServiceResult {
-        $deleted = $this->repository->delete($entity);
-        $this->activity->log($entity, ActivityActionEnum::Deleted);
+    public function delete(Model $entity): ServiceResult
+    {
+        $this->beforeDelete($entity);
+
+        $deleted = DB::transaction(function () use ($entity): bool {
+            $deleted = $this->repository->delete($entity);
+
+            $this->afterDelete($entity);
+
+            $this->activity->log($entity, ActivityActionEnum::Deleted);
+
+            return $deleted;
+        });
 
         return new ServiceResult(
             data: null,
             meta: [
-                'deleted' => $deleted
+                'deleted' => $deleted,
             ]
         );
     }
 
-    public function list(array $filters = []): ServiceResult {
+    public function list(array $filters = []): ServiceResult
+    {
         return new ServiceResult(
             data: $this->repository->list($filters)
         );
     }
 
-    public function exportQuery(array $params = []): Builder {
+    public function exportQuery(array $params = []): Builder
+    {
         return $this->repository->getExportQuery($params);
     }
 
-    public function show(Model $entity): ServiceResult {
+    public function show(Model $entity): ServiceResult
+    {
         return new ServiceResult(
             data: $this->loadChildren($entity)
         );
     }
 
-    public function find(mixed $id): ServiceResult {
+    public function find(mixed $id): ServiceResult
+    {
         return new ServiceResult(
             data: $this->loadChildren($this->repository->getById($id))
         );
     }
 
-    public function lookup(array $params): ServiceResult {
+    public function lookup(array $params): ServiceResult
+    {
         return new ServiceResult(
             data: $this->repository->lookup($params)
         );
     }
 
-    protected function prepareData(mixed $data): mixed {
+    protected function prepareData(mixed $data): mixed
+    {
         return $data;
     }
 
-    protected function childRelations(): array {
+    protected function beforeStore(mixed $data): void
+    {
+        // Sem regra de inclusão: cabe ao módulo sobrescrever.
+    }
+
+    protected function beforeUpdate(Model $entity, mixed $data): void
+    {
+        // Sem regra de alteração: cabe ao módulo sobrescrever.
+    }
+
+    protected function beforeDelete(Model $entity): void
+    {
+        // Sem regra de exclusão: cabe ao módulo sobrescrever.
+    }
+
+    protected function afterStore(Model $entity, mixed $data): Model
+    {
+        return $entity;
+    }
+
+    protected function afterUpdate(Model $entity, mixed $data): Model
+    {
+        return $entity;
+    }
+
+    protected function afterDelete(Model $entity): void
+    {
+        // Sem efeito colateral: cabe ao módulo sobrescrever.
+    }
+
+    protected function canEdit(Model $entity): bool
+    {
+        return true;
+    }
+
+    protected function editWarnings(Model $entity): array
+    {
         return [];
     }
 
-    protected function extractHeaderData(mixed $data): mixed {
+    protected function dataValue(mixed $data, string $key, mixed $default = null): mixed
+    {
+        return match (true) {
+            is_array($data) => $data[$key] ?? $default,
+            is_object($data) => $data->{$key} ?? $default,
+            default => $default,
+        };
+    }
+
+    protected function childRelations(): array
+    {
+        return [];
+    }
+
+    protected function extractHeaderData(mixed $data): mixed
+    {
         $childKeys = array_keys($this->childRelations());
 
-        if ($childKeys === [] || !is_object($data) || !method_exists($data, 'toArray')) {
+        if ($childKeys === [] || ! is_object($data) || ! method_exists($data, 'toArray')) {
             return $data;
         }
 
@@ -130,7 +211,8 @@ abstract class BaseCrudService
         return new AttributesDTO($attributes);
     }
 
-    protected function syncChildren(Model $header, mixed $data): array {
+    protected function syncChildren(Model $header, mixed $data): array
+    {
         $results = [];
 
         foreach ($this->childRelations() as $key => $definition) {
@@ -146,7 +228,8 @@ abstract class BaseCrudService
         return $results;
     }
 
-    protected function loadChildren(?Model $entity, ?array $relations = null): ?Model {
+    protected function loadChildren(?Model $entity, ?array $relations = null): ?Model
+    {
         $relations ??= array_keys($this->childRelations());
 
         if ($entity === null || $relations === []) {
@@ -156,11 +239,12 @@ abstract class BaseCrudService
         return $entity->loadMissing($relations);
     }
 
-    protected function extractChildItems(mixed $data, string $key): ?array {
+    protected function extractChildItems(mixed $data, string $key): ?array
+    {
         $value = match (true) {
-            is_array($data)  => $data[$key] ?? null,
+            is_array($data) => $data[$key] ?? null,
             is_object($data) => $data->{$key} ?? null,
-            default          => null,
+            default => null,
         };
 
         if ($value === null) {
@@ -181,7 +265,8 @@ abstract class BaseCrudService
         );
     }
 
-    private function childrenMeta(array $children): array {
+    private function childrenMeta(array $children): array
+    {
         return $children === [] ? [] : ['children' => $children];
     }
 }
