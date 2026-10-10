@@ -12,28 +12,31 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserService extends BaseCrudService
 {
-    public function __construct(UserRepositoryInterface $repository, ActivityLogService $activity) {
+    public function __construct(UserRepositoryInterface $repository, ActivityLogService $activity)
+    {
         $this->repository = $repository;
         $this->activity = $activity;
     }
 
-    public function store(mixed $data): ServiceResult {
-        $result = parent::store($data);
-        $result->data = $this->defineRoles($result->data, ListHelpers::groupListByProperty($data->roles, 'id'))->data;
-
-        return $result;
+    protected function afterStore(Model $user, mixed $data): Model
+    {
+        return $this->defineRoles($user, $this->roleIds($data))->data;
     }
 
-    public function update(Model $user, mixed $data): ServiceResult {
-        $result = parent::update($user, $data);
-        $result->data = $this->defineRoles($result->data, ListHelpers::groupListByProperty($data->roles, 'id'))->data;
-
-        return $result;
+    protected function afterUpdate(Model $user, mixed $data): Model
+    {
+        return $this->defineRoles($user, $this->roleIds($data))->data;
     }
 
-    public function defineRoles(User $user, array $roleIds = []): ServiceResult {
+    public function defineRoles(User $user, array $roleIds = []): ServiceResult
+    {
         return new ServiceResult(
             data: $this->repository->sync($user, 'roles', $roleIds)
         );
+    }
+
+    private function roleIds(mixed $data): array
+    {
+        return ListHelpers::groupListByProperty((array) $this->dataValue($data, 'roles', []), 'id');
     }
 }

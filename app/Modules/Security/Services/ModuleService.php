@@ -2,12 +2,10 @@
 
 namespace App\Modules\Security\Services;
 
-use App\Core\DTO\ServiceResult;
-use App\Core\Services\BaseCrudService;
 use App\Core\Services\ActivityLogService;
+use App\Core\Services\BaseCrudService;
 use App\Modules\Security\Repositories\Interfaces\ModuleRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
-use Override;
 
 class ModuleService extends BaseCrudService
 {
@@ -17,15 +15,13 @@ class ModuleService extends BaseCrudService
         $this->activity = $activity;
     }
 
-    #[Override]
-    public function edit(Model $module): ServiceResult {
-       $result = parent::edit($module);
+    protected function canEdit(Model $module): bool
+    {
+        return (bool) $module->is_active;
+    }
 
-        if (!$module->is_active) {
-            $result->meta['editable'] = false;
-            $result->warnings[] = 'Este módulo está não está ativo.';
-        }
-
-        return $result;
+    protected function editWarnings(Model $module): array
+    {
+        return $module->is_active ? [] : ['Este módulo não está ativo.'];
     }
 }

@@ -2,16 +2,18 @@
 
 namespace Tests\Feature\Catalog;
 
-use App\Modules\Catalog\Models\ProductCategory;
 use App\Modules\Catalog\Exports\ProductCategoryExport;
-use Maatwebsite\Excel\Facades\Excel;use Tests\TestCase;
+use App\Modules\Catalog\Models\ProductCategory;
 use Illuminate\Http\Response;
+use Maatwebsite\Excel\Facades\Excel;
+use Tests\TestCase;
 
 class ProductCategoryTest extends TestCase
 {
     protected string $endpoint = '/api/catalog/product-categories';
 
-    protected function getResourceStructure(): array {
+    protected function getResourceStructure(): array
+    {
         return [
             'id',
             'name',
@@ -20,11 +22,12 @@ class ProductCategoryTest extends TestCase
             'is_active',
             'created_at',
             'updated_at',
-            'deleted_at'
+            'deleted_at',
         ];
     }
 
-    public function test_listing_returns_default_api_response_structure(): void {
+    public function test_listing_returns_default_api_response_structure(): void
+    {
         $response = $this->getJson($this->endpoint, $this->getAdminAuthHeaders());
 
         $response->assertStatus(Response::HTTP_OK);
@@ -40,8 +43,8 @@ class ProductCategoryTest extends TestCase
             ->assertJsonIsObject()
             ->assertJsonStructure([
                 'data' => [
-                    '*' => $this->getResourceStructure()
-                ]
+                    '*' => $this->getResourceStructure(),
+                ],
             ])
             ->assertJsonCount(3, 'data');
     }
@@ -49,7 +52,7 @@ class ProductCategoryTest extends TestCase
     public function test_can_list_product_categorys_with_sort(): void
     {
         $queryParams = [
-            'sorts' => '-id'
+            'sorts' => '-id',
         ];
 
         ProductCategory::factory(3)->create();
@@ -65,9 +68,9 @@ class ProductCategoryTest extends TestCase
         $queryParams = [
             'filters' => [
                 'id' => [
-                    'eq' => 2
-                ]
-            ]
+                    'eq' => 2,
+                ],
+            ],
         ];
 
         ProductCategory::factory(3)->create();
@@ -84,7 +87,7 @@ class ProductCategoryTest extends TestCase
         $models = ProductCategory::factory(3)->create();
 
         $queryParams = [
-            'q' => $models->first()->name
+            'q' => $models->first()->name,
         ];
 
         $response = $this->getJson(url()->query($this->endpoint, $queryParams), $this->getAdminAuthHeaders());
@@ -116,7 +119,7 @@ class ProductCategoryTest extends TestCase
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonIsObject()
             ->assertJsonStructure([
-                'data' => $this->getResourceStructure()
+                'data' => $this->getResourceStructure(),
             ])
             ->assertJsonPath('data.name', $model->name);
     }
@@ -152,7 +155,7 @@ class ProductCategoryTest extends TestCase
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonIsObject()
             ->assertJsonStructure([
-                'data' => $this->getResourceStructure()
+                'data' => $this->getResourceStructure(),
             ])
             ->assertJsonPath('data.name', $model->name)
             ->assertJsonPath('meta.editable', true);
@@ -191,7 +194,7 @@ class ProductCategoryTest extends TestCase
         $response->assertStatus(Response::HTTP_CREATED)
             ->assertJsonIsObject()
             ->assertJsonStructure([
-                'data' => $this->getResourceStructure()
+                'data' => $this->getResourceStructure(),
             ])
             ->assertJsonPath('data.name', $model->name);
 
@@ -242,7 +245,7 @@ class ProductCategoryTest extends TestCase
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonIsObject()
             ->assertJsonStructure([
-                'data' => $this->getResourceStructure()
+                'data' => $this->getResourceStructure(),
             ])
             ->assertJsonPath('data.name', 'Updated ProductCategory');
     }
@@ -290,6 +293,22 @@ class ProductCategoryTest extends TestCase
         $this->assertErrorResponse($response, Response::HTTP_FORBIDDEN);
     }
 
+    public function test_cannot_update_product_category_with_itself_as_parent(): void
+    {
+        $model = ProductCategory::factory()->createOne();
+
+        $data = $model->toArray();
+        $data['parent_category_id'] = $model->id;
+
+        $response = $this->putJson("{$this->endpoint}/{$model->id}", $data, $this->getAdminAuthHeaders());
+
+        $this->assertErrorResponse($response, Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJsonValidationErrorFor('parent_category_id');
+
+        $model->refresh();
+        $this->assertNull($model->parent_category_id);
+    }
+
     public function test_can_delete_product_category_by_id(): void
     {
         $model = ProductCategory::factory()->createOne();
@@ -300,6 +319,16 @@ class ProductCategoryTest extends TestCase
         $this->assertSoftDeleted('product_categories', [
             'id' => $model->id,
         ]);
+    }
+
+    public function test_cannot_delete_inactive_product_category(): void
+    {
+        $model = ProductCategory::factory()->inactive()->createOne();
+
+        $response = $this->deleteJson("{$this->endpoint}/{$model->id}", [], $this->getAdminAuthHeaders());
+
+        $this->assertErrorResponse($response, Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->assertNotSoftDeleted('product_categories', ['id' => $model->id]);
     }
 
     public function test_cannot_delete_product_category_by_invalid_id(): void
@@ -382,9 +411,9 @@ class ProductCategoryTest extends TestCase
                         'key',
                         'label',
                         'sublabel',
-                        'meta'
-                    ]
-                ]
+                        'meta',
+                    ],
+                ],
             ])
             ->assertJsonCount(3, 'data');
     }
@@ -394,7 +423,7 @@ class ProductCategoryTest extends TestCase
         $models = ProductCategory::factory(3)->create();
 
         $queryParams = [
-            'q' => $models->first()->name
+            'q' => $models->first()->name,
         ];
 
         $response = $this->getJson(url()->query("{$this->endpoint}/lookup", $queryParams), $this->getAdminAuthHeaders());
@@ -410,7 +439,7 @@ class ProductCategoryTest extends TestCase
         $models = ProductCategory::factory(3)->create();
 
         $queryParams = [
-            'sorts' => '-id'
+            'sorts' => '-id',
         ];
 
         $response = $this->getJson(url()->query("{$this->endpoint}/lookup", $queryParams), $this->getAdminAuthHeaders());
