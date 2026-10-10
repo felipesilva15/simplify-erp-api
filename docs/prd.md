@@ -52,6 +52,7 @@ O único consumidor com rota nominal própria no repositório é o portal de doc
 | **Cadastros geográficos** | Consulta de países, estados e cidades e busca rápida em cada um. |
 | **Parceiros** | CRUD de parceiros (pessoa física, empresa ou estrangeiro) com contatos aninhados; busca rápida; exportação. |
 | **Tipos de parceiro** | CRUD e busca rápida. |
+| **Catálogo de produtos** | CRUD de categorias de produto (hierárquicas via `parent_category_id`), busca rápida e exportação. |
 | **Profissões (RH)** | Consulta do catálogo CBO, busca rápida e exportação. Sem cadastro nem edição. |
 | **Auditoria** | Listagem do histórico de um registro por recurso, com autor, ação, rota, IP e user agent. |
 | **Infraestrutura de API** | Filtro, ordenação, paginação, lookup, exportação tabular, envelope de resposta, erros padronizados, documentação OpenAPI. |
@@ -85,6 +86,7 @@ Os itens abaixo existem como estrutura de dados ou configuração **sem** rota, 
 | UC-13 | Auditar as alterações de um registro | Usuário com permissão de leitura |
 | UC-14 | Gerar um novo módulo de negócio | Desenvolvedor |
 | UC-15 | Consultar o catálogo de profissões (CBO), buscá-lo rapidamente e exportá-lo | Qualquer usuário autenticado com permissão |
+| UC-16 | Cadastrar e manter categorias de produto (inclusive hierarquia) | Administrador / usuário com permissão |
 
 ---
 
@@ -162,6 +164,13 @@ Os itens abaixo existem como estrutura de dados ou configuração **sem** rota, 
 - A tabela é fixa e mantida pelo sistema: é populada por `ProfessionSeeder` a partir de `storage/data/cbo-ocupacao.csv` e não usa soft delete.
 - Cada registro é identificado pelo código CBO (6 caracteres, único) e pelo nome; o `cbo` é filtrável e indexado na busca rápida.
 - As permissões do recurso são apenas de leitura e exportação: `professions.viewAny`, `professions.view` e `professions.export`.
+
+### 7.9 Categorias de produto (Catálogo)
+
+- Categorias são **hierárquicas**: cada categoria pode apontar para uma categoria pai por `parent_category_id` (nulo para categorias raiz), formando uma árvore de subcategorias.
+- `name` é obrigatório e `applicability` (produto ou serviço) é obrigatório; `is_active` controla a disponibilidade da categoria.
+- Uma categoria **não pode ser pai dela mesma**: enviar `parent_category_id` igual ao próprio `id` na alteração é rejeitado com `422`.
+- Um registro **inativo não pode ser excluído** pela API (`422`); a exclusão é lógica (soft delete).
 
 ---
 

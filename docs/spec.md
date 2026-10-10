@@ -93,15 +93,28 @@ lookup(array $params): ServiceResult
 exportQuery(array $params = []): Builder
 ```
 
-Pontos de gancho sobrescritíveis por módulo:
+Pontos de gancho sobrescritíveis por módulo (métodos `protected` no-op no core; o módulo só sobrescreve o que precisar):
 
 | Gancho | Finalidade | Quem usa |
 |---|---|---|
 | `prepareData(mixed $data): mixed` | Normalizar ou forçar valores antes da gravação. | `PartnerService`, `PermissionService` |
 | `childRelations(): array` | Declarar relações 1:N sincronizadas junto do cabeçalho. | `PartnerService` |
+| `beforeStore(mixed $data): void` | Regras de negócio que bloqueiam a inclusão (lançar `BusinessRuleException`). | `ProductCategoryService` (exemplo) |
+| `beforeUpdate(Model $entity, mixed $data): void` | Regras de negócio que bloqueiam a alteração. | `ProductCategoryService` |
+| `beforeDelete(Model $entity): void` | Regras de negócio que bloqueiam a exclusão. | `ProductCategoryService` |
+| `afterStore(Model $entity, mixed $data): Model` | Pós-processamento da inclusão, dentro da transação; pode devolver a instância atualizada. | `UserService` (roles) |
+| `afterUpdate(Model $entity, mixed $data): Model` | Pós-processamento da alteração, dentro da transação. | `UserService` (roles) |
+| `afterDelete(Model $entity): void` | Pós-processamento da exclusão, dentro da transação. | — |
+| `canEdit(Model $entity): bool` | Liga/desliga `meta.editable` no `edit()`, sem bloquear a leitura. | `ModuleService` (inativo) |
+| `editWarnings(Model $entity): array` | Avisos ao cliente no `edit()`. | `ModuleService` (inativo) |
+| `dataValue(mixed $data, string $key, mixed $default = null): mixed` | Lê um campo de payload heterogêneo (array, DTO, `Arrayable`, objeto) para uso nos hooks. | Core |
 | `ActivityLogService` injetado | Registrar auditoria. | Todos |
 
-`store` e `update` executam, dentro de uma única `DB::transaction`: gravação do cabeçalho, sincronização dos filhos e registro da auditoria. `delete` grava o soft delete e só então registra a auditoria, sem transação. `edit`, `list`, `lookup`, `show` e `find` não abrem transação.
+Ordem de execução: os ganchos `before*` rodam **antes** da transação; `after*` rodam **dentro** da transação, imediatamente antes do log de auditoria.
+
+`store` e `update` executam, dentro de uma única `DB::transaction`: hook `before*` fora da transação; depois gravação do cabeçalho, sincronização dos filhos, hook `after*` e registro da auditoria. `delete` também é transacional desde que passou a executar `beforeDelete`, exclusão, `afterDelete` e auditoria no mesmo bloco. `edit` devolve `meta.editable` (`canEdit()`), `warnings` (`editWarnings()`) e `meta.warnings`; `list`, `lookup`, `show` e `find` não abrem transação.
+
+Regras de negócio de exemplo em `ProductCategoryService`: a categoria não pode ter `parent_category_id` igual ao próprio `id` (`beforeUpdate`) e um registro inativo não pode ser excluído (`beforeDelete`).
 
 ### 2.2 Contrato de repositório
 
@@ -223,8 +236,8 @@ sequenceDiagram
     FR->>CT: chama a ação
     CT->>CT: {Entity}DTO::fromArray($request->validated())
     CT->>SV: store(dto) / update(model, dto)
-    SV->>SV: prepareData() — gancho do módulo
-    SV->>RP: DB::transaction { store(cabeçalho); syncChildren(); log() }
+    SV->>SV: prepareData() + beforeStore()/beforeUpdate() — ganchos do módulo
+    SV->>RP: DB::transaction { store/update(cabeçalho); syncChildren(); afterStore()/afterUpdate(); log() }
     RP->>DB: create() / update() (respeita $fillable e $casts)
     SV-->>CT: ServiceResult(data, warnings, meta)
     CT->>CT: {Entity}Resource → Collection

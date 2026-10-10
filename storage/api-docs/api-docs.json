@@ -9516,12 +9516,6 @@
                         "format": "date-time",
                         "example": "2026-10-07T16:16:20.103960Z",
                         "nullable": true
-                    },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-10-07T16:16:20.103960Z",
-                        "nullable": true
                     }
                 },
                 "type": "object"
