@@ -2,12 +2,14 @@
 
 namespace App\Modules\ThirdParty\Http\Resources\Partner;
 
+use App\Modules\Geography\Http\Resources\Address\AddressResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @OA\Schema(
  *      schema="PartnerResource",
+ *
  *      @OA\Property(property="id", type="integer", example=1),
  *      @OA\Property(property="partner_type_code", type="string", example="Sample", minLength=1, maxLength=20),
  *      @OA\Property(property="partner_type_name", type="string", example="Sample", minLength=1, maxLength=80),
@@ -34,6 +36,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *      @OA\Property(property="pix_key", type="string", example="Sample", nullable=true),
  *      @OA\Property(property="notes", type="string", example="Sample", nullable=true),
  *      @OA\Property(property="contacts", type="array", @OA\Items(ref="#/components/schemas/PartnerContactResource")),
+ *      @OA\Property(property="addresses", type="array", @OA\Items(ref="#/components/schemas/AddressResource")),
  *      @OA\Property(property="created_at", type="string", format="date-time", example="2026-09-09T02:22:32.660898Z", nullable=true),
  *      @OA\Property(property="updated_at", type="string", format="date-time", example="2026-09-09T02:22:32.660898Z", nullable=true),
  *      @OA\Property(property="deleted_at", type="string", format="date-time", example="2026-09-09T02:22:32.660898Z", nullable=true)
@@ -41,7 +44,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 class PartnerResource extends JsonResource
 {
-    public function toArray(Request $request): array {
+    public function toArray(Request $request): array
+    {
         return [
             'id' => $this->id,
             'partner_type_code' => $this->partner_type_code,
@@ -69,9 +73,10 @@ class PartnerResource extends JsonResource
             'pix_key' => $this->pix_key,
             'notes' => $this->notes,
             'contacts' => PartnerContactResource::collection($this->contacts),
+            'addresses' => AddressResource::collection($this->addresses),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'deleted_at' => $this->deleted_at
+            'deleted_at' => $this->deleted_at,
         ];
     }
 }

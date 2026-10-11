@@ -3,6 +3,7 @@
 namespace App\Modules\ThirdParty\Models;
 
 use App\Core\Models\BaseModel;
+use App\Modules\Geography\Models\Address;
 use App\Modules\ThirdParty\Enums\GenderEnum;
 use App\Modules\ThirdParty\Enums\MaritalStatusEnum;
 use App\Modules\ThirdParty\Enums\PersonTypeEnum;
@@ -13,11 +14,13 @@ use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @OA\Schema(
  *      schema="Partner",
+ *
  *      @OA\Property(property="id", type="integer", example=1),
  *      @OA\Property(property="partner_type_code", type="string", example="Sample"),
  *      @OA\Property(property="name", type="string", example="Sample"),
@@ -50,8 +53,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[UseFactory(PartnerFactory::class)]
 class Partner extends BaseModel
 {
-    /** @use HasFactory<\Database\Factories\PartnerFactory> */
-    use SoftDeletes, HasFactory;
+    /** @use HasFactory<PartnerFactory> */
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'partner_type_code',
@@ -76,7 +79,7 @@ class Partner extends BaseModel
         'mother_document',
         'pix_type',
         'pix_key',
-        'notes'
+        'notes',
     ];
 
     protected $casts = [
@@ -86,14 +89,21 @@ class Partner extends BaseModel
         'marital_status' => MaritalStatusEnum::class,
         'person_type' => PersonTypeEnum::class,
         'pix_type' => PixTypeEnum::class,
-        'taxpayer_type' => TaxpayerTypeEnum::class
+        'taxpayer_type' => TaxpayerTypeEnum::class,
     ];
 
-    public function partnerType(): BelongsTo {
+    public function partnerType(): BelongsTo
+    {
         return $this->belongsTo(PartnerType::class, 'partner_type_code', 'code');
     }
 
-    public function contacts(): HasMany {
+    public function contacts(): HasMany
+    {
         return $this->hasMany(Contact::class);
+    }
+
+    public function addresses(): MorphMany
+    {
+        return $this->morphMany(Address::class, 'addressable');
     }
 }

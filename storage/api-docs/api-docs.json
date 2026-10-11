@@ -506,6 +506,96 @@
                 ]
             }
         },
+        "/api/geography/addresses/{id}/activity-logs": {
+            "get": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "List activity logs of an address",
+                "operationId": "listAddressActivityLogs",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Address ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Address activity logs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ActivityLogCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/hr/professions/{id}/activity-logs": {
             "get": {
                 "tags": [
@@ -2804,6 +2894,524 @@
                         "bearerAuth": []
                     }
                 ]
+            }
+        },
+        "/api/geography/addresses": {
+            "get": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "List all addresses",
+                "operationId": "5ab83fdc34ec5608bb1e51a2c923a750",
+                "parameters": [
+                    {
+                        "name": "filters[id][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[addressable_type][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[addressable_id][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[type][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[city_name][like]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[created_at][gte]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "$ref": "#/components/parameters/qParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sortsParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/perPageParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/pageParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Address list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/AddressCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Registers an address",
+                "operationId": "9b11f548f70aa7cec530161ae1d95f2e",
+                "requestBody": {
+                    "description": "Data for creating a new address",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreAddressRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Registered address data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/AddressResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/geography/addresses/{address}": {
+            "get": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "List an address by ID",
+                "operationId": "3c5bf2e411bd86bf49185bd6a8bc3d2b",
+                "parameters": [
+                    {
+                        "name": "address",
+                        "in": "path",
+                        "description": "Address ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Address data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/AddressResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Update an address",
+                "operationId": "9ab27859a0b4c252f732b49f5b1b5342",
+                "parameters": [
+                    {
+                        "name": "address",
+                        "in": "path",
+                        "description": "Address ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Data for update address",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateAddressRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated address data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/AddressResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Delete an address",
+                "operationId": "ea801c0acf7402f7b1dbb87b39d14590",
+                "parameters": [
+                    {
+                        "name": "address",
+                        "in": "path",
+                        "description": "Address ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/geography/addresses/{address}/edit": {
+            "get": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Get data to edit an address",
+                "operationId": "13bdc104555fcacb8258eb65bed2395f",
+                "parameters": [
+                    {
+                        "name": "address",
+                        "in": "path",
+                        "description": "Address ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Address data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/AddressResource"
+                                                },
+                                                "warnings": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "Este recurso não pode ser editado."
+                                                    },
+                                                    "nullable": true
+                                                },
+                                                "meta": {
+                                                    "properties": {
+                                                        "editable": {
+                                                            "type": "boolean",
+                                                            "example": true
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/api/geography/cities": {
@@ -9564,6 +10172,353 @@
                 },
                 "type": "object"
             },
+            "AddressTypeEnum": {
+                "description": "Tipos de endereço:\n *      Fiscal = 'TAX'\n *      Entrega = 'DELIVERY'\n *      Cobrança = 'BILLING'",
+                "type": "string",
+                "enum": [
+                    "TAX",
+                    "DELIVERY",
+                    "BILLING"
+                ]
+            },
+            "StoreAddressRequest": {
+                "description": "Payload de criação de um endereço. O alvo polimórfico é informado por addressable_type (alias do morph map, ex.: partner) e addressable_id.",
+                "required": [
+                    "addressable_type",
+                    "addressable_id",
+                    "type",
+                    "country_id"
+                ],
+                "properties": {
+                    "addressable_type": {
+                        "type": "string",
+                        "example": "partner"
+                    },
+                    "addressable_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "$ref": "#/components/schemas/AddressTypeEnum"
+                    },
+                    "is_primary": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "country_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "state_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "city_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "district": {
+                        "type": "string",
+                        "example": "Centro",
+                        "nullable": true,
+                        "maxLength": 80,
+                        "minLength": 1
+                    },
+                    "street": {
+                        "type": "string",
+                        "example": "Rua das Flores",
+                        "nullable": true,
+                        "maxLength": 120,
+                        "minLength": 1
+                    },
+                    "number": {
+                        "type": "string",
+                        "example": "42",
+                        "nullable": true,
+                        "maxLength": 16,
+                        "minLength": 1
+                    },
+                    "state_name": {
+                        "type": "string",
+                        "example": "California",
+                        "nullable": true,
+                        "maxLength": 80,
+                        "minLength": 1
+                    },
+                    "city_name": {
+                        "type": "string",
+                        "example": "Sacramento",
+                        "nullable": true,
+                        "maxLength": 90,
+                        "minLength": 1
+                    },
+                    "address_line_1": {
+                        "type": "string",
+                        "example": "2201 K Street",
+                        "nullable": true,
+                        "maxLength": 160,
+                        "minLength": 1
+                    },
+                    "address_line_2": {
+                        "type": "string",
+                        "example": "Suite 200",
+                        "nullable": true,
+                        "maxLength": 160,
+                        "minLength": 1
+                    },
+                    "postal_code": {
+                        "type": "string",
+                        "example": "95814",
+                        "nullable": true,
+                        "maxLength": 20,
+                        "minLength": 1
+                    },
+                    "complement": {
+                        "type": "string",
+                        "example": "Sala 101",
+                        "nullable": true,
+                        "maxLength": 40,
+                        "minLength": 1
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Entregar somente em horário comercial",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateAddressRequest": {
+                "description": "Payload de alteração de um endereço. O alvo polimórfico (addressable_type/addressable_id) é imutável e não pode ser enviado.",
+                "required": [
+                    "type",
+                    "country_id"
+                ],
+                "properties": {
+                    "type": {
+                        "$ref": "#/components/schemas/AddressTypeEnum"
+                    },
+                    "is_primary": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "country_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "state_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "city_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "district": {
+                        "type": "string",
+                        "example": "Centro",
+                        "nullable": true,
+                        "maxLength": 80,
+                        "minLength": 1
+                    },
+                    "street": {
+                        "type": "string",
+                        "example": "Rua das Flores",
+                        "nullable": true,
+                        "maxLength": 120,
+                        "minLength": 1
+                    },
+                    "number": {
+                        "type": "string",
+                        "example": "42",
+                        "nullable": true,
+                        "maxLength": 16,
+                        "minLength": 1
+                    },
+                    "state_name": {
+                        "type": "string",
+                        "example": "California",
+                        "nullable": true,
+                        "maxLength": 80,
+                        "minLength": 1
+                    },
+                    "city_name": {
+                        "type": "string",
+                        "example": "Sacramento",
+                        "nullable": true,
+                        "maxLength": 90,
+                        "minLength": 1
+                    },
+                    "address_line_1": {
+                        "type": "string",
+                        "example": "2201 K Street",
+                        "nullable": true,
+                        "maxLength": 160,
+                        "minLength": 1
+                    },
+                    "address_line_2": {
+                        "type": "string",
+                        "example": "Suite 200",
+                        "nullable": true,
+                        "maxLength": 160,
+                        "minLength": 1
+                    },
+                    "postal_code": {
+                        "type": "string",
+                        "example": "95814",
+                        "nullable": true,
+                        "maxLength": 20,
+                        "minLength": 1
+                    },
+                    "complement": {
+                        "type": "string",
+                        "example": "Sala 101",
+                        "nullable": true,
+                        "maxLength": 40,
+                        "minLength": 1
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Entregar somente em horário comercial",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "AddressCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/AddressResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "AddressResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "addressable_type": {
+                        "type": "string",
+                        "example": "partner"
+                    },
+                    "addressable_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "BILLING"
+                    },
+                    "is_primary": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "country_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "country_iso_code": {
+                        "type": "string",
+                        "example": "BR"
+                    },
+                    "state_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "city_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "district": {
+                        "type": "string",
+                        "example": "Centro",
+                        "nullable": true
+                    },
+                    "street": {
+                        "type": "string",
+                        "example": "Rua das Flores",
+                        "nullable": true
+                    },
+                    "number": {
+                        "type": "string",
+                        "example": "42",
+                        "nullable": true
+                    },
+                    "state_name": {
+                        "type": "string",
+                        "example": "California",
+                        "nullable": true
+                    },
+                    "city_name": {
+                        "type": "string",
+                        "example": "Sacramento",
+                        "nullable": true
+                    },
+                    "address_line_1": {
+                        "type": "string",
+                        "example": "2201 K Street",
+                        "nullable": true
+                    },
+                    "address_line_2": {
+                        "type": "string",
+                        "example": "Suite 200",
+                        "nullable": true
+                    },
+                    "postal_code": {
+                        "type": "string",
+                        "example": "95814",
+                        "nullable": true
+                    },
+                    "complement": {
+                        "type": "string",
+                        "example": "Sala 101",
+                        "nullable": true
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Entregar somente em horário comercial",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-10-10T02:22:32.660898Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-10-10T02:22:32.660898Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-10-10T02:22:32.660898Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "CityCollection": {
                 "type": "object",
                 "allOf": [
@@ -9661,6 +10616,10 @@
                         "example": "Sample",
                         "maxLength": 7,
                         "minLength": 1
+                    },
+                    "state_id": {
+                        "type": "integer",
+                        "example": 1
                     },
                     "state": {
                         "$ref": "#/components/schemas/CityStateResource"
@@ -9938,6 +10897,213 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2026-09-24T04:09:20.641277Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "Address": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "addressable_type": {
+                        "type": "string",
+                        "example": "partner"
+                    },
+                    "addressable_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "$ref": "#/components/schemas/AddressTypeEnum"
+                    },
+                    "is_primary": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "country_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "state_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "city_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "district": {
+                        "type": "string",
+                        "example": "Centro",
+                        "nullable": true
+                    },
+                    "street": {
+                        "type": "string",
+                        "example": "Rua das Flores",
+                        "nullable": true
+                    },
+                    "number": {
+                        "type": "string",
+                        "example": "42",
+                        "nullable": true
+                    },
+                    "state_name": {
+                        "type": "string",
+                        "example": "California",
+                        "nullable": true
+                    },
+                    "city_name": {
+                        "type": "string",
+                        "example": "Sacramento",
+                        "nullable": true
+                    },
+                    "address_line_1": {
+                        "type": "string",
+                        "example": "2201 K Street",
+                        "nullable": true
+                    },
+                    "address_line_2": {
+                        "type": "string",
+                        "example": "Suite 200",
+                        "nullable": true
+                    },
+                    "postal_code": {
+                        "type": "string",
+                        "example": "95814",
+                        "nullable": true
+                    },
+                    "complement": {
+                        "type": "string",
+                        "example": "Sala 101",
+                        "nullable": true
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Entregar somente em horário comercial",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-10-10T02:22:32.660898Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-10-10T02:22:32.660898Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-10-10T02:22:32.660898Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "AddressItem": {
+                "description": "Item da lista addresses enviada junto do parceiro. O id ausente ou zero (0) indica um endereço novo; ausente no payload remove o endereço existente.",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "type": {
+                        "$ref": "#/components/schemas/AddressTypeEnum"
+                    },
+                    "is_primary": {
+                        "type": "boolean",
+                        "example": false,
+                        "nullable": true
+                    },
+                    "country_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "state_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "city_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "district": {
+                        "type": "string",
+                        "example": "Centro",
+                        "nullable": true,
+                        "maxLength": 80,
+                        "minLength": 1
+                    },
+                    "street": {
+                        "type": "string",
+                        "example": "Rua das Flores",
+                        "nullable": true,
+                        "maxLength": 120,
+                        "minLength": 1
+                    },
+                    "number": {
+                        "type": "string",
+                        "example": "42",
+                        "nullable": true,
+                        "maxLength": 16,
+                        "minLength": 1
+                    },
+                    "state_name": {
+                        "type": "string",
+                        "example": "California",
+                        "nullable": true,
+                        "maxLength": 80,
+                        "minLength": 1
+                    },
+                    "city_name": {
+                        "type": "string",
+                        "example": "Sacramento",
+                        "nullable": true,
+                        "maxLength": 90,
+                        "minLength": 1
+                    },
+                    "address_line_1": {
+                        "type": "string",
+                        "example": "2201 K Street",
+                        "nullable": true,
+                        "maxLength": 160,
+                        "minLength": 1
+                    },
+                    "address_line_2": {
+                        "type": "string",
+                        "example": "Suite 200",
+                        "nullable": true,
+                        "maxLength": 160,
+                        "minLength": 1
+                    },
+                    "postal_code": {
+                        "type": "string",
+                        "example": "95814",
+                        "nullable": true,
+                        "maxLength": 20,
+                        "minLength": 1
+                    },
+                    "complement": {
+                        "type": "string",
+                        "example": "Sala 101",
+                        "nullable": true,
+                        "maxLength": 40,
+                        "minLength": 1
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Entregar somente em horário comercial",
                         "nullable": true
                     }
                 },
@@ -11597,48 +12763,6 @@
                     "EXEMPT"
                 ]
             },
-            "StorePartnerTypeRequest": {
-                "required": [
-                    "name",
-                    "code"
-                ],
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 60,
-                        "minLength": 1
-                    },
-                    "code": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 3,
-                        "minLength": 1
-                    }
-                },
-                "type": "object"
-            },
-            "UpdatePartnerTypeRequest": {
-                "required": [
-                    "name",
-                    "code"
-                ],
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 60,
-                        "minLength": 1
-                    },
-                    "code": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 3,
-                        "minLength": 1
-                    }
-                },
-                "type": "object"
-            },
             "StorePartnerRequest": {
                 "required": [
                     "partner_type_code",
@@ -11803,6 +12927,14 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/ContactItem"
+                        },
+                        "nullable": true,
+                        "maxItems": 50
+                    },
+                    "addresses": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AddressItem"
                         },
                         "nullable": true,
                         "maxItems": 50
@@ -11977,96 +13109,24 @@
                         },
                         "nullable": true,
                         "maxItems": 50
+                    },
+                    "addresses": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AddressItem"
+                        },
+                        "nullable": true,
+                        "maxItems": 50
                     }
                 },
                 "type": "object"
             },
-            "PartnerTypeCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/PartnerTypeResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "PartnerTypeLookupCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/PartnerTypeLookupResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "PartnerTypeLookupResource": {
+            "StorePartnerTypeRequest": {
+                "required": [
+                    "name",
+                    "code"
+                ],
                 "properties": {
-                    "key": {
-                        "type": "string",
-                        "example": "TYP"
-                    },
-                    "label": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 80,
-                        "minLength": 1
-                    },
-                    "sublabel": {
-                        "type": "string",
-                        "example": "Cod.: 1",
-                        "maxLength": 80,
-                        "minLength": 1
-                    },
-                    "meta": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 1
-                            },
-                            "name": {
-                                "type": "string",
-                                "example": "Tipo de parceiro",
-                                "maxLength": 80,
-                                "minLength": 1
-                            },
-                            "code": {
-                                "type": "string",
-                                "example": "TYP",
-                                "maxLength": 20,
-                                "minLength": 1
-                            }
-                        },
-                        "type": "object"
-                    }
-                },
-                "type": "object"
-            },
-            "PartnerTypeResource": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
                     "name": {
                         "type": "string",
                         "example": "Sample",
@@ -12078,24 +13138,27 @@
                         "example": "Sample",
                         "maxLength": 3,
                         "minLength": 1
-                    },
-                    "created_at": {
+                    }
+                },
+                "type": "object"
+            },
+            "UpdatePartnerTypeRequest": {
+                "required": [
+                    "name",
+                    "code"
+                ],
+                "properties": {
+                    "name": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
-                        "nullable": true
+                        "example": "Sample",
+                        "maxLength": 60,
+                        "minLength": 1
                     },
-                    "updated_at": {
+                    "code": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
-                        "nullable": true
-                    },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
-                        "nullable": true
+                        "example": "Sample",
+                        "maxLength": 3,
+                        "minLength": 1
                     }
                 },
                 "type": "object"
@@ -12395,6 +13458,12 @@
                             "$ref": "#/components/schemas/PartnerContactResource"
                         }
                     },
+                    "addresses": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AddressResource"
+                        }
+                    },
                     "created_at": {
                         "type": "string",
                         "format": "date-time",
@@ -12411,6 +13480,125 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2026-09-09T02:22:32.660898Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "PartnerTypeCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PartnerTypeResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "PartnerTypeLookupCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PartnerTypeLookupResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "PartnerTypeLookupResource": {
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "example": "TYP"
+                    },
+                    "label": {
+                        "type": "string",
+                        "example": "Sample",
+                        "maxLength": 80,
+                        "minLength": 1
+                    },
+                    "sublabel": {
+                        "type": "string",
+                        "example": "Cod.: 1",
+                        "maxLength": 80,
+                        "minLength": 1
+                    },
+                    "meta": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Tipo de parceiro",
+                                "maxLength": 80,
+                                "minLength": 1
+                            },
+                            "code": {
+                                "type": "string",
+                                "example": "TYP",
+                                "maxLength": 20,
+                                "minLength": 1
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "PartnerTypeResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Sample",
+                        "maxLength": 60,
+                        "minLength": 1
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "Sample",
+                        "maxLength": 3,
+                        "minLength": 1
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
                         "nullable": true
                     }
                 },
@@ -12762,6 +13950,10 @@
             "description": "ProductCategory"
         },
         {
+            "name": "Address",
+            "description": "Address"
+        },
+        {
             "name": "City",
             "description": "City"
         },
@@ -12848,7 +14040,8 @@
             "tags": [
                 "Country",
                 "State",
-                "City"
+                "City",
+                "Address"
             ]
         },
         {

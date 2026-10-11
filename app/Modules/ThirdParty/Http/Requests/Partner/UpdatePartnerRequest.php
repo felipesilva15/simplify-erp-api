@@ -2,6 +2,7 @@
 
 namespace App\Modules\ThirdParty\Http\Requests\Partner;
 
+use App\Modules\Geography\Enums\AddressTypeEnum;
 use App\Modules\ThirdParty\Enums\GenderEnum;
 use App\Modules\ThirdParty\Enums\MaritalStatusEnum;
 use App\Modules\ThirdParty\Enums\PersonTypeEnum;
@@ -14,6 +15,7 @@ use Illuminate\Validation\Rule;
  * @OA\Schema(
  *      schema="UpdatePartnerRequest",
  *      required={"partner_type_code","name","trade_name","person_type","taxpayer_type","document_number"},
+ *
  *      @OA\Property(property="partner_type_code", type="string", example="Sample", minLength=1, maxLength=20),
  *      @OA\Property(property="name", type="string", example="Sample", minLength=1, maxLength=120),
  *      @OA\Property(property="trade_name", type="string", example="Sample", minLength=1, maxLength=150),
@@ -37,7 +39,8 @@ use Illuminate\Validation\Rule;
  *      @OA\Property(property="pix_type", ref="#/components/schemas/PixTypeEnum", nullable=true),
  *      @OA\Property(property="pix_key", type="string", example="Sample", minLength=1, maxLength=0, nullable=true),
  *      @OA\Property(property="notes", type="string", example="Sample", minLength=1, maxLength=0, nullable=true),
- *      @OA\Property(property="contacts", type="array", maxItems=50, nullable=true, @OA\Items(ref="#/components/schemas/ContactItem"))
+ *      @OA\Property(property="contacts", type="array", maxItems=50, nullable=true, @OA\Items(ref="#/components/schemas/ContactItem")),
+ *      @OA\Property(property="addresses", type="array", maxItems=50, nullable=true, @OA\Items(ref="#/components/schemas/AddressItem"))
  * )
  */
 class UpdatePartnerRequest extends FormRequest
@@ -76,7 +79,24 @@ class UpdatePartnerRequest extends FormRequest
             'contacts.*.mobile' => 'nullable|string|min:10|max:11',
             'contacts.*.phone' => 'nullable|string|min:10|max:10',
             'contacts.*.main' => 'nullable|boolean',
-            'contacts.*.notes' => 'nullable|string'
+            'contacts.*.notes' => 'nullable|string',
+            'addresses' => 'nullable|array|max:50',
+            'addresses.*.id' => 'nullable|integer|min:0',
+            'addresses.*.type' => ['required', Rule::enum(AddressTypeEnum::class)],
+            'addresses.*.is_primary' => 'nullable|boolean',
+            'addresses.*.country_id' => 'required|integer|exists:countries,id',
+            'addresses.*.state_id' => 'nullable|integer|exists:states,id',
+            'addresses.*.city_id' => 'nullable|integer|exists:cities,id',
+            'addresses.*.district' => 'nullable|string|min:1|max:80',
+            'addresses.*.street' => 'nullable|string|min:1|max:120',
+            'addresses.*.number' => 'nullable|string|min:1|max:16',
+            'addresses.*.state_name' => 'nullable|string|min:1|max:80',
+            'addresses.*.city_name' => 'nullable|string|min:1|max:90',
+            'addresses.*.address_line_1' => 'nullable|string|min:1|max:160',
+            'addresses.*.address_line_2' => 'nullable|string|min:1|max:160',
+            'addresses.*.postal_code' => 'nullable|string|min:1|max:20',
+            'addresses.*.complement' => 'nullable|string|min:1|max:40',
+            'addresses.*.notes' => 'nullable|string',
         ];
     }
 }

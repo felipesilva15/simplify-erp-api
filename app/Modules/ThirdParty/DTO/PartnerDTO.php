@@ -32,12 +32,14 @@ class PartnerDTO
         public ?string $pix_key = '',
         public ?string $notes = '',
         public ?array $contacts = null,
+        public ?array $addresses = null,
         public ?Carbon $created_at = null,
         public ?Carbon $updated_at = null,
         public ?Carbon $deleted_at = null
-    ) { }
+    ) {}
 
-    public static function fromArray(array $data): self {
+    public static function fromArray(array $data): self
+    {
         return new self(
             id: $data['id'] ?? 0,
             partner_type_code: $data['partner_type_code'] ?? '',
@@ -64,13 +66,15 @@ class PartnerDTO
             pix_key: $data['pix_key'] ?? '',
             notes: $data['notes'] ?? '',
             contacts: array_key_exists('contacts', $data) ? $data['contacts'] : null,
+            addresses: array_key_exists('addresses', $data) ? $data['addresses'] : null,
             created_at: $data['created_at'] ?? null,
             updated_at: $data['updated_at'] ?? null,
             deleted_at: $data['deleted_at'] ?? null
         );
     }
 
-    public function toArray(): array {
+    public function toArray(): array
+    {
         return [
             'id' => $this->id,
             'partner_type_code' => $this->partner_type_code,
@@ -97,9 +101,10 @@ class PartnerDTO
             'pix_key' => $this->pix_key,
             'notes' => $this->notes,
             'contacts' => $this->contacts,
+            'addresses' => $this->addresses,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'deleted_at' => $this->deleted_at
+            'deleted_at' => $this->deleted_at,
         ];
     }
 }

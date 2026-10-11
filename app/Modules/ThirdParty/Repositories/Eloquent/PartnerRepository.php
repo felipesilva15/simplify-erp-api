@@ -2,9 +2,9 @@
 
 namespace App\Modules\ThirdParty\Repositories\Eloquent;
 
+use App\Core\Repositories\Eloquent\BaseRepository;
 use App\Modules\ThirdParty\Models\Partner;
 use App\Modules\ThirdParty\Repositories\Interfaces\PartnerRepositoryInterface;
-use App\Core\Repositories\Eloquent\BaseRepository;
 use Override;
 
 class PartnerRepository extends BaseRepository implements PartnerRepositoryInterface
@@ -13,7 +13,10 @@ class PartnerRepository extends BaseRepository implements PartnerRepositoryInter
     protected function withRelations(): array
     {
         return [
-            'contacts'
+            'contacts',
+            'addresses.country',
+            'addresses.state',
+            'addresses.city',
         ];
     }
 
@@ -21,7 +24,7 @@ class PartnerRepository extends BaseRepository implements PartnerRepositoryInter
     public function getMaskedSearchableColumns(): array
     {
         return [
-            'document_number'
+            'document_number',
         ];
     }
 
@@ -32,7 +35,7 @@ class PartnerRepository extends BaseRepository implements PartnerRepositoryInter
             'id',
             'name',
             'trade_name',
-            'document_number'
+            'document_number',
         ];
     }
 
@@ -43,7 +46,7 @@ class PartnerRepository extends BaseRepository implements PartnerRepositoryInter
             'id',
             'name',
             'trade_name',
-            'document_number'
+            'document_number',
         ];
     }
 
