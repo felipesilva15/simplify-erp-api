@@ -8,7 +8,6 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 
-
 /**
  * @OA\OpenApi(
  *     x={
@@ -31,7 +30,7 @@ use Illuminate\Routing\Controller as BaseController;
  *             },
  *             {
  *                 "name"="Geography",
- *                 "tags"={"Country", "State", "City"}
+ *                 "tags"={"Country", "State", "City", "Address"}
  *             },
  *             {
  *                 "name"="Catalog",
@@ -40,19 +39,23 @@ use Illuminate\Routing\Controller as BaseController;
  *         }
  *     }
  * )
+ *
  * @OA\Info(
  *      title="Simplify ERP API",
  *      version="1.0.0",
  *      description="A sessão abaixo contém a documentação da API utilizada para o Simplify ERP.",
+ *
  *      @OA\Contact(
  *          email="felipe.allware@gmail.com",
  *          name="Felipe Silva"
  *      ),
+ *
  *      @OA\License(
  *          name="Licença MIT",
  *          url="https://github.com/felipesilva15/simplify-erp-api/blob/main/LICENSE"
  *      )
  * )
+ *
  * @OA\Server(
  *     description="Local",
  *     url="http://localhost:8000"
@@ -68,5 +71,5 @@ use Illuminate\Routing\Controller as BaseController;
  */
 abstract class Controller extends BaseController
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests, ApiResponse;
+    use ApiResponse, AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 }

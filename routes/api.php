@@ -1,25 +1,26 @@
 <?php
 
-use App\Modules\Security\Http\Controllers\ModuleController;
-use App\Modules\Security\Http\Controllers\ResourceController;
+use App\Modules\Catalog\Http\Controllers\ProductCategoryController;
+use App\Modules\Geography\Http\Controllers\AddressController;
 use App\Modules\Geography\Http\Controllers\CityController;
 use App\Modules\Geography\Http\Controllers\CountryController;
 use App\Modules\Geography\Http\Controllers\StateController;
 use App\Modules\HR\Http\Controllers\ProfessionController;
 use App\Modules\Security\Http\Controllers\AuthController;
+use App\Modules\Security\Http\Controllers\ModuleController;
 use App\Modules\Security\Http\Controllers\PermissionController;
+use App\Modules\Security\Http\Controllers\ResourceController;
 use App\Modules\Security\Http\Controllers\RoleController;
 use App\Modules\Security\Http\Controllers\UserController;
 use App\Modules\ThirdParty\Http\Controllers\PartnerController;
 use App\Modules\ThirdParty\Http\Controllers\PartnerTypeController;
-use App\Modules\Catalog\Http\Controllers\ProductCategoryController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('security/auth/login', [AuthController::class, 'login'])->name('auth.login');
 Route::post('security/auth/token', [AuthController::class, 'token'])->name('auth.token');
 
 Route::group(['middleware' => 'auth'], function () {
-    Route::prefix('security')->group(function() {
+    Route::prefix('security')->group(function () {
         Route::post('auth/logout', [AuthController::class, 'logout'])->name('auth.logout');
         Route::post('auth/refresh', [AuthController::class, 'refresh'])->name('auth.refresh');
         Route::get('auth/me', [AuthController::class, 'me'])->name('auth.me');
@@ -39,7 +40,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::crudResource('resources', ResourceController::class);
     });
 
-    Route::prefix('geography')->group(function() {
+    Route::prefix('geography')->group(function () {
         Route::get('countries/lookup', [CountryController::class, 'lookup'])->name('countries.lookup');
         Route::resource('countries', CountryController::class)->only('index', 'show');
 
@@ -48,9 +49,11 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::get('cities/lookup', [CityController::class, 'lookup'])->name('cities.lookup');
         Route::resource('cities', CityController::class)->only('index', 'show');
+
+        Route::crudResource('addresses', AddressController::class);
     });
 
-    Route::prefix('third-party')->group(function() {
+    Route::prefix('third-party')->group(function () {
         Route::get('partner-types/lookup', [PartnerTypeController::class, 'lookup'])->name('partnerTypes.lookup');
         Route::get('partner-types/export', [PartnerTypeController::class, 'export'])->name('partnerTypes.export');
         Route::crudResource('partner-types', PartnerTypeController::class);
@@ -60,14 +63,14 @@ Route::group(['middleware' => 'auth'], function () {
         Route::crudResource('partners', PartnerController::class);
     });
 
-    Route::prefix('hr')->group(function() {
+    Route::prefix('hr')->group(function () {
         Route::get('professions/lookup', [ProfessionController::class, 'lookup'])->name('professions.lookup');
         Route::get('professions/export', [ProfessionController::class, 'export'])->name('professions.export');
         Route::get('professions/{id}/activity-logs', [ProfessionController::class, 'activityLogs'])->name('professions.activityLogs');
         Route::resource('professions', ProfessionController::class)->only('index', 'show');
     });
 
-    Route::prefix('catalog')->group(function() {
+    Route::prefix('catalog')->group(function () {
         Route::get('product-categories/lookup', [ProductCategoryController::class, 'lookup'])->name('product-categories.lookup');
         Route::get('product-categories/export', [ProductCategoryController::class, 'export'])->name('product-categories.export');
         Route::crudResource('product-categories', ProductCategoryController::class);

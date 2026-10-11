@@ -3,9 +3,8 @@
 namespace Database\Seeders;
 
 use App\Modules\Security\Models\Module;
-use App\Modules\Security\Models\Resource;
 use App\Modules\Security\Models\Permission;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Modules\Security\Models\Resource;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -76,7 +75,7 @@ class ACLSeeder extends Seeder
                                 'created_at' => $now,
                                 'updated_at' => $now,
                             ],
-                        ]
+                        ],
                     ],
                     [
                         'slug' => 'partner',
@@ -127,9 +126,9 @@ class ACLSeeder extends Seeder
                                 'created_at' => $now,
                                 'updated_at' => $now,
                             ],
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ],
             [
                 'slug' => 'security',
@@ -188,7 +187,7 @@ class ACLSeeder extends Seeder
                                 'created_at' => $now,
                                 'updated_at' => $now,
                             ],
-                        ]
+                        ],
                     ],
                     [
                         'slug' => 'roles',
@@ -246,9 +245,9 @@ class ACLSeeder extends Seeder
                                 'created_at' => $now,
                                 'updated_at' => $now,
                             ],
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ],
             [
                 'slug' => 'hr',
@@ -286,9 +285,9 @@ class ACLSeeder extends Seeder
                                 'created_at' => $now,
                                 'updated_at' => $now,
                             ],
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ],
             [
                 'slug' => 'geography',
@@ -326,7 +325,7 @@ class ACLSeeder extends Seeder
                                 'created_at' => $now,
                                 'updated_at' => $now,
                             ],
-                        ]
+                        ],
                     ],
                     [
                         'slug' => 'states',
@@ -356,7 +355,7 @@ class ACLSeeder extends Seeder
                                 'created_at' => $now,
                                 'updated_at' => $now,
                             ],
-                        ]
+                        ],
                     ],
                     [
                         'slug' => 'cities',
@@ -386,10 +385,54 @@ class ACLSeeder extends Seeder
                                 'created_at' => $now,
                                 'updated_at' => $now,
                             ],
-                        ]
-                    ]
-                ]
-            ]
+                        ],
+                    ],
+                    [
+                        'slug' => 'addresses',
+                        'name' => 'Endereços',
+                        'description' => 'Funcionalidades para endereços',
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                        'permissions' => [
+                            [
+                                'action' => 'viewAny',
+                                'label' => 'Listar',
+                                'description' => 'Permite realizar a consulta de todos os endereços',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'view',
+                                'label' => 'Visualizar',
+                                'description' => 'Permite visualizar os detalhes de um endereço',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'create',
+                                'label' => 'Criar',
+                                'description' => 'Permite criar um novo endereço',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'update',
+                                'label' => 'Atualizar',
+                                'description' => 'Permite atualizar um endereço existente',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'delete',
+                                'label' => 'Excluir',
+                                'description' => 'Permite excluir um endereço',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         DB::transaction(function () use ($modules) {
@@ -402,7 +445,7 @@ class ACLSeeder extends Seeder
                 foreach ($moduleData['resources'] as $resourceData) {
                     $resource = Resource::firstOrCreate(
                         [
-                            'slug' => $resourceData['slug']
+                            'slug' => $resourceData['slug'],
                         ],
                         ['module_id' => $module->id, 'name' => $resourceData['name'], 'description' => $resourceData['description'], 'created_at' => $resourceData['created_at'], 'updated_at' => $resourceData['updated_at']]
                     );
@@ -411,7 +454,7 @@ class ACLSeeder extends Seeder
                         $permissionName = $resource->slug.'.'.$permissionData['action'];
                         Permission::firstOrCreate(
                             [
-                                'name' => $permissionName
+                                'name' => $permissionName,
                             ],
                             ['resource_id' => $resource->id, 'action' => $permissionData['action'], 'label' => $permissionData['label'], 'description' => $permissionData['description'], 'created_at' => $permissionData['created_at'], 'updated_at' => $permissionData['updated_at']]
                         );
