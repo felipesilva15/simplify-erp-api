@@ -96,11 +96,14 @@ class AuthTest extends TestCase
     public function test_can_logout(): void
     {
         $response = $this->postJson("{$this->endpoint}/logout", [], $this->getAdminAuthHeaders());
-        $response->assertNoContent();
+
+        $response->assertNoContent()
+                ->assertCookieExpired(config('jwt.cookie_name'));
     }
 
     public function test_can_refresh_token(): void
     {
+        $cookieName = config('jwt.cookie_name');
         $response = $this->postJson("{$this->endpoint}/refresh", [], $this->getAdminAuthHeaders());
 
         $response->assertStatus(Response::HTTP_OK)
@@ -109,7 +112,15 @@ class AuthTest extends TestCase
                     'access_token',
                     'token_type',
                     'expires_in'
-                ]);
+                ])
+                ->assertPlainCookie($cookieName);
+
+        // O refresh precisa reemitir o cookie, pois o token anterior entra na
+        // black list do pacote e deixaria a sessão inválida na próxima requisição.
+        $this->assertSame(
+            $response->json('access_token'),
+            $response->getCookie($cookieName, false)->getValue()
+        );
     }
 
     public function test_can_get_data_logged_in_user(): void
@@ -144,6 +155,17 @@ class AuthTest extends TestCase
         $response = $this
             ->withCredentials()
             ->withUnencryptedCookie(config('jwt.cookie_name'), 'invalid_token')
+            ->getJson("{$this->endpoint}/me");
+
+        $this->assertErrorResponse($response, Response::HTTP_UNAUTHORIZED);
+    }
+
+    public function test_bearer_header_without_cookie_is_not_authenticated(): void
+    {
+        // Contrato §8.2: a autenticação acontece apenas por cookie; um header
+        // Authorization puro é descartado pelo middleware JwtFromCookie.
+        $response = $this
+            ->withHeaders(['Authorization' => "Bearer {$this->adminAuthToken}"])
             ->getJson("{$this->endpoint}/me");
 
         $this->assertErrorResponse($response, Response::HTTP_UNAUTHORIZED);

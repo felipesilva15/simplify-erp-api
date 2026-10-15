@@ -96,12 +96,12 @@ Os itens abaixo existem como estrutura de dados ou configuração **sem** rota, 
 
 - O login exige `username` e `password`; a validação ocorre contra o campo `username` do usuário, não contra o e-mail.
 - Existem duas formas de obter um token:
-  - **por cookie** — `POST /api/security/auth/login` grava o token em cookie criptografado, httpOnly, com a mesma validade do token, e responde `204` sem corpo;
+  - **por cookie** — `POST /api/security/auth/login` grava o token em cookie httpOnly (nome em `JWT_COOKIE_NAME`, valor não criptografado), com a mesma validade do token, e responde `204` sem corpo;
   - **por corpo** — `POST /api/security/auth/token` responde `200` com o token no corpo.
 - O token é assinado com `JWT_SECRET`, tem validade de `JWT_TTL` minutos e pode ser renovado até `JWT_REFRESH_TTL` minutos.
-- O cookie tem **precedência absoluta** sobre o header `Authorization`: o middleware de requisição remove o header recebido e o reescreve a partir do cookie. Uma requisição autenticada apenas por header, sem cookie, **não é autenticada**.
+- O cookie tem **precedência absoluta** sobre o header `Authorization`: o middleware `JwtFromCookie` — que precisa rodar **antes** do middleware `auth` ([spec.md §8.2](spec.md#82-transporte-do-token)) — descarta o header recebido (inclusive a variável de servidor usada como fallback pelo `tymon/jwt-auth`) e o reescreve a partir do cookie. Uma requisição autenticada apenas por header, sem cookie, **não é autenticada**.
+- O cookie é emitido no login e **reemitido na renovação** (`auth/refresh`), pois o token anterior entra na black list; o logout o remove pelo nome configurado em `JWT_COOKIE_NAME`.
 - Logout, login e renovação são registrados na auditoria com a ação `AUTH`.
-- O nome do cookie usado no logout é fixo no código (`token`), independentemente de `JWT_COOKIE_NAME` — ver [§11](#11-observações-do-código-não-determinados).
 
 ### 7.2 Controle de acesso
 
@@ -237,8 +237,7 @@ Fatos observados que não constituem requisito e não têm confirmação no cód
 2. `config/scalar.php` declara o caminho `/scalar`, mas a rota que serve a interface Scalar é `/api-docs`. O caminho `/scalar` não está registrado.
 3. As migrations de `permission_role` e `role_user` não declaram chaves estrangeiras.
 4. A tabela `addresses` existe, mas não há rota, modelo ou fluxo que a utilize.
-5. O nome do cookie removido no logout (`token`) está fixo no código, enquanto o cookie emitido no login usa `JWT_COOKIE_NAME`. Alterar essa variável quebra o logout.
-6. A validação do código do tipo de parceiro limita a 3 caracteres, enquanto a coluna no banco é `char(20)`.
+5. A validação do código do tipo de parceiro limita a 3 caracteres, enquanto a coluna no banco é `char(20)`.
 
 ---
 

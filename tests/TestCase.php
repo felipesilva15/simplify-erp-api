@@ -31,12 +31,18 @@ abstract class TestCase extends BaseTestCase
     }
 
     protected function getCommomUserAuthHeaders() : array {
+        $this->withCredentials()
+            ->withUnencryptedCookie(config('jwt.cookie_name'), $this->commomUserAuthToken);
+
         return [
             "Authorization" => "Bearer {$this->commomUserAuthToken}"
         ];
     }
 
     protected function getAdminAuthHeaders() : array {
+        $this->withCredentials()
+            ->withUnencryptedCookie(config('jwt.cookie_name'), $this->adminAuthToken);
+
         return [
             "Authorization" => "Bearer {$this->adminAuthToken}"
         ];

@@ -50,21 +50,10 @@ class AuthController extends Controller
     public function login(LoginRequest $request): Response {
         $dto = AuthCredentialsDTO::fromArray($request->validated());
         $tokenDetails = $this->service->login($dto);
-        $cookie = Cookie::make(
-            name: config('jwt.cookie_name'),
-            value: $tokenDetails->token,
-            minutes: config('jwt.ttl'),
-            path: '/',
-            domain: null,
-            secure: config('jwt.cookie_secure'),
-            httpOnly: true,
-            raw: false,
-            sameSite: config('jwt.cookie_same_site')
-        );
 
         return response()
             ->noContent()
-            ->cookie($cookie);
+            ->cookie($this->makeAuthCookie($tokenDetails->token));
     }
 
     /**
@@ -146,7 +135,7 @@ class AuthController extends Controller
         $this->service->logout();
         return response()
             ->noContent()
-            ->withoutCookie('token');
+            ->withoutCookie(config('jwt.cookie_name'));
     }
     
     /**
@@ -169,6 +158,26 @@ class AuthController extends Controller
      */
     public function refresh(): JsonResponse {
         $tokenDetails = $this->service->refreshToken();
-        return response()->json(new TokenDetailsResource($tokenDetails), 200);
+
+        return response()
+            ->json(new TokenDetailsResource($tokenDetails), 200)
+            ->cookie($this->makeAuthCookie($tokenDetails->token));
+    }
+
+    /**
+     * Monta o cookie httpOnly que transporta o token de acesso.
+     */
+    protected function makeAuthCookie(string $token): \Symfony\Component\HttpFoundation\Cookie {
+        return Cookie::make(
+            name: config('jwt.cookie_name'),
+            value: $token,
+            minutes: config('jwt.ttl'),
+            path: '/',
+            domain: null,
+            secure: config('jwt.cookie_secure'),
+            httpOnly: true,
+            raw: false,
+            sameSite: config('jwt.cookie_same_site')
+        );
     }
 }

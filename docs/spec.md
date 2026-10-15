@@ -166,6 +166,8 @@ Os módulos **não** possuem `Providers/` próprio: os providers ficam centraliz
 
 Todas as rotas de API recebem o prefixo `/api` e o middleware `api` (do qual faz parte `JwtFromCookie`). O grupo `auth` exige um token válido.
 
+> **Ordem dos middlewares:** `JwtFromCookie` é anexado ao grupo `api`, mas isso por si só não garante que ele rode antes do `auth` — o `Authenticate` está na lista de prioridade global do kernel (`$middlewarePriority`) e seria ordenado à frente. Por isso `bootstrap/app.php` chama `prependToPriorityList(AuthenticatesRequests::class, JwtFromCookie::class)`. Sem esse ajuste, toda rota autenticada responde `401` antes de o cookie ser lido.
+
 | Método e caminho | Nome | Autorização |
 |---|---|---|
 | `POST /api/security/auth/login` | `auth.login` | público |
@@ -427,10 +429,26 @@ O guard padrão é `api`, com driver `jwt` (`tymon/jwt-auth`); o model de usuár
 
 ### 8.2 Transporte do token
 
-`JwtFromCookie` é anexado ao grupo `api` e também registrado como alias `jwt.cookie`:
+`JwtFromCookie` é anexado ao grupo `api`, registrado como alias `jwt.cookie` e **priorizado antes do middleware `auth`** em `bootstrap/app.php`:
+
+```php
+$middleware->appendToGroup('api', [JwtFromCookie::class]);
+
+$middleware->prependToPriorityList(
+    \Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests::class,
+    JwtFromCookie::class,
+);
+```
+
+> O `prependToPriorityList` precisa usar a **interface** `AuthenticatesRequests` (e não a classe concreta `Authenticate`): é a interface que consta em `Kernel::$middlewarePriority`, e o `SortedMiddleware` resolve cada middleware concreto para suas interfaces ao montar a ordem.
+
+O próprio middleware:
 
 ```php
 $request->headers->remove('Authorization');
+$request->server->remove('HTTP_AUTHORIZATION');
+$request->server->remove('REDIRECT_HTTP_AUTHORIZATION');
+
 $token = $request->cookie(config('jwt.cookie_name')) ?? '';
 if ($token) {
     $request->headers->set('Authorization', 'Bearer ' . $token);
@@ -440,10 +458,10 @@ if ($token) {
 Três consequências contratuais:
 
 1. o cookie tem precedência absoluta sobre o header enviado pelo cliente;
-2. sem cookie, o header é removido e **não** é reposto — autenticação por header puro não funciona;
-3. o nome do cookie vem de `JWT_COOKIE_NAME` (padrão do pacote `token`; `.env.example` define `access_token`).
+2. sem cookie, o header é removido e **não** é reposto — autenticação por header puro não funciona. A remoção abrange também `HTTP_AUTHORIZATION` / `REDIRECT_HTTP_AUTHORIZATION`, pois o parser `AuthHeaders` do `tymon/jwt-auth` recorre a essas variáveis de servidor quando o header bag está vazio;
+3. o nome do cookie vem de `JWT_COOKIE_NAME` (padrão do pacote `token`; `.env.example` define `access_token`) e é usado de forma consistente no login, no logout e na renovação.
 
-O cookie emitido em `auth/login` é criado com `httpOnly: true`, `raw: false` (criptografado), `path: '/'`, `secure` e `sameSite` vindos de `config('jwt.php')`, e validade em minutos igual a `jwt.ttl`. `auth/refresh` devolve o novo token no corpo, **sem** reemitir o cookie.
+O cookie é montado por `AuthController::makeAuthCookie()` com `httpOnly: true`, `raw: false` (valor URL-encoded, **não** criptografado — as rotas `api` não passam pelo `EncryptCookies`), `path: '/'`, `secure` e `sameSite` vindos de `config('jwt.php')`, e validade em minutos igual a `jwt.ttl`. É emitido no `auth/login` (`204`) e **reemitido no `auth/refresh`** (`200`, junto do novo token no corpo), pois o `Auth::refresh()` invalida o token anterior. O `auth/logout` remove o cookie pelo nome configurado.
 
 ### 8.3 Autorização
 
@@ -739,21 +757,21 @@ Além de criar arquivos, o comando **edita** quatro arquivos existentes, de form
 
 ## 16. Testes
 
-PHPUnit 12, com duas suítes declaradas em `phpunit.xml`: `Unit` (`tests/Unit`) e `Feature` (`tests/Feature`). Não há Pest. São 31 arquivos de teste e 444 métodos de teste, além de `tests/TestCase.php`.
+PHPUnit 12, com duas suítes declaradas em `phpunit.xml`: `Unit` (`tests/Unit`) e `Feature` (`tests/Feature`). Não há Pest. São 34 arquivos de teste e 541 casos de teste, além de `tests/TestCase.php`.
 
-`tests/TestCase.php` aplica `RefreshDatabase` e usa SQLite em memória (`DB_CONNECTION=sqlite`, `DB_DATABASE=:memory:` definidos no `phpunit.xml`), portanto a suíte não depende de serviço externo. A base cria um administrador e um usuário comum por teste e gera tokens JWT reais com `JWTAuth::fromUser()`, expondo `getAdminAuthHeaders()` e `getCommomUserAuthHeaders()`. Também concentra as asserções de contrato `assertApiResponseStructureForListing()` e `assertErrorResponse()`.
+`tests/TestCase.php` aplica `RefreshDatabase` e usa SQLite em memória (`DB_CONNECTION=sqlite`, `DB_DATABASE=:memory:` definidos no `phpunit.xml`), portanto a suíte não depende de serviço externo. A base cria um administrador e um usuário comum por teste e gera tokens JWT reais com `JWTAuth::fromUser()`. Como a API autentica apenas por cookie, os helpers `getAdminAuthHeaders()` e `getCommomUserAuthHeaders()` habilitam `withCredentials()` e registram o token no cookie via `withUnencryptedCookie()` — o header `Authorization` que também devolvem é descartado pelo `JwtFromCookie`. A base concentra ainda as asserções de contrato `assertApiResponseStructureForListing()` e `assertErrorResponse()`.
 
 | Suíte | Arquivos | Métodos | Natureza |
 |---|---|---|---|
-| `tests/Feature` | 20 | 340 | Integração via HTTP real: roteamento, middleware, guard, policies, Eloquent, soft delete, auditoria, exportação. |
-| `tests/Unit` | 11 | 104 | Classes isoladas; 4 sem banco, 7 sobem a aplicação com banco. |
+| `tests/Feature` | 23 | 427 | Integração via HTTP real: roteamento, middleware, guard, policies, Eloquent, soft delete, auditoria, exportação. |
+| `tests/Unit` | 11 | 114 | Classes isoladas; 4 sem banco, 7 sobem a aplicação com banco. |
 
 Cobertura por área:
 
 | Área | Onde |
 |---|---|
 | CRUD completo de entidades com as 27 asserções padrão | `Feature/Security/{Module,Resource,User,Role,Permission}Test`, `Feature/Geography/{Country,State,City}Test`, `Feature/ThirdParty/{Partner,PartnerType}Test` |
-| Autenticação: login por cookie, token por corpo, refresh, logout, token inválido e expirado | `Feature/Security/AuthTest` |
+| Autenticação: login por cookie, token por corpo, refresh (com reemissão do cookie), logout (limpando o cookie configurado), header puro rejeitado, token inválido e expirado | `Feature/Security/AuthTest` |
 | Sincronização de itens aninhados, rollback transacional, regras de canal e de contato principal, ausência de N+1 (via `DB::listen`) | `Feature/ThirdParty/PartnerContactTest` |
 | Exportação: formato, extensão, filtros, permissões | `Feature/Security/ExcelExportTest`, `Feature/ThirdParty/PartnerTest`, `Feature/HR/ProfessionTest` |
 | Catálogo somente leitura: listagem, detalhe, lookup e exportação, com ausência das rotas de escrita | `Feature/HR/ProfessionTest` |

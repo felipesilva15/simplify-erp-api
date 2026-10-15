@@ -26,6 +26,15 @@ return Application::configure(basePath: dirname(__DIR__))
             JwtFromCookie::class,
         ]);
 
+        // O middleware que converte o cookie em header Authorization precisa
+        // rodar antes do middleware "auth" (Authenticate), que por padrão tem
+        // prioridade na ordenação. Sem isso, rotas protegidas retornam 401
+        // antes mesmo do cookie ser lido.
+        $middleware->prependToPriorityList(
+            \Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests::class,
+            JwtFromCookie::class,
+        );
+
         $middleware->alias([
             'jwt.cookie' => JwtFromCookie::class,
         ]);
