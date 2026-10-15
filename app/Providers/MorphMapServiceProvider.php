@@ -12,6 +12,7 @@ use ReflectionClass;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Illuminate\Support\Collection;
+use Throwable;
 
 class MorphMapServiceProvider extends ServiceProvider
 {
@@ -25,18 +26,27 @@ class MorphMapServiceProvider extends ServiceProvider
     protected function resolveMorphMap(): array
     {
         $signature = $this->modelFilesSignature();
+
+        try {
         $cached = Cache::get(self::CACHE_KEY);
 
-        if (is_array($cached) && ($cached['signature'] ?? null) === $signature) {
-            return $cached['map'];
+            if (is_array($cached) && ($cached['signature'] ?? null) === $signature) {
+                return $cached['map'];
+            }
+        } catch (Throwable $e) {
+            // Ignore cache errors
         }
 
         $map = $this->scanModels();
 
-        Cache::forever(self::CACHE_KEY, [
-            'signature' => $signature,
-            'map' => $map,
-        ]);
+        try {
+            Cache::forever(self::CACHE_KEY, [
+                'signature' => $signature,
+                'map' => $map,
+            ]);
+        } catch (Throwable $e) {
+            // Ignore cache errors
+        }
 
         return $map;
     }
