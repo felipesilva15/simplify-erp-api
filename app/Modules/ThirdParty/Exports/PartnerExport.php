@@ -53,7 +53,7 @@ class PartnerExport extends BaseExport
             $row->municipal_registration,
             $row->suframa_registration,
             $row->marital_status?->label(),
-            $row->cbo,
+            $row->profession?->cbo ?? '',
             $row->gender?->label(),
             $row->birth_date?->format('d/m/Y'),
             $row->father_name,

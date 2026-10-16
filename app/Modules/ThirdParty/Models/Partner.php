@@ -4,6 +4,7 @@ namespace App\Modules\ThirdParty\Models;
 
 use App\Core\Models\BaseModel;
 use App\Modules\Geography\Models\Address;
+use App\Modules\HR\Models\Profession;
 use App\Modules\ThirdParty\Enums\GenderEnum;
 use App\Modules\ThirdParty\Enums\MaritalStatusEnum;
 use App\Modules\ThirdParty\Enums\PersonTypeEnum;
@@ -35,7 +36,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *      @OA\Property(property="municipal_registration", type="string", example="Sample", nullable=true),
  *      @OA\Property(property="suframa_registration", type="string", example="Sample", nullable=true),
  *      @OA\Property(property="marital_status", type="string", example="Sample", nullable=true),
- *      @OA\Property(property="cbo", type="string", example="Sample", nullable=true),
+ *      @OA\Property(property="profession_id", type="integer", example=1, nullable=true),
  *      @OA\Property(property="gender", type="string", example="Sample", nullable=true),
  *      @OA\Property(property="birth_date", type="string", format="date-time", example="2026-09-09T02:22:32.660898Z", nullable=true),
  *      @OA\Property(property="father_name", type="string", example="Sample", nullable=true),
@@ -70,7 +71,7 @@ class Partner extends BaseModel
         'municipal_registration',
         'suframa_registration',
         'marital_status',
-        'cbo',
+        'profession_id',
         'gender',
         'birth_date',
         'father_name',
@@ -91,6 +92,11 @@ class Partner extends BaseModel
         'pix_type' => PixTypeEnum::class,
         'taxpayer_type' => TaxpayerTypeEnum::class,
     ];
+
+    public function profession(): BelongsTo
+    {
+        return $this->belongsTo(Profession::class);
+    }
 
     public function partnerType(): BelongsTo
     {

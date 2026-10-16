@@ -13,6 +13,7 @@ class PartnerRepository extends BaseRepository implements PartnerRepositoryInter
     protected function withRelations(): array
     {
         return [
+            'profession',
             'contacts',
             'addresses.country',
             'addresses.state',

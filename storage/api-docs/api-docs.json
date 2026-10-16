@@ -12763,6 +12763,48 @@
                     "EXEMPT"
                 ]
             },
+            "StorePartnerTypeRequest": {
+                "required": [
+                    "name",
+                    "code"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Sample",
+                        "maxLength": 60,
+                        "minLength": 1
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "Sample",
+                        "maxLength": 3,
+                        "minLength": 1
+                    }
+                },
+                "type": "object"
+            },
+            "UpdatePartnerTypeRequest": {
+                "required": [
+                    "name",
+                    "code"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Sample",
+                        "maxLength": 60,
+                        "minLength": 1
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "Sample",
+                        "maxLength": 3,
+                        "minLength": 1
+                    }
+                },
+                "type": "object"
+            },
             "StorePartnerRequest": {
                 "required": [
                     "partner_type_code",
@@ -12852,12 +12894,10 @@
                         ],
                         "nullable": true
                     },
-                    "cbo": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 6,
-                        "minLength": 1
+                    "profession_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
                     },
                     "gender": {
                         "oneOf": [
@@ -13031,12 +13071,10 @@
                         ],
                         "nullable": true
                     },
-                    "cbo": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 6,
-                        "minLength": 1
+                    "profession_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
                     },
                     "gender": {
                         "oneOf": [
@@ -13121,33 +13159,92 @@
                 },
                 "type": "object"
             },
-            "StorePartnerTypeRequest": {
-                "required": [
-                    "name",
-                    "code"
-                ],
+            "PartnerTypeCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PartnerTypeResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "PartnerTypeLookupCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PartnerTypeLookupResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "PartnerTypeLookupResource": {
                 "properties": {
-                    "name": {
+                    "key": {
+                        "type": "string",
+                        "example": "TYP"
+                    },
+                    "label": {
                         "type": "string",
                         "example": "Sample",
-                        "maxLength": 60,
+                        "maxLength": 80,
                         "minLength": 1
                     },
-                    "code": {
+                    "sublabel": {
                         "type": "string",
-                        "example": "Sample",
-                        "maxLength": 3,
+                        "example": "Cod.: 1",
+                        "maxLength": 80,
                         "minLength": 1
+                    },
+                    "meta": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Tipo de parceiro",
+                                "maxLength": 80,
+                                "minLength": 1
+                            },
+                            "code": {
+                                "type": "string",
+                                "example": "TYP",
+                                "maxLength": 20,
+                                "minLength": 1
+                            }
+                        },
+                        "type": "object"
                     }
                 },
                 "type": "object"
             },
-            "UpdatePartnerTypeRequest": {
-                "required": [
-                    "name",
-                    "code"
-                ],
+            "PartnerTypeResource": {
                 "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
                     "name": {
                         "type": "string",
                         "example": "Sample",
@@ -13159,6 +13256,24 @@
                         "example": "Sample",
                         "maxLength": 3,
                         "minLength": 1
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -13304,6 +13419,27 @@
                 },
                 "type": "object"
             },
+            "PartnerProfessionResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "cbo": {
+                        "type": "string",
+                        "example": "Sample",
+                        "maxLength": 6,
+                        "minLength": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Sample",
+                        "maxLength": 180,
+                        "minLength": 1
+                    }
+                },
+                "type": "object"
+            },
             "PartnerResource": {
                 "properties": {
                     "id": {
@@ -13394,11 +13530,10 @@
                         "nullable": true,
                         "maxLength": 30
                     },
-                    "cbo": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 6
+                    "profession_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
                     },
                     "gender": {
                         "type": "string",
@@ -13480,125 +13615,6 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2026-09-09T02:22:32.660898Z",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "PartnerTypeCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/PartnerTypeResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "PartnerTypeLookupCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/PartnerTypeLookupResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "PartnerTypeLookupResource": {
-                "properties": {
-                    "key": {
-                        "type": "string",
-                        "example": "TYP"
-                    },
-                    "label": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 80,
-                        "minLength": 1
-                    },
-                    "sublabel": {
-                        "type": "string",
-                        "example": "Cod.: 1",
-                        "maxLength": 80,
-                        "minLength": 1
-                    },
-                    "meta": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 1
-                            },
-                            "name": {
-                                "type": "string",
-                                "example": "Tipo de parceiro",
-                                "maxLength": 80,
-                                "minLength": 1
-                            },
-                            "code": {
-                                "type": "string",
-                                "example": "TYP",
-                                "maxLength": 20,
-                                "minLength": 1
-                            }
-                        },
-                        "type": "object"
-                    }
-                },
-                "type": "object"
-            },
-            "PartnerTypeResource": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 60,
-                        "minLength": 1
-                    },
-                    "code": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 3,
-                        "minLength": 1
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
-                        "nullable": true
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
-                        "nullable": true
-                    },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
                         "nullable": true
                     }
                 },
@@ -13785,9 +13801,9 @@
                         "example": "Sample",
                         "nullable": true
                     },
-                    "cbo": {
-                        "type": "string",
-                        "example": "Sample",
+                    "profession_id": {
+                        "type": "integer",
+                        "example": 1,
                         "nullable": true
                     },
                     "gender": {
@@ -13939,7 +13955,7 @@
             "bearerAuth": {
                 "type": "apiKey",
                 "description": "Insira o token JWT",
-                "name": "token",
+                "name": "access_token",
                 "in": "cookie"
             }
         }

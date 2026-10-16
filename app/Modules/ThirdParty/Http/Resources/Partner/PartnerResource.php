@@ -25,7 +25,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *      @OA\Property(property="municipal_registration", type="string", example="Sample", maxLength=15, nullable=true),
  *      @OA\Property(property="suframa_registration", type="string", example="Sample", maxLength=9, nullable=true),
  *      @OA\Property(property="marital_status", type="string", example="Sample", maxLength=30, nullable=true),
- *      @OA\Property(property="cbo", type="string", example="Sample", maxLength=6, nullable=true),
+ *      @OA\Property(property="profession_id", type="integer", example=1, nullable=true),
  *      @OA\Property(property="gender", type="string", example="Sample", maxLength=12, nullable=true),
  *      @OA\Property(property="birth_date", type="string", format="date", example="2026-09-09", nullable=true),
  *      @OA\Property(property="father_name", type="string", example="Sample", maxLength=120, nullable=true),
@@ -62,7 +62,10 @@ class PartnerResource extends JsonResource
             'municipal_registration' => $this->municipal_registration,
             'suframa_registration' => $this->suframa_registration,
             'marital_status' => $this->marital_status,
-            'cbo' => $this->cbo,
+            'profession_id' => $this->profession_id,
+            'profession' => $this->whenLoaded('profession', function () {
+                return new PartnerProfessionResource($this->profession);
+            }),
             'gender' => $this->gender,
             'birth_date' => $this->birth_date?->format('Y-m-d'),
             'father_name' => $this->father_name,
