@@ -709,9 +709,9 @@ A leitura é feita pelo trait `HasActivityLogs`, que expõe `activityLogs($id, L
 | Opção | Efeito |
 |---|---|
 | `--all` | Gera tudo **exceto** `--lookup` e `--export`. |
-| `--model` `--service` `--repository` `--dto` `--controller` `--request` `--resource` `--policy` `--factory` `--test` | Geram apenas o artefato indicado. |
+| `--model` `--service` `--repository` `--dto` `--controller` `--request` `--resource` `--policy` `--factory` `--test` | Geram apenas o artefato indicado. `--policy` também complementa o `ACLSeeder` com o recurso e suas permissões. |
 | `--lookup` | **Opt-in**: cria `{Entity}LookupResource` e `{Entity}LookupCollection`, o método `lookup()` no controller, a rota `*/lookup`, o override de `getLookupColumnsToFilter()` e os casos de teste `test_can_lookup_*`. |
-| `--export` | **Opt-in**: cria `{Entity}Export`, o trait `HasExcelExport`, `exportModelClass()`, `exportClassForFormat()`, o método `export()` na policy, a rota `*/export` e os casos de teste `test_can_export_*`. |
+| `--export` | **Opt-in**: cria `{Entity}Export`, o trait `HasExcelExport`, `exportModelClass()`, `exportClassForFormat()`, o método `export()` na policy, a permissão `export` no `ACLSeeder`, a rota `*/export` e os casos de teste `test_can_export_*`. |
 
 O repository gerado sempre inclui `getListColumnsToFilter()` (colunas `string` da tabela, com `id` como fallback) e, com `--lookup`, `getLookupColumnsToFilter()`. Os dois hooks devolvem **apenas nomes de coluna**, porque os tipos são resolvidos em runtime por introspecção do schema.
 
@@ -743,7 +743,7 @@ São 29 stubs em `app/Console/Stubs`, todos com placeholders `{{snake_case}}` su
 
 ### 15.3 Efeitos colaterais em outros arquivos
 
-Além de criar arquivos, o comando **edita** quatro arquivos existentes, de forma idempotente:
+Além de criar arquivos, o comando **edita** cinco arquivos existentes, de forma idempotente:
 
 | Arquivo | Alteração |
 |---|---|
@@ -751,6 +751,9 @@ Além de criar arquivos, o comando **edita** quatro arquivos existentes, de form
 | `app/Providers/{Module}ModuleProvider.php` | Acrescenta `use` dos repositories e o `bind` interface → implementação. |
 | `routes/api.php` | Acrescenta o `use` do controller e as linhas de rota; cria o grupo `Route::prefix('{módulo-kebab}')` se ainda não existir. |
 | `app/Core/Http/Controllers/Controller.php` | Acrescenta a tag da entidade ao tag group do módulo no `@OA\OpenApi`, criando o grupo se necessário. |
+| `database/seeders/ACLSeeder.php` | Acrescenta o módulo (`Str::camel($module)`), o recurso (`Str::camel(Str::pluralStudly($entity))`) e as permissões usadas pela policy gerada: `viewAny`, `view`, `create`, `update`, `delete` e, com `--export`, `export`. |
+
+A edição do `ACLSeeder` acontece junto com a geração da policy: se o módulo já existe, apenas o recurso é acrescentado; se o recurso já existe, apenas as ações ausentes são acrescentadas. Execuções repetidas não duplicam módulo, recurso ou permissão. Os rótulos e descrições seguem o padrão do seeder (`Listar`, `Visualizar`, `Criar`, `Editar`, `Excluir`, `Exportar dados`).
 
 ### 15.4 Módulo `Core`
 

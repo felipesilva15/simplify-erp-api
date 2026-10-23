@@ -191,7 +191,7 @@ Os itens abaixo existem como estrutura de dados ou configuração **sem** rota, 
 | RF-11 | Consultar o histórico de auditoria de qualquer registro de recurso. |
 | RF-12 | Buscar por texto livre, filtrar, ordenar e paginar qualquer listagem por um contrato único. |
 | RF-13 | Exportar usuários, perfis, parceiros e profissões em planilha respeitando os filtros da listagem. |
-| RF-14 | Gerar, a partir do schema do banco, a estrutura completa de um novo módulo de negócio. |
+| RF-14 | Gerar, a partir do schema do banco, a estrutura completa de um novo módulo de negócio, incluindo o cadastro do recurso e das permissões no seeder de ACL. |
 | RF-15 | Publicar a especificação OpenAPI da API gerada a partir do código. |
 
 ---

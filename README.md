@@ -160,14 +160,14 @@ Os tag groups da especificação (`Security`, `ThirdParty`, `HR`, `Geography`) s
 
 ## Gerando um módulo novo
 
-O comando `make:module-crud` cria a estrutura completa de uma entidade (model, repository, interface, service, DTO, controller, requests, resources, policy, factory, testes) e registra as rotas, os bindings e o tag group do OpenAPI:
+O comando `make:module-crud` cria a estrutura completa de uma entidade (model, repository, interface, service, DTO, controller, requests, resources, policy, factory, testes) e registra as rotas, os bindings, o tag group do OpenAPI e o módulo/recurso/permissões no `ACLSeeder`:
 
 ```bash
 php artisan make:module-crud Core Vehicle --all
 php artisan make:module-crud Sales Order --all --lookup --export
 ```
 
-**A tabela da entidade precisa existir no banco antes da execução** — o comando lê o schema real da tabela para derivar `$fillable`, regras de validação, DTO, resources, factory e export. O repository gerado recebe os hooks `getListColumnsToFilter()` (e `getLookupColumnsToFilter()` com `--lookup`) com as colunas pesquisáveis; os casos de teste de lookup e exportação só são gerados com as respectivas flags. Contrato completo em [`docs/spec.md`](docs/spec.md#15-gerador-de-módulos).
+**A tabela da entidade precisa existir no banco antes da execução** — o comando lê o schema real da tabela para derivar `$fillable`, regras de validação, DTO, resources, factory e export. O repository gerado recebe os hooks `getListColumnsToFilter()` (e `getLookupColumnsToFilter()` com `--lookup`) com as colunas pesquisáveis; os casos de teste de lookup e exportação só são gerados com as respectivas flags. Ao gerar a policy, o comando também complementa `database/seeders/ACLSeeder.php` com o módulo, o recurso e as permissões da entidade (`viewAny`, `view`, `create`, `update`, `delete` e, com `--export`, `export`), sem duplicar dados já existentes. Contrato completo em [`docs/spec.md`](docs/spec.md#15-gerador-de-módulos).
 
 ---
 

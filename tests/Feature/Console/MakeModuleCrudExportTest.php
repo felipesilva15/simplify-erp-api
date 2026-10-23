@@ -16,6 +16,8 @@ class MakeModuleCrudExportTest extends TestCase
 
     private string $controllerPath;
 
+    private string $aclSeederPath;
+
     /**
      * @var array<string, string> Conteúdo original dos arquivos alterados pelo comando
      */
@@ -28,6 +30,7 @@ class MakeModuleCrudExportTest extends TestCase
         $this->routesPath = base_path('routes/api.php');
         $this->providersPath = base_path('bootstrap/providers.php');
         $this->controllerPath = app_path('Core/Http/Controllers/Controller.php');
+        $this->aclSeederPath = database_path('seeders/ACLSeeder.php');
 
         // Garante estado limpo entre execuções da suíte
         $this->cleanupGeneratedFiles();
@@ -76,6 +79,7 @@ class MakeModuleCrudExportTest extends TestCase
             $this->routesPath => File::get($this->routesPath),
             $this->providersPath => File::get($this->providersPath),
             $this->controllerPath => File::get($this->controllerPath),
+            $this->aclSeederPath => File::get($this->aclSeederPath),
         ];
     }
 

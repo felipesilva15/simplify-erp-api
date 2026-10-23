@@ -17,6 +17,8 @@ class MakeModuleCrudCoreTest extends TestCase
 
     private string $controllerPath;
 
+    private string $aclSeederPath;
+
     /**
      * @var array<string, string> Conteúdo original dos arquivos alterados pelo comando
      */
@@ -30,6 +32,7 @@ class MakeModuleCrudCoreTest extends TestCase
         $this->providersPath = base_path('bootstrap/providers.php');
         $this->appCoreProviderPath = app_path('Providers/AppCoreProvider.php');
         $this->controllerPath = app_path('Core/Http/Controllers/Controller.php');
+        $this->aclSeederPath = database_path('seeders/ACLSeeder.php');
 
         // Garante estado limpo entre execuções da suíte
         $this->cleanupGeneratedFiles();
@@ -73,6 +76,7 @@ class MakeModuleCrudCoreTest extends TestCase
             $this->providersPath => File::get($this->providersPath),
             $this->appCoreProviderPath => File::get($this->appCoreProviderPath),
             $this->controllerPath => File::get($this->controllerPath),
+            $this->aclSeederPath => File::get($this->aclSeederPath),
         ];
     }
 
@@ -178,7 +182,7 @@ class MakeModuleCrudCoreTest extends TestCase
 
         $swagger = File::get($this->controllerPath);
         $this->assertStringContainsString('"name"="Core"', $swagger);
-        $this->assertStringContainsString('"tags"={"Module", "Resource", "Widget"}', $swagger);
+        $this->assertStringContainsString('"tags"={"Widget"}', $swagger);
     }
 
     public function test_command_generates_searchable_column_hooks_returning_column_names(): void

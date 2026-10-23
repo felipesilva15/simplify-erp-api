@@ -209,6 +209,10 @@ class MakeModuleCrud extends Command
             $this->updateSwaggerTagGroups();
         }
 
+        if (isset($generatedOptions['policy'])) {
+            $this->updateAclSeeder();
+        }
+
         $this->info("Module [{$this->rootPath}] created successfully for {$this->entity} Entity!");
 
         return self::SUCCESS;
@@ -1073,7 +1077,9 @@ class MakeModuleCrud extends Command
                 return;
             }
 
-            $newTags = substr_replace($tags, ', "'.$this->entity.'"', -1, 0);
+            $existingTags = substr($tags, strlen('"tags"={'), -1);
+            $separator = trim($existingTags) === '' ? '' : ', ';
+            $newTags = '"tags"={'.$existingTags.$separator.'"'.$this->entity.'"}';
 
             $content = substr_replace($content, $newTags, $tagsPosition, strlen($tags));
         } else {
@@ -1099,5 +1105,334 @@ class MakeModuleCrud extends Command
         }
 
         File::put($path, $content);
+    }
+
+    private function updateAclSeeder(): void
+    {
+        $path = database_path('seeders/ACLSeeder.php');
+
+        if (! File::exists($path)) {
+            return;
+        }
+
+        $content = File::get($path);
+        $eol = str_contains($content, "\r\n") ? "\r\n" : "\n";
+
+        $moduleBounds = $this->findAclEntryBounds($content, $this->getAclModuleSlug(), 4, $eol);
+
+        if ($moduleBounds === null) {
+            $this->appendAclModule($content, $eol, $path);
+
+            return;
+        }
+
+        [$moduleStart, $moduleEnd] = $moduleBounds;
+        $resourceBounds = $this->findAclEntryBounds(
+            $content,
+            $this->getAclResourceSlug(),
+            6,
+            $eol,
+            $moduleStart,
+            $moduleEnd,
+        );
+
+        if ($resourceBounds === null) {
+            $this->appendAclResource($content, $eol, $path, $moduleStart, $moduleEnd);
+
+            return;
+        }
+
+        [$resourceStart, $resourceEnd] = $resourceBounds;
+        $this->appendAclPermissions($content, $eol, $path, $resourceStart, $resourceEnd);
+    }
+
+    private function appendAclModule(string $content, string $eol, string $path): void
+    {
+        $modulesPosition = strpos($content, '$modules = [');
+
+        if ($modulesPosition === false) {
+            return;
+        }
+
+        $modulesOpen = strpos($content, '[', $modulesPosition);
+        $modulesClose = $modulesOpen === false ? null : $this->findMatchingBracket($content, $modulesOpen);
+
+        if ($modulesClose === null) {
+            return;
+        }
+
+        $lineStart = $this->lineStart($content, $modulesClose, $eol);
+        $snippet = implode($eol, $this->buildAclModuleEntryLines()).$eol;
+
+        File::put($path, substr($content, 0, $lineStart).$snippet.substr($content, $lineStart));
+    }
+
+    private function appendAclResource(string $content, string $eol, string $path, int $moduleStart, int $moduleEnd): void
+    {
+        $resourcesPosition = strpos($content, "'resources' => [", $moduleStart);
+
+        if ($resourcesPosition === false || $resourcesPosition > $moduleEnd) {
+            return;
+        }
+
+        $resourcesOpen = strpos($content, '[', $resourcesPosition);
+        $resourcesClose = $resourcesOpen === false ? null : $this->findMatchingBracket($content, $resourcesOpen);
+
+        if ($resourcesClose === null) {
+            return;
+        }
+
+        $lineStart = $this->lineStart($content, $resourcesClose, $eol);
+        $snippet = implode($eol, $this->buildAclResourceEntryLines()).$eol;
+
+        File::put($path, substr($content, 0, $lineStart).$snippet.substr($content, $lineStart));
+    }
+
+    private function appendAclPermissions(string $content, string $eol, string $path, int $resourceStart, int $resourceEnd): void
+    {
+        $permissionsPosition = strpos($content, "'permissions' => [", $resourceStart);
+
+        if ($permissionsPosition === false || $permissionsPosition > $resourceEnd) {
+            return;
+        }
+
+        $permissionsOpen = strpos($content, '[', $permissionsPosition);
+        $permissionsClose = $permissionsOpen === false ? null : $this->findMatchingBracket($content, $permissionsOpen);
+
+        if ($permissionsClose === null) {
+            return;
+        }
+
+        $permissionsBlock = substr($content, $permissionsOpen, $permissionsClose - $permissionsOpen + 1);
+        preg_match_all("/'action'\s*=>\s*'([^']+)'/", $permissionsBlock, $matches);
+
+        $missingActions = array_values(array_diff($this->getAclActions(), $matches[1] ?? []));
+
+        if ($missingActions === []) {
+            return;
+        }
+
+        $lineStart = $this->lineStart($content, $permissionsClose, $eol);
+        $snippet = implode($eol, $this->buildAclPermissionEntryLines($missingActions)).$eol;
+
+        File::put($path, substr($content, 0, $lineStart).$snippet.substr($content, $lineStart));
+    }
+
+    private function findAclEntryBounds(
+        string $content,
+        string $slug,
+        int $indentLevel,
+        string $eol,
+        int $from = 0,
+        ?int $to = null,
+    ): ?array {
+        $needle = "'slug' => '{$slug}',";
+        $expectedIndent = $this->tabs($indentLevel);
+        $entryIndent = $this->tabs($indentLevel - 1);
+        $to ??= strlen($content);
+        $offset = $from;
+
+        while (($position = strpos($content, $needle, $offset)) !== false && $position < $to) {
+            $lineStart = $this->lineStart($content, $position, $eol);
+
+            if (substr($content, $lineStart, $position - $lineStart) === $expectedIndent) {
+                $entryLine = $eol.$entryIndent.'[';
+                $entryStart = strrpos(substr($content, 0, $lineStart), $entryLine);
+
+                if ($entryStart !== false) {
+                    $entryStart += strlen($eol);
+                    $entryOpen = strpos($content, '[', $entryStart);
+                    $entryClose = $entryOpen === false ? null : $this->findMatchingBracket($content, $entryOpen);
+
+                    if ($entryOpen !== false && $entryClose !== null) {
+                        return [$entryOpen, $entryClose];
+                    }
+                }
+            }
+
+            $offset = $position + strlen($needle);
+        }
+
+        return null;
+    }
+
+    private function findMatchingBracket(string $content, int $openPosition): ?int
+    {
+        $depth = 0;
+        $length = strlen($content);
+        $quote = null;
+        $escaped = false;
+
+        for ($i = $openPosition; $i < $length; $i++) {
+            $character = $content[$i];
+
+            if ($quote !== null) {
+                if ($escaped) {
+                    $escaped = false;
+                } elseif ($character === '\\') {
+                    $escaped = true;
+                } elseif ($character === $quote) {
+                    $quote = null;
+                }
+
+                continue;
+            }
+
+            if ($character === "'" || $character === '"') {
+                $quote = $character;
+
+                continue;
+            }
+
+            if ($character === '[') {
+                $depth++;
+
+                continue;
+            }
+
+            if ($character === ']') {
+                $depth--;
+
+                if ($depth === 0) {
+                    return $i;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private function lineStart(string $content, int $position, string $eol): int
+    {
+        $lineStart = strrpos(substr($content, 0, $position), $eol);
+
+        return $lineStart === false ? 0 : $lineStart + strlen($eol);
+    }
+
+    private function buildAclModuleEntryLines(): array
+    {
+        return [
+            $this->tabs(3).'[',
+            $this->tabs(4)."'slug' => ".$this->phpString($this->getAclModuleSlug()).',',
+            $this->tabs(4)."'name' => ".$this->phpString(Str::headline($this->module)).',',
+            $this->tabs(4)."'description' => ".$this->phpString("Módulo {$this->module} do sistema").',',
+            $this->tabs(4)."'is_active' => true,",
+            $this->tabs(4)."'created_at' => \$now,",
+            $this->tabs(4)."'updated_at' => \$now,",
+            $this->tabs(4)."'resources' => [",
+            ...$this->buildAclResourceEntryLines(),
+            $this->tabs(4).'],',
+            $this->tabs(3).'],',
+        ];
+    }
+
+    private function buildAclResourceEntryLines(): array
+    {
+        $pluralEntity = Str::pluralStudly($this->entity);
+
+        return [
+            $this->tabs(5).'[',
+            $this->tabs(6)."'slug' => ".$this->phpString($this->getAclResourceSlug()).',',
+            $this->tabs(6)."'name' => ".$this->phpString(Str::headline($pluralEntity)).',',
+            $this->tabs(6)."'description' => ".$this->phpString('Funcionalidades para '.$this->getAclHumanEntities()).',',
+            $this->tabs(6)."'created_at' => \$now,",
+            $this->tabs(6)."'updated_at' => \$now,",
+            $this->tabs(6)."'permissions' => [",
+            ...$this->buildAclPermissionEntryLines($this->getAclActions()),
+            $this->tabs(6).'],',
+            $this->tabs(5).'],',
+        ];
+    }
+
+    private function buildAclPermissionEntryLines(array $actions): array
+    {
+        $lines = [];
+        $definitions = $this->getAclPermissionDefinitions();
+
+        foreach ($actions as $action) {
+            if (! isset($definitions[$action])) {
+                continue;
+            }
+
+            $definition = $definitions[$action];
+            $lines[] = $this->tabs(7).'[';
+            $lines[] = $this->tabs(8)."'action' => ".$this->phpString($action).',';
+            $lines[] = $this->tabs(8)."'label' => ".$this->phpString($definition['label']).',';
+            $lines[] = $this->tabs(8)."'description' => ".$this->phpString($definition['description']).',';
+            $lines[] = $this->tabs(8)."'created_at' => \$now,";
+            $lines[] = $this->tabs(8)."'updated_at' => \$now,";
+            $lines[] = $this->tabs(7).'],';
+        }
+
+        return $lines;
+    }
+
+    private function getAclActions(): array
+    {
+        $actions = ['viewAny', 'view', 'create', 'update', 'delete'];
+
+        if ($this->option('export')) {
+            $actions[] = 'export';
+        }
+
+        return $actions;
+    }
+
+    private function getAclPermissionDefinitions(): array
+    {
+        $entity = $this->getAclHumanEntity();
+        $entities = $this->getAclHumanEntities();
+
+        return [
+            'viewAny' => [
+                'label' => 'Listar',
+                'description' => "Permite realizar a consulta de todos os {$entities}",
+            ],
+            'view' => [
+                'label' => 'Visualizar',
+                'description' => "Permite visualizar os detalhes de {$entity}",
+            ],
+            'create' => [
+                'label' => 'Criar',
+                'description' => "Permite realizar a criação de {$entity}",
+            ],
+            'update' => [
+                'label' => 'Editar',
+                'description' => "Permite realizar a edição de {$entity}",
+            ],
+            'delete' => [
+                'label' => 'Excluir',
+                'description' => "Permite realizar a exclusão de {$entity}",
+            ],
+            'export' => [
+                'label' => 'Exportar dados',
+                'description' => "Permite realizar a exportação de dados dos {$entities}",
+            ],
+        ];
+    }
+
+    private function getAclModuleSlug(): string
+    {
+        return Str::camel($this->module);
+    }
+
+    private function getAclResourceSlug(): string
+    {
+        return Str::camel(Str::pluralStudly($this->entity));
+    }
+
+    private function getAclHumanEntity(): string
+    {
+        return Str::lower(Str::headline($this->entity));
+    }
+
+    private function getAclHumanEntities(): string
+    {
+        return Str::lower(Str::headline(Str::pluralStudly($this->entity)));
+    }
+
+    private function phpString(string $value): string
+    {
+        return "'".str_replace(['\\', "'"], ['\\\\', "\\'"], $value)."'";
     }
 }
