@@ -948,7 +948,7 @@ class MakeModuleCrud extends Command
             );
         }
 
-        $prefixOpen = "Route::prefix('{$kebabModule}')->group(function() {";
+        $prefixOpen = "Route::prefix('{$kebabModule}')->group(function () {";
 
         if (str_contains($content, $prefixOpen)) {
             $end = $this->findGroupEnd($content, $prefixOpen);
