@@ -995,7 +995,9 @@ class MakeModuleCrud extends Command
             return '';
         }
 
-        return $this->tabs(2)."Route::get('{$routeEntity}/lookup', [{$this->entity}Controller::class, 'lookup'])->name('{$routeEntity}.lookup');".PHP_EOL;
+        $routeName = Str::camel($routeEntity);
+
+        return $this->tabs(2)."Route::get('{$routeEntity}/lookup', [{$this->entity}Controller::class, 'lookup'])->name('{$routeName}.lookup');".PHP_EOL;
     }
 
     private function getExportRouteLine(string $routeEntity): string
@@ -1004,7 +1006,9 @@ class MakeModuleCrud extends Command
             return '';
         }
 
-        return $this->tabs(2)."Route::get('{$routeEntity}/export', [{$this->entity}Controller::class, 'export'])->name('{$routeEntity}.export');".PHP_EOL;
+        $routeName = Str::camel($routeEntity);
+
+        return $this->tabs(2)."Route::get('{$routeEntity}/export', [{$this->entity}Controller::class, 'export'])->name('{$routeName}.export');".PHP_EOL;
     }
 
     private function getCrudRouteLine(string $routeEntity): string
