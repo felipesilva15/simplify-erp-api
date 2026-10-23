@@ -203,12 +203,26 @@ Fora de `/api`: `GET /` (landing page Blade), `GET /api-docs` (Scalar), `GET /up
 
 ```php
 Route::macro('crudResource', function (string $name, string $controller) {
-    Route::resource($name, $controller);
-    Route::get("{$name}/{id}/activity-logs", [$controller, 'activityLogs']);
+    $routeName = Str::camel($name);
+
+    Route::resource($name, $controller)->names([
+        'index' => "{$routeName}.index",
+        'create' => "{$routeName}.create",
+        'store' => "{$routeName}.store",
+        'show' => "{$routeName}.show",
+        'edit' => "{$routeName}.edit",
+        'update' => "{$routeName}.update",
+        'destroy' => "{$routeName}.destroy",
+    ]);
+
+    Route::get("{$name}/{id}/activity-logs", [$controller, 'activityLogs'])
+        ->name("{$routeName}.activityLogs");
 });
 ```
 
 Ou seja, `Route::crudResource()` equivale a `Route::resource()` **mais** a rota de auditoria `{nome}/{id}/activity-logs`. É essa macro que garante que toda entidade gerada pelo comando `make:module-crud` já nasça com histórico disponível.
+
+A URI permanece em kebab-case (`/api/catalog/product-categories`), mas os nomes das rotas usam camelCase (`productCategories.index`, `productCategories.activityLogs`), alinhados ao slug de permissão da entidade.
 
 ---
 
@@ -751,7 +765,7 @@ Além de criar arquivos, o comando **edita** quatro arquivos existentes, de form
 - **`meta` do lookup:** até cinco propriedades, começando por `id`.
 - **Operadores de filtro gerados na documentação:** `eq, like, ne` para strings; `eq, ne` para booleanos; `eq, lt, lte, gt, gte, ne` para os demais.
 - **Testes:** o stub de teste gera o conjunto padrão de 27 casos (estrutura da resposta, listagem, ordenação, filtro, sem autenticação, sem permissão, detalhe, `edit`, criação, atualização, exclusão — cada um com e sem autenticação e permissão) mais os casos de `lookup` ou `export` quando as flags correspondentes forem passadas.
-- **Rota do recurso:** `Str::kebab(Str::pluralStudly($entity))` (por exemplo `Order` → `orders`).
+- **Rota do recurso:** `Str::kebab(Str::pluralStudly($entity))` para a URI (por exemplo `Order` → `orders`) e `Str::camel` do mesmo plural para o nome das rotas (`Order` → `orders.index`; `ProductCategory` → `productCategories.index`). As rotas de `lookup` e `export` seguem o mesmo prefixo camelCase.
 
 ---
 
