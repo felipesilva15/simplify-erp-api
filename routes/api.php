@@ -14,6 +14,7 @@ use App\Modules\Security\Http\Controllers\RoleController;
 use App\Modules\Security\Http\Controllers\UserController;
 use App\Modules\ThirdParty\Http\Controllers\PartnerController;
 use App\Modules\ThirdParty\Http\Controllers\PartnerTypeController;
+use App\Modules\Catalog\Http\Controllers\ProductBrandController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('security/auth/login', [AuthController::class, 'login'])->name('auth.login');
@@ -71,8 +72,12 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::prefix('catalog')->group(function () {
-        Route::get('product-categories/lookup', [ProductCategoryController::class, 'lookup'])->name('product-categories.lookup');
-        Route::get('product-categories/export', [ProductCategoryController::class, 'export'])->name('product-categories.export');
+        Route::get('product-categories/lookup', [ProductCategoryController::class, 'lookup'])->name('productCategories.lookup');
+        Route::get('product-categories/export', [ProductCategoryController::class, 'export'])->name('productCategories.export');
         Route::crudResource('product-categories', ProductCategoryController::class);
+        
+        Route::get('product-brands/lookup', [ProductBrandController::class, 'lookup'])->name('productBrands.lookup');
+        Route::get('product-brands/export', [ProductBrandController::class, 'export'])->name('productBrands.export');
+        Route::crudResource('product-brands', ProductBrandController::class);
     });
 });

@@ -34,7 +34,7 @@ use Illuminate\Routing\Controller as BaseController;
  *             },
  *             {
  *                 "name"="Catalog",
- *                 "tags"={"ProductCategory"}
+ *                 "tags"={"ProductCategory", "ProductBrand"}
  *             }
  *         }
  *     }
