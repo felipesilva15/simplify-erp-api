@@ -1,6 +1,6 @@
-<?php 
+<?php
 
-namespace App\Core\Enums;
+namespace App\Modules\Catalog\Enums;
 
 /**
  * @OA\Schema(
@@ -21,9 +21,9 @@ enum MeasurementUnitCategoryEnum: string
     case Count  = 'COUNT';
     case Mass   = 'MASS';
     case Volume = 'VOLUME';
-    case Length = 'LENGTH'; 
+    case Length = 'LENGTH';
     case Area   = 'AREA';
-    case Time   = 'TIME'; 
+    case Time   = 'TIME';
 
     public function label(): string
     {
