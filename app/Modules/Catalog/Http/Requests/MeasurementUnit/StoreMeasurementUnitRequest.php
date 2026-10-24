@@ -27,7 +27,7 @@ class StoreMeasurementUnitRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code' => 'required|string|min:1|max:10|unique:measurement_units,code',
+            'code' => ['required', 'string', 'min:1', 'max:10', Rule::unique('measurement_units', 'code')->withoutTrashed()],
             'name' => 'required|string|min:1|max:60',
             'symbol' => 'required|string|min:1|max:10',
             'category' => ['required', Rule::enum(MeasurementUnitCategoryEnum::class)],

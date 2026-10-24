@@ -27,13 +27,7 @@ class UpdateMeasurementUnitRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code' => [
-                'required',
-                'string',
-                'min:1',
-                'max:10',
-                Rule::unique('measurement_units', 'code')->ignore($this->route('measurement_unit')),
-            ],
+            'code' => ['required', 'string', 'min:1', 'max:10', Rule::unique('measurement_units', 'code')->ignore($this->route('measurement_unit'))->withoutTrashed()],
             'name' => 'required|string|min:1|max:60',
             'symbol' => 'required|string|min:1|max:10',
             'category' => ['required', Rule::enum(MeasurementUnitCategoryEnum::class)],
