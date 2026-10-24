@@ -16,14 +16,24 @@ class MeasurementUnitService extends BaseCrudService
         $this->activity = $activity;
     }
 
+    protected function canEdit(Model $enity): bool
+    {
+        return (bool) !$enity->is_system;
+    }
+
+    protected function editWarnings(Model $enity): array
+    {
+        return !$enity->is_system ? [] : ['Não é possível atualizar uma unidade de medida controlada pelo sistema.'];
+    }
+
     protected function beforeUpdate(Model $entity, mixed $data): void
     {
         $baseUnitId = $this->dataValue($data, 'base_unit_id');
 
         if ($entity->is_system) {
             throw new BusinessRuleException(
-                message: 'Não é possível atualizar uma unidade de medida do sistema.',
-                errors: ['is_system' => 'Unidades de medida do sistema não podem ser atualizadas.']
+                message: 'Não é possível atualizar uma unidade de medida controlada pelo sistema.',
+                errors: ['is_system' => 'Unidades de medida controladas pelo sistema não podem ser atualizadas.']
             );
         }
 
@@ -39,8 +49,8 @@ class MeasurementUnitService extends BaseCrudService
     {
         if ($entity->is_system) {
             throw new BusinessRuleException(
-                message: 'Não é possível excluir uma unidade de medida do sistema.',
-                errors: ['is_system' => 'Unidades de medida do sistema não podem ser excluídas.']
+                message: 'Não é possível excluir uma unidade de medida controlada pelo sistema.',
+                errors: ['is_system' => 'Unidades de medida controladas pelo sistema não podem ser excluídas.']
             );
         }
     }

@@ -37,6 +37,7 @@ class ModelHelpers
             'text' => ['type' => 'string', 'default' => ''],
             'blob' => ['type' => 'string', 'default' => ''],
             'int' => ['type' => 'int', 'default' => 0],
+            'int2' => ['type' => 'int', 'default' => 0],
             'int8' => ['type' => 'int', 'default' => 0],
             'integer' => ['type' => 'int', 'default' => 0],
             'bigint' => ['type' => 'int', 'default' => 0],
