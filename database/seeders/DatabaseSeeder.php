@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             CitySeeder::class,
             ACLSeeder::class,
             ProfessionSeeder::class,
+            MeasurementUnitsSeeder::class,
         ]);
     }
 }
