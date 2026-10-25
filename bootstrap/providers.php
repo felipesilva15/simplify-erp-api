@@ -13,4 +13,5 @@ return [
     App\Providers\HRModuleProvider::class,
     App\Providers\GeographyModuleProvider::class,
     App\Providers\CatalogModuleProvider::class,
+    App\Modules\Integration\IntegrationServiceProvider::class,
 ];
