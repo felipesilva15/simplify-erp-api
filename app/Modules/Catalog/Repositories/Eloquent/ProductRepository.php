@@ -10,6 +10,16 @@ use Override;
 class ProductRepository extends BaseRepository implements ProductRepositoryInterface
 {
     #[Override]
+    protected function withRelations(): array
+    {
+        return [
+            'measurementUnit',
+            'category',
+            'brand'
+        ];
+    }
+
+    #[Override]
     protected function getListColumnsToFilter(): array
     {
         return [

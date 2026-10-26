@@ -36,7 +36,7 @@ class MeasurementUnitRepository extends BaseRepository implements MeasurementUni
     #[Override]
     protected function getLookupKeyColumn(): string
     {
-        return 'code';
+        return 'id';
     }
 
     #[Override]

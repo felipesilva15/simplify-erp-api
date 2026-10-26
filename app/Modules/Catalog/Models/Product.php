@@ -3,9 +3,11 @@
 namespace App\Modules\Catalog\Models;
 
 use App\Core\Models\BaseModel;
+use App\Modules\Catalog\Enums\ItemTypeCodeEnum;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -67,6 +69,28 @@ class Product extends BaseModel
     ];
 
     protected $casts = [
-        
+        'item_type_code' => ItemTypeCodeEnum::class,
+        'price' => 'decimal:4',
+        'cost' => 'decimal:4',
+        'net_weight' => 'decimal:3',
+        'gross_weight' => 'decimal:3',
+        'width' => 'decimal:4',
+        'height' => 'decimal:4',
+        'length' => 'decimal:4',
+        'minimum_stock' => 'decimal:4',
+        'maximum_stock' => 'decimal:4',
+        'is_active' => 'boolean'
     ];
+
+    public function measurementUnit(): BelongsTo {
+        return $this->belongsTo(MeasurementUnit::class);
+    }
+
+    public function category(): BelongsTo {
+        return $this->belongsTo(ProductCategory::class, 'product_category_id');
+    }
+
+    public function brand(): BelongsTo {
+        return $this->belongsTo(ProductBrand::class, 'product_brand_id');
+    }
 }
