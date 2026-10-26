@@ -8,6 +8,8 @@ use App\Modules\Catalog\Repositories\Eloquent\ProductBrandRepository;
 use App\Modules\Catalog\Repositories\Interfaces\ProductBrandRepositoryInterface;
 use App\Modules\Catalog\Repositories\Eloquent\MeasurementUnitRepository;
 use App\Modules\Catalog\Repositories\Interfaces\MeasurementUnitRepositoryInterface;
+use App\Modules\Catalog\Repositories\Eloquent\ProductRepository;
+use App\Modules\Catalog\Repositories\Interfaces\ProductRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class CatalogModuleProvider extends ServiceProvider
@@ -20,5 +22,6 @@ class CatalogModuleProvider extends ServiceProvider
         $this->app->bind(ProductCategoryRepositoryInterface::class, ProductCategoryRepository::class);
         $this->app->bind(ProductBrandRepositoryInterface::class, ProductBrandRepository::class);
         $this->app->bind(MeasurementUnitRepositoryInterface::class, MeasurementUnitRepository::class);
+        $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
     }
 }

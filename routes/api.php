@@ -16,6 +16,7 @@ use App\Modules\ThirdParty\Http\Controllers\PartnerController;
 use App\Modules\ThirdParty\Http\Controllers\PartnerTypeController;
 use App\Modules\Catalog\Http\Controllers\ProductBrandController;
 use App\Modules\Catalog\Http\Controllers\MeasurementUnitController;
+use App\Modules\Catalog\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('security/auth/login', [AuthController::class, 'login'])->name('auth.login');
@@ -84,5 +85,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('measurement-units/lookup', [MeasurementUnitController::class, 'lookup'])->name('measurementUnits.lookup');
         Route::get('measurement-units/export', [MeasurementUnitController::class, 'export'])->name('measurementUnits.export');
         Route::crudResource('measurement-units', MeasurementUnitController::class);
+
+        Route::get('products/lookup', [ProductController::class, 'lookup'])->name('products.lookup');
+        Route::get('products/export', [ProductController::class, 'export'])->name('products.export');
+        Route::crudResource('products', ProductController::class);
     });
 });
