@@ -8,6 +8,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Tag(
+ *     name="Integration",
+ *     description="Integrations"
+ * )
+ */
 class IntegrationProviderController extends Controller
 {
     public function __construct(protected ProviderRegistry $registry)

@@ -15,6 +15,12 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\RateLimiter;
 use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Tag(
+ *     name="Integration",
+ *     description="Integrations"
+ * )
+ */
 class WebhookController extends Controller
 {
     public function __construct(protected ProviderRegistry $registry)

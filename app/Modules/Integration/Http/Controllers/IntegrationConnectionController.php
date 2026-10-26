@@ -15,6 +15,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Tag(
+ *     name="IntegrationConnection",
+ *     description="Integration connections"
+ * )
+ */
 class IntegrationConnectionController extends Controller
 {
     use HasActivityLogs;
@@ -38,7 +44,16 @@ class IntegrationConnectionController extends Controller
      *     tags={"IntegrationConnection"},
      *     summary="List integration connections",
      *     security={{"bearerAuth":{}}},
-     *     @OA\Response(response="200", description="List", @OA\JsonContent(ref="#/components/schemas/ApiResponse"))
+     *     @OA\Response(
+     *         response="200",
+     *         description="List",
+     *         @OA\JsonContent(
+     *             allOf={
+     *                 @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                 @OA\Schema(ref="#/components/schemas/IntegrationConnectionCollection")
+     *             }
+     *         )
+     *     )
      * )
      */
     public function index(ListRequest $request): JsonResponse
@@ -61,7 +76,18 @@ class IntegrationConnectionController extends Controller
      *     summary="Create integration connection",
      *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(required=true, @OA\JsonContent(ref="#/components/schemas/StoreIntegrationConnectionRequest")),
-     *     @OA\Response(response="201", description="Created", @OA\JsonContent(ref="#/components/schemas/ApiResponse"))
+     *     @OA\Response(
+     *         response="201",
+     *         description="Created",
+     *         @OA\JsonContent(
+     *             allOf={
+     *                 @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                 @OA\Schema(
+     *                     @OA\Property(property="data", ref="#/components/schemas/IntegrationConnectionResource")
+     *                 )
+     *             }
+     *         )
+     *     )
      * )
      */
     public function store(StoreIntegrationConnectionRequest $request): JsonResponse
@@ -79,7 +105,18 @@ class IntegrationConnectionController extends Controller
      *     tags={"IntegrationConnection"},
      *     summary="Show integration connection",
      *     security={{"bearerAuth":{}}},
-     *     @OA\Response(response="200", description="Show", @OA\JsonContent(ref="#/components/schemas/ApiResponse"))
+     *     @OA\Response(
+     *         response="200",
+     *         description="Show",
+     *         @OA\JsonContent(
+     *             allOf={
+     *                 @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                 @OA\Schema(
+     *                     @OA\Property(property="data", ref="#/components/schemas/IntegrationConnectionResource")
+     *                 )
+     *             }
+     *         )
+     *     )
      * )
      */
     public function show(IntegrationConnection $integration_connection): JsonResponse
@@ -109,7 +146,18 @@ class IntegrationConnectionController extends Controller
      *     summary="Update integration connection",
      *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(required=true, @OA\JsonContent(ref="#/components/schemas/UpdateIntegrationConnectionRequest")),
-     *     @OA\Response(response="200", description="Updated", @OA\JsonContent(ref="#/components/schemas/ApiResponse"))
+     *     @OA\Response(
+     *         response="200",
+     *         description="Updated",
+     *         @OA\JsonContent(
+     *             allOf={
+     *                 @OA\Schema(ref="#/components/schemas/ApiResponse"),
+     *                 @OA\Schema(
+     *                     @OA\Property(property="data", ref="#/components/schemas/IntegrationConnectionResource")
+     *                 )
+     *             }
+     *         )
+     *     )
      * )
      */
     public function update(UpdateIntegrationConnectionRequest $request, IntegrationConnection $integration_connection): JsonResponse

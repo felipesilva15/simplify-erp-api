@@ -4,7 +4,15 @@ namespace App\Modules\Integration\Http\Resources\IntegrationConnection;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Schema(
+ *     schema="IntegrationConnectionCollection",
+ *     type="object",
+ *     @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/IntegrationConnectionResource"))
+ * )
+ */
 class IntegrationConnectionCollection extends ResourceCollection
 {
     public function toArray(Request $request): array
