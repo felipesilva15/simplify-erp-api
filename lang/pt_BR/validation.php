@@ -107,6 +107,7 @@ return [
     'multiple_of'          => 'O campo :attribute deve ser um múltiplo de :value.',
     'not_regex'            => 'O campo :attribute possui um formato inválido.',
     'numeric'              => 'O campo :attribute deve ser um número.',
+    'decimal'              => 'O campo :attribute deve ser um decimal com :decimal casas decimais.',
     'password' => [
         'letters'          => 'O campo :attribute deve conter pelo menos uma letra.',
         'mixed'            => 'O campo :attribute deve conter pelo menos uma letra maiúscula e uma letra minúscula.',
@@ -237,6 +238,15 @@ return [
         'father_document' => 'documento do pai',
         'mother_name' => 'nome da mãe',
         'mother_document' => 'documento da mãe',
+        'price' => 'preço',
+        'cost' => 'custo',
+        'net_weight' => 'peso líquido',
+        'gross_weight' => 'peso bruto',
+        'width' => 'largura',
+        'height' => 'altura',
+        'length' => 'comprimento',
+        'minimum_stock' => 'estoque mínimo',
+        'maximum_stock' => 'estoque máximo',
     ],
 
     'values' => [
