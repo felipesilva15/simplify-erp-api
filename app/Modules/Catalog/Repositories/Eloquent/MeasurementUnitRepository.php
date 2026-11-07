@@ -2,9 +2,9 @@
 
 namespace App\Modules\Catalog\Repositories\Eloquent;
 
+use App\Core\Repositories\Eloquent\BaseRepository;
 use App\Modules\Catalog\Models\MeasurementUnit;
 use App\Modules\Catalog\Repositories\Interfaces\MeasurementUnitRepositoryInterface;
-use App\Core\Repositories\Eloquent\BaseRepository;
 use Override;
 
 class MeasurementUnitRepository extends BaseRepository implements MeasurementUnitRepositoryInterface
@@ -17,7 +17,7 @@ class MeasurementUnitRepository extends BaseRepository implements MeasurementUni
             'code',
             'name',
             'symbol',
-            'category'
+            'category',
         ];
     }
 
@@ -29,7 +29,7 @@ class MeasurementUnitRepository extends BaseRepository implements MeasurementUni
             'code',
             'name',
             'symbol',
-            'category'
+            'category',
         ];
     }
 

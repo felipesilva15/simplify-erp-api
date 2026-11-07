@@ -13,14 +13,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @OA\Schema(
  *     schema="Product",
+ *
  *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="type", type="string", example="Sample"),
- *     @OA\Property(property="item_type_code", type="string", example="Sample", minLength=2, maxLength=2),
- *     @OA\Property(property="sku", type="string", example="Sample"),
- *     @OA\Property(property="gtin", type="string", example="Sample", nullable=true),
- *     @OA\Property(property="name", type="string", example="Sample"),
- *     @OA\Property(property="description", type="string", example="Sample", nullable=true),
- *     @OA\Property(property="notes", type="string", example="Sample", nullable=true),
+ *     @OA\Property(property="type", ref="#/components/schemas/ProductTypeEnum"),
+ *     @OA\Property(property="item_type_code", ref="#/components/schemas/ItemTypeCodeEnum"),
+ *     @OA\Property(property="sku", type="string", example="2156"),
+ *     @OA\Property(property="gtin", type="string", example="7892236733554", nullable=true),
+ *     @OA\Property(property="name", type="string", example="Torneira para lavabo"),
+ *     @OA\Property(property="description", type="string", example="Torneira gourmet para área de lavabo", nullable=true),
+ *     @OA\Property(property="notes", type="string", example="Produto sujeito a disponibilidade em estoque", nullable=true),
  *     @OA\Property(property="price", type="number", format="float", example=20.99),
  *     @OA\Property(property="cost", type="number", format="float", example=20.99),
  *     @OA\Property(property="net_weight", type="number", format="float", example=20.99, nullable=true),
@@ -42,8 +43,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[UseFactory(ProductFactory::class)]
 class Product extends BaseModel
 {
-    /** @use HasFactory<\Database\Factories\ProductFactory> */
-    use SoftDeletes, HasFactory;
+    /** @use HasFactory<ProductFactory> */
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'type',
@@ -65,7 +66,7 @@ class Product extends BaseModel
         'is_active',
         'measurement_unit_id',
         'product_category_id',
-        'product_brand_id'
+        'product_brand_id',
     ];
 
     protected $casts = [
@@ -79,18 +80,21 @@ class Product extends BaseModel
         'length' => 'decimal:4',
         'minimum_stock' => 'decimal:4',
         'maximum_stock' => 'decimal:4',
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
 
-    public function measurementUnit(): BelongsTo {
+    public function measurementUnit(): BelongsTo
+    {
         return $this->belongsTo(MeasurementUnit::class);
     }
 
-    public function category(): BelongsTo {
+    public function category(): BelongsTo
+    {
         return $this->belongsTo(ProductCategory::class, 'product_category_id');
     }
 
-    public function brand(): BelongsTo {
+    public function brand(): BelongsTo
+    {
         return $this->belongsTo(ProductBrand::class, 'product_brand_id');
     }
 }

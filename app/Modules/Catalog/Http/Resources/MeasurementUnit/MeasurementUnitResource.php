@@ -8,11 +8,12 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @OA\Schema(
  *     schema="MeasurementUnitResource",
+ *
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="code", type="string", example="KG", minLength=1, maxLength=10),
  *     @OA\Property(property="name", type="string", example="Quilograma", minLength=1, maxLength=60),
  *     @OA\Property(property="symbol", type="string", example="kg", minLength=1, maxLength=10),
- *     @OA\Property(property="category", type="string", example="MASS", minLength=1, maxLength=20),
+ *     @OA\Property(property="category", ref="#/components/schemas/MeasurementUnitCategoryEnum"),
  *     @OA\Property(property="base_unit_id", type="integer", example=1, nullable=true),
  *     @OA\Property(property="conversion_factor", type="number", format="float", example=1.0, minimum=0.00000001, maximum=9999999999.99999999),
  *     @OA\Property(property="decimal_places", type="integer", example=3),
@@ -26,7 +27,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 class MeasurementUnitResource extends JsonResource
 {
-    public function toArray(Request $request): array {
+    public function toArray(Request $request): array
+    {
         return [
             'id' => $this->id,
             'code' => $this->code,
@@ -41,7 +43,7 @@ class MeasurementUnitResource extends JsonResource
             'is_active' => $this->is_active,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'deleted_at' => $this->deleted_at
+            'deleted_at' => $this->deleted_at,
         ];
     }
 }

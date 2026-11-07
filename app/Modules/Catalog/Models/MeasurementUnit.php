@@ -14,11 +14,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @OA\Schema(
  *     schema="MeasurementUnit",
+ *
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="code", type="string", example="KG"),
  *     @OA\Property(property="name", type="string", example="Quilograma"),
  *     @OA\Property(property="symbol", type="string", example="kg"),
- *     @OA\Property(property="category", type="string", example="MASS"),
+ *     @OA\Property(property="category", ref="#/components/schemas/MeasurementUnitCategoryEnum"),
  *     @OA\Property(property="base_unit_id", type="integer", example=1, nullable=true),
  *     @OA\Property(property="conversion_factor", type="number", format="float", example=1.0),
  *     @OA\Property(property="decimal_places", type="integer", example=3),
@@ -33,8 +34,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[UseFactory(MeasurementUnitFactory::class)]
 class MeasurementUnit extends BaseModel
 {
-    /** @use HasFactory<\Database\Factories\MeasurementUnitFactory> */
-    use SoftDeletes, HasFactory;
+    /** @use HasFactory<MeasurementUnitFactory> */
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'code',
