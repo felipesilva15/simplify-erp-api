@@ -11,9 +11,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @OA\Schema(
  *      schema="PartnerType",
+ *
  *      @OA\Property(property="id", type="integer", example=1),
- *      @OA\Property(property="name", type="string", example="Sample"),
- *      @OA\Property(property="code", type="string", example="Sample"),
+ *      @OA\Property(property="name", type="string", example="Cliente"),
+ *      @OA\Property(property="code", type="string", example="CTM"),
  *      @OA\Property(property="created_at", type="string", format="date-time", example="2026-09-05T06:33:15.515561Z", nullable=true),
  *      @OA\Property(property="updated_at", type="string", format="date-time", example="2026-09-05T06:33:15.515561Z", nullable=true),
  *      @OA\Property(property="deleted_at", type="string", format="date-time", example="2026-09-05T06:33:15.515561Z", nullable=true)
@@ -22,15 +23,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[UseFactory(PartnerTypeFactory::class)]
 class PartnerType extends BaseModel
 {
-    /** @use HasFactory<\Database\Factories\PartnerTypeFactory> */
-    use SoftDeletes, HasFactory;
+    /** @use HasFactory<PartnerTypeFactory> */
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name',
-        'code'
+        'code',
     ];
 
     protected $casts = [
-        
+
     ];
 }

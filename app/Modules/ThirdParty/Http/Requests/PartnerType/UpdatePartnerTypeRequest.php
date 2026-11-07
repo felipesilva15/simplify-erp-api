@@ -9,8 +9,9 @@ use Illuminate\Validation\Rule;
  * @OA\Schema(
  *      schema="UpdatePartnerTypeRequest",
  *      required={"name","code"},
- *      @OA\Property(property="name", type="string", example="Sample", minLength=1, maxLength=60),
- *      @OA\Property(property="code", type="string", example="Sample", minLength=1, maxLength=3)
+ *
+ *      @OA\Property(property="name", type="string", example="Cliente", minLength=1, maxLength=60),
+ *      @OA\Property(property="code", type="string", example="CTM", minLength=1, maxLength=3)
  * )
  */
 class UpdatePartnerTypeRequest extends FormRequest
@@ -21,5 +22,5 @@ class UpdatePartnerTypeRequest extends FormRequest
             'name' => 'required|string|min:1|max:60',
             'code' => ['required', 'string', 'min:1', 'max:3',  Rule::unique('partner_types', 'code')->ignore($this->partner_type)],
         ];
-    }  
+    }
 }
