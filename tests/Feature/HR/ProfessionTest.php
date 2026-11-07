@@ -12,17 +12,19 @@ class ProfessionTest extends TestCase
 {
     protected string $endpoint = '/api/hr/professions';
 
-    protected function getResourceStructure(): array {
+    protected function getResourceStructure(): array
+    {
         return [
             'id',
             'cbo',
             'name',
             'created_at',
-            'updated_at'
+            'updated_at',
         ];
     }
 
-    protected function getLookupResourceStructure(): array {
+    protected function getLookupResourceStructure(): array
+    {
         return [
             'key',
             'label',
@@ -30,12 +32,13 @@ class ProfessionTest extends TestCase
             'meta' => [
                 'id',
                 'name',
-                'cbo'
-            ]
+                'cbo',
+            ],
         ];
     }
 
-    public function test_listing_returns_default_api_response_structure(): void {
+    public function test_listing_returns_default_api_response_structure(): void
+    {
         $response = $this->getJson($this->endpoint, $this->getAdminAuthHeaders());
 
         $response->assertStatus(Response::HTTP_OK);
@@ -51,8 +54,8 @@ class ProfessionTest extends TestCase
             ->assertJsonIsObject()
             ->assertJsonStructure([
                 'data' => [
-                    '*' => $this->getResourceStructure()
-                ]
+                    '*' => $this->getResourceStructure(),
+                ],
             ])
             ->assertJsonCount(3, 'data');
     }
@@ -60,7 +63,7 @@ class ProfessionTest extends TestCase
     public function test_can_list_professions_with_sort(): void
     {
         $queryParams = [
-            'sorts' => '-id'
+            'sorts' => '-id',
         ];
 
         Profession::factory(3)->create();
@@ -76,9 +79,9 @@ class ProfessionTest extends TestCase
         $queryParams = [
             'filters' => [
                 'id' => [
-                    'eq' => 2
-                ]
-            ]
+                    'eq' => 2,
+                ],
+            ],
         ];
 
         Profession::factory(3)->create();
@@ -111,7 +114,7 @@ class ProfessionTest extends TestCase
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonIsObject()
             ->assertJsonStructure([
-                'data' => $this->getResourceStructure()
+                'data' => $this->getResourceStructure(),
             ])
             ->assertJsonPath('data.cbo', $model->cbo)
             ->assertJsonPath('data.name', $model->name);
@@ -148,7 +151,8 @@ class ProfessionTest extends TestCase
         $this->assertErrorResponse($response, Response::HTTP_NOT_FOUND);
     }
 
-    public function test_lookup_returns_default_api_response_structure(): void {
+    public function test_lookup_returns_default_api_response_structure(): void
+    {
         $response = $this->getJson("{$this->endpoint}/lookup", $this->getAdminAuthHeaders());
 
         $response->assertStatus(Response::HTTP_OK);
@@ -164,8 +168,8 @@ class ProfessionTest extends TestCase
             ->assertJsonIsObject()
             ->assertJsonStructure([
                 'data' => [
-                    '*' => $this->getLookupResourceStructure()
-                ]
+                    '*' => $this->getLookupResourceStructure(),
+                ],
             ])
             ->assertJsonCount(3, 'data');
     }
@@ -176,7 +180,7 @@ class ProfessionTest extends TestCase
         Profession::factory()->createOne(['name' => 'médico']);
 
         $queryParams = [
-            'q' => 'engenheiro'
+            'q' => 'engenheiro',
         ];
 
         $response = $this->getJson(url()->query("{$this->endpoint}/lookup", $queryParams), $this->getAdminAuthHeaders());
@@ -186,7 +190,7 @@ class ProfessionTest extends TestCase
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.key', $profession->id)
             ->assertJsonPath('data.0.label', 'engenheiro civil')
-            ->assertJsonPath('data.0.sublabel', "Cod.: {$profession->id}")
+            ->assertJsonPath('data.0.sublabel', "Cod.: {$profession->id} | CBO: {$profession->cbo}")
             ->assertJsonPath('data.0.meta.cbo', $profession->cbo);
     }
 
@@ -196,8 +200,8 @@ class ProfessionTest extends TestCase
         $queryParams = [
             'keys' => [
                 $professions[0]->id,
-                $professions[2]->id
-            ]
+                $professions[2]->id,
+            ],
         ];
 
         $response = $this->getJson(url()->query("{$this->endpoint}/lookup", $queryParams), $this->getAdminAuthHeaders());

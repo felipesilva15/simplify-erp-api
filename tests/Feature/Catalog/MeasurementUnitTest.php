@@ -426,7 +426,7 @@ class MeasurementUnitTest extends TestCase
         $models = MeasurementUnit::factory(3)->create();
 
         $queryParams = [
-            'q' => $models->first()->code
+            'q' => $models->first()->id
         ];
 
         $response = $this->getJson(url()->query("{$this->endpoint}/lookup", $queryParams), $this->getAdminAuthHeaders());
@@ -434,7 +434,7 @@ class MeasurementUnitTest extends TestCase
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonIsObject()
             ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.key', $models->first()->code);
+            ->assertJsonPath('data.0.key', $models->first()->id);
     }
 
     public function test_can_lookup_measurement_units_with_sort(): void
@@ -449,7 +449,7 @@ class MeasurementUnitTest extends TestCase
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonIsObject()
-            ->assertJsonPath('data.0.key', $models->last()->code);
+            ->assertJsonPath('data.0.key', $models->last()->id);
     }
 
     public function test_cannot_lookup_measurement_units_without_authentication(): void

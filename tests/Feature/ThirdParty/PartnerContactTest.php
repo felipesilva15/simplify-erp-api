@@ -9,6 +9,7 @@ use App\Modules\ThirdParty\Enums\TaxpayerTypeEnum;
 use App\Modules\ThirdParty\Models\Contact;
 use App\Modules\ThirdParty\Models\Partner;
 use App\Modules\ThirdParty\Models\PartnerType;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
@@ -260,9 +261,9 @@ class PartnerContactTest extends TestCase
 
     public function test_cannot_assign_child_from_another_header(): void
     {
-        $partner  = $this->createPartnerWithThreeContacts();
-        $other    = $this->createPartnerWithThreeContacts();
-        $foreign  = $other->contacts()->first();
+        $partner = $this->createPartnerWithThreeContacts();
+        $other = $this->createPartnerWithThreeContacts();
+        $foreign = $other->contacts()->first();
 
         $response = $this->putJson("{$this->endpoint}/{$partner->id}", $this->partnerPayload([
             'contacts' => [
@@ -318,8 +319,8 @@ class PartnerContactTest extends TestCase
     {
         $response = $this->postJson($this->endpoint, $this->partnerPayload([
             'contacts' => [
-                $this->contactPayload(['name' => 'A', 'main' => true]),
-                $this->contactPayload(['name' => 'B', 'main' => true]),
+                $this->contactPayload(['name' => 'Ana', 'main' => true]),
+                $this->contactPayload(['name' => 'Bia', 'main' => true]),
             ],
         ]), $this->getAdminAuthHeaders());
 
@@ -332,13 +333,13 @@ class PartnerContactTest extends TestCase
     {
         $response = $this->postJson($this->endpoint, $this->partnerPayload([
             'contacts' => [
-                $this->contactPayload(['name' => 'A', 'main' => true]),
-                $this->contactPayload(['name' => 'B', 'main' => false]),
+                $this->contactPayload(['name' => 'Ana', 'main' => true]),
+                $this->contactPayload(['name' => 'Bia', 'main' => false]),
             ],
         ]), $this->getAdminAuthHeaders());
 
         $response->assertStatus(Response::HTTP_CREATED);
-        $this->assertDatabaseHas('contacts', ['name' => 'A', 'main' => true]);
+        $this->assertDatabaseHas('contacts', ['name' => 'Ana', 'main' => true]);
     }
 
     public function test_main_rule_also_sees_main_persisted_on_existing_children(): void
@@ -453,7 +454,7 @@ class PartnerContactTest extends TestCase
         $this->assertSame('contact', Contact::morphAlias());
         $this->assertSame(
             'contact',
-            \Illuminate\Database\Eloquent\Relations\Relation::getMorphAlias(Contact::class),
+            Relation::getMorphAlias(Contact::class),
             'O model de item precisa estar no morph map para o histórico ser consultável.'
         );
 

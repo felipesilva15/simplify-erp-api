@@ -2,16 +2,18 @@
 
 namespace Tests\Feature\Catalog;
 
-use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Exports\ProductExport;
-use Maatwebsite\Excel\Facades\Excel;use Tests\TestCase;
+use App\Modules\Catalog\Models\Product;
 use Illuminate\Http\Response;
+use Maatwebsite\Excel\Facades\Excel;
+use Tests\TestCase;
 
 class ProductTest extends TestCase
 {
     protected string $endpoint = '/api/catalog/products';
 
-    protected function getResourceStructure(): array {
+    protected function getResourceStructure(): array
+    {
         return [
             'id',
             'type',
@@ -35,11 +37,12 @@ class ProductTest extends TestCase
             'product_brand_id',
             'deleted_at',
             'created_at',
-            'updated_at'
+            'updated_at',
         ];
     }
 
-    public function test_listing_returns_default_api_response_structure(): void {
+    public function test_listing_returns_default_api_response_structure(): void
+    {
         $response = $this->getJson($this->endpoint, $this->getAdminAuthHeaders());
 
         $response->assertStatus(Response::HTTP_OK);
@@ -55,8 +58,8 @@ class ProductTest extends TestCase
             ->assertJsonIsObject()
             ->assertJsonStructure([
                 'data' => [
-                    '*' => $this->getResourceStructure()
-                ]
+                    '*' => $this->getResourceStructure(),
+                ],
             ])
             ->assertJsonCount(3, 'data');
     }
@@ -64,7 +67,7 @@ class ProductTest extends TestCase
     public function test_can_list_products_with_sort(): void
     {
         $queryParams = [
-            'sorts' => '-id'
+            'sorts' => '-id',
         ];
 
         Product::factory(3)->create();
@@ -80,9 +83,9 @@ class ProductTest extends TestCase
         $queryParams = [
             'filters' => [
                 'id' => [
-                    'eq' => 2
-                ]
-            ]
+                    'eq' => 2,
+                ],
+            ],
         ];
 
         Product::factory(3)->create();
@@ -99,7 +102,7 @@ class ProductTest extends TestCase
         $models = Product::factory(3)->create();
 
         $queryParams = [
-            'q' => $models->first()->type
+            'q' => $models->first()->name,
         ];
 
         $response = $this->getJson(url()->query($this->endpoint, $queryParams), $this->getAdminAuthHeaders());
@@ -131,7 +134,7 @@ class ProductTest extends TestCase
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonIsObject()
             ->assertJsonStructure([
-                'data' => $this->getResourceStructure()
+                'data' => $this->getResourceStructure(),
             ])
             ->assertJsonPath('data.type', $model->type);
     }
@@ -167,7 +170,7 @@ class ProductTest extends TestCase
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonIsObject()
             ->assertJsonStructure([
-                'data' => $this->getResourceStructure()
+                'data' => $this->getResourceStructure(),
             ])
             ->assertJsonPath('data.type', $model->type)
             ->assertJsonPath('meta.editable', true);
@@ -206,7 +209,7 @@ class ProductTest extends TestCase
         $response->assertStatus(Response::HTTP_CREATED)
             ->assertJsonIsObject()
             ->assertJsonStructure([
-                'data' => $this->getResourceStructure()
+                'data' => $this->getResourceStructure(),
             ])
             ->assertJsonPath('data.type', $model->type);
 
@@ -257,7 +260,7 @@ class ProductTest extends TestCase
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonIsObject()
             ->assertJsonStructure([
-                'data' => $this->getResourceStructure()
+                'data' => $this->getResourceStructure(),
             ])
             ->assertJsonPath('data.type', 'Updated Product');
     }
@@ -361,7 +364,7 @@ class ProductTest extends TestCase
         Excel::fake();
 
         $response = $this->getJson(
-            "{$this->endpoint}/export?q=".urlencode((string) $models->first()->type),
+            "{$this->endpoint}/export?q=".urlencode((string) $models->first()->name),
             $this->getAdminAuthHeaders()
         );
 
@@ -397,9 +400,9 @@ class ProductTest extends TestCase
                         'key',
                         'label',
                         'sublabel',
-                        'meta'
-                    ]
-                ]
+                        'meta',
+                    ],
+                ],
             ])
             ->assertJsonCount(3, 'data');
     }
@@ -409,7 +412,7 @@ class ProductTest extends TestCase
         $models = Product::factory(3)->create();
 
         $queryParams = [
-            'q' => $models->first()->type
+            'q' => $models->first()->name,
         ];
 
         $response = $this->getJson(url()->query("{$this->endpoint}/lookup", $queryParams), $this->getAdminAuthHeaders());
@@ -425,7 +428,7 @@ class ProductTest extends TestCase
         $models = Product::factory(3)->create();
 
         $queryParams = [
-            'sorts' => '-id'
+            'sorts' => '-id',
         ];
 
         $response = $this->getJson(url()->query("{$this->endpoint}/lookup", $queryParams), $this->getAdminAuthHeaders());

@@ -2,19 +2,26 @@
 
 namespace Database\Factories;
 
+use App\Core\Enums\ProductTypeEnum;
+use App\Modules\Catalog\Enums\ItemTypeCodeEnum;
+use App\Modules\Catalog\Models\MeasurementUnit;
+use App\Modules\Catalog\Models\Product;
+use App\Modules\Catalog\Models\ProductBrand;
+use App\Modules\Catalog\Models\ProductCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Modules\Catalog\Models\Product>
+ * @extends Factory<Product>
  */
 class ProductFactory extends Factory
 {
     public function definition(): array
     {
         return [
-            'type' => fake()->name(),
-            'sku' => fake()->name(),
-            'gtin' => fake()->name(),
+            'type' => ProductTypeEnum::Product,
+            'item_type_code' => ItemTypeCodeEnum::MerchandiseForResale->value,
+            'sku' => fake()->unique()->bothify('SKU-####'),
+            'gtin' => fake()->numerify('#############'),
             'name' => fake()->name(),
             'description' => fake()->name(),
             'notes' => fake()->name(),
@@ -28,9 +35,9 @@ class ProductFactory extends Factory
             'minimum_stock' => fake()->randomFloat(2, 0, 9999),
             'maximum_stock' => fake()->randomFloat(2, 0, 9999),
             'is_active' => fake()->boolean(),
-            'measurement_unit_id' => fake()->numberBetween(0, 100),
-            'product_category_id' => fake()->numberBetween(0, 100),
-            'product_brand_id' => fake()->numberBetween(0, 100)
+            'measurement_unit_id' => MeasurementUnit::factory(),
+            'product_category_id' => ProductCategory::factory(),
+            'product_brand_id' => ProductBrand::factory(),
         ];
     }
 }

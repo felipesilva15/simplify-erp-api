@@ -4,6 +4,7 @@ namespace Tests\Feature\ThirdParty;
 
 use App\Modules\ThirdParty\Exports\PartnerExport;
 use App\Modules\ThirdParty\Models\Partner;
+use App\Modules\ThirdParty\Models\PartnerType;
 use Illuminate\Http\Response;
 use Maatwebsite\Excel\Facades\Excel;
 use Tests\TestCase;
@@ -12,7 +13,8 @@ class PartnerTest extends TestCase
 {
     protected string $endpoint = '/api/third-party/partners';
 
-    protected function getResourceStructure(): array {
+    protected function getResourceStructure(): array
+    {
         return [
             'id',
             'partner_type_code',
@@ -28,7 +30,7 @@ class PartnerTest extends TestCase
             'municipal_registration',
             'suframa_registration',
             'marital_status',
-            'cbo',
+            'profession_id',
             'gender',
             'birth_date',
             'father_name',
@@ -40,11 +42,12 @@ class PartnerTest extends TestCase
             'notes',
             'created_at',
             'updated_at',
-            'deleted_at'
+            'deleted_at',
         ];
     }
 
-    public function test_listing_returns_default_api_response_structure(): void {
+    public function test_listing_returns_default_api_response_structure(): void
+    {
         $response = $this->getJson($this->endpoint, $this->getAdminAuthHeaders());
 
         $response->assertStatus(Response::HTTP_OK);
@@ -60,8 +63,8 @@ class PartnerTest extends TestCase
             ->assertJsonIsObject()
             ->assertJsonStructure([
                 'data' => [
-                    '*' => $this->getResourceStructure()
-                ]
+                    '*' => $this->getResourceStructure(),
+                ],
             ])
             ->assertJsonCount(3, 'data');
     }
@@ -69,7 +72,7 @@ class PartnerTest extends TestCase
     public function test_can_list_partners_with_sort(): void
     {
         $queryParams = [
-            'sorts' => '-id'
+            'sorts' => '-id',
         ];
 
         Partner::factory(3)->create();
@@ -85,9 +88,9 @@ class PartnerTest extends TestCase
         $queryParams = [
             'filters' => [
                 'id' => [
-                    'eq' => 2
-                ]
-            ]
+                    'eq' => 2,
+                ],
+            ],
         ];
 
         Partner::factory(3)->create();
@@ -120,7 +123,7 @@ class PartnerTest extends TestCase
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonIsObject()
             ->assertJsonStructure([
-                'data' => $this->getResourceStructure()
+                'data' => $this->getResourceStructure(),
             ])
             ->assertJsonPath('data.partner_type_code', $model->partner_type_code);
     }
@@ -156,7 +159,7 @@ class PartnerTest extends TestCase
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonIsObject()
             ->assertJsonStructure([
-                'data' => $this->getResourceStructure()
+                'data' => $this->getResourceStructure(),
             ])
             ->assertJsonPath('data.partner_type_code', $model->partner_type_code)
             ->assertJsonPath('meta.editable', true);
@@ -195,7 +198,7 @@ class PartnerTest extends TestCase
         $response->assertStatus(Response::HTTP_CREATED)
             ->assertJsonIsObject()
             ->assertJsonStructure([
-                'data' => $this->getResourceStructure()
+                'data' => $this->getResourceStructure(),
             ])
             ->assertJsonPath('data.partner_type_code', $model->partner_type_code);
 
@@ -239,16 +242,16 @@ class PartnerTest extends TestCase
         $model = Partner::factory()->createOne();
 
         $data = $model->toArray();
-        $data['partner_type_code'] = 'Updated Partner';
+        $data['partner_type_code'] = PartnerType::factory()->createOne()->code;
 
         $response = $this->putJson("{$this->endpoint}/{$model->id}", $data, $this->getAdminAuthHeaders());
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonIsObject()
             ->assertJsonStructure([
-                'data' => $this->getResourceStructure()
+                'data' => $this->getResourceStructure(),
             ])
-            ->assertJsonPath('data.partner_type_code', 'Updated Partner');
+            ->assertJsonPath('data.partner_type_code', $data['partner_type_code']);
     }
 
     public function test_cannot_update_partner_with_invalid_payload(): void
