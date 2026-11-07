@@ -2,13 +2,13 @@
     "openapi": "3.0.0",
     "info": {
         "title": "Simplify ERP API",
-        "description": "A sessão abaixo contém a documentação da API utilizada para o Simplify ERP.",
+        "description": "The section below contains the API documentation used by Simplify ERP.",
         "contact": {
             "name": "Felipe Silva",
             "email": "felipe.allware@gmail.com"
         },
         "license": {
-            "name": "Licença MIT",
+            "name": "MIT License",
             "url": "https://github.com/felipesilva15/simplify-erp-api/blob/main/LICENSE"
         },
         "version": "1.0.0"
@@ -3471,7 +3471,7 @@
         "/api/security/roles/export": {
             "get": {
                 "tags": [
-                    "Security"
+                    "Role"
                 ],
                 "summary": "Export all roles to Excel",
                 "operationId": "exportRole",
@@ -3677,7 +3677,7 @@
         "/api/security/users/export": {
             "get": {
                 "tags": [
-                    "Security"
+                    "User"
                 ],
                 "summary": "Export all users to Excel",
                 "operationId": "exportUser",
@@ -4089,7 +4089,7 @@
         "/api/third-party/partner-types/export": {
             "get": {
                 "tags": [
-                    "Partner"
+                    "PartnerType"
                 ],
                 "summary": "Export all partner types to Excel",
                 "operationId": "exportPartnerType",
@@ -10537,7 +10537,7 @@
                 "operationId": "13fc5316beba6f2e14dd68a48a84972e",
                 "responses": {
                     "200": {
-                        "description": "List",
+                        "description": "Integration connections retrieved successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -10578,7 +10578,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Created",
+                        "description": "Integration connection created successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -10616,7 +10616,7 @@
                 "operationId": "bd5befcb6a661dc183f3d29e13eb4d45",
                 "responses": {
                     "200": {
-                        "description": "Show",
+                        "description": "Integration connection retrieved successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -10662,7 +10662,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Updated",
+                        "description": "Integration connection updated successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -10689,6 +10689,23 @@
                         "bearerAuth": []
                     }
                 ]
+            },
+            "delete": {
+                "tags": [
+                    "IntegrationConnection"
+                ],
+                "summary": "Delete integration connection",
+                "operationId": "c3333100e469b15766a242a067b520c0",
+                "responses": {
+                    "204": {
+                        "description": "Integration connection deleted successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/integrations/providers": {
@@ -10700,7 +10717,7 @@
                 "operationId": "563d46da45c1714b91fad89ed0b01476",
                 "responses": {
                     "200": {
-                        "description": "List",
+                        "description": "Integration providers retrieved successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -10717,16 +10734,30 @@
                 ]
             }
         },
-        "/webhooks/{provider}/{connection}": {
+        "/api/webhooks/{provider}": {
             "post": {
                 "tags": [
                     "Integration"
                 ],
                 "summary": "Webhook inbox",
-                "operationId": "fad19a7b8b1e8c47226dabafb5ec251f",
+                "operationId": "da472e8500c1450c87797447cbdd3158",
                 "responses": {
                     "202": {
-                        "description": "Accepted"
+                        "description": "Webhook accepted for asynchronous processing"
+                    }
+                }
+            }
+        },
+        "/api/webhooks/{provider}/{connection}": {
+            "post": {
+                "tags": [
+                    "Integration"
+                ],
+                "summary": "Webhook inbox for a specific connection",
+                "operationId": "2fac45e7cc700dcba814d83bfaa260c1",
+                "responses": {
+                    "202": {
+                        "description": "Webhook accepted for asynchronous processing"
                     }
                 }
             }
@@ -15080,6 +15111,9 @@
                         "example": "Operação realizada com sucesso"
                     },
                     "data": {
+                        "example": {
+                            "id": 1
+                        },
                         "nullable": true
                     },
                     "warnings": {
@@ -15087,14 +15121,34 @@
                         "items": {
                             "type": "string"
                         },
+                        "example": [
+                            "No records found."
+                        ],
                         "nullable": true
                     },
                     "links": {
                         "type": "object",
+                        "example": {
+                            "first": "http://localhost:8000/api/catalog/products?page=1",
+                            "previous": null,
+                            "next": null,
+                            "last": "http://localhost:8000/api/catalog/products?page=1"
+                        },
                         "nullable": true
                     },
                     "meta": {
                         "type": "object",
+                        "example": {
+                            "per_page": 15,
+                            "current_page": 1,
+                            "last_page": 1,
+                            "total": 1
+                        },
+                        "nullable": true
+                    },
+                    "errors": {
+                        "type": "object",
+                        "example": null,
                         "nullable": true
                     }
                 },
@@ -15115,19 +15169,19 @@
                 "properties": {
                     "first": {
                         "type": "string",
-                        "example": "http://localhost:8000/api/data?page=1"
+                        "example": "http://localhost:8000/api/catalog/products?page=1"
                     },
                     "previous": {
                         "type": "string",
-                        "example": "http://localhost:8000/api/data?page=1"
+                        "example": "http://localhost:8000/api/catalog/products?page=1"
                     },
                     "next": {
                         "type": "string",
-                        "example": "http://localhost:8000/api/data?page=3"
+                        "example": "http://localhost:8000/api/catalog/products?page=3"
                     },
                     "last": {
                         "type": "string",
-                        "example": "http://localhost:8000/api/data?page=3"
+                        "example": "http://localhost:8000/api/catalog/products?page=3"
                     }
                 },
                 "type": "object"
@@ -15163,7 +15217,7 @@
                 "properties": {
                     "url": {
                         "type": "string",
-                        "example": "http://localhost:8000/api/data?page=1"
+                        "example": "http://localhost:8000/api/catalog/products?page=1"
                     },
                     "page": {
                         "type": "integer",
@@ -15177,7 +15231,7 @@
                 "type": "object"
             },
             "ActivityActionEnum": {
-                "description": "Activity actions:\n *      Created = 'CREATED'\n *      Updated = 'UPDATED'\n *      Deleted = 'DELETED'\n *      Approved = 'APPROVED'\n *      Auth = 'AUTH'",
+                "description": "Activity actions: CREATED, UPDATED, DELETED, APPROVED, AUTH",
                 "type": "string",
                 "enum": [
                     "CREATED",
@@ -15188,7 +15242,7 @@
                 ]
             },
             "ProductApplicabilityEnum": {
-                "description": "Product applicabilities:\n *      Product = 'PRODUCT'\n *      Service = 'SERVICE'\n *      Both = 'BOTH'",
+                "description": "Product applicabilities: PRODUCT, SERVICE, BOTH",
                 "type": "string",
                 "enum": [
                     "PRODUCT",
@@ -15197,7 +15251,7 @@
                 ]
             },
             "ProductTypeEnum": {
-                "description": "Product types:\n *      Product = 'PRODUCT'\n *      Service = 'SERVICE'",
+                "description": "Product types: PRODUCT, SERVICE",
                 "type": "string",
                 "enum": [
                     "PRODUCT",
@@ -15205,7 +15259,7 @@
                 ]
             },
             "RequestQueryOperatorsEnum": {
-                "description": "Request query operators:\n *      Equal = 'eq'\n *      Like = 'like'\n *      Less than = 'lt'\n *      Less than equal = 'lte'\n *      Greater than = 'gt'\n *      Greater than equal = 'gte'\n *      Not equal = 'ne'",
+                "description": "Request query operators: eq, like, lt, lte, gt, gte, ne",
                 "type": "string",
                 "enum": [
                     "eq",
@@ -15218,7 +15272,7 @@
                 ]
             },
             "SqlOrderDirectionEnum": {
-                "description": "SQL order direction:\n *      Ascending = 'asc'\n *      Descending = 'desc'",
+                "description": "SQL order direction: asc, desc",
                 "type": "string",
                 "enum": [
                     "asc",
@@ -15226,7 +15280,7 @@
                 ]
             },
             "SqlQueryOperatorsEnum": {
-                "description": "SQL query operators:\n *      Equal = '='\n *      Like = 'like'\n *      Less than = '<'\n *      Less than equal = '<='\n *      Greater than = '>'\n *      Greater than equal = '>='\n *      Not equal = '!='",
+                "description": "SQL query operators: =, like, <, <=, >, >=, !=",
                 "type": "string",
                 "enum": [
                     "=",
@@ -15239,7 +15293,7 @@
                 ]
             },
             "UserAgentEnum": {
-                "description": "User agents:\n *      Firefox = 'FIREFOX'\n *      Chrome = 'CHROME'\n *      Edge = 'EDGE'\n *      Safari = 'SAFARI'\n *      Postman = 'POSTMAN'\n *      Insomnia = 'INSOMNIA'\n *      Bruno = 'BRUNO'\n *      Googlebot = 'GOOGLEBOT'\n *      Bot = 'BOT'\n *      Unknown = 'UNKNOWN'",
+                "description": "User agents: FIREFOX, CHROME, EDGE, SAFARI, POSTMAN, INSOMNIA, BRUNO, GOOGLEBOT, BOT, UNKNOWN",
                 "type": "string",
                 "enum": [
                     "FIREFOX",
@@ -15309,7 +15363,7 @@
                     "q": {
                         "description": "Free text search across the searchable columns",
                         "type": "string",
-                        "example": "Felipe"
+                        "example": "torneira"
                     },
                     "sorts": {
                         "description": "Fields for sorting separated by commas. Use '-' to sort descending",
@@ -15319,7 +15373,7 @@
                     "per_page": {
                         "description": "Items per page",
                         "type": "integer",
-                        "example": 10
+                        "example": 15
                     },
                     "page": {
                         "description": "Page number",
@@ -15334,14 +15388,18 @@
                     "q": {
                         "description": "Free text search across the searchable columns",
                         "type": "string",
-                        "example": "1"
+                        "example": "torneira"
                     },
                     "keys": {
                         "description": "Values of the lookup key column to filter by",
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "example": [
+                            "1",
+                            "3"
+                        ]
                     },
                     "sorts": {
                         "description": "Fields for sorting separated by commas. Use '-' to sort descending",
@@ -15351,7 +15409,7 @@
                     "per_page": {
                         "description": "Items per page",
                         "type": "integer",
-                        "example": 10
+                        "example": 15
                     },
                     "page": {
                         "description": "Page number",
@@ -15435,6 +15493,10 @@
                             "name": {
                                 "type": "string",
                                 "example": "Felipe Silva"
+                            },
+                            "username": {
+                                "type": "string",
+                                "example": "felipe.silva"
                             }
                         },
                         "type": "object",
@@ -15443,6 +15505,7 @@
                     "created_at": {
                         "type": "string",
                         "format": "date-time",
+                        "example": "2026-05-20T14:30:00Z",
                         "nullable": true
                     }
                 },
@@ -15515,8 +15578,26 @@
                     }
                 ]
             },
+            "ItemTypeCodeEnum": {
+                "description": "Item type codes: 00 = Merchandise for resale; 01 = Raw material; 02 = Packaging; 03 = Work in progress; 04 = Finished product; 05 = By-product; 06 = Intermediate product; 07 = Consumable supplies; 08 = Fixed asset; 09 = Service; 10 = Other inputs; 99 = Other",
+                "type": "string",
+                "enum": [
+                    "00",
+                    "01",
+                    "02",
+                    "03",
+                    "04",
+                    "05",
+                    "06",
+                    "07",
+                    "08",
+                    "09",
+                    "10",
+                    "99"
+                ]
+            },
             "MeasurementUnitCategoryEnum": {
-                "description": "Measurement unit categories:\n *      Count = 'COUNT'\n *      Mass = 'MASS'\n *      Volume = 'VOLUME'\n *      Length = 'LENGTH'\n *      Area = 'AREA'\n *      Time = 'TIME'",
+                "description": "Measurement unit categories: COUNT, MASS, VOLUME, LENGTH, AREA, TIME",
                 "type": "string",
                 "enum": [
                     "COUNT",
@@ -15657,6 +15738,286 @@
                 },
                 "type": "object"
             },
+            "StoreProductRequest": {
+                "required": [
+                    "type",
+                    "item_type_code",
+                    "sku",
+                    "name",
+                    "price",
+                    "cost",
+                    "is_active",
+                    "measurement_unit_id"
+                ],
+                "properties": {
+                    "type": {
+                        "$ref": "#/components/schemas/ProductTypeEnum"
+                    },
+                    "item_type_code": {
+                        "$ref": "#/components/schemas/ItemTypeCodeEnum"
+                    },
+                    "sku": {
+                        "type": "string",
+                        "example": "2156",
+                        "maxLength": 40,
+                        "minLength": 1
+                    },
+                    "gtin": {
+                        "type": "string",
+                        "example": "7892236733554",
+                        "nullable": true,
+                        "maxLength": 14,
+                        "minLength": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Torneira para lavabo",
+                        "maxLength": 255,
+                        "minLength": 1
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Torneira gourmet para área de lavabo",
+                        "nullable": true,
+                        "maxLength": 1024,
+                        "minLength": 1
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Produto sujeito a disponibilidade em estoque",
+                        "nullable": true
+                    },
+                    "price": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "119.90",
+                        "maximum": 100000000000000,
+                        "minimum": 0.0001
+                    },
+                    "cost": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "59.45",
+                        "maximum": 100000000000000,
+                        "minimum": 0.0001
+                    },
+                    "net_weight": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "350",
+                        "nullable": true,
+                        "maximum": 999999999.999,
+                        "minimum": 0.001
+                    },
+                    "gross_weight": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "386",
+                        "nullable": true,
+                        "maximum": 999999999.999,
+                        "minimum": 0.001
+                    },
+                    "width": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "21.30",
+                        "nullable": true,
+                        "maximum": 99999999.9999,
+                        "minimum": 0.0001
+                    },
+                    "height": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "8.60",
+                        "nullable": true,
+                        "maximum": 99999999.9999,
+                        "minimum": 0.0001
+                    },
+                    "length": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "4.20",
+                        "nullable": true,
+                        "maximum": 99999999.9999,
+                        "minimum": 0.0001
+                    },
+                    "minimum_stock": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "1",
+                        "nullable": true,
+                        "maximum": 100000000000000,
+                        "minimum": 0.0001
+                    },
+                    "maximum_stock": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "3",
+                        "nullable": true,
+                        "maximum": 100000000000000,
+                        "minimum": 0.0001
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "measurement_unit_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "product_category_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "product_brand_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateProductRequest": {
+                "required": [
+                    "type",
+                    "item_type_code",
+                    "sku",
+                    "name",
+                    "price",
+                    "cost",
+                    "is_active",
+                    "measurement_unit_id"
+                ],
+                "properties": {
+                    "type": {
+                        "$ref": "#/components/schemas/ProductTypeEnum"
+                    },
+                    "item_type_code": {
+                        "$ref": "#/components/schemas/ItemTypeCodeEnum"
+                    },
+                    "sku": {
+                        "type": "string",
+                        "example": "2156",
+                        "maxLength": 40,
+                        "minLength": 1
+                    },
+                    "gtin": {
+                        "type": "string",
+                        "example": "7892236733554",
+                        "nullable": true,
+                        "maxLength": 14,
+                        "minLength": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Torneira para lavabo",
+                        "maxLength": 255,
+                        "minLength": 1
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Torneira gourmet para área de lavabo",
+                        "nullable": true,
+                        "maxLength": 1024,
+                        "minLength": 1
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Produto sujeito a disponibilidade em estoque",
+                        "nullable": true
+                    },
+                    "price": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "119.90",
+                        "maximum": 100000000000000,
+                        "minimum": 0.0001
+                    },
+                    "cost": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "59.45",
+                        "maximum": 100000000000000,
+                        "minimum": 0.0001
+                    },
+                    "net_weight": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "350",
+                        "nullable": true,
+                        "maximum": 999999999.999,
+                        "minimum": 0.001
+                    },
+                    "gross_weight": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "386",
+                        "nullable": true,
+                        "maximum": 999999999.999,
+                        "minimum": 0.001
+                    },
+                    "width": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "21.30",
+                        "nullable": true,
+                        "maximum": 99999999.9999,
+                        "minimum": 0.0001
+                    },
+                    "height": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "8.60",
+                        "nullable": true,
+                        "maximum": 99999999.9999,
+                        "minimum": 0.0001
+                    },
+                    "length": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "4.20",
+                        "nullable": true,
+                        "maximum": 99999999.9999,
+                        "minimum": 0.0001
+                    },
+                    "minimum_stock": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "1",
+                        "nullable": true,
+                        "maximum": 100000000000000,
+                        "minimum": 0.0001
+                    },
+                    "maximum_stock": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "3",
+                        "nullable": true,
+                        "maximum": 100000000000000,
+                        "minimum": 0.0001
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "measurement_unit_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "product_category_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "product_brand_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "StoreProductBrandRequest": {
                 "required": [
                     "name"
@@ -15664,7 +16025,7 @@
                 "properties": {
                     "name": {
                         "type": "string",
-                        "example": "Hauwei",
+                        "example": "Docol",
                         "maxLength": 120,
                         "minLength": 1
                     }
@@ -15678,7 +16039,7 @@
                 "properties": {
                     "name": {
                         "type": "string",
-                        "example": "Hauwei",
+                        "example": "Docol",
                         "maxLength": 120,
                         "minLength": 1
                     }
@@ -15739,302 +16100,6 @@
                 },
                 "type": "object"
             },
-            "StoreProductRequest": {
-                "required": [
-                    "type",
-                    "item_type_code",
-                    "sku",
-                    "name",
-                    "price",
-                    "cost",
-                    "is_active",
-                    "measurement_unit_id"
-                ],
-                "properties": {
-                    "type": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 20,
-                        "minLength": 1
-                    },
-                    "item_type_code": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 2,
-                        "minLength": 2
-                    },
-                    "sku": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 40,
-                        "minLength": 1
-                    },
-                    "gtin": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 14,
-                        "minLength": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 255,
-                        "minLength": 1
-                    },
-                    "description": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 1024,
-                        "minLength": 1
-                    },
-                    "notes": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 0,
-                        "minLength": 1
-                    },
-                    "price": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 20.99,
-                        "maximum": 100000000000000,
-                        "minimum": 0.0001
-                    },
-                    "cost": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 20.99,
-                        "maximum": 100000000000000,
-                        "minimum": 0.0001
-                    },
-                    "net_weight": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 20.99,
-                        "nullable": true,
-                        "maximum": 999999999.999,
-                        "minimum": 0.001
-                    },
-                    "gross_weight": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 20.99,
-                        "nullable": true,
-                        "maximum": 999999999.999,
-                        "minimum": 0.001
-                    },
-                    "width": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 20.99,
-                        "nullable": true,
-                        "maximum": 99999999.9999,
-                        "minimum": 0.0001
-                    },
-                    "height": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 20.99,
-                        "nullable": true,
-                        "maximum": 99999999.9999,
-                        "minimum": 0.0001
-                    },
-                    "length": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 20.99,
-                        "nullable": true,
-                        "maximum": 99999999.9999,
-                        "minimum": 0.0001
-                    },
-                    "minimum_stock": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 20.99,
-                        "nullable": true,
-                        "maximum": 100000000000000,
-                        "minimum": 0.0001
-                    },
-                    "maximum_stock": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 20.99,
-                        "nullable": true,
-                        "maximum": 100000000000000,
-                        "minimum": 0.0001
-                    },
-                    "is_active": {
-                        "type": "boolean",
-                        "example": false
-                    },
-                    "measurement_unit_id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "product_category_id": {
-                        "type": "integer",
-                        "example": 1,
-                        "nullable": true
-                    },
-                    "product_brand_id": {
-                        "type": "integer",
-                        "example": 1,
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "UpdateProductRequest": {
-                "required": [
-                    "type",
-                    "item_type_code",
-                    "sku",
-                    "name",
-                    "price",
-                    "cost",
-                    "is_active",
-                    "measurement_unit_id"
-                ],
-                "properties": {
-                    "type": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 20,
-                        "minLength": 1
-                    },
-                    "item_type_code": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 2,
-                        "minLength": 2
-                    },
-                    "sku": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 40,
-                        "minLength": 1
-                    },
-                    "gtin": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 14,
-                        "minLength": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 255,
-                        "minLength": 1
-                    },
-                    "description": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 1024,
-                        "minLength": 1
-                    },
-                    "notes": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 0,
-                        "minLength": 1
-                    },
-                    "price": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 20.99,
-                        "maximum": 100000000000000,
-                        "minimum": 0.0001
-                    },
-                    "cost": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 20.99,
-                        "maximum": 100000000000000,
-                        "minimum": 0.0001
-                    },
-                    "net_weight": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 20.99,
-                        "nullable": true,
-                        "maximum": 999999999.999,
-                        "minimum": 0.001
-                    },
-                    "gross_weight": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 20.99,
-                        "nullable": true,
-                        "maximum": 999999999.999,
-                        "minimum": 0.001
-                    },
-                    "width": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 20.99,
-                        "nullable": true,
-                        "maximum": 99999999.9999,
-                        "minimum": 0.0001
-                    },
-                    "height": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 20.99,
-                        "nullable": true,
-                        "maximum": 99999999.9999,
-                        "minimum": 0.0001
-                    },
-                    "length": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 20.99,
-                        "nullable": true,
-                        "maximum": 99999999.9999,
-                        "minimum": 0.0001
-                    },
-                    "minimum_stock": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 20.99,
-                        "nullable": true,
-                        "maximum": 100000000000000,
-                        "minimum": 0.0001
-                    },
-                    "maximum_stock": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 20.99,
-                        "nullable": true,
-                        "maximum": 100000000000000,
-                        "minimum": 0.0001
-                    },
-                    "is_active": {
-                        "type": "boolean",
-                        "example": false
-                    },
-                    "measurement_unit_id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "product_category_id": {
-                        "type": "integer",
-                        "example": 1,
-                        "nullable": true
-                    },
-                    "product_brand_id": {
-                        "type": "integer",
-                        "example": 1,
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
             "MeasurementUnitCollection": {
                 "type": "object",
                 "allOf": [
@@ -16077,17 +16142,19 @@
                 "properties": {
                     "key": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": 1,
+                        "maxLength": 10,
+                        "minLength": 1
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Quilograma",
                         "maxLength": 60,
                         "minLength": 1
                     },
                     "sublabel": {
                         "type": "string",
-                        "example": "Cod.: 1",
+                        "example": "Cód: KG | Símbolo: kg",
                         "maxLength": 80,
                         "minLength": 1
                     },
@@ -16099,27 +16166,24 @@
                             },
                             "name": {
                                 "type": "string",
-                                "example": "Sample",
+                                "example": "Quilograma",
                                 "maxLength": 60,
                                 "minLength": 1
                             },
                             "code": {
                                 "type": "string",
-                                "example": "Sample",
+                                "example": "KG",
                                 "maxLength": 10,
                                 "minLength": 1
                             },
                             "symbol": {
                                 "type": "string",
-                                "example": "Sample",
+                                "example": "kg",
                                 "maxLength": 10,
                                 "minLength": 1
                             },
                             "category": {
-                                "type": "string",
-                                "example": "Sample",
-                                "maxLength": 20,
-                                "minLength": 1
+                                "$ref": "#/components/schemas/MeasurementUnitCategoryEnum"
                             }
                         },
                         "type": "object"
@@ -16152,10 +16216,7 @@
                         "minLength": 1
                     },
                     "category": {
-                        "type": "string",
-                        "example": "MASS",
-                        "maxLength": 20,
-                        "minLength": 1
+                        "$ref": "#/components/schemas/MeasurementUnitCategoryEnum"
                     },
                     "base_unit_id": {
                         "type": "integer",
@@ -16209,6 +16270,317 @@
                 },
                 "type": "object"
             },
+            "ProductCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ProductResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "ProductLookupCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ProductLookupResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "ProductLookupResource": {
+                "properties": {
+                    "key": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "label": {
+                        "type": "string",
+                        "example": "Torneira para lavabo",
+                        "maxLength": 255,
+                        "minLength": 1
+                    },
+                    "sublabel": {
+                        "type": "string",
+                        "example": "Cod.: 1",
+                        "maxLength": 80,
+                        "minLength": 1
+                    },
+                    "meta": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Torneira para lavabo",
+                                "maxLength": 255,
+                                "minLength": 1
+                            },
+                            "type": {
+                                "$ref": "#/components/schemas/ProductTypeEnum"
+                            },
+                            "item_type_code": {
+                                "$ref": "#/components/schemas/ItemTypeCodeEnum"
+                            },
+                            "sku": {
+                                "type": "string",
+                                "example": "2156",
+                                "maxLength": 40,
+                                "minLength": 1
+                            },
+                            "gtin": {
+                                "type": "string",
+                                "example": "7892236733554",
+                                "nullable": true,
+                                "maxLength": 14,
+                                "minLength": 1
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "ProductMeasurementUnitResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "UN",
+                        "maxLength": 10,
+                        "minLength": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Unidade",
+                        "maxLength": 60,
+                        "minLength": 1
+                    },
+                    "symbol": {
+                        "type": "string",
+                        "example": "un",
+                        "maxLength": 10,
+                        "minLength": 1
+                    }
+                },
+                "type": "object"
+            },
+            "ProductProductBrandResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Docol",
+                        "maxLength": 120,
+                        "minLength": 1
+                    }
+                },
+                "type": "object"
+            },
+            "ProductProductCategoryResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Hidráulica",
+                        "maxLength": 120,
+                        "minLength": 1
+                    }
+                },
+                "type": "object"
+            },
+            "ProductResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "$ref": "#/components/schemas/ProductTypeEnum"
+                    },
+                    "item_type_code": {
+                        "$ref": "#/components/schemas/ItemTypeCodeEnum"
+                    },
+                    "sku": {
+                        "type": "string",
+                        "example": "2156",
+                        "maxLength": 40,
+                        "minLength": 1
+                    },
+                    "gtin": {
+                        "type": "string",
+                        "example": "7892236733554",
+                        "nullable": true,
+                        "maxLength": 14,
+                        "minLength": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Torneira para lavabo",
+                        "maxLength": 255,
+                        "minLength": 1
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Torneira gourmet para área do Lavabo",
+                        "nullable": true,
+                        "maxLength": 1024,
+                        "minLength": 1
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Produto sujeito a disponibilidade em estoque",
+                        "nullable": true
+                    },
+                    "price": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "119.90",
+                        "maximum": 100000000000000,
+                        "minimum": 0.0001
+                    },
+                    "cost": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "59.45",
+                        "maximum": 100000000000000,
+                        "minimum": 0.0001
+                    },
+                    "net_weight": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "350",
+                        "nullable": true,
+                        "maximum": 999999999.999,
+                        "minimum": 0.001
+                    },
+                    "gross_weight": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "386",
+                        "nullable": true,
+                        "maximum": 999999999.999,
+                        "minimum": 0.001
+                    },
+                    "width": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "21.30",
+                        "nullable": true,
+                        "maximum": 99999999.9999,
+                        "minimum": 0.0001
+                    },
+                    "height": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "8.60",
+                        "nullable": true,
+                        "maximum": 99999999.9999,
+                        "minimum": 0.0001
+                    },
+                    "length": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "4.20",
+                        "nullable": true,
+                        "maximum": 99999999.9999,
+                        "minimum": 0.0001
+                    },
+                    "minimum_stock": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "1",
+                        "nullable": true,
+                        "maximum": 100000000000000,
+                        "minimum": 0.0001
+                    },
+                    "maximum_stock": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "3",
+                        "nullable": true,
+                        "maximum": 100000000000000,
+                        "minimum": 0.0001
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "measurement_unit_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "measurement_unit": {
+                        "$ref": "#/components/schemas/ProductMeasurementUnitResource"
+                    },
+                    "product_category_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "category": {
+                        "$ref": "#/components/schemas/ProductProductCategoryResource"
+                    },
+                    "product_brand_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "brand": {
+                        "$ref": "#/components/schemas/ProductProductBrandResource"
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-10-25T23:09:57.427032Z",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-10-25T23:09:57.427032Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-10-25T23:09:57.427032Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "ProductBrandCollection": {
                 "type": "object",
                 "allOf": [
@@ -16255,7 +16627,7 @@
                     },
                     "label": {
                         "type": "string",
-                        "example": "Hauwei",
+                        "example": "Docol",
                         "maxLength": 120,
                         "minLength": 1
                     },
@@ -16273,7 +16645,7 @@
                             },
                             "name": {
                                 "type": "string",
-                                "example": "Hauwei",
+                                "example": "Docol",
                                 "maxLength": 120,
                                 "minLength": 1
                             }
@@ -16291,7 +16663,7 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Hauwei",
+                        "example": "Docol",
                         "maxLength": 120,
                         "minLength": 1
                     },
@@ -16385,10 +16757,7 @@
                                 "minLength": 1
                             },
                             "applicability": {
-                                "type": "string",
-                                "example": "PRODUCT",
-                                "maxLength": 20,
-                                "minLength": 1
+                                "$ref": "#/components/schemas/ProductApplicabilityEnum"
                             }
                         },
                         "type": "object"
@@ -16414,10 +16783,7 @@
                         "nullable": true
                     },
                     "applicability": {
-                        "type": "string",
-                        "example": "PRODUCT",
-                        "maxLength": 20,
-                        "minLength": 1
+                        "$ref": "#/components/schemas/ProductApplicabilityEnum"
                     },
                     "is_active": {
                         "type": "boolean",
@@ -16444,340 +16810,6 @@
                 },
                 "type": "object"
             },
-            "ProductCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/ProductResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "ProductLookupCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/ProductLookupResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "ProductLookupResource": {
-                "properties": {
-                    "key": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "label": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 255,
-                        "minLength": 1
-                    },
-                    "sublabel": {
-                        "type": "string",
-                        "example": "Cod.: 1",
-                        "maxLength": 80,
-                        "minLength": 1
-                    },
-                    "meta": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 1
-                            },
-                            "name": {
-                                "type": "string",
-                                "example": "Sample",
-                                "maxLength": 255,
-                                "minLength": 1
-                            },
-                            "type": {
-                                "type": "string",
-                                "example": "Sample",
-                                "maxLength": 20,
-                                "minLength": 1
-                            },
-                            "item_type_code": {
-                                "type": "string",
-                                "example": "Sample",
-                                "maxLength": 2,
-                                "minLength": 2
-                            },
-                            "sku": {
-                                "type": "string",
-                                "example": "Sample",
-                                "maxLength": 40,
-                                "minLength": 1
-                            },
-                            "gtin": {
-                                "type": "string",
-                                "example": "Sample",
-                                "nullable": true,
-                                "maxLength": 14,
-                                "minLength": 1
-                            }
-                        },
-                        "type": "object"
-                    }
-                },
-                "type": "object"
-            },
-            "ProductMeasurementUnitResource": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "code": {
-                        "type": "string",
-                        "example": "UN",
-                        "maxLength": 10,
-                        "minLength": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "example": "Unidade",
-                        "maxLength": 60,
-                        "minLength": 1
-                    },
-                    "symbol": {
-                        "type": "string",
-                        "example": "un",
-                        "maxLength": 10,
-                        "minLength": 1
-                    }
-                },
-                "type": "object"
-            },
-            "ProductProductBrandResource": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "example": "Docol",
-                        "maxLength": 120,
-                        "minLength": 1
-                    }
-                },
-                "type": "object"
-            },
-            "ProductProductCategoryResource": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "example": "Hidráulica",
-                        "maxLength": 120,
-                        "minLength": 1
-                    }
-                },
-                "type": "object"
-            },
-            "ProductResource": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "type": {
-                        "type": "string",
-                        "example": "PRODUCT",
-                        "maxLength": 20,
-                        "minLength": 1
-                    },
-                    "item_type_code": {
-                        "type": "string",
-                        "example": "00",
-                        "maxLength": 2,
-                        "minLength": 2
-                    },
-                    "sku": {
-                        "type": "string",
-                        "example": "2156",
-                        "maxLength": 40,
-                        "minLength": 1
-                    },
-                    "gtin": {
-                        "type": "string",
-                        "example": "7892236733554",
-                        "nullable": true,
-                        "maxLength": 14,
-                        "minLength": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "example": "Torneira para lavabo",
-                        "maxLength": 255,
-                        "minLength": 1
-                    },
-                    "description": {
-                        "type": "string",
-                        "example": "Torneira gourmet para área do Lavabo",
-                        "nullable": true,
-                        "maxLength": 1024,
-                        "minLength": 1
-                    },
-                    "notes": {
-                        "type": "string",
-                        "example": "",
-                        "nullable": true,
-                        "maxLength": 0,
-                        "minLength": 1
-                    },
-                    "price": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 119.9,
-                        "maximum": 100000000000000,
-                        "minimum": 0.0001
-                    },
-                    "cost": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 59.45,
-                        "maximum": 100000000000000,
-                        "minimum": 0.0001
-                    },
-                    "net_weight": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 350,
-                        "nullable": true,
-                        "maximum": 999999999.999,
-                        "minimum": 0.001
-                    },
-                    "gross_weight": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 386,
-                        "nullable": true,
-                        "maximum": 999999999.999,
-                        "minimum": 0.001
-                    },
-                    "width": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 21.3,
-                        "nullable": true,
-                        "maximum": 99999999.9999,
-                        "minimum": 0.0001
-                    },
-                    "height": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 8.6,
-                        "nullable": true,
-                        "maximum": 99999999.9999,
-                        "minimum": 0.0001
-                    },
-                    "length": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 4.2,
-                        "nullable": true,
-                        "maximum": 99999999.9999,
-                        "minimum": 0.0001
-                    },
-                    "minimum_stock": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 1,
-                        "nullable": true,
-                        "maximum": 100000000000000,
-                        "minimum": 0.0001
-                    },
-                    "maximum_stock": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 3,
-                        "nullable": true,
-                        "maximum": 100000000000000,
-                        "minimum": 0.0001
-                    },
-                    "is_active": {
-                        "type": "boolean",
-                        "example": true
-                    },
-                    "measurement_unit_id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "measurement_unit": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ProductMeasurementUnitResource"
-                        }
-                    },
-                    "product_category_id": {
-                        "type": "integer",
-                        "example": 1,
-                        "nullable": true
-                    },
-                    "category": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ProductProductCategoryResource"
-                        }
-                    },
-                    "product_brand_id": {
-                        "type": "integer",
-                        "example": 1,
-                        "nullable": true
-                    },
-                    "brand": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ProductProductBrandResource"
-                        }
-                    },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-10-25T23:09:57.427032Z",
-                        "nullable": true
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-10-25T23:09:57.427032Z",
-                        "nullable": true
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-10-25T23:09:57.427032Z",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
             "MeasurementUnit": {
                 "properties": {
                     "id": {
@@ -16797,8 +16829,7 @@
                         "example": "kg"
                     },
                     "category": {
-                        "type": "string",
-                        "example": "MASS"
+                        "$ref": "#/components/schemas/MeasurementUnitCategoryEnum"
                     },
                     "base_unit_id": {
                         "type": "integer",
@@ -16855,36 +16886,32 @@
                         "example": 1
                     },
                     "type": {
-                        "type": "string",
-                        "example": "Sample"
+                        "$ref": "#/components/schemas/ProductTypeEnum"
                     },
                     "item_type_code": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 2,
-                        "minLength": 2
+                        "$ref": "#/components/schemas/ItemTypeCodeEnum"
                     },
                     "sku": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "2156"
                     },
                     "gtin": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "7892236733554",
                         "nullable": true
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "Torneira para lavabo"
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Torneira gourmet para área de lavabo",
                         "nullable": true
                     },
                     "notes": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Produto sujeito a disponibilidade em estoque",
                         "nullable": true
                     },
                     "price": {
@@ -16986,7 +17013,7 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Hauwei"
+                        "example": "Docol"
                     },
                     "created_at": {
                         "type": "string",
@@ -17017,7 +17044,7 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "Hidráulica"
                     },
                     "parent_category_id": {
                         "type": "integer",
@@ -17025,8 +17052,7 @@
                         "nullable": true
                     },
                     "applicability": {
-                        "type": "string",
-                        "example": "Sample"
+                        "$ref": "#/components/schemas/ProductApplicabilityEnum"
                     },
                     "is_active": {
                         "type": "boolean",
@@ -17054,7 +17080,7 @@
                 "type": "object"
             },
             "AddressTypeEnum": {
-                "description": "Tipos de endereço:\n *      Fiscal = 'TAX'\n *      Entrega = 'DELIVERY'\n *      Cobrança = 'BILLING'",
+                "description": "Address types: TAX, DELIVERY, BILLING",
                 "type": "string",
                 "enum": [
                     "TAX",
@@ -17102,56 +17128,56 @@
                     },
                     "district": {
                         "type": "string",
-                        "example": "Centro",
+                        "example": "Bela Vista",
                         "nullable": true,
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "street": {
                         "type": "string",
-                        "example": "Rua das Flores",
+                        "example": "Avenida Paulista",
                         "nullable": true,
                         "maxLength": 120,
                         "minLength": 1
                     },
                     "number": {
                         "type": "string",
-                        "example": "42",
+                        "example": "1000",
                         "nullable": true,
                         "maxLength": 16,
                         "minLength": 1
                     },
                     "state_name": {
                         "type": "string",
-                        "example": "California",
+                        "example": "São Paulo",
                         "nullable": true,
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "city_name": {
                         "type": "string",
-                        "example": "Sacramento",
+                        "example": "São Paulo",
                         "nullable": true,
                         "maxLength": 90,
                         "minLength": 1
                     },
                     "address_line_1": {
                         "type": "string",
-                        "example": "2201 K Street",
+                        "example": "Avenida Paulista, 1000",
                         "nullable": true,
                         "maxLength": 160,
                         "minLength": 1
                     },
                     "address_line_2": {
                         "type": "string",
-                        "example": "Suite 200",
+                        "example": "Conjunto 101",
                         "nullable": true,
                         "maxLength": 160,
                         "minLength": 1
                     },
                     "postal_code": {
                         "type": "string",
-                        "example": "95814",
+                        "example": "01310-100",
                         "nullable": true,
                         "maxLength": 20,
                         "minLength": 1
@@ -17201,56 +17227,56 @@
                     },
                     "district": {
                         "type": "string",
-                        "example": "Centro",
+                        "example": "Bela Vista",
                         "nullable": true,
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "street": {
                         "type": "string",
-                        "example": "Rua das Flores",
+                        "example": "Avenida Paulista",
                         "nullable": true,
                         "maxLength": 120,
                         "minLength": 1
                     },
                     "number": {
                         "type": "string",
-                        "example": "42",
+                        "example": "1000",
                         "nullable": true,
                         "maxLength": 16,
                         "minLength": 1
                     },
                     "state_name": {
                         "type": "string",
-                        "example": "California",
+                        "example": "São Paulo",
                         "nullable": true,
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "city_name": {
                         "type": "string",
-                        "example": "Sacramento",
+                        "example": "São Paulo",
                         "nullable": true,
                         "maxLength": 90,
                         "minLength": 1
                     },
                     "address_line_1": {
                         "type": "string",
-                        "example": "2201 K Street",
+                        "example": "Avenida Paulista, 1000",
                         "nullable": true,
                         "maxLength": 160,
                         "minLength": 1
                     },
                     "address_line_2": {
                         "type": "string",
-                        "example": "Suite 200",
+                        "example": "Conjunto 101",
                         "nullable": true,
                         "maxLength": 160,
                         "minLength": 1
                     },
                     "postal_code": {
                         "type": "string",
-                        "example": "95814",
+                        "example": "01310-100",
                         "nullable": true,
                         "maxLength": 20,
                         "minLength": 1
@@ -17304,8 +17330,7 @@
                         "example": 1
                     },
                     "type": {
-                        "type": "string",
-                        "example": "BILLING"
+                        "$ref": "#/components/schemas/AddressTypeEnum"
                     },
                     "is_primary": {
                         "type": "boolean",
@@ -17331,42 +17356,42 @@
                     },
                     "district": {
                         "type": "string",
-                        "example": "Centro",
+                        "example": "Bela Vista",
                         "nullable": true
                     },
                     "street": {
                         "type": "string",
-                        "example": "Rua das Flores",
+                        "example": "Avenida Paulista",
                         "nullable": true
                     },
                     "number": {
                         "type": "string",
-                        "example": "42",
+                        "example": "1000",
                         "nullable": true
                     },
                     "state_name": {
                         "type": "string",
-                        "example": "California",
+                        "example": "São Paulo",
                         "nullable": true
                     },
                     "city_name": {
                         "type": "string",
-                        "example": "Sacramento",
+                        "example": "São Paulo",
                         "nullable": true
                     },
                     "address_line_1": {
                         "type": "string",
-                        "example": "2201 K Street",
+                        "example": "Avenida Paulista, 1000",
                         "nullable": true
                     },
                     "address_line_2": {
                         "type": "string",
-                        "example": "Suite 200",
+                        "example": "Conjunto 101",
                         "nullable": true
                     },
                     "postal_code": {
                         "type": "string",
-                        "example": "95814",
+                        "example": "01310100",
                         "nullable": true
                     },
                     "complement": {
@@ -17446,13 +17471,13 @@
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "São Paulo",
                         "maxLength": 90,
                         "minLength": 1
                     },
                     "sublabel": {
                         "type": "string",
-                        "example": "Cod.: 1",
+                        "example": "Cod.: 1 | UF: SP | Cód. IBGE: 3550308",
                         "maxLength": 80,
                         "minLength": 1
                     },
@@ -17464,13 +17489,13 @@
                             },
                             "name": {
                                 "type": "string",
-                                "example": "Sample",
+                                "example": "São Paulo",
                                 "maxLength": 90,
                                 "minLength": 1
                             },
                             "ibge_code": {
                                 "type": "string",
-                                "example": "Sample",
+                                "example": "3550308",
                                 "maxLength": 7,
                                 "minLength": 1
                             }
@@ -17488,13 +17513,13 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "São Paulo",
                         "maxLength": 90,
                         "minLength": 1
                     },
                     "ibge_code": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "3550308",
                         "maxLength": 7,
                         "minLength": 1
                     },
@@ -17528,13 +17553,13 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "São Paulo",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "uf": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "SP",
                         "maxLength": 2,
                         "minLength": 2
                     }
@@ -17587,13 +17612,13 @@
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Brasil",
                         "maxLength": 60,
                         "minLength": 1
                     },
                     "sublabel": {
                         "type": "string",
-                        "example": "Cod.: 1",
+                        "example": "Cod.: 1 | ISO: BR",
                         "maxLength": 80,
                         "minLength": 1
                     },
@@ -17605,13 +17630,13 @@
                             },
                             "name": {
                                 "type": "string",
-                                "example": "Sample",
+                                "example": "Brasil",
                                 "maxLength": 60,
                                 "minLength": 1
                             },
                             "iso_code": {
                                 "type": "string",
-                                "example": "Sample",
+                                "example": "BR",
                                 "maxLength": 2,
                                 "minLength": 1
                             }
@@ -17629,13 +17654,13 @@
                     },
                     "iso_code": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "BR",
                         "maxLength": 2,
                         "minLength": 1
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Brasil",
                         "maxLength": 60,
                         "minLength": 1
                     },
@@ -17700,13 +17725,13 @@
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "São Paulo",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "sublabel": {
                         "type": "string",
-                        "example": "Cod.: 1",
+                        "example": "Cod.: 1 | UF: SP | Cod. IBGE: 35",
                         "maxLength": 80,
                         "minLength": 1
                     },
@@ -17718,19 +17743,19 @@
                             },
                             "name": {
                                 "type": "string",
-                                "example": "Sample",
+                                "example": "São Paulo",
                                 "maxLength": 80,
                                 "minLength": 1
                             },
                             "uf": {
                                 "type": "string",
-                                "example": "Sample",
+                                "example": "SP",
                                 "maxLength": 2,
                                 "minLength": 1
                             },
                             "ibge_code": {
                                 "type": "string",
-                                "example": "Sample",
+                                "example": "35",
                                 "maxLength": 2,
                                 "minLength": 1
                             }
@@ -17752,19 +17777,19 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "São Paulo",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "uf": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "SP",
                         "maxLength": 2,
                         "minLength": 1
                     },
                     "ibge_code": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "35",
                         "maxLength": 2,
                         "minLength": 1
                     },
@@ -17820,42 +17845,42 @@
                     },
                     "district": {
                         "type": "string",
-                        "example": "Centro",
+                        "example": "Bela Vista",
                         "nullable": true
                     },
                     "street": {
                         "type": "string",
-                        "example": "Rua das Flores",
+                        "example": "Avenida Paulista",
                         "nullable": true
                     },
                     "number": {
                         "type": "string",
-                        "example": "42",
+                        "example": "1000",
                         "nullable": true
                     },
                     "state_name": {
                         "type": "string",
-                        "example": "California",
+                        "example": "São Paulo",
                         "nullable": true
                     },
                     "city_name": {
                         "type": "string",
-                        "example": "Sacramento",
+                        "example": "São Paulo",
                         "nullable": true
                     },
                     "address_line_1": {
                         "type": "string",
-                        "example": "2201 K Street",
+                        "example": "Avenida Paulista, 1000",
                         "nullable": true
                     },
                     "address_line_2": {
                         "type": "string",
-                        "example": "Suite 200",
+                        "example": "Conjunto 101",
                         "nullable": true
                     },
                     "postal_code": {
                         "type": "string",
-                        "example": "95814",
+                        "example": "01310100",
                         "nullable": true
                     },
                     "complement": {
@@ -17921,56 +17946,56 @@
                     },
                     "district": {
                         "type": "string",
-                        "example": "Centro",
+                        "example": "Bela Vista",
                         "nullable": true,
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "street": {
                         "type": "string",
-                        "example": "Rua das Flores",
+                        "example": "Avenida Paulista",
                         "nullable": true,
                         "maxLength": 120,
                         "minLength": 1
                     },
                     "number": {
                         "type": "string",
-                        "example": "42",
+                        "example": "1000",
                         "nullable": true,
                         "maxLength": 16,
                         "minLength": 1
                     },
                     "state_name": {
                         "type": "string",
-                        "example": "California",
+                        "example": "São Paulo",
                         "nullable": true,
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "city_name": {
                         "type": "string",
-                        "example": "Sacramento",
+                        "example": "São Paulo",
                         "nullable": true,
                         "maxLength": 90,
                         "minLength": 1
                     },
                     "address_line_1": {
                         "type": "string",
-                        "example": "2201 K Street",
+                        "example": "Avenida Paulista, 1000",
                         "nullable": true,
                         "maxLength": 160,
                         "minLength": 1
                     },
                     "address_line_2": {
                         "type": "string",
-                        "example": "Suite 200",
+                        "example": "Conjunto 101",
                         "nullable": true,
                         "maxLength": 160,
                         "minLength": 1
                     },
                     "postal_code": {
                         "type": "string",
-                        "example": "95814",
+                        "example": "01310100",
                         "nullable": true,
                         "maxLength": 20,
                         "minLength": 1
@@ -18002,11 +18027,11 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "São Paulo"
                     },
                     "ibge_code": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "3550308"
                     },
                     "created_at": {
                         "type": "string",
@@ -18031,11 +18056,11 @@
                     },
                     "iso_code": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "BR"
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "Brasil"
                     },
                     "created_at": {
                         "type": "string",
@@ -18064,15 +18089,15 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "São Paulo"
                     },
                     "uf": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "SP"
                     },
                     "ibge_code": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "35"
                     },
                     "created_at": {
                         "type": "string",
@@ -18135,7 +18160,7 @@
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Analista de desenvolvimento de sistemas",
                         "maxLength": 180,
                         "minLength": 1
                     },
@@ -18153,13 +18178,13 @@
                             },
                             "name": {
                                 "type": "string",
-                                "example": "Sample",
+                                "example": "Analista de desenvolvimento de sistemas",
                                 "maxLength": 180,
                                 "minLength": 1
                             },
                             "cbo": {
                                 "type": "string",
-                                "example": "Sample",
+                                "example": "212405",
                                 "maxLength": 6,
                                 "minLength": 1
                             }
@@ -18177,13 +18202,13 @@
                     },
                     "cbo": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "212405",
                         "maxLength": 6,
                         "minLength": 1
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Analista de desenvolvimento de sistemas",
                         "maxLength": 180,
                         "minLength": 1
                     },
@@ -18210,11 +18235,11 @@
                     },
                     "cbo": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "212405"
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "Analista de desenvolvimento de sistemas"
                     },
                     "created_at": {
                         "type": "string",
@@ -18239,20 +18264,31 @@
                 ],
                 "properties": {
                     "provider": {
-                        "type": "string"
+                        "type": "string",
+                        "example": "billing",
+                        "maxLength": 100
                     },
                     "name": {
-                        "type": "string"
+                        "type": "string",
+                        "example": "Conexão ERP Produção",
+                        "maxLength": 150
                     },
                     "credentials": {
-                        "type": "object"
+                        "type": "object",
+                        "example": {
+                            "api_key": "sk_live_1234567890"
+                        }
                     },
                     "settings": {
                         "type": "object",
+                        "example": {
+                            "base_url": "https://api.exemplo.com"
+                        },
                         "nullable": true
                     },
                     "is_active": {
                         "type": "boolean",
+                        "example": true,
                         "nullable": true
                     }
                 },
@@ -18261,20 +18297,31 @@
             "UpdateIntegrationConnectionRequest": {
                 "properties": {
                     "provider": {
-                        "type": "string"
+                        "type": "string",
+                        "example": "billing",
+                        "maxLength": 100
                     },
                     "name": {
-                        "type": "string"
+                        "type": "string",
+                        "example": "Conexão ERP Produção",
+                        "maxLength": 150
                     },
                     "credentials": {
-                        "type": "object"
+                        "type": "object",
+                        "example": {
+                            "api_key": "sk_live_1234567890"
+                        }
                     },
                     "settings": {
                         "type": "object",
+                        "example": {
+                            "base_url": "https://api.exemplo.com"
+                        },
                         "nullable": true
                     },
                     "is_active": {
                         "type": "boolean",
+                        "example": true,
                         "nullable": true
                     }
                 },
@@ -18286,7 +18333,20 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/IntegrationConnectionResource"
-                        }
+                        },
+                        "example": [
+                            {
+                                "id": 1,
+                                "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                                "provider": "billing",
+                                "name": "Conexão ERP Produção",
+                                "has_credentials": true,
+                                "settings": {
+                                    "base_url": "https://api.exemplo.com"
+                                },
+                                "is_active": true
+                            }
+                        ]
                     }
                 },
                 "type": "object"
@@ -18294,37 +18354,53 @@
             "IntegrationConnectionResource": {
                 "properties": {
                     "id": {
-                        "type": "integer"
+                        "type": "integer",
+                        "example": 1
                     },
                     "uuid": {
-                        "type": "string"
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
                     },
                     "provider": {
-                        "type": "string"
+                        "type": "string",
+                        "example": "billing"
                     },
                     "name": {
-                        "type": "string"
+                        "type": "string",
+                        "example": "Conexão ERP Produção"
                     },
                     "has_credentials": {
-                        "type": "boolean"
+                        "type": "boolean",
+                        "example": true
                     },
                     "settings": {
                         "type": "object",
+                        "example": {
+                            "base_url": "https://api.exemplo.com"
+                        },
                         "nullable": true
                     },
                     "is_active": {
-                        "type": "boolean"
+                        "type": "boolean",
+                        "example": true
                     },
                     "last_used_at": {
                         "type": "string",
+                        "format": "date-time",
+                        "example": "2026-05-20T14:30:00Z",
                         "nullable": true
                     },
                     "created_at": {
                         "type": "string",
+                        "format": "date-time",
+                        "example": "2026-05-20T14:30:00Z",
                         "nullable": true
                     },
                     "updated_at": {
                         "type": "string",
+                        "format": "date-time",
+                        "example": "2026-05-20T14:30:00Z",
                         "nullable": true
                     }
                 },
@@ -18342,7 +18418,7 @@
                     },
                     "password": {
                         "type": "string",
-                        "example": "123"
+                        "example": "Senha@123"
                     }
                 },
                 "type": "object"
@@ -18355,19 +18431,19 @@
                 "properties": {
                     "name": {
                         "type": "string",
-                        "example": "Sample module",
+                        "example": "Segurança",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "slug": {
                         "type": "string",
-                        "example": "sample",
+                        "example": "security",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Módulo de segurança e permissões",
                         "nullable": true,
                         "maxLength": 512,
                         "minLength": 1
@@ -18388,19 +18464,19 @@
                 "properties": {
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Segurança",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "slug": {
                         "type": "string",
-                        "example": "sample",
+                        "example": "security",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Módulo de segurança e permissões",
                         "nullable": true,
                         "maxLength": 512,
                         "minLength": 1
@@ -18426,19 +18502,19 @@
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
-                        "maxLength": 60,
+                        "example": "Visualizar usuários",
+                        "maxLength": 80,
                         "minLength": 1
                     },
                     "action": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "viewAny",
                         "maxLength": 120,
                         "minLength": 1
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Permite listar usuários",
                         "nullable": true,
                         "maxLength": 512,
                         "minLength": 1
@@ -18459,19 +18535,19 @@
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
-                        "maxLength": 60,
+                        "example": "Visualizar usuários",
+                        "maxLength": 80,
                         "minLength": 1
                     },
                     "action": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "viewAny",
                         "maxLength": 120,
                         "minLength": 1
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Permite listar usuários",
                         "nullable": true,
                         "maxLength": 512,
                         "minLength": 1
@@ -18482,24 +18558,25 @@
             "StoreResourceRequest": {
                 "required": [
                     "name",
-                    "slug"
+                    "slug",
+                    "module_id"
                 ],
                 "properties": {
                     "name": {
                         "type": "string",
-                        "example": "Sample module",
+                        "example": "Usuários",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "slug": {
                         "type": "string",
-                        "example": "sample",
+                        "example": "users",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Recursos de usuários",
                         "nullable": true,
                         "maxLength": 512,
                         "minLength": 1
@@ -18514,24 +18591,25 @@
             "UpdateResourceRequest": {
                 "required": [
                     "name",
-                    "slug"
+                    "slug",
+                    "module_id"
                 ],
                 "properties": {
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Usuários",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "slug": {
                         "type": "string",
-                        "example": "sample",
+                        "example": "users",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Recursos de usuários",
                         "nullable": true,
                         "maxLength": 512,
                         "minLength": 1
@@ -18549,7 +18627,12 @@
                         "type": "array",
                         "items": {
                             "type": "integer"
-                        }
+                        },
+                        "example": [
+                            1,
+                            2,
+                            3
+                        ]
                     }
                 },
                 "type": "object"
@@ -18561,13 +18644,13 @@
                 "properties": {
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Administrador",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Acesso completo ao sistema",
                         "nullable": true,
                         "maxLength": 512,
                         "minLength": 1
@@ -18582,13 +18665,13 @@
                 "properties": {
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Administrador",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Acesso completo ao sistema",
                         "nullable": true,
                         "maxLength": 512,
                         "minLength": 1
@@ -18601,37 +18684,38 @@
                     "name",
                     "email",
                     "password",
-                    "username"
+                    "username",
+                    "is_admin"
                 ],
                 "properties": {
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Felipe Silva",
                         "maxLength": 255,
                         "minLength": 1
                     },
                     "email": {
                         "type": "string",
-                        "example": "Sample",
+                        "format": "email",
+                        "example": "felipe.silva@simplify.com.br",
                         "maxLength": 255,
                         "minLength": 1
                     },
                     "password": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Senha@123",
                         "maxLength": 255,
                         "minLength": 1
                     },
                     "username": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
+                        "example": "felipe.silva",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "phone_number": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "5511985841589",
                         "nullable": true,
                         "maxLength": 14,
                         "minLength": 1
@@ -18653,7 +18737,12 @@
                                 }
                             },
                             "type": "object"
-                        }
+                        },
+                        "example": [
+                            {
+                                "id": 1
+                            }
+                        ]
                     }
                 },
                 "type": "object"
@@ -18662,32 +18751,32 @@
                 "required": [
                     "name",
                     "email",
-                    "password",
-                    "required"
+                    "username",
+                    "is_admin"
                 ],
                 "properties": {
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Felipe Silva",
                         "maxLength": 255,
                         "minLength": 1
                     },
                     "email": {
                         "type": "string",
-                        "example": "Sample",
+                        "format": "email",
+                        "example": "felipe.silva@simplify.com.br",
                         "maxLength": 255,
                         "minLength": 1
                     },
                     "username": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
+                        "example": "felipe.silva",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "phone_number": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "5511985841589",
                         "nullable": true,
                         "maxLength": 14,
                         "minLength": 1
@@ -18709,7 +18798,12 @@
                                 }
                             },
                             "type": "object"
-                        }
+                        },
+                        "example": [
+                            {
+                                "id": 1
+                            }
+                        ]
                     }
                 },
                 "type": "object"
@@ -18718,14 +18812,14 @@
                 "properties": {
                     "access_token": {
                         "type": "string",
-                        "example": "token123"
+                        "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwibmFtZSI6IkZlbGlwZSBTaWx2YSJ9.abc123"
                     },
                     "token_type": {
                         "type": "string",
                         "example": "bearer"
                     },
                     "expires_in": {
-                        "type": "number",
+                        "type": "integer",
                         "example": 3600
                     }
                 },
@@ -18758,25 +18852,25 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample module",
+                        "example": "Segurança",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Segurança",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "slug": {
                         "type": "string",
-                        "example": "sample",
+                        "example": "security",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Módulo de segurança e permissões",
                         "nullable": true,
                         "maxLength": 512,
                         "minLength": 1
@@ -18821,26 +18915,26 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "sample",
+                        "example": "users.viewAny",
                         "maxLength": 120,
                         "minLength": 1
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Visualizar usuários",
                         "maxLength": 180,
                         "minLength": 1
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Permite listar usuários",
                         "nullable": true,
                         "maxLength": 512,
                         "minLength": 1
                     },
                     "action": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "viewAny",
                         "nullable": true,
                         "maxLength": 80
                     }
@@ -18855,28 +18949,34 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Usuários",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Usuários",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "slug": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "users",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Recursos de usuários",
                         "nullable": true,
                         "maxLength": 512,
                         "minLength": 1
+                    },
+                    "permissions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ModuleResourcePermissionResource"
+                        }
                     }
                 },
                 "type": "object"
@@ -18908,7 +19008,7 @@
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Visualizar usuários",
                         "maxLength": 80,
                         "minLength": 1
                     },
@@ -18917,19 +19017,19 @@
                     },
                     "action": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "viewAny",
                         "maxLength": 120,
                         "minLength": 1
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "users.viewAny",
                         "maxLength": 180,
                         "minLength": 1
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Permite listar usuários",
                         "nullable": true,
                         "maxLength": 512,
                         "minLength": 1
@@ -18963,13 +19063,13 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Usuários",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "slug": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "users",
                         "maxLength": 80,
                         "minLength": 1
                     }
@@ -19003,13 +19103,13 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Segurança",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "slug": {
                         "type": "string",
-                        "example": "sample",
+                        "example": "security",
                         "maxLength": 80,
                         "minLength": 1
                     }
@@ -19024,25 +19124,25 @@
                     },
                     "action": {
                         "type": "string",
-                        "example": "sample",
+                        "example": "viewAny",
                         "maxLength": 120,
                         "minLength": 1
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "users.viewAny",
                         "maxLength": 180,
                         "minLength": 1
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Visualizar usuários",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Permite listar usuários",
                         "nullable": true,
                         "maxLength": 512,
                         "minLength": 1
@@ -19058,19 +19158,19 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample module",
+                        "example": "Usuários",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "slug": {
                         "type": "string",
-                        "example": "sample",
+                        "example": "users",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Recursos de usuários",
                         "nullable": true,
                         "maxLength": 512,
                         "minLength": 1
@@ -19187,25 +19287,25 @@
                     },
                     "resource": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "users",
                         "maxLength": 60,
                         "minLength": 1
                     },
                     "action": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "viewAny",
                         "maxLength": 120,
                         "minLength": 1
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "users.viewAny",
                         "maxLength": 180,
                         "minLength": 1
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Permite listar usuários",
                         "nullable": true,
                         "maxLength": 512,
                         "minLength": 1
@@ -19221,13 +19321,13 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Administrador",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Acesso completo ao sistema",
                         "nullable": true,
                         "maxLength": 512,
                         "minLength": 1
@@ -19362,13 +19462,14 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Felipe Silva",
                         "maxLength": 255,
                         "minLength": 1
                     },
                     "email": {
                         "type": "string",
-                        "example": "Sample",
+                        "format": "email",
+                        "example": "felipe.silva@simplify.com.br",
                         "maxLength": 255,
                         "minLength": 1
                     },
@@ -19380,14 +19481,14 @@
                     },
                     "username": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "felipe.silva",
                         "nullable": true,
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "phone_number": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "5511985841589",
                         "nullable": true,
                         "maxLength": 14,
                         "minLength": 1
@@ -19438,7 +19539,7 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Administrador",
                         "maxLength": 80,
                         "minLength": 1
                     }
@@ -19453,15 +19554,15 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample module"
+                        "example": "Segurança"
                     },
                     "slug": {
                         "type": "string",
-                        "example": "sample"
+                        "example": "security"
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Módulo de segurança e permissões",
                         "nullable": true
                     },
                     "is_active": {
@@ -19502,19 +19603,19 @@
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "Visualizar usuários"
                     },
                     "action": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "viewAny"
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "users.viewAny"
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Permite listar usuários",
                         "nullable": true
                     },
                     "created_at": {
@@ -19546,15 +19647,15 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample module"
+                        "example": "Usuários"
                     },
                     "slug": {
                         "type": "string",
-                        "example": "sample"
+                        "example": "users"
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Recursos de usuários",
                         "nullable": true
                     },
                     "module_id": {
@@ -19590,11 +19691,11 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "Administrador"
                     },
                     "description": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Acesso completo ao sistema",
                         "nullable": true
                     },
                     "created_at": {
@@ -19626,11 +19727,12 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "Felipe Silva"
                     },
                     "email": {
                         "type": "string",
-                        "example": "Sample"
+                        "format": "email",
+                        "example": "felipe.silva@simplify.com.br"
                     },
                     "email_verified_at": {
                         "type": "string",
@@ -19638,23 +19740,14 @@
                         "example": "2025-12-11T11:13:03.678895Z",
                         "nullable": true
                     },
-                    "password": {
-                        "type": "string",
-                        "example": "Sample"
-                    },
-                    "remember_token": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true
-                    },
                     "username": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "felipe.silva",
                         "nullable": true
                     },
                     "phone_number": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "+55 11 99999-9999",
                         "nullable": true
                     },
                     "created_at": {
@@ -19674,23 +19767,6 @@
                         "format": "date-time",
                         "example": "2025-12-11T11:13:03.678895Z",
                         "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "AccessTokenDTO": {
-                "properties": {
-                    "access_token": {
-                        "type": "string",
-                        "example": "token123"
-                    },
-                    "token_type": {
-                        "type": "string",
-                        "example": "bearer"
-                    },
-                    "expires_in": {
-                        "type": "number",
-                        "example": 3600
                     }
                 },
                 "type": "object"
@@ -19743,48 +19819,6 @@
                     "EXEMPT"
                 ]
             },
-            "StorePartnerTypeRequest": {
-                "required": [
-                    "name",
-                    "code"
-                ],
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 60,
-                        "minLength": 1
-                    },
-                    "code": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 3,
-                        "minLength": 1
-                    }
-                },
-                "type": "object"
-            },
-            "UpdatePartnerTypeRequest": {
-                "required": [
-                    "name",
-                    "code"
-                ],
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 60,
-                        "minLength": 1
-                    },
-                    "code": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 3,
-                        "minLength": 1
-                    }
-                },
-                "type": "object"
-            },
             "StorePartnerRequest": {
                 "required": [
                     "partner_type_code",
@@ -19797,19 +19831,19 @@
                 "properties": {
                     "partner_type_code": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "CTM",
                         "maxLength": 20,
                         "minLength": 1
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Simplify Comércio de Materiais Ltda.",
                         "maxLength": 120,
                         "minLength": 1
                     },
                     "trade_name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Simplify Materiais",
                         "maxLength": 150,
                         "minLength": 1
                     },
@@ -19821,20 +19855,20 @@
                     },
                     "document_number": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "11222333000181",
                         "maxLength": 20,
                         "minLength": 1
                     },
                     "identity_number": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "123456789",
                         "nullable": true,
                         "maxLength": 15,
                         "minLength": 1
                     },
                     "identity_issuer": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "SSP/SP",
                         "nullable": true,
                         "maxLength": 20,
                         "minLength": 1
@@ -19842,26 +19876,26 @@
                     "partner_since": {
                         "type": "string",
                         "format": "date",
-                        "example": "2026-09-09",
+                        "example": "2020-03-15",
                         "nullable": true
                     },
                     "state_registration": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "123456789123",
                         "nullable": true,
                         "maxLength": 14,
                         "minLength": 1
                     },
                     "municipal_registration": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "12345678",
                         "nullable": true,
                         "maxLength": 15,
                         "minLength": 1
                     },
                     "suframa_registration": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "123456789",
                         "nullable": true,
                         "maxLength": 9,
                         "minLength": 1
@@ -19890,33 +19924,33 @@
                     "birth_date": {
                         "type": "string",
                         "format": "date",
-                        "example": "2026-09-09",
+                        "example": "1985-06-20",
                         "nullable": true
                     },
                     "father_name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "José Almeida",
                         "nullable": true,
                         "maxLength": 120,
                         "minLength": 1
                     },
                     "father_document": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "12345678909",
                         "nullable": true,
                         "maxLength": 15,
                         "minLength": 1
                     },
                     "mother_name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Maria Almeida",
                         "nullable": true,
                         "maxLength": 120,
                         "minLength": 1
                     },
                     "mother_document": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "98765432100",
                         "nullable": true,
                         "maxLength": 15,
                         "minLength": 1
@@ -19931,17 +19965,13 @@
                     },
                     "pix_key": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 0,
-                        "minLength": 1
+                        "example": "financeiro@simplify.com.br",
+                        "nullable": true
                     },
                     "notes": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 0,
-                        "minLength": 1
+                        "example": "Cliente desde 2020",
+                        "nullable": true
                     },
                     "contacts": {
                         "type": "array",
@@ -19974,19 +20004,19 @@
                 "properties": {
                     "partner_type_code": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "CTM",
                         "maxLength": 20,
                         "minLength": 1
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Simplify Comércio de Materiais Ltda.",
                         "maxLength": 120,
                         "minLength": 1
                     },
                     "trade_name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Simplify Materiais",
                         "maxLength": 150,
                         "minLength": 1
                     },
@@ -19998,20 +20028,20 @@
                     },
                     "document_number": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "11222333000181",
                         "maxLength": 20,
                         "minLength": 1
                     },
                     "identity_number": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "123456789",
                         "nullable": true,
                         "maxLength": 15,
                         "minLength": 1
                     },
                     "identity_issuer": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "SSP/SP",
                         "nullable": true,
                         "maxLength": 20,
                         "minLength": 1
@@ -20019,26 +20049,26 @@
                     "partner_since": {
                         "type": "string",
                         "format": "date",
-                        "example": "2026-09-09",
+                        "example": "2020-03-15",
                         "nullable": true
                     },
                     "state_registration": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "123456789123",
                         "nullable": true,
                         "maxLength": 14,
                         "minLength": 1
                     },
                     "municipal_registration": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "12345678",
                         "nullable": true,
                         "maxLength": 15,
                         "minLength": 1
                     },
                     "suframa_registration": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "123456789",
                         "nullable": true,
                         "maxLength": 9,
                         "minLength": 1
@@ -20067,33 +20097,33 @@
                     "birth_date": {
                         "type": "string",
                         "format": "date",
-                        "example": "2026-09-09",
+                        "example": "1985-06-20",
                         "nullable": true
                     },
                     "father_name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "José Almeida",
                         "nullable": true,
                         "maxLength": 120,
                         "minLength": 1
                     },
                     "father_document": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "12345678909",
                         "nullable": true,
                         "maxLength": 15,
                         "minLength": 1
                     },
                     "mother_name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Maria Almeida",
                         "nullable": true,
                         "maxLength": 120,
                         "minLength": 1
                     },
                     "mother_document": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "98765432100",
                         "nullable": true,
                         "maxLength": 15,
                         "minLength": 1
@@ -20108,17 +20138,13 @@
                     },
                     "pix_key": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 0,
-                        "minLength": 1
+                        "example": "financeiro@simplify.com.br",
+                        "nullable": true
                     },
                     "notes": {
                         "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 0,
-                        "minLength": 1
+                        "example": "Cliente desde 2020",
+                        "nullable": true
                     },
                     "contacts": {
                         "type": "array",
@@ -20139,121 +20165,44 @@
                 },
                 "type": "object"
             },
-            "PartnerTypeCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/PartnerTypeResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "PartnerTypeLookupCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/PartnerTypeLookupResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "PartnerTypeLookupResource": {
+            "StorePartnerTypeRequest": {
+                "required": [
+                    "name",
+                    "code"
+                ],
                 "properties": {
-                    "key": {
-                        "type": "string",
-                        "example": "TYP"
-                    },
-                    "label": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 80,
-                        "minLength": 1
-                    },
-                    "sublabel": {
-                        "type": "string",
-                        "example": "Cod.: 1",
-                        "maxLength": 80,
-                        "minLength": 1
-                    },
-                    "meta": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 1
-                            },
-                            "name": {
-                                "type": "string",
-                                "example": "Tipo de parceiro",
-                                "maxLength": 80,
-                                "minLength": 1
-                            },
-                            "code": {
-                                "type": "string",
-                                "example": "TYP",
-                                "maxLength": 20,
-                                "minLength": 1
-                            }
-                        },
-                        "type": "object"
-                    }
-                },
-                "type": "object"
-            },
-            "PartnerTypeResource": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Cliente",
                         "maxLength": 60,
                         "minLength": 1
                     },
                     "code": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "CTM",
                         "maxLength": 3,
                         "minLength": 1
-                    },
-                    "created_at": {
+                    }
+                },
+                "type": "object"
+            },
+            "UpdatePartnerTypeRequest": {
+                "required": [
+                    "name",
+                    "code"
+                ],
+                "properties": {
+                    "name": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
-                        "nullable": true
+                        "example": "Cliente",
+                        "maxLength": 60,
+                        "minLength": 1
                     },
-                    "updated_at": {
+                    "code": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
-                        "nullable": true
-                    },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
-                        "nullable": true
+                        "example": "CTM",
+                        "maxLength": 3,
+                        "minLength": 1
                     }
                 },
                 "type": "object"
@@ -20353,13 +20302,13 @@
                     },
                     "label": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Simplify Materiais",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "sublabel": {
                         "type": "string",
-                        "example": "Cod.: 1",
+                        "example": "Cod.: 1 | CNPJ: 11222333000181 | Razão: Simplify Comércio de Materiais Ltda.",
                         "maxLength": 80,
                         "minLength": 1
                     },
@@ -20371,27 +20320,24 @@
                             },
                             "name": {
                                 "type": "string",
-                                "example": "Sample Company LTDA",
+                                "example": "Simplify Comércio de Materiais Ltda.",
                                 "maxLength": 120,
                                 "minLength": 1
                             },
                             "trade_name": {
                                 "type": "string",
-                                "example": "Sample",
+                                "example": "Simplify Materiais",
                                 "maxLength": 150,
                                 "minLength": 1
                             },
                             "document_number": {
                                 "type": "string",
-                                "example": "11.222.333/0001-81",
+                                "example": "11222333000181",
                                 "maxLength": 20,
                                 "minLength": 1
                             },
                             "person_type": {
-                                "type": "string",
-                                "example": "Pessoa Jurídica",
-                                "maxLength": 30,
-                                "minLength": 1
+                                "$ref": "#/components/schemas/PersonTypeEnum"
                             }
                         },
                         "type": "object"
@@ -20407,13 +20353,13 @@
                     },
                     "cbo": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "212405",
                         "maxLength": 6,
                         "minLength": 1
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Analista de desenvolvimento de sistemas",
                         "maxLength": 180,
                         "minLength": 1
                     }
@@ -20428,87 +20374,83 @@
                     },
                     "partner_type_code": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "CTM",
                         "maxLength": 20,
                         "minLength": 1
                     },
                     "partner_type_name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Cliente",
                         "maxLength": 80,
                         "minLength": 1
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Simplify Comércio de Materiais Ltda.",
                         "maxLength": 120,
                         "minLength": 1
                     },
                     "trade_name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Simplify Materiais",
                         "maxLength": 150,
                         "minLength": 1
                     },
                     "person_type": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 30,
-                        "minLength": 1
+                        "$ref": "#/components/schemas/PersonTypeEnum"
                     },
                     "taxpayer_type": {
-                        "type": "string",
-                        "example": "Sample",
-                        "maxLength": 30,
-                        "minLength": 1
+                        "$ref": "#/components/schemas/TaxpayerTypeEnum"
                     },
                     "document_number": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "11222333000181",
                         "maxLength": 20,
                         "minLength": 1
                     },
                     "identity_number": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "123456789",
                         "nullable": true,
                         "maxLength": 15
                     },
                     "identity_issuer": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "SSP/SP",
                         "nullable": true,
                         "maxLength": 20
                     },
                     "partner_since": {
                         "type": "string",
                         "format": "date",
-                        "example": "2026-09-09",
+                        "example": "2020-03-15",
                         "nullable": true
                     },
                     "state_registration": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "123456789123",
                         "nullable": true,
                         "maxLength": 14
                     },
                     "municipal_registration": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "12345678",
                         "nullable": true,
                         "maxLength": 15
                     },
                     "suframa_registration": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "123456789",
                         "nullable": true,
                         "maxLength": 9
                     },
                     "marital_status": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 30
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/MaritalStatusEnum"
+                            }
+                        ],
+                        "nullable": true
                     },
                     "profession_id": {
                         "type": "integer",
@@ -20519,55 +20461,59 @@
                         "$ref": "#/components/schemas/PartnerProfessionResource"
                     },
                     "gender": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 12
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/GenderEnum"
+                            }
+                        ],
+                        "nullable": true
                     },
                     "birth_date": {
                         "type": "string",
                         "format": "date",
-                        "example": "2026-09-09",
+                        "example": "1985-06-20",
                         "nullable": true
                     },
                     "father_name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "José Almeida",
                         "nullable": true,
                         "maxLength": 120
                     },
                     "father_document": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "12345678909",
                         "nullable": true,
                         "maxLength": 15
                     },
                     "mother_name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Maria Almeida",
                         "nullable": true,
                         "maxLength": 120
                     },
                     "mother_document": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "98765432100",
                         "nullable": true,
                         "maxLength": 15
                     },
                     "pix_type": {
-                        "type": "string",
-                        "example": "Sample",
-                        "nullable": true,
-                        "maxLength": 30
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/PixTypeEnum"
+                            }
+                        ],
+                        "nullable": true
                     },
                     "pix_key": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "financeiro@simplify.com.br",
                         "nullable": true
                     },
                     "notes": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Cliente desde 2020",
                         "nullable": true
                     },
                     "contacts": {
@@ -20603,6 +20549,125 @@
                 },
                 "type": "object"
             },
+            "PartnerTypeCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PartnerTypeResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "PartnerTypeLookupCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PartnerTypeLookupResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "PartnerTypeLookupResource": {
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "example": "CTM"
+                    },
+                    "label": {
+                        "type": "string",
+                        "example": "Cliente",
+                        "maxLength": 80,
+                        "minLength": 1
+                    },
+                    "sublabel": {
+                        "type": "string",
+                        "example": "Cod.: CTM",
+                        "maxLength": 80,
+                        "minLength": 1
+                    },
+                    "meta": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Cliente",
+                                "maxLength": 80,
+                                "minLength": 1
+                            },
+                            "code": {
+                                "type": "string",
+                                "example": "CTM",
+                                "maxLength": 20,
+                                "minLength": 1
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "PartnerTypeResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Cliente",
+                        "maxLength": 60,
+                        "minLength": 1
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "CTM",
+                        "maxLength": 3,
+                        "minLength": 1
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "Contact": {
                 "properties": {
                     "id": {
@@ -20615,23 +20680,24 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "Roberto Almeida"
                     },
                     "department": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "TI"
                     },
                     "email": {
                         "type": "string",
-                        "example": "Sample"
+                        "format": "email",
+                        "example": "roberto.almeida@simplify.com.br"
                     },
                     "mobile": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "11985984268"
                     },
                     "phone": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "1159856859"
                     },
                     "main": {
                         "type": "boolean",
@@ -20639,7 +20705,7 @@
                     },
                     "notes": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "Entrar em contato somente para suporte"
                     },
                     "created_at": {
                         "type": "string",
@@ -20672,7 +20738,7 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Roberto",
+                        "example": "Roberto Almeida",
                         "maxLength": 120,
                         "minLength": 1
                     },
@@ -20686,7 +20752,7 @@
                     "email": {
                         "type": "string",
                         "format": "email",
-                        "example": "roberto@email.com.br",
+                        "example": "roberto.almeida@simplify.com.br",
                         "nullable": true,
                         "maxLength": 180,
                         "minLength": 1
@@ -20726,62 +20792,63 @@
                     },
                     "partner_type_code": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "CTM"
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "Simplify Comércio de Materiais Ltda."
                     },
                     "trade_name": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "Simplify Materiais"
                     },
                     "person_type": {
-                        "type": "string",
-                        "example": "Sample"
+                        "$ref": "#/components/schemas/PersonTypeEnum"
                     },
                     "taxpayer_type": {
-                        "type": "string",
-                        "example": "Sample"
+                        "$ref": "#/components/schemas/TaxpayerTypeEnum"
                     },
                     "document_number": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "11222333000181"
                     },
                     "identity_number": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "123456789",
                         "nullable": true
                     },
                     "identity_issuer": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "SSP/SP",
                         "nullable": true
                     },
                     "partner_since": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-09T02:22:32.660898Z",
+                        "format": "date",
+                        "example": "2020-03-15",
                         "nullable": true
                     },
                     "state_registration": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "123456789123",
                         "nullable": true
                     },
                     "municipal_registration": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "12345678",
                         "nullable": true
                     },
                     "suframa_registration": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "123456789",
                         "nullable": true
                     },
                     "marital_status": {
-                        "type": "string",
-                        "example": "Sample",
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/MaritalStatusEnum"
+                            }
+                        ],
                         "nullable": true
                     },
                     "profession_id": {
@@ -20790,49 +20857,55 @@
                         "nullable": true
                     },
                     "gender": {
-                        "type": "string",
-                        "example": "Sample",
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/GenderEnum"
+                            }
+                        ],
                         "nullable": true
                     },
                     "birth_date": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-09T02:22:32.660898Z",
+                        "format": "date",
+                        "example": "1985-06-20",
                         "nullable": true
                     },
                     "father_name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "José Almeida",
                         "nullable": true
                     },
                     "father_document": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "12345678909",
                         "nullable": true
                     },
                     "mother_name": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Maria Almeida",
                         "nullable": true
                     },
                     "mother_document": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "98765432100",
                         "nullable": true
                     },
                     "pix_type": {
-                        "type": "string",
-                        "example": "Sample",
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/PixTypeEnum"
+                            }
+                        ],
                         "nullable": true
                     },
                     "pix_key": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "financeiro@simplify.com.br",
                         "nullable": true
                     },
                     "notes": {
                         "type": "string",
-                        "example": "Sample",
+                        "example": "Cliente desde 2020",
                         "nullable": true
                     },
                     "created_at": {
@@ -20864,11 +20937,11 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "Cliente"
                     },
                     "code": {
                         "type": "string",
-                        "example": "Sample"
+                        "example": "CTM"
                     },
                     "created_at": {
                         "type": "string",
@@ -20901,7 +20974,7 @@
                 "schema": {
                     "type": "string"
                 },
-                "example": ""
+                "example": "torneira"
             },
             "sortsParam": {
                 "name": "sorts",
@@ -20921,7 +20994,7 @@
                 "schema": {
                     "type": "integer"
                 },
-                "example": 10
+                "example": 15
             },
             "pageParam": {
                 "name": "page",
@@ -20938,7 +21011,7 @@
             "bearerAuth": {
                 "type": "apiKey",
                 "description": "Insira o token JWT",
-                "name": "access_token",
+                "name": "token",
                 "in": "cookie"
             }
         }
@@ -21009,10 +21082,6 @@
             "description": "Role"
         },
         {
-            "name": "Security",
-            "description": "Security"
-        },
-        {
             "name": "User",
             "description": "User"
         },
@@ -21026,10 +21095,6 @@
         }
     ],
     "x-tagGroups": [
-        {
-            "name": "Core",
-            "tags": []
-        },
         {
             "name": "Security",
             "tags": [
@@ -21070,6 +21135,13 @@
                 "ProductBrand",
                 "MeasurementUnit",
                 "Product"
+            ]
+        },
+        {
+            "name": "Integration",
+            "tags": [
+                "Integration",
+                "IntegrationConnection"
             ]
         }
     ]
