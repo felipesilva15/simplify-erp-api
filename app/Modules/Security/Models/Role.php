@@ -12,9 +12,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @OA\Schema(
  *      schema="Role",
+ *
  *      @OA\Property(property="id", type="integer", example=1),
- *      @OA\Property(property="name", type="string", example="Sample"),
- *      @OA\Property(property="description", type="string", example="Sample", nullable=true),
+ *      @OA\Property(property="name", type="string", example="Administrador"),
+ *      @OA\Property(property="description", type="string", example="Acesso completo ao sistema", nullable=true),
  *      @OA\Property(property="created_at", type="string", format="date-time", example="2025-12-01T11:21:13.278086Z", nullable=true),
  *      @OA\Property(property="updated_at", type="string", format="date-time", example="2025-12-01T11:21:13.278086Z", nullable=true),
  *      @OA\Property(property="deleted_at", type="string", format="date-time", example="2025-12-01T11:21:13.278086Z", nullable=true)
@@ -23,27 +24,29 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[UseFactory(RoleFactory::class)]
 class Role extends BaseModel
 {
-    /** @use HasFactory<\Database\Factories\RoleFactory> */
-    use SoftDeletes, HasFactory;
+    /** @use HasFactory<RoleFactory> */
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name',
-        'description'
+        'description',
     ];
 
     protected $casts = [
-        
+
     ];
 
-    public function permissions(): BelongsToMany {
+    public function permissions(): BelongsToMany
+    {
         return $this->belongsToMany(Permission::class)
-                    ->using(PermissionRole::class)
-                    ->withTimestamps();
+            ->using(PermissionRole::class)
+            ->withTimestamps();
     }
 
-    public function users(): BelongsToMany {
+    public function users(): BelongsToMany
+    {
         return $this->belongsToMany(User::class)
-                    ->using(RoleUser::class)
-                    ->withTimestamps();
+            ->using(RoleUser::class)
+            ->withTimestamps();
     }
 }

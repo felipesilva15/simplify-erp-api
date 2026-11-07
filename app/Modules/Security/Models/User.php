@@ -7,23 +7,22 @@ use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
  * @OA\Schema(
  *      schema="User",
+ *
  *      @OA\Property(property="id", type="integer", example=1),
- *      @OA\Property(property="name", type="string", example="Sample"),
- *      @OA\Property(property="email", type="string", example="Sample"),
+ *      @OA\Property(property="name", type="string", example="Felipe Silva"),
+ *      @OA\Property(property="email", type="string", format="email", example="felipe.silva@simplify.com.br"),
  *      @OA\Property(property="email_verified_at", type="string", format="date-time", example="2025-12-11T11:13:03.678895Z", nullable=true),
- *      @OA\Property(property="password", type="string", example="Sample"),
- *      @OA\Property(property="remember_token", type="string", example="Sample", nullable=true),
- *      @OA\Property(property="username", type="string", example="Sample", nullable=true),
- *      @OA\Property(property="phone_number", type="string", example="Sample", nullable=true),
+ *      @OA\Property(property="username", type="string", example="felipe.silva", nullable=true),
+ *      @OA\Property(property="phone_number", type="string", example="+55 11 99999-9999", nullable=true),
  *      @OA\Property(property="created_at", type="string", format="date-time", example="2025-12-11T11:13:03.678895Z", nullable=true),
  *      @OA\Property(property="updated_at", type="string", format="date-time", example="2025-12-11T11:13:03.678895Z", nullable=true),
  *      @OA\Property(property="deleted_at", type="string", format="date-time", example="2025-12-11T11:13:03.678895Z", nullable=true)
@@ -32,8 +31,8 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 #[UseFactory(UserFactory::class)]
 class User extends Authenticatable implements JWTSubject
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use SoftDeletes, HasFactory, Notifiable;
+    /** @use HasFactory<UserFactory> */
+    use HasFactory, Notifiable, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -41,7 +40,7 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'username',
         'phone_number',
-        'is_admin'
+        'is_admin',
     ];
 
     protected $hidden = [
@@ -49,46 +48,53 @@ class User extends Authenticatable implements JWTSubject
         'remember_token',
     ];
 
-    protected function casts(): array {
+    protected function casts(): array
+    {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'is_admin' => 'boolean'
+            'is_admin' => 'boolean',
         ];
     }
 
-    public function getJWTIdentifier(): mixed {
+    public function getJWTIdentifier(): mixed
+    {
         return $this->getKey();
     }
 
-    public function getJWTCustomClaims(): array {
+    public function getJWTCustomClaims(): array
+    {
         return [];
     }
 
-    public function getAuthPassword(): string {
+    public function getAuthPassword(): string
+    {
         return $this->password;
     }
 
-    public function roles(): BelongsToMany {
+    public function roles(): BelongsToMany
+    {
         return $this->belongsToMany(Role::class)
-                    ->using(RoleUser::class)
-                    ->withTimestamps();
+            ->using(RoleUser::class)
+            ->withTimestamps();
     }
 
-    public function permissions(): Builder {
+    public function permissions(): Builder
+    {
         return Permission::query()
-                        ->whereHas('roles.users', fn ($query) =>
-                            $query->where('users.id', $this->id)
-                        );
+            ->whereHas('roles.users', fn ($query) => $query->where('users.id', $this->id)
+            );
     }
 
-    public function permissionsList(): Collection {
+    public function permissionsList(): Collection
+    {
         return $this->permissions()->select('name')->pluck('name');
     }
 
-    public function hasPermission(string $name): bool {
+    public function hasPermission(string $name): bool
+    {
         return $this->permissions()
-                        ->where('name', $name)
-                        ->exists();
+            ->where('name', $name)
+            ->exists();
     }
 }

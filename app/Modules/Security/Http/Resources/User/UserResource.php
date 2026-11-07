@@ -8,12 +8,13 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @OA\Schema(
  *      schema="UserResource",
+ *
  *      @OA\Property(property="id", type="integer", example=1),
- *      @OA\Property(property="name", type="string", example="Sample", minLength=1, maxLength=255),
- *      @OA\Property(property="email", type="string", example="Sample", minLength=1, maxLength=255),
+ *      @OA\Property(property="name", type="string", example="Felipe Silva", minLength=1, maxLength=255),
+ *      @OA\Property(property="email", type="string", format="email", example="felipe.silva@simplify.com.br", minLength=1, maxLength=255),
  *      @OA\Property(property="email_verified_at", type="string", format="date-time", example="2025-12-11T11:13:04.516675Z", nullable=true),
- *      @OA\Property(property="username", type="string", example="Sample", minLength=1, maxLength=80, nullable=true),
- *      @OA\Property(property="phone_number", type="string", example="Sample", minLength=1, maxLength=14, nullable=true),
+ *      @OA\Property(property="username", type="string", example="felipe.silva", minLength=1, maxLength=80, nullable=true),
+ *      @OA\Property(property="phone_number", type="string", example="5511985841589", minLength=1, maxLength=14, nullable=true),
  *      @OA\Property(property="is_admin", type="boolean", example=false),
  *      @OA\Property(property="roles", type="array", @OA\Items(ref="#/components/schemas/UserRoleResource")),
  *      @OA\Property(property="permissions", type="array", @OA\Items(type="string", example="users.viewAny")),
@@ -24,7 +25,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 class UserResource extends JsonResource
 {
-    public function toArray(Request $request): array {
+    public function toArray(Request $request): array
+    {
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -37,7 +39,7 @@ class UserResource extends JsonResource
             'permissions' => $this->is_admin ? ['*'] : $this->permissionsList(),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'deleted_at' => $this->deleted_at
+            'deleted_at' => $this->deleted_at,
         ];
     }
 }

@@ -8,8 +8,9 @@ use Illuminate\Foundation\Http\FormRequest;
  * @OA\Schema(
  *      schema="UpdateRoleRequest",
  *      required={"name"},
- *      @OA\Property(property="name", type="string", example="Sample", minLength=1, maxLength=80),
- *      @OA\Property(property="description", type="string", example="Sample", minLength=1, maxLength=512, nullable=true)
+ *
+ *      @OA\Property(property="name", type="string", example="Administrador", minLength=1, maxLength=80),
+ *      @OA\Property(property="description", type="string", example="Acesso completo ao sistema", minLength=1, maxLength=512, nullable=true)
  * )
  */
 class UpdateRoleRequest extends FormRequest
@@ -18,7 +19,7 @@ class UpdateRoleRequest extends FormRequest
     {
         return [
             'name' => 'required|string|min:1|max:80',
-            'description' => 'nullable|string|min:1|max:512'
+            'description' => 'nullable|string|min:1|max:512',
         ];
     }
 }

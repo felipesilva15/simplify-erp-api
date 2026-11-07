@@ -7,7 +7,8 @@ use Illuminate\Foundation\Http\FormRequest;
 /**
  * @OA\Schema(
  *      schema="RolePermissionsRequest",
- *      @OA\Property(property="ids", type="array", @OA\Items(type="integer")),
+ *
+ *      @OA\Property(property="ids", type="array", example={1, 2, 3}, @OA\Items(type="integer")),
  * )
  */
 class RolePermissionsRequest extends FormRequest
@@ -16,7 +17,7 @@ class RolePermissionsRequest extends FormRequest
     {
         return [
             'ids' => ['array'],
-            'ids.*' => 'integer|exists:permissions,id'
+            'ids.*' => 'integer|exists:permissions,id',
         ];
     }
 }

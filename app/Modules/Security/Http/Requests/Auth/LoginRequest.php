@@ -8,8 +8,9 @@ use Illuminate\Foundation\Http\FormRequest;
  * @OA\Schema(
  *      schema="LoginRequest",
  *      required={"username", "password"},
+ *
  *      @OA\Property(property="username", type="string", example="felipe.silva"),
- *      @OA\Property(property="password", type="string", example="123")
+ *      @OA\Property(property="password", type="string", example="Senha@123")
  * )
  */
 class LoginRequest extends FormRequest
@@ -18,7 +19,7 @@ class LoginRequest extends FormRequest
     {
         return [
             'username' => 'required|string',
-            'password' => 'required|string'
+            'password' => 'required|string',
         ];
     }
 }

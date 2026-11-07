@@ -12,10 +12,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @OA\Schema(
  *      schema="Module",
+ *
  *      @OA\Property(property="id", type="integer", example=1),
- *      @OA\Property(property="name", type="string", example="Sample module"),
- *      @OA\Property(property="slug", type="string", example="sample"),
- *      @OA\Property(property="description", type="string", example="Sample", nullable=true),
+ *      @OA\Property(property="name", type="string", example="Segurança"),
+ *      @OA\Property(property="slug", type="string", example="security"),
+ *      @OA\Property(property="description", type="string", example="Módulo de segurança e permissões", nullable=true),
  *      @OA\Property(property="is_active", type="boolean", example=false, nullable=true),
  *      @OA\Property(property="created_at", type="string", format="date-time", example="2025-12-05T00:30:46.131084Z", nullable=true),
  *      @OA\Property(property="updated_at", type="string", format="date-time", example="2025-12-05T00:30:46.131084Z", nullable=true),
@@ -25,21 +26,22 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[UseFactory(ModuleFactory::class)]
 class Module extends BaseModel
 {
-    /** @use HasFactory<\Database\Factories\ModuleFactory> */
-    use SoftDeletes, HasFactory;
+    /** @use HasFactory<ModuleFactory> */
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name',
         'slug',
         'description',
-        'is_active'
+        'is_active',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
 
-    public function resources(): HasMany {
+    public function resources(): HasMany
+    {
         return $this->hasMany(Resource::class);
     }
 }

@@ -8,9 +8,10 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @OA\Schema(
  *      schema="RoleResource",
+ *
  *      @OA\Property(property="id", type="integer", example=1),
- *      @OA\Property(property="name", type="string", example="Sample", minLength=1, maxLength=80),
- *      @OA\Property(property="description", type="string", example="Sample", minLength=1, maxLength=512, nullable=true),
+ *      @OA\Property(property="name", type="string", example="Administrador", minLength=1, maxLength=80),
+ *      @OA\Property(property="description", type="string", example="Acesso completo ao sistema", minLength=1, maxLength=512, nullable=true),
  *      @OA\Property(property="permissions", type="array", @OA\Items(ref="#/components/schemas/RolePermissionResource")),
  *      @OA\Property(property="created_at", type="string", format="date-time", example="2025-12-01T11:21:13.562558Z", nullable=true),
  *      @OA\Property(property="updated_at", type="string", format="date-time", example="2025-12-01T11:21:13.562558Z", nullable=true),
@@ -19,7 +20,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 class RoleResource extends JsonResource
 {
-    public function toArray(Request $request): array {
+    public function toArray(Request $request): array
+    {
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -27,7 +29,7 @@ class RoleResource extends JsonResource
             'permissions' => RolePermissionResource::collection($this->permissions),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'deleted_at' => $this->deleted_at
+            'deleted_at' => $this->deleted_at,
         ];
     }
 }

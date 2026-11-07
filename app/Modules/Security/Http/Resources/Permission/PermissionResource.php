@@ -8,12 +8,13 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @OA\Schema(
  *      schema="PermissionResource",
+ *
  *      @OA\Property(property="id", type="integer", example=1),
- *      @OA\Property(property="label", type="string", example="Sample", minLength=1, maxLength=80),
+ *      @OA\Property(property="label", type="string", example="Visualizar usuários", minLength=1, maxLength=80),
  *      @OA\Property(property="resource", ref="#/components/schemas/PermissionResourceResource"),
- *      @OA\Property(property="action", type="string", example="Sample", minLength=1, maxLength=120),
- *      @OA\Property(property="name", type="string", example="Sample", minLength=1, maxLength=180),
- *      @OA\Property(property="description", type="string", example="Sample", minLength=1, maxLength=512, nullable=true),
+ *      @OA\Property(property="action", type="string", example="viewAny", minLength=1, maxLength=120),
+ *      @OA\Property(property="name", type="string", example="users.viewAny", minLength=1, maxLength=180),
+ *      @OA\Property(property="description", type="string", example="Permite listar usuários", minLength=1, maxLength=512, nullable=true),
  *      @OA\Property(property="created_at", type="string", format="date-time", example="2025-12-05T00:27:48.930766Z", nullable=true),
  *      @OA\Property(property="updated_at", type="string", format="date-time", example="2025-12-05T00:27:48.930766Z", nullable=true),
  *      @OA\Property(property="deleted_at", type="string", format="date-time", example="2025-12-05T00:27:48.930766Z", nullable=true)
@@ -21,7 +22,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 class PermissionResource extends JsonResource
 {
-    public function toArray(Request $request): array {
+    public function toArray(Request $request): array
+    {
         return [
             'id' => $this->id,
             'label' => $this->label,
@@ -31,7 +33,7 @@ class PermissionResource extends JsonResource
             'resource' => new PermissionResourceResource($this->getAttribute('resource')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'deleted_at' => $this->deleted_at
+            'deleted_at' => $this->deleted_at,
         ];
     }
 }

@@ -8,10 +8,11 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @OA\Schema(
  *      schema="ResourceResource",
+ *
  *      @OA\Property(property="id", type="integer", example=1),
- *      @OA\Property(property="name", type="string", example="Sample module", minLength=1, maxLength=80),
- *      @OA\Property(property="slug", type="string", example="sample", minLength=1, maxLength=80),
- *      @OA\Property(property="description", type="string", example="Sample", minLength=1, maxLength=512, nullable=true),
+ *      @OA\Property(property="name", type="string", example="Usuários", minLength=1, maxLength=80),
+ *      @OA\Property(property="slug", type="string", example="users", minLength=1, maxLength=80),
+ *      @OA\Property(property="description", type="string", example="Recursos de usuários", minLength=1, maxLength=512, nullable=true),
  *      @OA\Property(property="module", ref="#/components/schemas/ResourceModuleResource"),
  *      @OA\Property(property="permissions", type="array", @OA\Items(ref="#/components/schemas/ResourcePermissionResource")),
  *      @OA\Property(property="created_at", type="string", format="date-time", example="2025-12-05T00:30:46.143219Z", nullable=true),
@@ -21,7 +22,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 class ResourceResource extends JsonResource
 {
-    public function toArray(Request $request): array {
+    public function toArray(Request $request): array
+    {
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -31,7 +33,7 @@ class ResourceResource extends JsonResource
             'permissions' => ResourcePermissionResource::collection($this->permissions),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'deleted_at' => $this->deleted_at
+            'deleted_at' => $this->deleted_at,
         ];
     }
 }

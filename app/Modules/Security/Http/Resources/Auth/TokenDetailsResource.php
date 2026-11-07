@@ -8,18 +8,20 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @OA\Schema(
  *      schema="TokenDetailsResource",
- *      @OA\Property(property="access_token", type="string", example="token123"),
+ *
+ *      @OA\Property(property="access_token", type="string", example="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwibmFtZSI6IkZlbGlwZSBTaWx2YSJ9.abc123"),
  *      @OA\Property(property="token_type", type="string", example="bearer"),
- *      @OA\Property(property="expires_in", type="number", example=3600)
+ *      @OA\Property(property="expires_in", type="integer", example=3600)
  * )
  */
 class TokenDetailsResource extends JsonResource
 {
-    public function toArray(Request $request): array {
+    public function toArray(Request $request): array
+    {
         return [
             'access_token' => $this->token,
             'token_type' => $this->type,
-            'expires_in' => $this->expiresIn
+            'expires_in' => $this->expiresIn,
         ];
     }
 }

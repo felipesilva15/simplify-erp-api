@@ -8,19 +8,23 @@ use Illuminate\Validation\Rule;
 /**
  * @OA\Schema(
  *      schema="UpdateUserRequest",
- *      required={"name","email","password","required"},
- *      @OA\Property(property="name", type="string", example="Sample", minLength=1, maxLength=255),
- *      @OA\Property(property="email", type="string", example="Sample", minLength=1, maxLength=255),
- *      @OA\Property(property="username", type="string", example="Sample", minLength=1, maxLength=80, nullable=true),
- *      @OA\Property(property="phone_number", type="string", example="Sample", minLength=1, maxLength=14, nullable=true),
+ *      required={"name","email","username","is_admin"},
+ *
+ *      @OA\Property(property="name", type="string", example="Felipe Silva", minLength=1, maxLength=255),
+ *      @OA\Property(property="email", type="string", format="email", example="felipe.silva@simplify.com.br", minLength=1, maxLength=255),
+ *      @OA\Property(property="username", type="string", example="felipe.silva", minLength=1, maxLength=80),
+ *      @OA\Property(property="phone_number", type="string", example="5511985841589", minLength=1, maxLength=14, nullable=true),
  *      @OA\Property(property="is_admin", type="boolean", example=false),
  *      @OA\Property(
- *          property="roles", 
- *          type="array", 
+ *          property="roles",
+ *          type="array",
+ *          example={{"id": 1}},
+ *
  *          @OA\Items(
  *              required={"id"},
+ *
  *              @OA\Property(property="id", type="integer", example=1)
- *          ) 
+ *          )
  *      )
  * )
  */
@@ -35,7 +39,7 @@ class UpdateUserRequest extends FormRequest
             'phone_number' => 'nullable|string|min:1|max:14',
             'is_admin' => 'required|boolean',
             'roles' => 'array',
-            'roles.*.id' => 'required|integer|exists:roles,id'
+            'roles.*.id' => 'required|integer|exists:roles,id',
         ];
     }
 }

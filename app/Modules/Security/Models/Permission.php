@@ -3,8 +3,6 @@
 namespace App\Modules\Security\Models;
 
 use App\Core\Models\BaseModel;
-use App\Modules\Security\Models\Module;
-use App\Modules\Security\Models\Resource;
 use Database\Factories\PermissionFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,12 +13,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @OA\Schema(
  *      schema="Permission",
+ *
  *      @OA\Property(property="id", type="integer", example=1),
  *      @OA\Property(property="resource_id", type="integer", example=1),
- *      @OA\Property(property="label", type="string", example="Sample"),
- *      @OA\Property(property="action", type="string", example="Sample"),
- *      @OA\Property(property="name", type="string", example="Sample"),
- *      @OA\Property(property="description", type="string", example="Sample", nullable=true),
+ *      @OA\Property(property="label", type="string", example="Visualizar usuários"),
+ *      @OA\Property(property="action", type="string", example="viewAny"),
+ *      @OA\Property(property="name", type="string", example="users.viewAny"),
+ *      @OA\Property(property="description", type="string", example="Permite listar usuários", nullable=true),
  *      @OA\Property(property="created_at", type="string", format="date-time", example="2025-12-05T00:27:48.633261Z", nullable=true),
  *      @OA\Property(property="updated_at", type="string", format="date-time", example="2025-12-05T00:27:48.633261Z", nullable=true),
  *      @OA\Property(property="deleted_at", type="string", format="date-time", example="2025-12-05T00:27:48.633261Z", nullable=true)
@@ -29,27 +28,29 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[UseFactory(PermissionFactory::class)]
 class Permission extends BaseModel
 {
-    /** @use HasFactory<\Database\Factories\PermissionFactory> */
-    use SoftDeletes, HasFactory;
+    /** @use HasFactory<PermissionFactory> */
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'resource_id',
         'action',
         'name',
         'label',
-        'description'
+        'description',
     ];
 
     protected $casts = [
-        
+
     ];
 
-    public function resource(): BelongsTo {
+    public function resource(): BelongsTo
+    {
         return $this->belongsTo(Resource::class);
     }
 
-    public function roles(): BelongsToMany {
+    public function roles(): BelongsToMany
+    {
         return $this->belongsToMany(Role::class)
-                    ->using(PermissionRole::class);
+            ->using(PermissionRole::class);
     }
 }
