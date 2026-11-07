@@ -8,9 +8,10 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @OA\Schema(
  *     schema="CityResource",
+ *
  *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="name", type="string", example="Sample", minLength=1, maxLength=90),
- *     @OA\Property(property="ibge_code", type="string", example="Sample", minLength=1, maxLength=7),
+ *     @OA\Property(property="name", type="string", example="São Paulo", minLength=1, maxLength=90),
+ *     @OA\Property(property="ibge_code", type="string", example="3550308", minLength=1, maxLength=7),
  *     @OA\Property(property="state_id", type="integer", example=1),
  *     @OA\Property(property="state", ref="#/components/schemas/CityStateResource"),
  *     @OA\Property(property="created_at", type="string", format="date-time", example="2026-09-24T17:20:04.068390Z", nullable=true),
@@ -19,7 +20,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 class CityResource extends JsonResource
 {
-    public function toArray(Request $request): array {
+    public function toArray(Request $request): array
+    {
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -27,7 +29,7 @@ class CityResource extends JsonResource
             'state_id' => $this->state_id,
             'state' => CityStateResource::make($this->state),
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
+            'updated_at' => $this->updated_at,
         ];
     }
 }

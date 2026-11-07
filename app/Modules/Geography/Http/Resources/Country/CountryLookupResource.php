@@ -8,26 +8,28 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @OA\Schema(
  *      schema="CountryLookupResource",
+ *
  *      @OA\Property(property="key", type="integer", example=1),
- *      @OA\Property(property="label", type="string", example="Sample", minLength=1, maxLength=60),
- *      @OA\Property(property="sublabel", type="string", example="Cod.: 1", minLength=1, maxLength=80),
+ *      @OA\Property(property="label", type="string", example="Brasil", minLength=1, maxLength=60),
+ *      @OA\Property(property="sublabel", type="string", example="Cod.: 1 | ISO: BR", minLength=1, maxLength=80),
  *      @OA\Property(
  *          property="meta",
  *          type="object",
  *         @OA\Property(property="id", type="integer", example=1),
- *         @OA\Property(property="name", type="string", example="Sample", minLength=1, maxLength=60),
- *         @OA\Property(property="iso_code", type="string", example="Sample", minLength=1, maxLength=2)
+ *         @OA\Property(property="name", type="string", example="Brasil", minLength=1, maxLength=60),
+ *         @OA\Property(property="iso_code", type="string", example="BR", minLength=1, maxLength=2)
  *      )
  * )
  */
 class CountryLookupResource extends JsonResource
 {
-    public function toArray(Request $request): array {
+    public function toArray(Request $request): array
+    {
         return [
             'key' => $this->id,
             'label' => $this->name,
             'sublabel' => "Cod.: {$this->id} | ISO: {$this->iso_code}",
-            'meta' => $this->only('id', 'name', 'iso_code')
+            'meta' => $this->only('id', 'name', 'iso_code'),
         ];
     }
 }

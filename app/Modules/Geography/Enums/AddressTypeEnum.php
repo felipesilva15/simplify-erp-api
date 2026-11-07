@@ -6,10 +6,7 @@ namespace App\Modules\Geography\Enums;
  * @OA\Schema(
  *   schema="AddressTypeEnum",
  *   type="string",
- *   description="Tipos de endereço:
- *      Fiscal = 'TAX'
- *      Entrega = 'DELIVERY'
- *      Cobrança = 'BILLING'",
+ *   description="Address types: TAX, DELIVERY, BILLING",
  *   enum={"TAX", "DELIVERY", "BILLING"}
  * )
  */

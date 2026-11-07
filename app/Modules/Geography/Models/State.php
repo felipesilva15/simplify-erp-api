@@ -11,11 +11,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @OA\Schema(
  *     schema="State",
+ *
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="country_id", type="integer", example=1),
- *     @OA\Property(property="name", type="string", example="Sample"),
- *     @OA\Property(property="uf", type="string", example="Sample"),
- *     @OA\Property(property="ibge_code", type="string", example="Sample"),
+ *     @OA\Property(property="name", type="string", example="São Paulo"),
+ *     @OA\Property(property="uf", type="string", example="SP"),
+ *     @OA\Property(property="ibge_code", type="string", example="35"),
  *     @OA\Property(property="created_at", type="string", format="date-time", example="2026-09-24T04:09:20.641277Z", nullable=true),
  *     @OA\Property(property="updated_at", type="string", format="date-time", example="2026-09-24T04:09:20.641277Z", nullable=true)
  * )
@@ -23,21 +24,22 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[UseFactory(StateFactory::class)]
 class State extends BaseModel
 {
-    /** @use HasFactory<\Database\Factories\StateFactory> */
+    /** @use HasFactory<StateFactory> */
     use HasFactory;
 
     protected $fillable = [
         'country_id',
         'name',
         'uf',
-        'ibge_code'
+        'ibge_code',
     ];
 
     protected $casts = [
-        
+
     ];
 
-    public function country(): BelongsTo {
+    public function country(): BelongsTo
+    {
         return $this->belongsTo(Country::class);
     }
 }
