@@ -20515,6 +20515,9 @@
                         "example": 1,
                         "nullable": true
                     },
+                    "profession": {
+                        "$ref": "#/components/schemas/PartnerProfessionResource"
+                    },
                     "gender": {
                         "type": "string",
                         "example": "Sample",

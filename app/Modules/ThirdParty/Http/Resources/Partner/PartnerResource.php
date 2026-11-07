@@ -26,6 +26,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *      @OA\Property(property="suframa_registration", type="string", example="Sample", maxLength=9, nullable=true),
  *      @OA\Property(property="marital_status", type="string", example="Sample", maxLength=30, nullable=true),
  *      @OA\Property(property="profession_id", type="integer", example=1, nullable=true),
+ *      @OA\Property(property="profession", ref="#/components/schemas/PartnerProfessionResource"),
  *      @OA\Property(property="gender", type="string", example="Sample", maxLength=12, nullable=true),
  *      @OA\Property(property="birth_date", type="string", format="date", example="2026-09-09", nullable=true),
  *      @OA\Property(property="father_name", type="string", example="Sample", maxLength=120, nullable=true),
