@@ -10,9 +10,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 /**
  * @OA\Schema(
  *     schema="Profession",
+ *
  *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="cbo", type="string", example="Sample"),
- *     @OA\Property(property="name", type="string", example="Sample"),
+ *     @OA\Property(property="cbo", type="string", example="212405"),
+ *     @OA\Property(property="name", type="string", example="Analista de desenvolvimento de sistemas"),
  *     @OA\Property(property="created_at", type="string", format="date-time", example="2026-10-01T12:41:58.875427Z", nullable=true),
  *     @OA\Property(property="updated_at", type="string", format="date-time", example="2026-10-01T12:41:58.875427Z", nullable=true)
  * )
@@ -20,14 +21,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 #[UseFactory(ProfessionFactory::class)]
 class Profession extends BaseModel
 {
-    /** @use HasFactory<\Database\Factories\ProfessionFactory> */
+    /** @use HasFactory<ProfessionFactory> */
     use HasFactory;
 
     protected $fillable = [
-        
+
     ];
 
     protected $casts = [
-        
+
     ];
 }
