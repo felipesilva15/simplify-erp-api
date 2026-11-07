@@ -35,6 +35,10 @@ use Illuminate\Routing\Controller as BaseController;
  *             {
  *                 "name"="Catalog",
  *                 "tags"={"ProductCategory", "ProductBrand", "MeasurementUnit", "Product"}
+ *             },
+ *             {
+ *                 "name"="Integration",
+ *                 "tags"={"Integration", "IntegrationConnection"}
  *             }
  *         }
  *     }
@@ -43,7 +47,7 @@ use Illuminate\Routing\Controller as BaseController;
  * @OA\Info(
  *      title="Simplify ERP API",
  *      version="1.0.0",
- *      description="A sessão abaixo contém a documentação da API utilizada para o Simplify ERP.",
+ *      description="The section below contains the API documentation used by Simplify ERP.",
  *
  *      @OA\Contact(
  *          email="felipe.allware@gmail.com",
@@ -51,7 +55,7 @@ use Illuminate\Routing\Controller as BaseController;
  *      ),
  *
  *      @OA\License(
- *          name="Licença MIT",
+ *          name="MIT License",
  *          url="https://github.com/felipesilva15/simplify-erp-api/blob/main/LICENSE"
  *      )
  * )

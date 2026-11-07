@@ -6,14 +6,7 @@ namespace App\Core\Enums;
  * @OA\Schema(
  *   schema="RequestQueryOperatorsEnum",
  *   type="string",
- *   description="Request query operators:
- *      Equal = 'eq'
- *      Like = 'like'
- *      Less than = 'lt'
- *      Less than equal = 'lte'
- *      Greater than = 'gt'
- *      Greater than equal = 'gte'
- *      Not equal = 'ne'",
+ *   description="Request query operators: eq, like, lt, lte, gt, gte, ne",
  *   enum={"eq", "like", "lt", "lte", "gt", "gte", "ne"}
  * )
  */

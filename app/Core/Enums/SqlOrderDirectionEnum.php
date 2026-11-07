@@ -6,9 +6,7 @@ namespace App\Core\Enums;
  * @OA\Schema(
  *   schema="SqlOrderDirectionEnum",
  *   type="string",
- *   description="SQL order direction:
- *      Ascending = 'asc'
- *      Descending = 'desc'",
+ *   description="SQL order direction: asc, desc",
  *   enum={"asc", "desc"}
  * )
  */

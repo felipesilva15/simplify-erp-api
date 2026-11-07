@@ -6,14 +6,7 @@ namespace App\Core\Enums;
  * @OA\Schema(
  *   schema="SqlQueryOperatorsEnum",
  *   type="string",
- *   description="SQL query operators:
- *      Equal = '='
- *      Like = 'like'
- *      Less than = '<'
- *      Less than equal = '<='
- *      Greater than = '>'
- *      Greater than equal = '>='
- *      Not equal = '!='",
+ *   description="SQL query operators: =, like, <, <=, >, >=, !=",
  *   enum={"=", "like", "<", "<=", ">", ">=", "!="}
  * )
  */

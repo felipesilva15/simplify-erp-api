@@ -8,17 +8,18 @@ use Illuminate\Foundation\Http\FormRequest;
  * @OA\Schema(
  *     schema="ListRequest",
  *     type="object",
+ *
  *     @OA\Property(
  *         property="filters",
  *         ref="#/components/schemas/Filters",
  *         example={
  *             "id": {"gte": 1, "lte": 10},
- *             "name": {"like": "Felipe"}
+ *             "name": {"like": "Torneira"}
  *         }
  *     ),
- *     @OA\Property(property="q", type="string", example="Felipe", description="Free text search across the searchable columns"),
+ *     @OA\Property(property="q", type="string", example="torneira", description="Free text search across the searchable columns"),
  *     @OA\Property(property="sorts", type="string", example="-id", description="Fields for sorting separated by commas. Use '-' to sort descending"),
- *     @OA\Property(property="per_page", type="integer", example=10, description="Items per page"),
+ *     @OA\Property(property="per_page", type="integer", example=15, description="Items per page"),
  *     @OA\Property(property="page", type="integer", example=1, description="Page number")
  * )
  */
@@ -33,7 +34,7 @@ class ListRequest extends FormRequest
             'filters.*.*' => 'required',
             'sorts' => 'nullable|string',
             'per_page' => 'nullable|integer|max:100',
-            'page' => 'nullable|integer|min:1'
+            'page' => 'nullable|integer|min:1',
         ];
     }
 }

@@ -8,6 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @OA\Schema(
  *     schema="ActivityLogResource",
+ *
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="origin_type", type="string", example="user"),
  *     @OA\Property(property="origin_id", type="string", example="1"),
@@ -23,9 +24,10 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *         type="object",
  *         nullable=true,
  *         @OA\Property(property="id", type="integer", example=1),
- *         @OA\Property(property="name", type="string", example="Felipe Silva")
+ *         @OA\Property(property="name", type="string", example="Felipe Silva"),
+ *         @OA\Property(property="username", type="string", example="felipe.silva")
  *     ),
- *     @OA\Property(property="created_at", type="string", format="date-time", nullable=true)
+ *     @OA\Property(property="created_at", type="string", format="date-time", example="2026-05-20T14:30:00Z", nullable=true)
  * )
  */
 class ActivityLogResource extends JsonResource
@@ -46,7 +48,7 @@ class ActivityLogResource extends JsonResource
             'user' => $this->whenLoaded('user', fn () => [
                 'id' => $this->user->id,
                 'name' => $this->user->name,
-                'username' => $this->user->username
+                'username' => $this->user->username,
             ]),
             'created_at' => $this->created_at,
         ];
