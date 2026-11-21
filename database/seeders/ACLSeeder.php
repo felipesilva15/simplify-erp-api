@@ -698,6 +698,67 @@ class ACLSeeder extends Seeder
                     ],
                 ],
             ],
+            [
+                'slug' => 'construction',
+                'name' => 'Construction',
+                'description' => 'Módulo obras do sistema',
+                'is_active' => true,
+                'created_at' => $now,
+                'updated_at' => $now,
+                'resources' => [
+                    [
+                        'slug' => 'projectTypes',
+                        'name' => 'Project Types',
+                        'description' => 'Funcionalidades para tipos de projeto',
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                        'permissions' => [
+                            [
+                                'action' => 'viewAny',
+                                'label' => 'Listar',
+                                'description' => 'Permite realizar a consulta de todos os tipos de projeto',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'view',
+                                'label' => 'Visualizar',
+                                'description' => 'Permite visualizar os detalhes de tipo de projeto',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'create',
+                                'label' => 'Criar',
+                                'description' => 'Permite realizar a criação de tipo de projeto',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'update',
+                                'label' => 'Editar',
+                                'description' => 'Permite realizar a edição de tipo de projeto',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'delete',
+                                'label' => 'Excluir',
+                                'description' => 'Permite realizar a exclusão de tipo de projeto',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'export',
+                                'label' => 'Exportar dados',
+                                'description' => 'Permite realizar a exportação de dados dos tipos de projeto',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         DB::transaction(function () use ($modules) {

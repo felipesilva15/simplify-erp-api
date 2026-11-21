@@ -18,6 +18,7 @@ use App\Modules\Security\Http\Controllers\RoleController;
 use App\Modules\Security\Http\Controllers\UserController;
 use App\Modules\ThirdParty\Http\Controllers\PartnerController;
 use App\Modules\ThirdParty\Http\Controllers\PartnerTypeController;
+use App\Modules\Construction\Http\Controllers\ProjectTypeController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('security/auth/login', [AuthController::class, 'login'])->name('auth.login');
@@ -94,5 +95,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('services/lookup', [ServiceController::class, 'lookup'])->name('services.lookup');
         Route::get('services/export', [ServiceController::class, 'export'])->name('services.export');
         Route::crudResource('services', ServiceController::class);
+    });
+
+    Route::prefix('construction')->group(function() {
+        Route::get('project-types/lookup', [ProjectTypeController::class, 'lookup'])->name('projectTypes.lookup');
+        Route::get('project-types/export', [ProjectTypeController::class, 'export'])->name('projectTypes.export');
+        Route::crudResource('project-types', ProjectTypeController::class);
     });
 });

@@ -39,6 +39,10 @@ use Illuminate\Routing\Controller as BaseController;
  *             {
  *                 "name"="Integration",
  *                 "tags"={"Integration", "IntegrationConnection"}
+ *             },
+ *             {
+ *                 "name"="Construction",
+ *                 "tags"={"ProjectType"}
  *             }
  *         }
  *     }
