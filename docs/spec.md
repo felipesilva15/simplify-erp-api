@@ -140,6 +140,8 @@ sync(Model $entity, string $relationMethodName, array $ids = []): ?Model
 | `getMaskedSearchableColumns(): array` | `[]` | Colunas comparadas sem máscara (PostgreSQL). |
 | `getNonNormalizedSearchableColumns(): array` | `[]` | Colunas que **não** devem ser normalizadas na busca. |
 
+`list`, `lookup` e `getExportQuery` também aceitam `forcedFilters` em `$params` (`['coluna' => valor]`), aplicados pelo `BaseRepository` depois dos filtros do cliente. É assim que as fachadas de catálogo garantem que uma listagem nunca misture produtos e serviços ([§3.3](#33-produtos-e-serviços)).
+
 Os dois hooks de busca devolvem **apenas os nomes das colunas**: o tipo é resolvido em runtime por `ModelHelpers::getColumnsCollection()` (introspecção de `Schema::getColumns`), e colunas inexistentes no schema são ignoradas. O mapa legado (`['name' => 'string']`) continua aceito por compatibilidade.
 
 `store` e `update` exigem que `$data` exponha `toArray()`, removem a chave `id` e delegam ao Eloquent — o `$fillable` e o `$casts` do model são a última fronteira de segurança. `update` devolve `$entity->fresh()`.
@@ -192,6 +194,16 @@ Todas as rotas de API recebem o prefixo `/api` e o middleware `api` (do qual faz
 | `GET /api/hr/professions` · `GET /api/hr/professions/{profession}` | — | `professions.viewAny` / `view` |
 | `GET /api/hr/professions/lookup` · `GET /api/hr/professions/export` | `professions.lookup` · `professions.export` | `professions.viewAny` · `professions.export` |
 | `GET /api/hr/professions/{id}/activity-logs` | `professions.activityLogs` | `professions.view` |
+| `crudResource` `/api/catalog/product-categories` | — | `productCategories.*` |
+| `crudResource` `/api/catalog/product-brands` | — | `productBrands.*` |
+| `crudResource` `/api/catalog/measurement-units` | — | `measurementUnits.*` |
+| `crudResource` `/api/catalog/products` | — | `products.*` |
+| `GET /api/catalog/products/lookup` · `GET /api/catalog/products/export` | `products.lookup` · `products.export` | `products.viewAny` · `products.export` |
+| `crudResource` `/api/catalog/services` | — | `services.*` |
+| `GET /api/catalog/services/lookup` · `GET /api/catalog/services/export` | `services.lookup` · `services.export` | `services.viewAny` · `services.export` |
+| `apiResource` `/api/integration-connections` · `GET /api/integrations/providers` | — | autenticado |
+
+As rotas do módulo `Integration` são carregadas por `IntegrationServiceProvider` com o prefixo `/api`, o mesmo contrato documentado no OpenAPI; o webhook `POST /webhooks/{provider}/{connection?}` permanece fora de `/api`.
 
 Cada linha marcada como `crudResource` representa o conjunto padrão de sete ações REST — `index`, `create`, `store`, `show`, `edit`, `update` e `destroy` — **mais** a rota `GET {recurso}/{id}/activity-logs` adicionada pela macro ([§3.2](#32-a-macro-crudresource)).
 
@@ -223,6 +235,36 @@ Route::macro('crudResource', function (string $name, string $controller) {
 Ou seja, `Route::crudResource()` equivale a `Route::resource()` **mais** a rota de auditoria `{nome}/{id}/activity-logs`. É essa macro que garante que toda entidade gerada pelo comando `make:module-crud` já nasça com histórico disponível.
 
 A URI permanece em kebab-case (`/api/catalog/product-categories`), mas os nomes das rotas usam camelCase (`productCategories.index`, `productCategories.activityLogs`), alinhados ao slug de permissão da entidade.
+
+### 3.3 Produtos e serviços
+
+Produtos e serviços são **duas fachadas HTTP sobre a mesma entidade** `Product`, a mesma tabela `products`, o mesmo `ProductRepository` e o mesmo `ProductService`. Não existem model, tabela nem Service separados para serviços.
+
+| Fachada | Tipo fixado pelo servidor | Permissões | Controller | Export |
+|---|---|---|---|---|
+| `/api/catalog/products` | `PRODUCT` | `products.*` | `ProductController` | `ProductExport` |
+| `/api/catalog/services` | `SERVICE` | `services.*` | `ServiceController` | `ServiceExport` |
+
+Ambas expõem `index`, `show`, `edit`, `store`, `update`, `destroy`, `activity-logs`, `lookup` e `export`. Cada fachada tem seus próprios `FormRequest` e Resources. O cliente **nunca informa `type`**: se enviar o campo, o valor é sobrescrito pelo tipo da rota antes da persistência.
+
+O `ProductService` expõe variantes por tipo — `storeFor`, `updateFor`, `showFor`, `editFor`, `deleteFor`, `listFor`, `lookupFor` e `exportQueryFor`. Todas elas:
+
+- fixam `type` no DTO e incluem `type` em `fieldsToUse`, para que o valor enviado pelo cliente nunca sobrescreva o da rota;
+- validam `item_type_code` com `ItemTypeCodeEnum::valuesFor()`: `00`–`08` para produtos e `09`, `10`, `99` para serviços;
+- validam a aplicabilidade da categoria: `PRODUCT`/`BOTH` para produtos e `SERVICE`/`BOTH` para serviços;
+- aplicam `forcedFilters = ['type' => <tipo>]` em listagem, lookup e exportação;
+- retornam `404` quando um id pertence à outra fachada, inclusive em `show`, `edit`, `update`, `destroy` e `activity-logs`.
+
+Campos gravados por cada fachada:
+
+| Fachada | Campos |
+|---|---|
+| Produto | `sku`, `gtin`, `item_type_code`, `name`, `description`, `notes`, `price`, `cost`, `is_active`, `net_weight`, `gross_weight`, `width`, `height`, `length`, `minimum_stock`, `maximum_stock`, `measurement_unit_id`, `product_category_id`, `product_brand_id` |
+| Serviço | `sku`, `item_type_code`, `name`, `description`, `notes`, `price`, `cost`, `is_active`, `measurement_unit_id`, `product_category_id` |
+
+`ProductDTO` usa `fieldsToUse` para gravar apenas os campos presentes no payload da fachada correspondente. Como a coluna `sku` é `NOT NULL`, ela continua obrigatória nos dois casos; `gtin` é aceito apenas nos requests de produto. `gtin` e `sku` permanecem únicos em toda a tabela `products`, entre registros ativos.
+
+A autorização usa `authorizeResource(Product::class, 'service')` no controller de serviços e abilities sufixadas em `ProductPolicy` (`viewAnyService`, `viewService`, `createService`, `updateService`, `deleteService`, `exportService`), porque o Gate resolve a policy a partir do model `Product`. Não existe `ServicePolicy`. Os ganchos `exportAbility()` (em `HasExcelExport`) e `activityLogAbility()` / `validateActivityLogModel()` (em `HasActivityLogs`) permitem que cada fachada use sua própria permissão sem duplicar os traits; em serviços, `activityLogAbility()` retorna `viewService`.
 
 ---
 
@@ -572,7 +614,7 @@ A senha nunca trafega em resposta: `User` declara `password` e `remember_token` 
 
 ### 10.4 Field filtering no DTO
 
-`UserDTO` expõe `public array $fieldsToUse = []`, preenchido pelo controller com `array_keys($request->validated())`. `UserDTO::toArray()` filtra o payload por essa lista. Efeito: no `update` de usuário, como `password` não faz parte das regras, o DTO nunca envia o campo, nem vazio. `RoleDTO` e `PermissionDTO` não possuem esse mecanismo e enviam todos os campos.
+`UserDTO` expõe `public array $fieldsToUse = []`, preenchido pelo controller com `array_keys($request->validated())`. `UserDTO::toArray()` filtra o payload por essa lista. Efeito: no `update` de usuário, como `password` não faz parte das regras, o DTO nunca envia o campo, nem vazio. `ProductDTO` usa o mesmo mecanismo para separar os campos gravados pelas fachadas de produto e serviço ([§3.3](#33-produtos-e-serviços)); `RoleDTO` e `PermissionDTO` não possuem esse mecanismo e enviam todos os campos.
 
 ---
 

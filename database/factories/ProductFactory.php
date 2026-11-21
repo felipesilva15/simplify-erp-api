@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Core\Enums\ProductApplicabilityEnum;
 use App\Core\Enums\ProductTypeEnum;
 use App\Modules\Catalog\Enums\ItemTypeCodeEnum;
 use App\Modules\Catalog\Models\MeasurementUnit;
@@ -32,12 +33,32 @@ class ProductFactory extends Factory
             'width' => fake()->randomFloat(2, 0, 9999),
             'height' => fake()->randomFloat(2, 0, 9999),
             'length' => fake()->randomFloat(2, 0, 9999),
-            'minimum_stock' => fake()->randomFloat(2, 0, 9999),
-            'maximum_stock' => fake()->randomFloat(2, 0, 9999),
+            'minimum_stock' => 1,
+            'maximum_stock' => 10,
             'is_active' => fake()->boolean(),
             'measurement_unit_id' => MeasurementUnit::factory(),
             'product_category_id' => ProductCategory::factory(),
             'product_brand_id' => ProductBrand::factory(),
         ];
+    }
+
+    public function service(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'type' => ProductTypeEnum::Service,
+            'item_type_code' => ItemTypeCodeEnum::Service->value,
+            'gtin' => null,
+            'net_weight' => null,
+            'gross_weight' => null,
+            'width' => null,
+            'height' => null,
+            'length' => null,
+            'minimum_stock' => null,
+            'maximum_stock' => null,
+            'product_category_id' => ProductCategory::factory()->state([
+                'applicability' => ProductApplicabilityEnum::Service,
+            ]),
+            'product_brand_id' => null,
+        ]);
     }
 }

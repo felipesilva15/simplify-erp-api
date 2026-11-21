@@ -42,7 +42,7 @@ trait HasExcelExport
 {
     public function export(ExportRequest $request): BinaryFileResponse
     {
-        $this->authorize('export', $this->exportModelClass());
+        $this->authorize($this->exportAbility(), $this->exportModelClass());
 
         $params = $request->all();
 
@@ -59,6 +59,15 @@ trait HasExcelExport
     protected function exportQuery(array $params): Builder
     {
         return $this->service->exportQuery($params);
+    }
+
+    /**
+     * Ability verificada antes da exportação. Fachadas sobre a mesma entidade
+     * podem sobrescrever este método para usar uma permissão própria.
+     */
+    protected function exportAbility(): string
+    {
+        return 'export';
     }
 
     /**

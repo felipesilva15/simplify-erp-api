@@ -19,11 +19,12 @@ class OpenApiConsistencyTest extends TestCase
         '/api/oauth2-callback',
     ];
 
-    private function documentedOperations(): array {
+    private function documentedOperations(): array
+    {
         $response = $this->getJson('/docs?api-docs.json');
 
         $response->assertOk()
-                 ->assertJsonIsObject();
+            ->assertJsonIsObject();
 
         $operations = [];
 
@@ -43,22 +44,32 @@ class OpenApiConsistencyTest extends TestCase
         return $operations;
     }
 
-    private function apiRoutes(): array {
+    private function registeredRoutes(): array
+    {
         return collect(RouteFacade::getRoutes()->getRoutes())
             ->map(fn (Route $route) => [
-                'path' => '/' . trim($route->uri(), '/'),
+                'path' => '/'.trim($route->uri(), '/'),
                 'methods' => array_map('strtoupper', $route->methods()),
             ])
+            ->values()
+            ->all();
+    }
+
+    private function apiRoutes(): array
+    {
+        return collect($this->registeredRoutes())
             ->filter(fn (array $route) => str_starts_with($route['path'], '/api/'))
             ->values()
             ->all();
     }
 
-    private function normalizePath(string $path): string {
-        return rtrim($path, '/');
+    private function normalizePath(string $path): string
+    {
+        return rtrim(str_replace('?', '', $path), '/');
     }
 
-    private function methodsMatch(string $documentedMethod, array $routeMethods): bool {
+    private function methodsMatch(string $documentedMethod, array $routeMethods): bool
+    {
         $inDocumented = $documentedMethod;
         $normalized = $routeMethods;
 
@@ -72,7 +83,7 @@ class OpenApiConsistencyTest extends TestCase
 
     public function test_every_documented_operation_has_a_matching_route(): void
     {
-        $routes = $this->apiRoutes();
+        $routes = $this->registeredRoutes();
         $normalizedRoutes = collect($routes)
             ->map(fn (array $route) => [
                 'path' => $this->normalizePath($route['path']),
@@ -109,7 +120,7 @@ class OpenApiConsistencyTest extends TestCase
                         && $this->methodsMatch($operation['method'], $route['methods'])
                 )
             )
-            ->map(fn (array $route) => implode('|', $route['methods']) . ' ' . $route['path'])
+            ->map(fn (array $route) => implode('|', $route['methods']).' '.$route['path'])
             ->values();
 
         $this->assertSame(

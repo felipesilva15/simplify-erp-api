@@ -1,6 +1,10 @@
 <?php
 
+use App\Modules\Catalog\Http\Controllers\MeasurementUnitController;
+use App\Modules\Catalog\Http\Controllers\ProductBrandController;
 use App\Modules\Catalog\Http\Controllers\ProductCategoryController;
+use App\Modules\Catalog\Http\Controllers\ProductController;
+use App\Modules\Catalog\Http\Controllers\ServiceController;
 use App\Modules\Geography\Http\Controllers\AddressController;
 use App\Modules\Geography\Http\Controllers\CityController;
 use App\Modules\Geography\Http\Controllers\CountryController;
@@ -14,9 +18,6 @@ use App\Modules\Security\Http\Controllers\RoleController;
 use App\Modules\Security\Http\Controllers\UserController;
 use App\Modules\ThirdParty\Http\Controllers\PartnerController;
 use App\Modules\ThirdParty\Http\Controllers\PartnerTypeController;
-use App\Modules\Catalog\Http\Controllers\ProductBrandController;
-use App\Modules\Catalog\Http\Controllers\MeasurementUnitController;
-use App\Modules\Catalog\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('security/auth/login', [AuthController::class, 'login'])->name('auth.login');
@@ -77,7 +78,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('product-categories/lookup', [ProductCategoryController::class, 'lookup'])->name('productCategories.lookup');
         Route::get('product-categories/export', [ProductCategoryController::class, 'export'])->name('productCategories.export');
         Route::crudResource('product-categories', ProductCategoryController::class);
-        
+
         Route::get('product-brands/lookup', [ProductBrandController::class, 'lookup'])->name('productBrands.lookup');
         Route::get('product-brands/export', [ProductBrandController::class, 'export'])->name('productBrands.export');
         Route::crudResource('product-brands', ProductBrandController::class);
@@ -89,5 +90,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('products/lookup', [ProductController::class, 'lookup'])->name('products.lookup');
         Route::get('products/export', [ProductController::class, 'export'])->name('products.export');
         Route::crudResource('products', ProductController::class);
+
+        Route::get('services/lookup', [ServiceController::class, 'lookup'])->name('services.lookup');
+        Route::get('services/export', [ServiceController::class, 'export'])->name('services.export');
+        Route::crudResource('services', ServiceController::class);
     });
 });

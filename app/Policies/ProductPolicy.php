@@ -8,7 +8,7 @@ use App\Modules\Security\Services\AuthService;
 
 class ProductPolicy
 {
-    public function __construct(protected AuthService $authService) { }
+    public function __construct(protected AuthService $authService) {}
 
     public function viewAny(User $user)
     {
@@ -38,5 +38,35 @@ class ProductPolicy
     public function export(User $user)
     {
         return $this->authService->hasAuthorized($user, 'products.export');
+    }
+
+    public function viewAnyService(User $user)
+    {
+        return $this->authService->hasAuthorized($user, 'services.viewAny');
+    }
+
+    public function viewService(User $user, Product $model)
+    {
+        return $this->authService->hasAuthorized($user, 'services.view');
+    }
+
+    public function createService(User $user)
+    {
+        return $this->authService->hasAuthorized($user, 'services.create');
+    }
+
+    public function updateService(User $user, Product $model)
+    {
+        return $this->authService->hasAuthorized($user, 'services.update');
+    }
+
+    public function deleteService(User $user, Product $model)
+    {
+        return $this->authService->hasAuthorized($user, 'services.delete');
+    }
+
+    public function exportService(User $user)
+    {
+        return $this->authService->hasAuthorized($user, 'services.export');
     }
 }

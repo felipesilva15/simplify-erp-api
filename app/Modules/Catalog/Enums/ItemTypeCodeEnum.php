@@ -3,6 +3,7 @@
 namespace App\Modules\Catalog\Enums;
 
 use App\Core\Enums\ProductApplicabilityEnum;
+use App\Core\Enums\ProductTypeEnum;
 
 /**
  * @OA\Schema(
@@ -58,5 +59,24 @@ enum ItemTypeCodeEnum: string
     {
         return $this->applicability() !== ProductApplicabilityEnum::Service
             && $this !== self::FixedAsset;
+    }
+
+    /**
+     * Códigos permitidos para cada fachada do catálogo.
+     *
+     * Produto aceita os códigos exclusivos de produto (00 a 08); serviço aceita
+     * os códigos de serviço e os aplicáveis a ambos (09, 10 e 99).
+     */
+    public static function valuesFor(ProductTypeEnum $type): array
+    {
+        return array_values(array_map(
+            fn (self $case): string => $case->value,
+            array_filter(
+                self::cases(),
+                fn (self $case): bool => $type === ProductTypeEnum::Service
+                    ? $case->applicability() !== ProductApplicabilityEnum::Product
+                    : $case->applicability() === ProductApplicabilityEnum::Product
+            )
+        ));
     }
 }

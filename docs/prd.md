@@ -52,7 +52,7 @@ O único consumidor com rota nominal própria no repositório é o portal de doc
 | **Cadastros geográficos** | Consulta de países, estados e cidades e busca rápida em cada um. |
 | **Parceiros** | CRUD de parceiros (pessoa física, empresa ou estrangeiro) com contatos aninhados; busca rápida; exportação. |
 | **Tipos de parceiro** | CRUD e busca rápida. |
-| **Catálogo de produtos** | CRUD de categorias de produto (hierárquicas via `parent_category_id`), busca rápida e exportação. |
+| **Catálogo** | CRUD de categorias hierárquicas; CRUD, busca rápida e exportação separados para produtos (`/api/catalog/products`) e serviços (`/api/catalog/services`) sobre a mesma entidade. |
 | **Profissões (RH)** | Consulta do catálogo CBO, busca rápida e exportação. Sem cadastro nem edição. |
 | **Auditoria** | Listagem do histórico de um registro por recurso, com autor, ação, rota, IP e user agent. |
 | **Infraestrutura de API** | Filtro, ordenação, paginação, lookup, exportação tabular, envelope de resposta, erros padronizados, documentação OpenAPI. |
@@ -87,6 +87,7 @@ Os itens abaixo existem como estrutura de dados ou configuração **sem** rota, 
 | UC-14 | Gerar um novo módulo de negócio | Desenvolvedor |
 | UC-15 | Consultar o catálogo de profissões (CBO), buscá-lo rapidamente e exportá-lo | Qualquer usuário autenticado com permissão |
 | UC-16 | Cadastrar e manter categorias de produto (inclusive hierarquia) | Administrador / usuário com permissão |
+| UC-17 | Cadastrar e manter produtos e serviços em rotas e permissões separadas | Administrador / usuário com permissão |
 
 ---
 
@@ -172,6 +173,18 @@ Os itens abaixo existem como estrutura de dados ou configuração **sem** rota, 
 - Uma categoria **não pode ser pai dela mesma**: enviar `parent_category_id` igual ao próprio `id` na alteração é rejeitado com `422`.
 - Um registro **inativo não pode ser excluído** pela API (`422`); a exclusão é lógica (soft delete).
 
+### 7.10 Produtos e serviços (Catálogo)
+
+- Produtos e serviços são **a mesma entidade** (`products`) e usam o mesmo Service, mas são expostos por rotas distintas: `/api/catalog/products` e `/api/catalog/services`.
+- O campo `type` **não é informado pelo cliente**: a rota de produtos fixa `PRODUCT` e a rota de serviços fixa `SERVICE`. Uma tentativa de enviar outro valor é ignorada e o valor da fachada prevalece.
+- Cada fachada vê apenas os registros do seu tipo. Um id do outro tipo responde `404` em `show`, `edit`, `update`, `destroy` e `activity-logs`.
+- As duas fachadas oferecem CRUD, `edit`, `lookup`, `export` e `activity-logs`, com permissões independentes: `products.*` e `services.*`.
+- Campos próprios de **produto**: `sku`, `gtin`, `item_type_code`, nome, descrição, observações, preço, custo, pesos, dimensões, estoques, `is_active`, unidade de medida, categoria e marca.
+- Campos próprios de **serviço**: `sku`, `item_type_code`, nome, descrição, observações, preço, custo, `is_active`, unidade de medida e categoria.
+- `item_type_code` aceita apenas códigos aplicáveis a produto (`00` a `08`) na rota de produtos e a serviço (`09`, `10`, `99`) na rota de serviços.
+- A categoria informada precisa ter `applicability` compatível: `PRODUCT`/`BOTH` para produtos e `SERVICE`/`BOTH` para serviços.
+- `sku` e `gtin` continuam únicos em toda a tabela `products`, entre registros ativos.
+
 ---
 
 ## 8. Requisitos funcionais
@@ -190,7 +203,7 @@ Os itens abaixo existem como estrutura de dados ou configuração **sem** rota, 
 | RF-10 | Consultar o catálogo de profissões (CBO), com listagem, detalhe, busca rápida, exportação e auditoria, sem operações de criação, edição ou exclusão. |
 | RF-11 | Consultar o histórico de auditoria de qualquer registro de recurso. |
 | RF-12 | Buscar por texto livre, filtrar, ordenar e paginar qualquer listagem por um contrato único. |
-| RF-13 | Exportar usuários, perfis, parceiros e profissões em planilha respeitando os filtros da listagem. |
+| RF-13 | Exportar usuários, perfis, parceiros, profissões, produtos e serviços em planilha respeitando os filtros da listagem. |
 | RF-14 | Gerar, a partir do schema do banco, a estrutura completa de um novo módulo de negócio, incluindo o cadastro do recurso e das permissões no seeder de ACL. |
 | RF-15 | Publicar a especificação OpenAPI da API gerada a partir do código. |
 

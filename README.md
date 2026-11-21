@@ -196,11 +196,13 @@ lang/pt_BR/              # traduções de validação e paginação
 routes/                  # api.php (API), web.php (landing e Scalar), console.php
 storage/data/            # cidades.csv e cbo-ocupacao.csv usados pelos seeders
 tests/
-  Feature/               # 366 testes de integração HTTP
-  Unit/                  # 110 testes unitários
+  Feature/               # 574 testes de integração HTTP
+  Unit/                  # 114 testes unitários
 ```
 
 `App\Core` é a camada interna do produto e é tratada como parte fundamental da arquitetura: módulos de negócio são sempre escritos estendendo `BaseCrudService`, `BaseRepository`, `ApiResponse`, `HasActivityLogs` e `HasExcelExport`. O `BaseCrudService` expõe ganchos sobrescrevíveis — `beforeStore`/`beforeUpdate`/`beforeDelete` (regras que bloqueiam, via `BusinessRuleException`), `afterStore`/`afterUpdate`/`afterDelete` (dentro da transação), `canEdit`/`editWarnings` e `prepareData`. Detalhes em [`docs/spec.md`](docs/spec.md#2-camada-core).
+
+Catálogo expõe duas fachadas HTTP sobre a **mesma** entidade `Product` e o **mesmo** `ProductService`: `/api/catalog/products` (`products.*`, `type = PRODUCT`) e `/api/catalog/services` (`services.*`, `type = SERVICE`). O `type` é fixado no servidor; cada fachada tem requests, resources, export, abilities de policy e documentação próprios. Detalhes em [`docs/spec.md` §3.3](docs/spec.md#33-produtos-e-serviços).
 
 ---
 

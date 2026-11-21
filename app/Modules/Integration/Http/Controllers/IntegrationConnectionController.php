@@ -44,11 +44,14 @@ class IntegrationConnectionController extends Controller
      *     tags={"IntegrationConnection"},
      *     summary="List integration connections",
      *     security={{"bearerAuth":{}}},
+     *
      *     @OA\Response(
      *         response="200",
      *         description="List",
+     *
      *         @OA\JsonContent(
      *             allOf={
+     *
      *                 @OA\Schema(ref="#/components/schemas/ApiResponse"),
      *                 @OA\Schema(ref="#/components/schemas/IntegrationConnectionCollection")
      *             }
@@ -75,14 +78,19 @@ class IntegrationConnectionController extends Controller
      *     tags={"IntegrationConnection"},
      *     summary="Create integration connection",
      *     security={{"bearerAuth":{}}},
+     *
      *     @OA\RequestBody(required=true, @OA\JsonContent(ref="#/components/schemas/StoreIntegrationConnectionRequest")),
+     *
      *     @OA\Response(
      *         response="201",
      *         description="Created",
+     *
      *         @OA\JsonContent(
      *             allOf={
+     *
      *                 @OA\Schema(ref="#/components/schemas/ApiResponse"),
      *                 @OA\Schema(
+     *
      *                     @OA\Property(property="data", ref="#/components/schemas/IntegrationConnectionResource")
      *                 )
      *             }
@@ -93,6 +101,7 @@ class IntegrationConnectionController extends Controller
     public function store(StoreIntegrationConnectionRequest $request): JsonResponse
     {
         $serviceResult = $this->service->store($request->validated());
+
         return $this->success(
             data: new IntegrationConnectionResource($serviceResult->data),
             httpStatus: Response::HTTP_CREATED
@@ -105,13 +114,17 @@ class IntegrationConnectionController extends Controller
      *     tags={"IntegrationConnection"},
      *     summary="Show integration connection",
      *     security={{"bearerAuth":{}}},
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Show",
+     *
      *         @OA\JsonContent(
      *             allOf={
+     *
      *                 @OA\Schema(ref="#/components/schemas/ApiResponse"),
      *                 @OA\Schema(
+     *
      *                     @OA\Property(property="data", ref="#/components/schemas/IntegrationConnectionResource")
      *                 )
      *             }
@@ -122,6 +135,7 @@ class IntegrationConnectionController extends Controller
     public function show(IntegrationConnection $integration_connection): JsonResponse
     {
         $serviceResult = $this->service->show($integration_connection);
+
         return $this->success(
             data: new IntegrationConnectionResource($serviceResult->data),
             httpStatus: Response::HTTP_OK
@@ -131,6 +145,7 @@ class IntegrationConnectionController extends Controller
     public function edit(IntegrationConnection $integration_connection): JsonResponse
     {
         $serviceResult = $this->service->edit($integration_connection);
+
         return $this->success(
             data: new IntegrationConnectionResource($serviceResult->data),
             warnings: $serviceResult->warnings ?? null,
@@ -145,14 +160,19 @@ class IntegrationConnectionController extends Controller
      *     tags={"IntegrationConnection"},
      *     summary="Update integration connection",
      *     security={{"bearerAuth":{}}},
+     *
      *     @OA\RequestBody(required=true, @OA\JsonContent(ref="#/components/schemas/UpdateIntegrationConnectionRequest")),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Updated",
+     *
      *         @OA\JsonContent(
      *             allOf={
+     *
      *                 @OA\Schema(ref="#/components/schemas/ApiResponse"),
      *                 @OA\Schema(
+     *
      *                     @OA\Property(property="data", ref="#/components/schemas/IntegrationConnectionResource")
      *                 )
      *             }
@@ -163,15 +183,38 @@ class IntegrationConnectionController extends Controller
     public function update(UpdateIntegrationConnectionRequest $request, IntegrationConnection $integration_connection): JsonResponse
     {
         $serviceResult = $this->service->update($integration_connection, $request->validated());
+
         return $this->success(
             data: new IntegrationConnectionResource($serviceResult->data),
             httpStatus: Response::HTTP_OK
         );
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/api/integration-connections/{integration_connection}",
+     *     tags={"IntegrationConnection"},
+     *     summary="Delete integration connection",
+     *     security={{"bearerAuth":{}}},
+     *
+     *     @OA\Parameter(
+     *         name="integration_connection",
+     *         in="path",
+     *         required=true,
+     *
+     *         @OA\Schema(type="integer")
+     *     ),
+     *
+     *     @OA\Response(response="204", description="No Content"),
+     *     @OA\Response(response="401", description="Unauthorized", @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")),
+     *     @OA\Response(response="403", description="Forbidden", @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse")),
+     *     @OA\Response(response="404", description="Record not found", @OA\JsonContent(ref="#/components/schemas/ApiErrorResponse"))
+     * )
+     */
     public function destroy(IntegrationConnection $integration_connection): Response
     {
         $this->service->delete($integration_connection);
+
         return response()->noContent();
     }
 }

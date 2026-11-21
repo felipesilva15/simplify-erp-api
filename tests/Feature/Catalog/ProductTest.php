@@ -2,9 +2,12 @@
 
 namespace Tests\Feature\Catalog;
 
+use App\Core\Enums\ProductTypeEnum;
+use App\Modules\Catalog\Enums\ItemTypeCodeEnum;
 use App\Modules\Catalog\Exports\ProductExport;
 use App\Modules\Catalog\Models\Product;
 use Illuminate\Http\Response;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Tests\TestCase;
 
@@ -17,6 +20,7 @@ class ProductTest extends TestCase
         return [
             'id',
             'type',
+            'item_type_code',
             'sku',
             'gtin',
             'name',
@@ -222,12 +226,12 @@ class ProductTest extends TestCase
     {
         $model = Product::factory()->makeOne();
         $data = $model->toArray();
-        unset($data['type']);
+        $data['item_type_code'] = '99';
 
         $response = $this->postJson($this->endpoint, $data, $this->getAdminAuthHeaders());
 
         $this->assertErrorResponse($response, Response::HTTP_UNPROCESSABLE_ENTITY);
-        $response->assertJsonValidationErrorFor('type');
+        $response->assertJsonValidationErrorFor('item_type_code');
     }
 
     public function test_cannot_create_product_without_authentication(): void
@@ -253,7 +257,7 @@ class ProductTest extends TestCase
         $model = Product::factory()->createOne();
 
         $data = $model->toArray();
-        $data['type'] = 'Updated Product';
+        $data['name'] = 'Produto atualizado';
 
         $response = $this->putJson("{$this->endpoint}/{$model->id}", $data, $this->getAdminAuthHeaders());
 
@@ -262,7 +266,8 @@ class ProductTest extends TestCase
             ->assertJsonStructure([
                 'data' => $this->getResourceStructure(),
             ])
-            ->assertJsonPath('data.type', 'Updated Product');
+            ->assertJsonPath('data.name', 'Produto atualizado')
+            ->assertJsonPath('data.type', ProductTypeEnum::Product->value);
     }
 
     public function test_cannot_update_product_with_invalid_payload(): void
@@ -270,12 +275,12 @@ class ProductTest extends TestCase
         $model = Product::factory()->createOne();
 
         $data = $model->toArray();
-        unset($data['type']);
+        $data['item_type_code'] = '09';
 
         $response = $this->putJson("{$this->endpoint}/{$model->id}", $data, $this->getAdminAuthHeaders());
 
         $this->assertErrorResponse($response, Response::HTTP_UNPROCESSABLE_ENTITY);
-        $response->assertJsonValidationErrorFor('type');
+        $response->assertJsonValidationErrorFor('item_type_code');
     }
 
     public function test_cannot_update_product_with_invalid_id(): void
@@ -445,5 +450,72 @@ class ProductTest extends TestCase
         $response = $this->getJson("{$this->endpoint}/lookup");
 
         $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+    }
+
+    public function test_products_facade_ignores_services(): void
+    {
+        Product::factory()->createOne();
+        $service = Product::factory()->service()->createOne();
+
+        $response = $this->getJson($this->endpoint, $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.id', 1)
+            ->assertJsonMissing(['id' => $service->id]);
+    }
+
+    public function test_cannot_access_service_through_products_facade(): void
+    {
+        $service = Product::factory()->service()->createOne();
+
+        $response = $this->getJson("{$this->endpoint}/{$service->id}", $this->getAdminAuthHeaders());
+
+        $this->assertErrorResponse($response, Response::HTTP_NOT_FOUND);
+    }
+
+    public function test_client_cannot_change_product_type(): void
+    {
+        $model = Product::factory()->createOne();
+        $data = $model->toArray();
+        $data['type'] = ProductTypeEnum::Service->value;
+
+        $response = $this->putJson("{$this->endpoint}/{$model->id}", $data, $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonPath('data.type', ProductTypeEnum::Product->value);
+
+        $this->assertDatabaseHas('products', [
+            'id' => $model->id,
+            'type' => ProductTypeEnum::Product->value,
+        ]);
+    }
+
+    public function test_accepts_all_product_item_type_codes(): void
+    {
+        foreach (ItemTypeCodeEnum::valuesFor(ProductTypeEnum::Product) as $code) {
+            $data = Product::factory()->makeOne()->toArray();
+            $data['item_type_code'] = $code;
+            $data['sku'] = 'PROD-'.Str::upper(Str::random(8));
+            $data['gtin'] = (string) fake()->unique()->numerify('#############');
+
+            $response = $this->postJson($this->endpoint, $data, $this->getAdminAuthHeaders());
+
+            $response->assertStatus(Response::HTTP_CREATED)
+                ->assertJsonPath('data.item_type_code', $code)
+                ->assertJsonPath('data.type', ProductTypeEnum::Product->value);
+        }
+    }
+
+    public function test_cannot_access_service_activity_logs_through_products_facade(): void
+    {
+        $service = Product::factory()->service()->createOne();
+
+        $response = $this->getJson(
+            "{$this->endpoint}/{$service->id}/activity-logs",
+            $this->getAdminAuthHeaders()
+        );
+
+        $this->assertErrorResponse($response, Response::HTTP_NOT_FOUND);
     }
 }

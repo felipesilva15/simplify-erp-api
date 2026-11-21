@@ -6,6 +6,12 @@ use Carbon\Carbon;
 
 class ProductDTO
 {
+    /**
+     * Campos que devem ser gravados. Quando vazio, todos os campos são enviados
+     * (comportamento usado por factories e testes unitários).
+     */
+    public array $fieldsToUse = [];
+
     public function __construct(
         public int $id = 0,
         public string $type = '',
@@ -31,9 +37,10 @@ class ProductDTO
         public ?Carbon $deleted_at = null,
         public ?Carbon $created_at = null,
         public ?Carbon $updated_at = null
-    ) { }
+    ) {}
 
-    public static function fromArray(array $data): self {
+    public static function fromArray(array $data): self
+    {
         return new self(
             id: $data['id'] ?? 0,
             type: $data['type'] ?? '',
@@ -56,14 +63,15 @@ class ProductDTO
             measurement_unit_id: $data['measurement_unit_id'] ?? 0,
             product_category_id: $data['product_category_id'] ?? null,
             product_brand_id: $data['product_brand_id'] ?? null,
-            deleted_at: !empty($data['deleted_at']) ? Carbon::parse($data['deleted_at']) : null,
-            created_at: !empty($data['created_at']) ? Carbon::parse($data['created_at']) : null,
-            updated_at: !empty($data['updated_at']) ? Carbon::parse($data['updated_at']) : null
+            deleted_at: ! empty($data['deleted_at']) ? Carbon::parse($data['deleted_at']) : null,
+            created_at: ! empty($data['created_at']) ? Carbon::parse($data['created_at']) : null,
+            updated_at: ! empty($data['updated_at']) ? Carbon::parse($data['updated_at']) : null
         );
     }
 
-    public function toArray(): array {
-        return [
+    public function toArray(): array
+    {
+        $data = [
             'id' => $this->id,
             'type' => $this->type,
             'item_type_code' => $this->item_type_code,
@@ -87,7 +95,13 @@ class ProductDTO
             'product_brand_id' => $this->product_brand_id,
             'deleted_at' => $this->deleted_at,
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
+            'updated_at' => $this->updated_at,
         ];
+
+        return array_filter(
+            $data,
+            fn ($value, $key) => $this->fieldsToUse === [] || in_array($key, $this->fieldsToUse, true),
+            ARRAY_FILTER_USE_BOTH
+        );
     }
 }

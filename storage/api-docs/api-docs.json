@@ -2652,6 +2652,208 @@
                 ]
             }
         },
+        "/api/catalog/services/{id}/activity-logs": {
+            "get": {
+                "tags": [
+                    "Service"
+                ],
+                "summary": "List activity logs of a service",
+                "operationId": "listServiceActivityLogs",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Service ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Service activity logs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ActivityLogCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/catalog/services/export": {
+            "get": {
+                "tags": [
+                    "Service"
+                ],
+                "summary": "Export all services to Excel",
+                "operationId": "exportService",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/qParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sortsParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/perPageParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/pageParam"
+                    },
+                    {
+                        "name": "filters[id][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[item_type_code][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[sku][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[name][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "format",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "full"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "extension",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "xlsx",
+                                "xls",
+                                "csv"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Excel file with services",
+                        "content": {
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/geography/addresses/{id}/activity-logs": {
             "get": {
                 "tags": [
@@ -8225,7 +8427,7 @@
                         "description": "Keys to find",
                         "required": false,
                         "schema": {
-                            "type": "{{lookup_key_type}}"
+                            "type": "integer"
                         }
                     },
                     {
@@ -8258,6 +8460,565 @@
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/catalog/services": {
+            "get": {
+                "tags": [
+                    "Service"
+                ],
+                "summary": "List all services",
+                "operationId": "listServices",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/qParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sortsParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/perPageParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/pageParam"
+                    },
+                    {
+                        "name": "filters[id][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters[sku][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[name][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[is_active][eq]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Services list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServiceCollection"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Service"
+                ],
+                "summary": "Registers a service",
+                "operationId": "storeService",
+                "requestBody": {
+                    "description": "Data for creating a new service",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreServiceRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Registered service data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/ServiceResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/catalog/services/{service}": {
+            "get": {
+                "tags": [
+                    "Service"
+                ],
+                "summary": "Get a service by ID",
+                "operationId": "getService",
+                "parameters": [
+                    {
+                        "name": "service",
+                        "in": "path",
+                        "description": "Service ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Service data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/ServiceResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Service"
+                ],
+                "summary": "Update a service",
+                "operationId": "updateService",
+                "parameters": [
+                    {
+                        "name": "service",
+                        "in": "path",
+                        "description": "Service ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Data for update service",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateServiceRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated service data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/ServiceResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Service"
+                ],
+                "summary": "Delete a service",
+                "operationId": "deleteService",
+                "parameters": [
+                    {
+                        "name": "service",
+                        "in": "path",
+                        "description": "Service ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/catalog/services/{service}/edit": {
+            "get": {
+                "tags": [
+                    "Service"
+                ],
+                "summary": "Get data to edit a service",
+                "operationId": "editService",
+                "parameters": [
+                    {
+                        "name": "service",
+                        "in": "path",
+                        "description": "Service ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Service data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/ServiceResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/catalog/services/lookup": {
+            "get": {
+                "tags": [
+                    "Service"
+                ],
+                "summary": "Lookup services",
+                "operationId": "lookupServices",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/qParam"
+                    },
+                    {
+                        "name": "keys[]",
+                        "in": "query",
+                        "description": "Keys to find",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "$ref": "#/components/parameters/sortsParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/perPageParam"
+                    },
+                    {
+                        "$ref": "#/components/parameters/pageParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Service lookup list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ServiceLookupCollection"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -10537,7 +11298,7 @@
                 "operationId": "13fc5316beba6f2e14dd68a48a84972e",
                 "responses": {
                     "200": {
-                        "description": "Integration connections retrieved successfully",
+                        "description": "List",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -10578,7 +11339,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Integration connection created successfully",
+                        "description": "Created",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -10616,7 +11377,7 @@
                 "operationId": "bd5befcb6a661dc183f3d29e13eb4d45",
                 "responses": {
                     "200": {
-                        "description": "Integration connection retrieved successfully",
+                        "description": "Show",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -10662,7 +11423,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Integration connection updated successfully",
+                        "description": "Updated",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -10696,9 +11457,49 @@
                 ],
                 "summary": "Delete integration connection",
                 "operationId": "c3333100e469b15766a242a067b520c0",
+                "parameters": [
+                    {
+                        "name": "integration_connection",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "204": {
-                        "description": "Integration connection deleted successfully"
+                        "description": "No Content"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -10717,7 +11518,7 @@
                 "operationId": "563d46da45c1714b91fad89ed0b01476",
                 "responses": {
                     "200": {
-                        "description": "Integration providers retrieved successfully",
+                        "description": "List",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -10734,30 +11535,16 @@
                 ]
             }
         },
-        "/api/webhooks/{provider}": {
+        "/webhooks/{provider}/{connection}": {
             "post": {
                 "tags": [
                     "Integration"
                 ],
                 "summary": "Webhook inbox",
-                "operationId": "da472e8500c1450c87797447cbdd3158",
+                "operationId": "fad19a7b8b1e8c47226dabafb5ec251f",
                 "responses": {
                     "202": {
-                        "description": "Webhook accepted for asynchronous processing"
-                    }
-                }
-            }
-        },
-        "/api/webhooks/{provider}/{connection}": {
-            "post": {
-                "tags": [
-                    "Integration"
-                ],
-                "summary": "Webhook inbox for a specific connection",
-                "operationId": "2fac45e7cc700dcba814d83bfaa260c1",
-                "responses": {
-                    "202": {
-                        "description": "Webhook accepted for asynchronous processing"
+                        "description": "Accepted"
                     }
                 }
             }
@@ -15738,286 +16525,6 @@
                 },
                 "type": "object"
             },
-            "StoreProductRequest": {
-                "required": [
-                    "type",
-                    "item_type_code",
-                    "sku",
-                    "name",
-                    "price",
-                    "cost",
-                    "is_active",
-                    "measurement_unit_id"
-                ],
-                "properties": {
-                    "type": {
-                        "$ref": "#/components/schemas/ProductTypeEnum"
-                    },
-                    "item_type_code": {
-                        "$ref": "#/components/schemas/ItemTypeCodeEnum"
-                    },
-                    "sku": {
-                        "type": "string",
-                        "example": "2156",
-                        "maxLength": 40,
-                        "minLength": 1
-                    },
-                    "gtin": {
-                        "type": "string",
-                        "example": "7892236733554",
-                        "nullable": true,
-                        "maxLength": 14,
-                        "minLength": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "example": "Torneira para lavabo",
-                        "maxLength": 255,
-                        "minLength": 1
-                    },
-                    "description": {
-                        "type": "string",
-                        "example": "Torneira gourmet para área de lavabo",
-                        "nullable": true,
-                        "maxLength": 1024,
-                        "minLength": 1
-                    },
-                    "notes": {
-                        "type": "string",
-                        "example": "Produto sujeito a disponibilidade em estoque",
-                        "nullable": true
-                    },
-                    "price": {
-                        "type": "string",
-                        "format": "decimal",
-                        "example": "119.90",
-                        "maximum": 100000000000000,
-                        "minimum": 0.0001
-                    },
-                    "cost": {
-                        "type": "string",
-                        "format": "decimal",
-                        "example": "59.45",
-                        "maximum": 100000000000000,
-                        "minimum": 0.0001
-                    },
-                    "net_weight": {
-                        "type": "string",
-                        "format": "decimal",
-                        "example": "350",
-                        "nullable": true,
-                        "maximum": 999999999.999,
-                        "minimum": 0.001
-                    },
-                    "gross_weight": {
-                        "type": "string",
-                        "format": "decimal",
-                        "example": "386",
-                        "nullable": true,
-                        "maximum": 999999999.999,
-                        "minimum": 0.001
-                    },
-                    "width": {
-                        "type": "string",
-                        "format": "decimal",
-                        "example": "21.30",
-                        "nullable": true,
-                        "maximum": 99999999.9999,
-                        "minimum": 0.0001
-                    },
-                    "height": {
-                        "type": "string",
-                        "format": "decimal",
-                        "example": "8.60",
-                        "nullable": true,
-                        "maximum": 99999999.9999,
-                        "minimum": 0.0001
-                    },
-                    "length": {
-                        "type": "string",
-                        "format": "decimal",
-                        "example": "4.20",
-                        "nullable": true,
-                        "maximum": 99999999.9999,
-                        "minimum": 0.0001
-                    },
-                    "minimum_stock": {
-                        "type": "string",
-                        "format": "decimal",
-                        "example": "1",
-                        "nullable": true,
-                        "maximum": 100000000000000,
-                        "minimum": 0.0001
-                    },
-                    "maximum_stock": {
-                        "type": "string",
-                        "format": "decimal",
-                        "example": "3",
-                        "nullable": true,
-                        "maximum": 100000000000000,
-                        "minimum": 0.0001
-                    },
-                    "is_active": {
-                        "type": "boolean",
-                        "example": false
-                    },
-                    "measurement_unit_id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "product_category_id": {
-                        "type": "integer",
-                        "example": 1,
-                        "nullable": true
-                    },
-                    "product_brand_id": {
-                        "type": "integer",
-                        "example": 1,
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "UpdateProductRequest": {
-                "required": [
-                    "type",
-                    "item_type_code",
-                    "sku",
-                    "name",
-                    "price",
-                    "cost",
-                    "is_active",
-                    "measurement_unit_id"
-                ],
-                "properties": {
-                    "type": {
-                        "$ref": "#/components/schemas/ProductTypeEnum"
-                    },
-                    "item_type_code": {
-                        "$ref": "#/components/schemas/ItemTypeCodeEnum"
-                    },
-                    "sku": {
-                        "type": "string",
-                        "example": "2156",
-                        "maxLength": 40,
-                        "minLength": 1
-                    },
-                    "gtin": {
-                        "type": "string",
-                        "example": "7892236733554",
-                        "nullable": true,
-                        "maxLength": 14,
-                        "minLength": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "example": "Torneira para lavabo",
-                        "maxLength": 255,
-                        "minLength": 1
-                    },
-                    "description": {
-                        "type": "string",
-                        "example": "Torneira gourmet para área de lavabo",
-                        "nullable": true,
-                        "maxLength": 1024,
-                        "minLength": 1
-                    },
-                    "notes": {
-                        "type": "string",
-                        "example": "Produto sujeito a disponibilidade em estoque",
-                        "nullable": true
-                    },
-                    "price": {
-                        "type": "string",
-                        "format": "decimal",
-                        "example": "119.90",
-                        "maximum": 100000000000000,
-                        "minimum": 0.0001
-                    },
-                    "cost": {
-                        "type": "string",
-                        "format": "decimal",
-                        "example": "59.45",
-                        "maximum": 100000000000000,
-                        "minimum": 0.0001
-                    },
-                    "net_weight": {
-                        "type": "string",
-                        "format": "decimal",
-                        "example": "350",
-                        "nullable": true,
-                        "maximum": 999999999.999,
-                        "minimum": 0.001
-                    },
-                    "gross_weight": {
-                        "type": "string",
-                        "format": "decimal",
-                        "example": "386",
-                        "nullable": true,
-                        "maximum": 999999999.999,
-                        "minimum": 0.001
-                    },
-                    "width": {
-                        "type": "string",
-                        "format": "decimal",
-                        "example": "21.30",
-                        "nullable": true,
-                        "maximum": 99999999.9999,
-                        "minimum": 0.0001
-                    },
-                    "height": {
-                        "type": "string",
-                        "format": "decimal",
-                        "example": "8.60",
-                        "nullable": true,
-                        "maximum": 99999999.9999,
-                        "minimum": 0.0001
-                    },
-                    "length": {
-                        "type": "string",
-                        "format": "decimal",
-                        "example": "4.20",
-                        "nullable": true,
-                        "maximum": 99999999.9999,
-                        "minimum": 0.0001
-                    },
-                    "minimum_stock": {
-                        "type": "string",
-                        "format": "decimal",
-                        "example": "1",
-                        "nullable": true,
-                        "maximum": 100000000000000,
-                        "minimum": 0.0001
-                    },
-                    "maximum_stock": {
-                        "type": "string",
-                        "format": "decimal",
-                        "example": "3",
-                        "nullable": true,
-                        "maximum": 100000000000000,
-                        "minimum": 0.0001
-                    },
-                    "is_active": {
-                        "type": "boolean",
-                        "example": false
-                    },
-                    "measurement_unit_id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "product_category_id": {
-                        "type": "integer",
-                        "example": 1,
-                        "nullable": true
-                    },
-                    "product_brand_id": {
-                        "type": "integer",
-                        "example": 1,
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
             "StoreProductBrandRequest": {
                 "required": [
                     "name"
@@ -16096,6 +16603,414 @@
                     "is_active": {
                         "type": "boolean",
                         "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "StoreProductRequest": {
+                "required": [
+                    "item_type_code",
+                    "sku",
+                    "name",
+                    "price",
+                    "cost",
+                    "is_active",
+                    "measurement_unit_id"
+                ],
+                "properties": {
+                    "item_type_code": {
+                        "$ref": "#/components/schemas/ItemTypeCodeEnum"
+                    },
+                    "sku": {
+                        "type": "string",
+                        "example": "2156",
+                        "maxLength": 40,
+                        "minLength": 1
+                    },
+                    "gtin": {
+                        "type": "string",
+                        "example": "7892236733554",
+                        "nullable": true,
+                        "maxLength": 14,
+                        "minLength": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Torneira para lavabo",
+                        "maxLength": 255,
+                        "minLength": 1
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Torneira gourmet para área de lavabo",
+                        "nullable": true,
+                        "maxLength": 1024,
+                        "minLength": 1
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Produto sujeito a disponibilidade em estoque",
+                        "nullable": true
+                    },
+                    "price": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "119.90",
+                        "maximum": 100000000000000,
+                        "minimum": 0.0001
+                    },
+                    "cost": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "59.45",
+                        "maximum": 100000000000000,
+                        "minimum": 0.0001
+                    },
+                    "net_weight": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "350",
+                        "nullable": true,
+                        "maximum": 999999999.999,
+                        "minimum": 0.001
+                    },
+                    "gross_weight": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "386",
+                        "nullable": true,
+                        "maximum": 999999999.999,
+                        "minimum": 0.001
+                    },
+                    "width": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "21.30",
+                        "nullable": true,
+                        "maximum": 99999999.9999,
+                        "minimum": 0.0001
+                    },
+                    "height": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "8.60",
+                        "nullable": true,
+                        "maximum": 99999999.9999,
+                        "minimum": 0.0001
+                    },
+                    "length": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "4.20",
+                        "nullable": true,
+                        "maximum": 99999999.9999,
+                        "minimum": 0.0001
+                    },
+                    "minimum_stock": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "1",
+                        "nullable": true,
+                        "maximum": 100000000000000,
+                        "minimum": 0
+                    },
+                    "maximum_stock": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "3",
+                        "nullable": true,
+                        "maximum": 100000000000000,
+                        "minimum": 0
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "measurement_unit_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "product_category_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "product_brand_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateProductRequest": {
+                "required": [
+                    "item_type_code",
+                    "sku",
+                    "name",
+                    "price",
+                    "cost",
+                    "is_active",
+                    "measurement_unit_id"
+                ],
+                "properties": {
+                    "item_type_code": {
+                        "$ref": "#/components/schemas/ItemTypeCodeEnum"
+                    },
+                    "sku": {
+                        "type": "string",
+                        "example": "2156",
+                        "maxLength": 40,
+                        "minLength": 1
+                    },
+                    "gtin": {
+                        "type": "string",
+                        "example": "7892236733554",
+                        "nullable": true,
+                        "maxLength": 14,
+                        "minLength": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Torneira para lavabo",
+                        "maxLength": 255,
+                        "minLength": 1
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Torneira gourmet para área de lavabo",
+                        "nullable": true,
+                        "maxLength": 1024,
+                        "minLength": 1
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Produto sujeito a disponibilidade em estoque",
+                        "nullable": true
+                    },
+                    "price": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "119.90",
+                        "maximum": 100000000000000,
+                        "minimum": 0.0001
+                    },
+                    "cost": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "59.45",
+                        "maximum": 100000000000000,
+                        "minimum": 0.0001
+                    },
+                    "net_weight": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "350",
+                        "nullable": true,
+                        "maximum": 999999999.999,
+                        "minimum": 0.001
+                    },
+                    "gross_weight": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "386",
+                        "nullable": true,
+                        "maximum": 999999999.999,
+                        "minimum": 0.001
+                    },
+                    "width": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "21.30",
+                        "nullable": true,
+                        "maximum": 99999999.9999,
+                        "minimum": 0.0001
+                    },
+                    "height": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "8.60",
+                        "nullable": true,
+                        "maximum": 99999999.9999,
+                        "minimum": 0.0001
+                    },
+                    "length": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "4.20",
+                        "nullable": true,
+                        "maximum": 99999999.9999,
+                        "minimum": 0.0001
+                    },
+                    "minimum_stock": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "1",
+                        "nullable": true,
+                        "maximum": 100000000000000,
+                        "minimum": 0
+                    },
+                    "maximum_stock": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "3",
+                        "nullable": true,
+                        "maximum": 100000000000000,
+                        "minimum": 0
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "measurement_unit_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "product_category_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "product_brand_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "StoreServiceRequest": {
+                "required": [
+                    "item_type_code",
+                    "sku",
+                    "name",
+                    "price",
+                    "cost",
+                    "is_active",
+                    "measurement_unit_id"
+                ],
+                "properties": {
+                    "item_type_code": {
+                        "$ref": "#/components/schemas/ItemTypeCodeEnum"
+                    },
+                    "sku": {
+                        "type": "string",
+                        "example": "SERV-001",
+                        "maxLength": 40,
+                        "minLength": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Consultoria em sistemas",
+                        "maxLength": 255,
+                        "minLength": 1
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Consultoria técnica especializada",
+                        "nullable": true,
+                        "maxLength": 1024,
+                        "minLength": 1
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Cobrança por hora",
+                        "nullable": true
+                    },
+                    "price": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "150.00",
+                        "maximum": 100000000000000,
+                        "minimum": 0.0001
+                    },
+                    "cost": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "80.00",
+                        "maximum": 100000000000000,
+                        "minimum": 0.0001
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "measurement_unit_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "product_category_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateServiceRequest": {
+                "required": [
+                    "item_type_code",
+                    "sku",
+                    "name",
+                    "price",
+                    "cost",
+                    "is_active",
+                    "measurement_unit_id"
+                ],
+                "properties": {
+                    "item_type_code": {
+                        "$ref": "#/components/schemas/ItemTypeCodeEnum"
+                    },
+                    "sku": {
+                        "type": "string",
+                        "example": "SERV-001",
+                        "maxLength": 40,
+                        "minLength": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Consultoria em sistemas",
+                        "maxLength": 255,
+                        "minLength": 1
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Consultoria técnica especializada",
+                        "nullable": true,
+                        "maxLength": 1024,
+                        "minLength": 1
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Cobrança por hora",
+                        "nullable": true
+                    },
+                    "price": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "150.00",
+                        "maximum": 100000000000000,
+                        "minimum": 0.0001
+                    },
+                    "cost": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "80.00",
+                        "maximum": 100000000000000,
+                        "minimum": 0.0001
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "measurement_unit_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "product_category_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -16265,6 +17180,235 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2026-10-23T17:17:05.207961Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ProductBrandCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ProductBrandResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "ProductBrandLookupCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ProductBrandLookupResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "ProductBrandLookupResource": {
+                "properties": {
+                    "key": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "label": {
+                        "type": "string",
+                        "example": "Docol",
+                        "maxLength": 120,
+                        "minLength": 1
+                    },
+                    "sublabel": {
+                        "type": "string",
+                        "example": "Cod.: 1",
+                        "maxLength": 80,
+                        "minLength": 1
+                    },
+                    "meta": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Docol",
+                                "maxLength": 120,
+                                "minLength": 1
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "ProductBrandResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Docol",
+                        "maxLength": 120,
+                        "minLength": 1
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-10-23T00:34:36.763327Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-10-23T00:34:36.763327Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-10-23T00:34:36.763327Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ProductCategoryCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ProductCategoryResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "ProductCategoryLookupCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ProductCategoryLookupResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "ProductCategoryLookupResource": {
+                "properties": {
+                    "key": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "label": {
+                        "type": "string",
+                        "example": "Hidráulica",
+                        "maxLength": 120,
+                        "minLength": 1
+                    },
+                    "sublabel": {
+                        "type": "string",
+                        "example": "Cod.: 1",
+                        "maxLength": 80,
+                        "minLength": 1
+                    },
+                    "meta": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Hidráulica",
+                                "maxLength": 120,
+                                "minLength": 1
+                            },
+                            "applicability": {
+                                "$ref": "#/components/schemas/ProductApplicabilityEnum"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "ProductCategoryResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Hidráulica",
+                        "maxLength": 120,
+                        "minLength": 1
+                    },
+                    "parent_category_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "applicability": {
+                        "$ref": "#/components/schemas/ProductApplicabilityEnum"
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "subcategories": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProductCategoryResource"
+                        }
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-10-07T16:16:20.103960Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-10-07T16:16:20.103960Z",
                         "nullable": true
                     }
                 },
@@ -16581,7 +17725,7 @@
                 },
                 "type": "object"
             },
-            "ProductBrandCollection": {
+            "ServiceCollection": {
                 "type": "object",
                 "allOf": [
                     {
@@ -16589,7 +17733,7 @@
                             "data": {
                                 "type": "array",
                                 "items": {
-                                    "$ref": "#/components/schemas/ProductBrandResource"
+                                    "$ref": "#/components/schemas/ServiceResource"
                                 }
                             }
                         },
@@ -16600,7 +17744,7 @@
                     }
                 ]
             },
-            "ProductBrandLookupCollection": {
+            "ServiceLookupCollection": {
                 "type": "object",
                 "allOf": [
                     {
@@ -16608,7 +17752,7 @@
                             "data": {
                                 "type": "array",
                                 "items": {
-                                    "$ref": "#/components/schemas/ProductBrandLookupResource"
+                                    "$ref": "#/components/schemas/ServiceLookupResource"
                                 }
                             }
                         },
@@ -16619,7 +17763,7 @@
                     }
                 ]
             },
-            "ProductBrandLookupResource": {
+            "ServiceLookupResource": {
                 "properties": {
                     "key": {
                         "type": "integer",
@@ -16627,13 +17771,13 @@
                     },
                     "label": {
                         "type": "string",
-                        "example": "Docol",
-                        "maxLength": 120,
+                        "example": "Consultoria em sistemas",
+                        "maxLength": 255,
                         "minLength": 1
                     },
                     "sublabel": {
                         "type": "string",
-                        "example": "Cod.: 1",
+                        "example": "Cód.: 1",
                         "maxLength": 80,
                         "minLength": 1
                     },
@@ -16645,119 +17789,21 @@
                             },
                             "name": {
                                 "type": "string",
-                                "example": "Docol",
-                                "maxLength": 120,
+                                "example": "Consultoria em sistemas",
+                                "maxLength": 255,
                                 "minLength": 1
-                            }
-                        },
-                        "type": "object"
-                    }
-                },
-                "type": "object"
-            },
-            "ProductBrandResource": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "example": "Docol",
-                        "maxLength": 120,
-                        "minLength": 1
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-10-23T00:34:36.763327Z",
-                        "nullable": true
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-10-23T00:34:36.763327Z",
-                        "nullable": true
-                    },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-10-23T00:34:36.763327Z",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "ProductCategoryCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/ProductCategoryResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "ProductCategoryLookupCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/ProductCategoryLookupResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "ProductCategoryLookupResource": {
-                "properties": {
-                    "key": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "label": {
-                        "type": "string",
-                        "example": "Hidráulica",
-                        "maxLength": 120,
-                        "minLength": 1
-                    },
-                    "sublabel": {
-                        "type": "string",
-                        "example": "Cod.: 1",
-                        "maxLength": 80,
-                        "minLength": 1
-                    },
-                    "meta": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 1
                             },
-                            "name": {
+                            "type": {
+                                "$ref": "#/components/schemas/ProductTypeEnum"
+                            },
+                            "item_type_code": {
+                                "$ref": "#/components/schemas/ItemTypeCodeEnum"
+                            },
+                            "sku": {
                                 "type": "string",
-                                "example": "Hidráulica",
-                                "maxLength": 120,
+                                "example": "SERV-001",
+                                "maxLength": 40,
                                 "minLength": 1
-                            },
-                            "applicability": {
-                                "$ref": "#/components/schemas/ProductApplicabilityEnum"
                             }
                         },
                         "type": "object"
@@ -16765,46 +17811,84 @@
                 },
                 "type": "object"
             },
-            "ProductCategoryResource": {
+            "ServiceResource": {
                 "properties": {
                     "id": {
                         "type": "integer",
                         "example": 1
                     },
-                    "name": {
+                    "type": {
+                        "$ref": "#/components/schemas/ProductTypeEnum"
+                    },
+                    "item_type_code": {
+                        "$ref": "#/components/schemas/ItemTypeCodeEnum"
+                    },
+                    "sku": {
                         "type": "string",
-                        "example": "Hidráulica",
-                        "maxLength": 120,
+                        "example": "SERV-001",
+                        "maxLength": 40,
                         "minLength": 1
                     },
-                    "parent_category_id": {
-                        "type": "integer",
-                        "example": 1,
+                    "name": {
+                        "type": "string",
+                        "example": "Consultoria em sistemas",
+                        "maxLength": 255,
+                        "minLength": 1
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Consultoria técnica especializada",
+                        "nullable": true,
+                        "maxLength": 1024,
+                        "minLength": 1
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Cobrança por hora",
                         "nullable": true
                     },
-                    "applicability": {
-                        "$ref": "#/components/schemas/ProductApplicabilityEnum"
+                    "price": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "150.00"
+                    },
+                    "cost": {
+                        "type": "string",
+                        "format": "decimal",
+                        "example": "80.00"
                     },
                     "is_active": {
                         "type": "boolean",
                         "example": true
                     },
-                    "subcategories": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ProductCategoryResource"
-                        }
+                    "measurement_unit_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "measurement_unit": {
+                        "$ref": "#/components/schemas/ProductMeasurementUnitResource"
+                    },
+                    "product_category_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "category": {
+                        "$ref": "#/components/schemas/ProductProductCategoryResource"
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
                     },
                     "created_at": {
                         "type": "string",
                         "format": "date-time",
-                        "example": "2026-10-07T16:16:20.103960Z",
                         "nullable": true
                     },
                     "updated_at": {
                         "type": "string",
                         "format": "date-time",
-                        "example": "2026-10-07T16:16:20.103960Z",
                         "nullable": true
                     }
                 },
@@ -18264,31 +19348,20 @@
                 ],
                 "properties": {
                     "provider": {
-                        "type": "string",
-                        "example": "billing",
-                        "maxLength": 100
+                        "type": "string"
                     },
                     "name": {
-                        "type": "string",
-                        "example": "Conexão ERP Produção",
-                        "maxLength": 150
+                        "type": "string"
                     },
                     "credentials": {
-                        "type": "object",
-                        "example": {
-                            "api_key": "sk_live_1234567890"
-                        }
+                        "type": "object"
                     },
                     "settings": {
                         "type": "object",
-                        "example": {
-                            "base_url": "https://api.exemplo.com"
-                        },
                         "nullable": true
                     },
                     "is_active": {
                         "type": "boolean",
-                        "example": true,
                         "nullable": true
                     }
                 },
@@ -18297,31 +19370,20 @@
             "UpdateIntegrationConnectionRequest": {
                 "properties": {
                     "provider": {
-                        "type": "string",
-                        "example": "billing",
-                        "maxLength": 100
+                        "type": "string"
                     },
                     "name": {
-                        "type": "string",
-                        "example": "Conexão ERP Produção",
-                        "maxLength": 150
+                        "type": "string"
                     },
                     "credentials": {
-                        "type": "object",
-                        "example": {
-                            "api_key": "sk_live_1234567890"
-                        }
+                        "type": "object"
                     },
                     "settings": {
                         "type": "object",
-                        "example": {
-                            "base_url": "https://api.exemplo.com"
-                        },
                         "nullable": true
                     },
                     "is_active": {
                         "type": "boolean",
-                        "example": true,
                         "nullable": true
                     }
                 },
@@ -18333,20 +19395,7 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/IntegrationConnectionResource"
-                        },
-                        "example": [
-                            {
-                                "id": 1,
-                                "uuid": "550e8400-e29b-41d4-a716-446655440000",
-                                "provider": "billing",
-                                "name": "Conexão ERP Produção",
-                                "has_credentials": true,
-                                "settings": {
-                                    "base_url": "https://api.exemplo.com"
-                                },
-                                "is_active": true
-                            }
-                        ]
+                        }
                     }
                 },
                 "type": "object"
@@ -18354,53 +19403,37 @@
             "IntegrationConnectionResource": {
                 "properties": {
                     "id": {
-                        "type": "integer",
-                        "example": 1
+                        "type": "integer"
                     },
                     "uuid": {
-                        "type": "string",
-                        "format": "uuid",
-                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                        "type": "string"
                     },
                     "provider": {
-                        "type": "string",
-                        "example": "billing"
+                        "type": "string"
                     },
                     "name": {
-                        "type": "string",
-                        "example": "Conexão ERP Produção"
+                        "type": "string"
                     },
                     "has_credentials": {
-                        "type": "boolean",
-                        "example": true
+                        "type": "boolean"
                     },
                     "settings": {
                         "type": "object",
-                        "example": {
-                            "base_url": "https://api.exemplo.com"
-                        },
                         "nullable": true
                     },
                     "is_active": {
-                        "type": "boolean",
-                        "example": true
+                        "type": "boolean"
                     },
                     "last_used_at": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2026-05-20T14:30:00Z",
                         "nullable": true
                     },
                     "created_at": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2026-05-20T14:30:00Z",
                         "nullable": true
                     },
                     "updated_at": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2026-05-20T14:30:00Z",
                         "nullable": true
                     }
                 },
@@ -19819,6 +20852,48 @@
                     "EXEMPT"
                 ]
             },
+            "StorePartnerTypeRequest": {
+                "required": [
+                    "name",
+                    "code"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Cliente",
+                        "maxLength": 60,
+                        "minLength": 1
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "CTM",
+                        "maxLength": 3,
+                        "minLength": 1
+                    }
+                },
+                "type": "object"
+            },
+            "UpdatePartnerTypeRequest": {
+                "required": [
+                    "name",
+                    "code"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Cliente",
+                        "maxLength": 60,
+                        "minLength": 1
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "CTM",
+                        "maxLength": 3,
+                        "minLength": 1
+                    }
+                },
+                "type": "object"
+            },
             "StorePartnerRequest": {
                 "required": [
                     "partner_type_code",
@@ -20165,33 +21240,92 @@
                 },
                 "type": "object"
             },
-            "StorePartnerTypeRequest": {
-                "required": [
-                    "name",
-                    "code"
-                ],
+            "PartnerTypeCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PartnerTypeResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "PartnerTypeLookupCollection": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PartnerTypeLookupResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PaginatorInfo"
+                    }
+                ]
+            },
+            "PartnerTypeLookupResource": {
                 "properties": {
-                    "name": {
+                    "key": {
+                        "type": "string",
+                        "example": "CTM"
+                    },
+                    "label": {
                         "type": "string",
                         "example": "Cliente",
-                        "maxLength": 60,
+                        "maxLength": 80,
                         "minLength": 1
                     },
-                    "code": {
+                    "sublabel": {
                         "type": "string",
-                        "example": "CTM",
-                        "maxLength": 3,
+                        "example": "Cod.: CTM",
+                        "maxLength": 80,
                         "minLength": 1
+                    },
+                    "meta": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Cliente",
+                                "maxLength": 80,
+                                "minLength": 1
+                            },
+                            "code": {
+                                "type": "string",
+                                "example": "CTM",
+                                "maxLength": 20,
+                                "minLength": 1
+                            }
+                        },
+                        "type": "object"
                     }
                 },
                 "type": "object"
             },
-            "UpdatePartnerTypeRequest": {
-                "required": [
-                    "name",
-                    "code"
-                ],
+            "PartnerTypeResource": {
                 "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
                     "name": {
                         "type": "string",
                         "example": "Cliente",
@@ -20203,6 +21337,24 @@
                         "example": "CTM",
                         "maxLength": 3,
                         "minLength": 1
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-09-05T06:33:15.515561Z",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -20544,125 +21696,6 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2026-09-09T02:22:32.660898Z",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "PartnerTypeCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/PartnerTypeResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "PartnerTypeLookupCollection": {
-                "type": "object",
-                "allOf": [
-                    {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/PartnerTypeLookupResource"
-                                }
-                            }
-                        },
-                        "type": "object"
-                    },
-                    {
-                        "$ref": "#/components/schemas/PaginatorInfo"
-                    }
-                ]
-            },
-            "PartnerTypeLookupResource": {
-                "properties": {
-                    "key": {
-                        "type": "string",
-                        "example": "CTM"
-                    },
-                    "label": {
-                        "type": "string",
-                        "example": "Cliente",
-                        "maxLength": 80,
-                        "minLength": 1
-                    },
-                    "sublabel": {
-                        "type": "string",
-                        "example": "Cod.: CTM",
-                        "maxLength": 80,
-                        "minLength": 1
-                    },
-                    "meta": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 1
-                            },
-                            "name": {
-                                "type": "string",
-                                "example": "Cliente",
-                                "maxLength": 80,
-                                "minLength": 1
-                            },
-                            "code": {
-                                "type": "string",
-                                "example": "CTM",
-                                "maxLength": 20,
-                                "minLength": 1
-                            }
-                        },
-                        "type": "object"
-                    }
-                },
-                "type": "object"
-            },
-            "PartnerTypeResource": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "example": "Cliente",
-                        "maxLength": 60,
-                        "minLength": 1
-                    },
-                    "code": {
-                        "type": "string",
-                        "example": "CTM",
-                        "maxLength": 3,
-                        "minLength": 1
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
-                        "nullable": true
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
-                        "nullable": true
-                    },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-09-05T06:33:15.515561Z",
                         "nullable": true
                     }
                 },
@@ -21011,7 +22044,7 @@
             "bearerAuth": {
                 "type": "apiKey",
                 "description": "Insira o token JWT",
-                "name": "token",
+                "name": "access_token",
                 "in": "cookie"
             }
         }
@@ -21040,6 +22073,10 @@
         {
             "name": "Product",
             "description": "Product"
+        },
+        {
+            "name": "Service",
+            "description": "Service"
         },
         {
             "name": "Address",
@@ -21096,6 +22133,10 @@
     ],
     "x-tagGroups": [
         {
+            "name": "Core",
+            "tags": []
+        },
+        {
             "name": "Security",
             "tags": [
                 "Authentication",
@@ -21134,7 +22175,8 @@
                 "ProductCategory",
                 "ProductBrand",
                 "MeasurementUnit",
-                "Product"
+                "Product",
+                "Service"
             ]
         },
         {
