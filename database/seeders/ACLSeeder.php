@@ -759,6 +759,67 @@ class ACLSeeder extends Seeder
                     ],
                 ],
             ],
+            [
+                'slug' => 'finance',
+                'name' => 'Finance',
+                'description' => 'Módulo Finance do sistema',
+                'is_active' => true,
+                'created_at' => $now,
+                'updated_at' => $now,
+                'resources' => [
+                    [
+                        'slug' => 'paymentMethods',
+                        'name' => 'Payment Methods',
+                        'description' => 'Funcionalidades para payment methods',
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                        'permissions' => [
+                            [
+                                'action' => 'viewAny',
+                                'label' => 'Listar',
+                                'description' => 'Permite realizar a consulta de todos os payment methods',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'view',
+                                'label' => 'Visualizar',
+                                'description' => 'Permite visualizar os detalhes de payment method',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'create',
+                                'label' => 'Criar',
+                                'description' => 'Permite realizar a criação de payment method',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'update',
+                                'label' => 'Editar',
+                                'description' => 'Permite realizar a edição de payment method',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'delete',
+                                'label' => 'Excluir',
+                                'description' => 'Permite realizar a exclusão de payment method',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'export',
+                                'label' => 'Exportar dados',
+                                'description' => 'Permite realizar a exportação de dados dos payment methods',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         DB::transaction(function () use ($modules) {

@@ -17,7 +17,7 @@ Infraestrutura técnica para integrações externas. Projetado para ser multi-te
 - `Providers/` - Adapters concretos de provedores (vazio por ora)
 
 ## Regras de dependência
-- `Integration/Core` **NÃO** pode importar nada de módulos de domínio (Geography, Financial, ThirdParty, etc.).
+- `Integration/Core` **NÃO** pode importar nada de módulos de domínio (Geography, Finance, ThirdParty, etc.).
 - Módulos de domínio são donos de **contratos/DTOs** (interfaces). Adapters em `Integration/Providers/<Provedor>` implementarão esses contratos (fora do escopo atual).
 - Toda resolução de credenciais deve passar por `IConnectionResolver` (ponto único que ficará tenant-aware no futuro).
 - `IntegrationUnavailableApiException` (estende `ApiException`, HTTP 503, code `integration_unavailable`) é a exceção para serviços de domínio traduzirem falhas técnicas.

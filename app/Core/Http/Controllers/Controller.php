@@ -43,6 +43,10 @@ use Illuminate\Routing\Controller as BaseController;
  *             {
  *                 "name"="Construction",
  *                 "tags"={"ProjectType"}
+ *             },
+ *             {
+ *                 "name"="Finance",
+ *                 "tags"={"PaymentMethod"}
  *             }
  *         }
  *     }

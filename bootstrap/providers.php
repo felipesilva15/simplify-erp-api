@@ -15,4 +15,5 @@ return [
     App\Providers\CatalogModuleProvider::class,
     App\Modules\Integration\IntegrationServiceProvider::class,
     App\Providers\ConstructionModuleProvider::class,
+    App\Providers\FinanceModuleProvider::class,
 ];

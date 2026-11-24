@@ -19,6 +19,7 @@ use App\Modules\Security\Http\Controllers\UserController;
 use App\Modules\ThirdParty\Http\Controllers\PartnerController;
 use App\Modules\ThirdParty\Http\Controllers\PartnerTypeController;
 use App\Modules\Construction\Http\Controllers\ProjectTypeController;
+use App\Modules\Finance\Http\Controllers\PaymentMethodController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('security/auth/login', [AuthController::class, 'login'])->name('auth.login');
@@ -101,5 +102,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('project-types/lookup', [ProjectTypeController::class, 'lookup'])->name('projectTypes.lookup');
         Route::get('project-types/export', [ProjectTypeController::class, 'export'])->name('projectTypes.export');
         Route::crudResource('project-types', ProjectTypeController::class);
+    });
+
+    Route::prefix('finance')->group(function() {
+        Route::get('payment-methods/lookup', [PaymentMethodController::class, 'lookup'])->name('paymentMethods.lookup');
+        Route::get('payment-methods/export', [PaymentMethodController::class, 'export'])->name('paymentMethods.export');
+        Route::crudResource('payment-methods', PaymentMethodController::class);
     });
 });
