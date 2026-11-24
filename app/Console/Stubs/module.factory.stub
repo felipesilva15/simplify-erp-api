@@ -1,7 +1,7 @@
 <?php
 
 namespace Database\Factories;
-
+{{enum_imports}}
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

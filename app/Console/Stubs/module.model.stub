@@ -3,7 +3,7 @@
 namespace {{module_namespace}}\Models;
 
 use App\Core\Models\BaseModel;
-use Database\Factories\{{entity}}Factory;
+{{enum_imports}}use Database\Factories\{{entity}}Factory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -25,6 +25,6 @@ class {{entity}} extends BaseModel
     ];
 
     protected $casts = [
-        
+{{model_casts}}
     ];
 }

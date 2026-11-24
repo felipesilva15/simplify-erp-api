@@ -83,7 +83,7 @@ class {{entity}}Controller extends Controller
      *      path="/api/{{lower_module}}/{{route_entity}}",
      *      tags={"{{entity}}"},
      *      summary="List all {{human_entities}}",
-     *     {{index_filter_parameters}}
+{{index_filter_parameters}}
      *     @OA\Parameter(ref="#/components/parameters/qParam"),
      *     @OA\Parameter(ref="#/components/parameters/sortsParam"),
      *     @OA\Parameter(ref="#/components/parameters/perPageParam"),

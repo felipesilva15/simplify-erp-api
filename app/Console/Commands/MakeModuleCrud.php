@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Console\Support\EnumResolver;
+use App\Console\Support\MigrationColumnMetadata;
 use App\Core\Helpers\ModelHelpers;
 use App\Core\Helpers\StringHelpers;
 use Carbon\Carbon;
@@ -41,6 +43,10 @@ class MakeModuleCrud extends Command
     private string $stubPath = '';
 
     private array $entityFields = [];
+
+    private array $entityEnums = [];
+
+    private EnumResolver $enumResolver;
 
     private array $commonFields = ['id', 'created_at', 'updated_at', 'deleted_at'];
 
@@ -184,9 +190,11 @@ class MakeModuleCrud extends Command
         $this->entity = Str::studly($this->argument('entity'));
         $this->rootPath = app_path($this->isCoreModule() ? 'Core' : "Modules/{$this->module}");
         $this->stubPath = app_path('Console/Stubs');
+        $this->enumResolver = new EnumResolver($this->module, $this->entity);
 
         $this->makeFolders();
         $this->loadEntityFields();
+        $this->entityEnums = $this->enumResolver->resolveForColumns(array_column($this->entityFields, 'name'));
 
         $generatedOptions = [];
 
@@ -309,7 +317,10 @@ class MakeModuleCrud extends Command
 
     private function loadEntityFields(): void
     {
-        $this->entityFields = ModelHelpers::getColumnsFromTable($this->getTableNameByEntityName($this->entity));
+        $tableName = $this->getTableNameByEntityName($this->entity);
+
+        $this->entityFields = ModelHelpers::getColumnsFromTable($tableName);
+        MigrationColumnMetadata::applyToFields($tableName, $this->entityFields);
     }
 
     private function getTableNameByEntityName(string $entityName): string
@@ -330,12 +341,41 @@ class MakeModuleCrud extends Command
     private function getModelReplacements(): array
     {
         return [
+            '{{enum_imports}}' => $this->enumResolver->importsFor($this->entityEnums),
             '{{fillable_fields}}' => $this->renderLines(
                 array_map(fn ($field) => "'{$field['name']}'", $this->entityFields(skipCommon: true)),
                 indent: $this->tabs(2),
             ),
+            '{{model_casts}}' => $this->renderLines($this->modelCasts(), indent: $this->tabs(2)),
             ...$this->getSwaggerFields(setCommonProperties: true, setValidationAttributes: false),
         ];
+    }
+
+    private function modelCasts(): array
+    {
+        $casts = [];
+
+        foreach ($this->entityFields(skipCommon: true) as $field) {
+            $enum = $this->entityEnums[$field['name']] ?? null;
+
+            if ($enum !== null) {
+                $casts[] = "'{$field['name']}' => {$enum['class']}::class";
+
+                continue;
+            }
+
+            if ($field['type'] === 'float') {
+                $casts[] = "'{$field['name']}' => 'decimal:{$field['precision']}'";
+
+                continue;
+            }
+
+            if ($field['type'] === 'bool') {
+                $casts[] = "'{$field['name']}' => 'boolean'";
+            }
+        }
+
+        return $casts;
     }
 
     private function getDtoReplacements(): array
@@ -345,7 +385,6 @@ class MakeModuleCrud extends Command
         $arrayFields = [];
 
         foreach ($this->entityFields() as $field) {
-            $default = StringHelpers::toStringLiteral($field['default']);
             $arrayFields[] = "'{$field['name']}' => \$this->{$field['name']}";
 
             if ($field['type'] === 'Carbon') {
@@ -355,7 +394,10 @@ class MakeModuleCrud extends Command
                 continue;
             }
 
-            $properties[] = 'public '.($field['nullable'] ? '?' : '').$field['type'].' $'.$field['name'].' = '.$default;
+            $type = $field['type'] === 'float' ? 'string' : $field['type'];
+            $default = StringHelpers::toStringLiteral($this->dtoDefaultValue($field));
+
+            $properties[] = 'public '.($field['nullable'] ? '?' : '').$type.' $'.$field['name'].' = '.$default;
             $params[] = "{$field['name']}: \$data['{$field['name']}'] ?? {$default}";
         }
 
@@ -367,17 +409,35 @@ class MakeModuleCrud extends Command
         ];
     }
 
+    private function dtoDefaultValue(array $field): mixed
+    {
+        if ($field['nullable']) {
+            return null;
+        }
+
+        if ($field['type'] === 'float') {
+            return '0';
+        }
+
+        return $field['default'];
+    }
+
     private function getControllerReplacements(): array
     {
         $base = $this->getBaseReplacements();
 
         return [
-            '{{index_filter_parameters}}' => $this->renderIndexFilterParameters(),
+            '{{index_filter_parameters}}' => $this->renderIndexFilterParameters(
+                $this->tabs(1).' * '.$this->tabs(1),
+            ),
             '{{lookup_imports}}' => $this->option('lookup')
                 ? $this->replacePlaceholders($this->readStubBlock('module.controller-lookup-imports.stub'), $base).PHP_EOL
                 : '',
             '{{lookup_method}}' => $this->option('lookup')
-                ? $this->replacePlaceholders($this->readStubBlock('module.controller-lookup.stub'), $base)
+                ? $this->replacePlaceholders($this->readStubBlock('module.controller-lookup.stub'), [
+                    ...$base,
+                    ...$this->getLookupReplacements(),
+                ])
                 : '',
             '{{export_imports}}' => $this->option('export')
                 ? PHP_EOL.$this->replacePlaceholders($this->readStubBlock('module.controller-export-imports.stub'), $base)
@@ -388,7 +448,9 @@ class MakeModuleCrud extends Command
             '{{export_swagger}}' => $this->option('export')
                 ? $this->replacePlaceholders($this->readStubBlock('module.controller-export-swagger.stub'), [
                     ...$base,
-                    '{{export_filter_parameters}}' => $this->renderIndexFilterParameters(),
+                    '{{export_filter_parameters}}' => $this->renderIndexFilterParameters(
+                        $this->tabs(0).' * '.$this->tabs(2),
+                    ),
                 ])
                 : '',
             '{{export_methods}}' => $this->option('export')
@@ -428,15 +490,29 @@ class MakeModuleCrud extends Command
     private function getRequestReplacements(): array
     {
         return [
+            '{{enum_imports}}' => $this->requestImports(),
             '{{rules_definitions}}' => $this->renderLines(
                 array_map(
-                    fn ($field) => "'{$field['name']}' => '{$this->buildRule($field)}'",
+                    fn ($field) => "'{$field['name']}' => {$this->buildRule($field)}",
                     $this->entityFields(skipCommon: true),
                 ),
                 indent: $this->tabs(3),
             ),
             ...$this->getSwaggerFields(setCommonProperties: false, setValidationAttributes: true),
         ];
+    }
+
+    private function requestImports(): string
+    {
+        $imports = $this->enumResolver->importsFor($this->entityEnums);
+
+        foreach ($this->entityFields(skipCommon: true) as $field) {
+            if (isset($this->entityEnums[$field['name']])) {
+                return $imports.'use Illuminate\Validation\Rule;'.PHP_EOL;
+            }
+        }
+
+        return $imports;
     }
 
     private function getResourceReplacements(): array
@@ -453,6 +529,7 @@ class MakeModuleCrud extends Command
     private function getFactoryReplacements(): array
     {
         return [
+            '{{enum_imports}}' => $this->enumResolver->importsFor($this->entityEnums),
             '{{factory_attributes}}' => $this->renderLines(
                 array_map(
                     fn ($field) => "'{$field['name']}' => {$this->fakerExpression($field)}",
@@ -669,7 +746,7 @@ class MakeModuleCrud extends Command
         return $this->getSwaggerProperty($field, true);
     }
 
-    private function renderIndexFilterParameters(): string
+    private function renderIndexFilterParameters(string $docPrefix): string
     {
         $lines = [];
 
@@ -683,18 +760,11 @@ class MakeModuleCrud extends Command
             };
 
             foreach ($this->filterOperatorsForType($field['type']) as $operator) {
-                $lines[] = '@OA\Parameter(name="filters['.$field['name'].']['.$operator.']", in="query", required=false, @OA\Schema(type="'.$schemaType.'"))';
+                $lines[] = $docPrefix.'@OA\Parameter(name="filters['.$field['name'].']['.$operator.']", in="query", required=false, @OA\Schema(type="'.$schemaType.'")),';
             }
         }
 
-        $rendered = '';
-        $prefix = $this->tabs(1).' * '.$this->tabs(1);
-
-        foreach ($lines as $index => $line) {
-            $rendered .= ($index > 0 ? $prefix : '').$line.','.PHP_EOL;
-        }
-
-        return rtrim($rendered, PHP_EOL);
+        return implode(PHP_EOL, $lines);
     }
 
     private function filterOperatorsForType(string $type): array
@@ -708,34 +778,46 @@ class MakeModuleCrud extends Command
 
     private function fakerExpression(array $field): string
     {
-        if (str_contains($field['name'], 'mail')) {
-            return 'fake()->unique()->safeEmail()';
+        $enum = $this->entityEnums[$field['name']] ?? null;
+
+        if ($enum !== null) {
+            $expression = "fake()->randomElement({$enum['class']}::cases())";
+        } elseif (str_contains($field['name'], 'mail')) {
+            $expression = 'fake()->unique()->safeEmail()';
+        } elseif (str_contains($field['name'], 'slug')) {
+            $expression = 'strtolower(fake()->name())';
+        } elseif (str_contains($field['name'], 'phone')) {
+            $expression = "fake()->numerify('###########')";
+        } else {
+            $expression = match ($field['type']) {
+                'string' => 'fake()->name()',
+                'int' => 'fake()->numberBetween(0, 100)',
+                'float' => 'number_format(fake()->randomFloat('.$field['precision'].', 0, '.$this->decimalMaximum($field).'), '.$field['precision'].", '.', '')",
+                'bool' => 'fake()->boolean()',
+                'Carbon' => "fake()->date('Y-m-d H:i:s')",
+                default => 'fake()->name()',
+            };
         }
 
-        if (str_contains($field['name'], 'slug')) {
-            return 'strtolower(fake()->name())';
-        }
-
-        if (str_contains($field['name'], 'phone')) {
-            return "fake()->numerify('###########')";
-        }
-
-        return match ($field['type']) {
-            'string' => 'fake()->name()',
-            'int' => 'fake()->numberBetween(0, 100)',
-            'float' => 'fake()->randomFloat(2, 0, 9999)',
-            'bool' => 'fake()->boolean()',
-            'Carbon' => "fake()->date('Y-m-d H:i:s')",
-            default => 'fake()->name()',
-        };
+        return $field['nullable'] ? "fake()->boolean() ? null : {$expression}" : $expression;
     }
 
     private function buildRule(array $field): string
     {
-        $rules = [$field['nullable'] ? 'nullable' : 'required'];
+        $required = $field['nullable'] ? 'nullable' : 'required';
+        $enum = $this->entityEnums[$field['name']] ?? null;
 
-        $typeRule = $this->requestTypes[$field['type']];
-        $rules[] = $field['type'] === 'float' ? "{$typeRule}:{$field['precision']}" : $typeRule;
+        if ($enum !== null) {
+            return "['{$required}', Rule::enum({$enum['class']}::class)]";
+        }
+
+        $rules = [$required];
+
+        if ($field['type'] === 'float') {
+            $rules[] = "decimal:0,{$field['precision']}";
+        } else {
+            $rules[] = $this->requestTypes[$field['type']];
+        }
 
         if ($field['max_length'] && $field['type'] === 'string') {
             $rules[] = 'min:1';
@@ -746,7 +828,7 @@ class MakeModuleCrud extends Command
             $rules[] = 'email';
         }
 
-        return implode('|', $rules);
+        return "'".implode('|', $rules)."'";
     }
 
     private function getSwaggerFields(bool $setCommonProperties, bool $setValidationAttributes): array
@@ -770,6 +852,26 @@ class MakeModuleCrud extends Command
 
     private function getSwaggerProperty(array $field, bool $setValidationAttributes): string
     {
+        $enum = $this->entityEnums[$field['name']] ?? null;
+
+        if ($enum !== null) {
+            $property = "@OA\Property(property=\"{$field['name']}\", ref=\"#/components/schemas/{$enum['schema']}\"";
+
+            return $property.($field['nullable'] ? ', nullable=true' : '').')';
+        }
+
+        if ($field['type'] === 'float') {
+            $property = "@OA\Property(property=\"{$field['name']}\", type=\"string\", format=\"decimal\"";
+            $property .= ', example='.($field['nullable'] ? 'null' : '"'.number_format(0, $field['precision'], '.', '').'"');
+
+            if ($setValidationAttributes) {
+                $property .= ', minimum="0.'.str_repeat('0', max(0, $field['precision'] - 1)).'1"';
+                $property .= ', maximum="'.$this->decimalMaximum($field).'"';
+            }
+
+            return $property.($field['nullable'] ? ', nullable=true' : '').')';
+        }
+
         $type = $this->swaggerTypes[$field['type']];
         $property = "@OA\Property(property=\"{$field['name']}\", type=\"{$type['type']}\"";
 
@@ -779,24 +881,18 @@ class MakeModuleCrud extends Command
 
         $property .= ", example={$type['example']}";
 
-        if ($setValidationAttributes) {
-            switch ($field['type']) {
-                case 'string':
-                    $property .= ', minLength=1, maxLength='.$field['max_length'];
-                    break;
-
-                case 'float':
-                    $property .= ', minimum=0.'.str_pad('', $field['precision'] - 1, '0').'1';
-                    $property .= ', maximum='.str_pad('', $field['max_length'] - $field['precision'], '9').'.'.str_pad('', $field['precision'], '9');
-                    break;
-            }
+        if ($setValidationAttributes && $field['type'] === 'string') {
+            $property .= ', minLength=1, maxLength='.$field['max_length'];
         }
 
-        if ($field['nullable']) {
-            $property .= ', nullable=true';
-        }
+        return $property.($field['nullable'] ? ', nullable=true' : '').')';
+    }
 
-        return $property.')';
+    private function decimalMaximum(array $field): string
+    {
+        $integerDigits = max(1, $field['max_length'] - $field['precision']);
+
+        return str_repeat('9', $integerDigits).'.'.str_repeat('9', $field['precision']);
     }
 
     private function entityFields(bool $skipCommon = false): array

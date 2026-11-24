@@ -1,7 +1,7 @@
 <?php
 
 namespace {{module_namespace}}\Http\Requests\{{entity}};
-
+{{enum_imports}}
 use Illuminate\Foundation\Http\FormRequest;
 
 /**

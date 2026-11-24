@@ -22,7 +22,7 @@
  *             description="File extension (xlsx, xls, csv)",
  *             @OA\Schema(type="string", enum={"xlsx","xls","csv"})
  *         ),
- *     {{export_filter_parameters}}
+{{export_filter_parameters}}
  *         @OA\Response(
  *             response="200",
  *             description="Excel file with {{human_entities}}",
