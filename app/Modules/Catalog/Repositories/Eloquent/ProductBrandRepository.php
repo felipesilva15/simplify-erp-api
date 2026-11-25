@@ -28,6 +28,14 @@ class ProductBrandRepository extends BaseRepository implements ProductBrandRepos
     }
 
     #[Override]
+    protected function getLookupFilterColumns(): array
+    {
+        return [
+            'name',
+        ];
+    }
+
+    #[Override]
     protected function getModelClass(): string
     {
         return ProductBrand::class;

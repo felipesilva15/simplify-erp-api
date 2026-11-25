@@ -31,6 +31,17 @@ class StateRepository extends BaseRepository implements StateRepositoryInterface
     }
 
     #[Override]
+    protected function getLookupFilterColumns(): array
+    {
+        return [
+            'name',
+            'uf',
+            'ibge_code',
+            'country_id',
+        ];
+    }
+
+    #[Override]
     protected function getModelClass(): string
     {
         return State::class;

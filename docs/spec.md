@@ -377,7 +377,7 @@ Duas respostas fogem do envelope e são **exceções observadas no código**: `a
 | `per_page` | inteiro | `nullable\|integer\|max:100` |
 | `page` | inteiro | `nullable\|integer\|min:1` |
 
-`LookupRequest` (busca rápida) aceita `q` (string), `sorts` (string), `keys` (array), `per_page` e `page`. `ExportRequest` estende `ListRequest` e acrescenta `format` (string) e `extension` (`in:xlsx,xls,csv`).
+`LookupRequest` (busca rápida) estende `ListRequest` e acrescenta `keys` (array), aceitando portanto o mesmo `filters[coluna][operador]` da listagem, além de `q`, `sorts`, `per_page` e `page`. `ExportRequest` também estende `ListRequest` e acrescenta `format` (string) e `extension` (`in:xlsx,xls,csv`).
 
 Operadores de filtro, mapeados para SQL em `ModelHelpers::$operatorDictionary`:
 
@@ -440,9 +440,11 @@ Pensada para preencher campos de seleção, usa um recurso dedicado com quatro c
 ```
 
 - `q` produz um `orWhere` agrupado sobre as colunas de `getLookupColumnsToFilter()`, respeitando o tipo resolvido no schema (`int` vira igualdade, `string` vira `like`).
-- `keys[]` aplica `whereIn` **em conjunto com** (`and`) o resultado de `q`.
+- `filters[coluna][operador]` usa o mesmo `ModelHelpers::setFiltersOnQuery()` da listagem, mas aceita apenas as colunas devolvidas por `getLookupFilterableColumns()`: os campos comuns (`id`, `created_at`, `updated_at` e `deleted_at`, quando existem) mais a curadoria de `getLookupFilterColumns()` do repositório, menos as colunas removidas por `getLookupFilterExcludedColumns()` para aquele contexto. Colunas fora dessa lista e operadores desconhecidos são ignorados.
+- `keys[]` aplica `whereIn` **em conjunto com** (`and`) `q` e `filters`.
 - A coluna alvo de `keys` é configurável: `id` por padrão, `code` para tipos de parceiro — e o `key` devolvido acompanha a mesma coluna.
 - `sorts` é validado e aplicado em `lookup()`, com o mesmo padrão `-id` da listagem.
+- `forcedFilters` (usado pelas fachadas `products`/`services`) continua sendo aplicado pelo servidor e não pode ser sobrescrito pelo cliente.
 - `withRelations()` também é aplicado ao lookup, garantindo que o `LookupResource` não sofra N+1.
 
 ---
@@ -752,10 +754,10 @@ A leitura é feita pelo trait `HasActivityLogs`, que expõe `activityLogs($id, L
 |---|---|
 | `--all` | Gera tudo **exceto** `--lookup` e `--export`. |
 | `--model` `--service` `--repository` `--dto` `--controller` `--request` `--resource` `--policy` `--factory` `--test` | Geram apenas o artefato indicado. `--policy` também complementa o `ACLSeeder` com o recurso e suas permissões. |
-| `--lookup` | **Opt-in**: cria `{Entity}LookupResource` e `{Entity}LookupCollection`, o método `lookup()` no controller, a rota `*/lookup`, o override de `getLookupColumnsToFilter()` e os casos de teste `test_can_lookup_*`. |
+| `--lookup` | **Opt-in**: cria `{Entity}LookupResource` e `{Entity}LookupCollection`, o método `lookup()` no controller (com as anotações `filters[coluna][operador]`), a rota `*/lookup`, os overrides de `getLookupColumnsToFilter()` e `getLookupFilterColumns()` e os casos de teste `test_can_lookup_*`, incluindo filtro. |
 | `--export` | **Opt-in**: cria `{Entity}Export`, o trait `HasExcelExport`, `exportModelClass()`, `exportClassForFormat()`, o método `export()` na policy, a permissão `export` no `ACLSeeder`, a rota `*/export` e os casos de teste `test_can_export_*`. |
 
-O repository gerado sempre inclui `getListColumnsToFilter()` (colunas `string` da tabela, com `id` como fallback) e, com `--lookup`, `getLookupColumnsToFilter()`. Os dois hooks devolvem **apenas nomes de coluna**, porque os tipos são resolvidos em runtime por introspecção do schema.
+O repository gerado sempre inclui `getListColumnsToFilter()` (colunas `string` da tabela, com `id` como fallback) e, com `--lookup`, `getLookupColumnsToFilter()` e `getLookupFilterColumns()`. Os três hooks devolvem **apenas nomes de coluna**, porque os tipos são resolvidos em runtime por introspecção do schema. O `getLookupFilterColumns()` gerado começa com todas as colunas da entidade (menos os campos comuns, que `BaseRepository` já inclui) e pode ser reduzido depois de acordo com o domínio do lookup.
 
 ### 15.2 Artefatos gerados
 
@@ -781,7 +783,7 @@ database/factories/OrderFactory.php
 tests/Feature/Sales/OrderTest.php
 ```
 
-São 29 stubs em `app/Console/Stubs`, todos com placeholders `{{snake_case}}` substituídos por `strtr` (substituição simultânea, não recursiva). Os blocos opcionais de repository (`module.repository-list-columns.stub`, `module.repository-lookup.stub`) e de teste (`module.test-export.stub`, `module.test-lookup.stub`) são renderizados apenas quando a flag correspondente está ativa.
+São 30 stubs em `app/Console/Stubs`, todos com placeholders `{{snake_case}}` substituídos por `strtr` (substituição simultânea, não recursiva). Os blocos opcionais de repository (`module.repository-list-columns.stub`, `module.repository-lookup.stub`, `module.repository-lookup-filters.stub`) e de teste (`module.test-export.stub`, `module.test-lookup.stub`) são renderizados apenas quando a flag correspondente está ativa. O docblock do lookup gerado recebe as anotações `filters[coluna][operador]` das mesmas colunas do `index()`.
 
 ### 15.3 Efeitos colaterais em outros arquivos
 
@@ -960,7 +962,7 @@ O que precisa acompanhar qualquer mudança neste repositório. Os itens do bloco
 | Teste automatizado para a mudança | `tests/Feature`, `tests/Unit` | 30 arquivos, 398 métodos; `phpunit.xml` declara as duas suítes ([§16](#16-testes)) |
 | Suíte sem serviço externo | `phpunit.xml` | `DB_CONNECTION=sqlite` e `DB_DATABASE=:memory:`; `RefreshDatabase` em `tests/TestCase.php` |
 | Auditoria em toda escrita | Services que estendem `BaseCrudService` | `ActivityLogService::log()` em `store`, `update` e `delete` ([§13](#13-auditoria-activity-log)) |
-| Módulo novo via comando | `app/Console/Commands/MakeModuleCrud.php` | 29 stubs; testes com snapshot e restauração em `tests/Feature/Console` ([§15](#15-gerador-de-módulos)) |
+| Módulo novo via comando | `app/Console/Commands/MakeModuleCrud.php` | 30 stubs; testes com snapshot e restauração em `tests/Feature/Console` ([§15](#15-gerador-de-módulos)) |
 | Formatação com Laravel Pint | `laravel/pint ^1.27` | Declarado em `require-dev`; binário em `vendor/bin/pint`. Não há `pint.json` nem script no `composer.json`, então vale a configuração padrão do Pint e a execução é manual. Observação: a execução atual acusa estilo fora do padrão em boa parte de `app/` e `tests/`, ou seja, o Pint **não** é aplicado como gate hoje |
 | Padrão de código em `app/` | `.editorconfig` | UTF-8, LF, indentação de 4 espaços, newline final, sem espaço no fim da linha |
 | Padrão de commits Conventional Commits | Histórico do Git | 169 dos 171 commits usam prefixo `tipo:` — `feat` (79), `refactor` (41), `test` (20), `fix` (18), `docs` (5), `chore` (3), `config` (2), `style` (1). Os 2 restantes são commits iniciais. Não há `commitlint` nem hook configurado que imponha o padrão |

@@ -150,7 +150,7 @@ Os itens abaixo existem como estrutura de dados ou configuração **sem** rota, 
 - Todas as listagens suportam **busca textual (`q`)**, **filtro por campo e operador**, **ordenação** e **paginação**; o contrato de parâmetros é único para todos os recursos.
 - A busca textual (`q`) é livre: casa as colunas pesquisáveis do recurso em um único agrupamento `OR`, ignorando maiúsculas, minúsculas e acentos, e as colunas são definidas por recurso, não pelo cliente.
 - A ordenação é múltipla (`sorts=name,-created_at`); quando o cliente não a informa, a listagem assume `-id` como padrão determinístico.
-- A busca rápida (`lookup`) é um endpoint enxuto, orientado a preencher campos de seleção, e devolve `key`, `label`, `sublabel` e `meta`. Aceita `q`, `sorts`, `keys[]` e paginação, e ordena por padrão em `-id`.
+- A busca rápida (`lookup`) é um endpoint enxuto, orientado a preencher campos de seleção, e devolve `key`, `label`, `sublabel` e `meta`. Aceita `q`, `filters[coluna][operador]`, `sorts`, `keys[]` e paginação, e ordena por padrão em `-id`. Os filtros de cada lookup são um subconjunto curado de colunas do recurso, definido no repository, e seguem os mesmos operadores da listagem.
 - A exportação gera planilha a partir da **mesma** consulta da listagem — mesma busca, mesmos filtros e mesma ordenação — e exige permissão de exportação específica do recurso. Somente usuários, perfis, parceiros e profissões possuem exportação.
 
 ### 7.7 Cadastros geográficos
@@ -202,7 +202,7 @@ Os itens abaixo existem como estrutura de dados ou configuração **sem** rota, 
 | RF-09 | Manter parceiros com contatos aninhados, com listagem, busca rápida e exportação. |
 | RF-10 | Consultar o catálogo de profissões (CBO), com listagem, detalhe, busca rápida, exportação e auditoria, sem operações de criação, edição ou exclusão. |
 | RF-11 | Consultar o histórico de auditoria de qualquer registro de recurso. |
-| RF-12 | Buscar por texto livre, filtrar, ordenar e paginar qualquer listagem por um contrato único. |
+| RF-12 | Buscar por texto livre, filtrar, ordenar e paginar qualquer listagem ou busca rápida por um contrato único. |
 | RF-13 | Exportar usuários, perfis, parceiros, profissões, produtos e serviços em planilha respeitando os filtros da listagem. |
 | RF-14 | Gerar, a partir do schema do banco, a estrutura completa de um novo módulo de negócio, incluindo o cadastro do recurso e das permissões no seeder de ACL. |
 | RF-15 | Publicar a especificação OpenAPI da API gerada a partir do código. |

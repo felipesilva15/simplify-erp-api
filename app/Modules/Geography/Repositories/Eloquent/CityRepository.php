@@ -29,6 +29,16 @@ class CityRepository extends BaseRepository implements CityRepositoryInterface
     }
 
     #[Override]
+    protected function getLookupFilterColumns(): array
+    {
+        return [
+            'name',
+            'ibge_code',
+            'state_id',
+        ];
+    }
+
+    #[Override]
     protected function getModelClass(): string
     {
         return City::class;

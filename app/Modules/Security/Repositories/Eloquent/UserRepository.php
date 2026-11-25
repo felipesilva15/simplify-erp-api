@@ -48,6 +48,17 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     }
 
     #[Override]
+    protected function getLookupFilterColumns(): array
+    {
+        return [
+            'name',
+            'email',
+            'username',
+            'phone_number',
+        ];
+    }
+
+    #[Override]
     protected function getModelClass(): string
     {
         return User::class;

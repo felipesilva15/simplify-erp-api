@@ -437,6 +437,7 @@ class MakeModuleCrud extends Command
                 ? $this->replacePlaceholders($this->readStubBlock('module.controller-lookup.stub'), [
                     ...$base,
                     ...$this->getLookupReplacements(),
+                    '{{lookup_filter_parameters}}' => $this->renderIndexFilterParameters('     *      '),
                 ])
                 : '',
             '{{export_imports}}' => $this->option('export')
@@ -565,11 +566,13 @@ class MakeModuleCrud extends Command
 
         $displayField = $stringField['name'] ?? ($fields[0]['name'] ?? '');
         $requiredField = $requiredField['name'] ?? $displayField;
+        $lookupKey = $this->getLookupKeyField()['name'] ?? 'id';
 
         return [
             '{{display_field}}' => $displayField,
             '{{required_field}}' => $requiredField,
-            '{{lookup_key_attribute}}' => $this->getLookupKeyField()['name'] ?? 'id',
+            '{{lookup_key_attribute}}' => $lookupKey,
+            '{{lookup_key_column}}' => $lookupKey,
             '{{test_imports}}' => $this->option('export')
                 ? PHP_EOL.'use '.$this->getModuleNamespace().'\\Exports\\'.$this->entity.'Export;'
                     .PHP_EOL.'use Maatwebsite\\Excel\\Facades\\Excel;'
@@ -601,10 +604,27 @@ class MakeModuleCrud extends Command
         $columns = $this->renderLines($this->getSearchableColumnNames(), indent: $this->tabs(3));
 
         $lookupColumns = '';
+        $lookupFilterMethod = '';
         $lookupKeyMethod = '';
 
         if ($this->option('lookup')) {
             $lookupColumns = $this->renderLines($this->getSearchableColumnNames(), indent: $this->tabs(3));
+            $lookupFilterColumns = $this->renderLines(
+                array_map(
+                    fn ($field) => "'{$field['name']}'",
+                    array_values(array_filter(
+                        $this->entityFields(),
+                        fn ($field) => ! in_array($field['name'], $this->commonFields, true),
+                    )),
+                ),
+                indent: $this->tabs(3),
+            );
+
+            $lookupFilterMethod = $this->replacePlaceholders(
+                $this->readStubBlock('module.repository-lookup-filters.stub'),
+                ['{{lookup_filter_columns}}' => $lookupFilterColumns],
+            ).PHP_EOL.PHP_EOL;
+
             $keyName = $this->getLookupKeyField()['name'] ?? 'id';
 
             if ($keyName !== 'id') {
@@ -628,6 +648,7 @@ class MakeModuleCrud extends Command
                     ['{{lookup_columns}}' => $lookupColumns],
                 ).PHP_EOL.PHP_EOL
                 : '',
+            '{{lookup_filter_method}}' => $lookupFilterMethod,
             '{{lookup_key_method}}' => $lookupKeyMethod,
         ];
     }
@@ -717,6 +738,7 @@ class MakeModuleCrud extends Command
 
         return [
             '{{lookup_key_type}}' => $usesIdAsKey ? 'integer' : 'string',
+            '{{lookup_key_column}}' => $keyName,
             '{{lookup_key_example}}' => $usesIdAsKey ? '1' : '"Sample"',
             '{{lookup_label_max_length}}' => $labelMaxLength,
             '{{lookup_key_accessor}}' => $usesIdAsKey ? '$this->id' : '$this->'.$keyName,

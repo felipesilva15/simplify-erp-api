@@ -11,7 +11,7 @@ use Illuminate\Validation\Rule;
 /**
  * @OA\Schema(
  *     schema="UpdatePaymentMethodRequest",
- *     required={"name","condition","applicable_type","payment_deadline"},
+ *     required={"name","condition","payment_type","applicable_type","payment_deadline"},
  *     @OA\Property(property="name", type="string", example="A vista", minLength=1, maxLength=100),
  *     @OA\Property(property="condition", type="string", example="Ato", minLength=1, maxLength=80),
  *     @OA\Property(property="payment_type", ref="#/components/schemas/PaymentTypeEnum"),

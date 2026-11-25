@@ -2,9 +2,10 @@
 
 namespace App\Modules\Catalog\Repositories\Eloquent;
 
+use App\Core\Enums\ProductTypeEnum;
+use App\Core\Repositories\Eloquent\BaseRepository;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Repositories\Interfaces\ProductRepositoryInterface;
-use App\Core\Repositories\Eloquent\BaseRepository;
 use Override;
 
 class ProductRepository extends BaseRepository implements ProductRepositoryInterface
@@ -39,6 +40,33 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
             'gtin',
             'name',
         ];
+    }
+
+    #[Override]
+    protected function getLookupFilterColumns(): array
+    {
+        return [
+            'name',
+            'sku',
+            'gtin',
+            'item_type_code',
+            'is_active',
+            'product_category_id',
+            'product_brand_id',
+            'measurement_unit_id',
+        ];
+    }
+
+    /**
+     * Products e services compartilham a mesma tabela, mas `gtin` só faz sentido
+     * na fachada de products; services não expõe o campo no LookupResource.
+     */
+    #[Override]
+    protected function getLookupFilterExcludedColumns(array $params): array
+    {
+        return ($params['forcedFilters']['type'] ?? null) === ProductTypeEnum::Service->value
+            ? ['gtin']
+            : [];
     }
 
     #[Override]

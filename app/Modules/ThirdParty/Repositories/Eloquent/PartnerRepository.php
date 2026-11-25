@@ -52,6 +52,18 @@ class PartnerRepository extends BaseRepository implements PartnerRepositoryInter
     }
 
     #[Override]
+    protected function getLookupFilterColumns(): array
+    {
+        return [
+            'name',
+            'trade_name',
+            'document_number',
+            'person_type',
+            'profession_id',
+        ];
+    }
+
+    #[Override]
     protected function getModelClass(): string
     {
         return Partner::class;

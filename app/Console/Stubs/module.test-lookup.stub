@@ -35,6 +35,24 @@ public function test_can_lookup_{{lower_entity}}s(): void
             ->assertJsonPath('data.0.key', $models->first()->{{lookup_key_attribute}});
     }
 
+    public function test_can_lookup_{{lower_entity}}s_with_filters(): void
+    {
+        $models = {{entity}}::factory(2)->create();
+
+        $queryParams = [
+            'filters' => [
+                '{{lookup_key_column}}' => ['eq' => $models->last()->{{lookup_key_attribute}}],
+            ],
+        ];
+
+        $response = $this->getJson(url()->query("{$this->endpoint}/lookup", $queryParams), $this->getAdminAuthHeaders());
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonIsObject()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.key', $models->last()->{{lookup_key_attribute}});
+    }
+
     public function test_can_lookup_{{lower_entity}}s_with_sort(): void
     {
         $models = {{entity}}::factory(3)->create();

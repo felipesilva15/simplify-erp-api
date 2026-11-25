@@ -2,8 +2,6 @@
 
 namespace App\Core\Http\Requests\Core;
 
-use Illuminate\Foundation\Http\FormRequest;
-
 /**
  * @OA\Parameter(parameter="qParam", name="q", in="query", required=false, example="torneira", description="Free text search across the searchable columns", @OA\Schema(type="string")),
  * @OA\Parameter(parameter="sortsParam", name="sorts", in="query", required=false, example="-id", description="Fields for sorting separated by commas. Use '-' to sort descending", @OA\Schema(type="string")),
@@ -15,22 +13,20 @@ use Illuminate\Foundation\Http\FormRequest;
  *     type="object",
  *
  *     @OA\Property(property="q", type="string", example="torneira", description="Free text search across the searchable columns"),
+ *     @OA\Property(property="filters", ref="#/components/schemas/Filters", example={"name": {"like": "São Paulo"}}),
  *     @OA\Property(property="keys", type="array", example={"1","3"}, @OA\Items(type="string"), description="Values of the lookup key column to filter by"),
  *     @OA\Property(property="sorts", type="string", example="-id", description="Fields for sorting separated by commas. Use '-' to sort descending"),
  *     @OA\Property(property="per_page", type="integer", example=15, description="Items per page"),
  *     @OA\Property(property="page", type="integer", example=1, description="Page number")
  * )
  */
-class LookupRequest extends FormRequest
+class LookupRequest extends ListRequest
 {
     public function rules(): array
     {
         return [
-            'q' => 'nullable|string',
+            ...parent::rules(),
             'keys' => 'nullable|array',
-            'sorts' => 'nullable|string',
-            'per_page' => 'nullable|integer|max:100',
-            'page' => 'nullable|integer|min:1',
         ];
     }
 }

@@ -34,6 +34,18 @@ class MeasurementUnitRepository extends BaseRepository implements MeasurementUni
     }
 
     #[Override]
+    protected function getLookupFilterColumns(): array
+    {
+        return [
+            'code',
+            'name',
+            'symbol',
+            'category',
+            'is_active',
+        ];
+    }
+
+    #[Override]
     protected function getLookupKeyColumn(): string
     {
         return 'id';

@@ -36,6 +36,17 @@ class ProductCategoryRepository extends BaseRepository implements ProductCategor
     }
 
     #[Override]
+    protected function getLookupFilterColumns(): array
+    {
+        return [
+            'name',
+            'applicability',
+            'parent_category_id',
+            'is_active',
+        ];
+    }
+
+    #[Override]
     protected function getModelClass(): string
     {
         return ProductCategory::class;

@@ -28,6 +28,14 @@ class RoleRepository extends BaseRepository implements RoleRepositoryInterface
     }
 
     #[Override]
+    protected function getLookupFilterColumns(): array
+    {
+        return [
+            'name',
+        ];
+    }
+
+    #[Override]
     public function getModelClass(): string
     {
         return Role::class;

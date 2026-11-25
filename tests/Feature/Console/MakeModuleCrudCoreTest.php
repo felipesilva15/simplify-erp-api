@@ -197,8 +197,9 @@ class MakeModuleCrudCoreTest extends TestCase
         $this->assertStringNotContainsString("'id' => ", $repository);
         $this->assertStringNotContainsString("'name' => ", $repository);
 
-        // Sem --lookup o hook de lookup não é gerado
+        // Sem --lookup os hooks de lookup não são gerados
         $this->assertStringNotContainsString('getLookupColumnsToFilter', $repository);
+        $this->assertStringNotContainsString('getLookupFilterColumns', $repository);
     }
 
     public function test_command_generates_search_test_and_omits_lookup_tests_without_flag(): void

@@ -223,8 +223,16 @@ class MakeModuleCrudExportTest extends TestCase
 
         $this->assertStringContainsString('public function test_can_lookup_vehicles(): void', $withLookup);
         $this->assertStringContainsString('public function test_can_lookup_vehicles_with_search(): void', $withLookup);
+        $this->assertStringContainsString('public function test_can_lookup_vehicles_with_filters(): void', $withLookup);
         $this->assertStringContainsString('public function test_can_lookup_vehicles_with_sort(): void', $withLookup);
         $this->assertStringContainsString('public function test_cannot_lookup_vehicles_without_authentication(): void', $withLookup);
         $this->assertStringNotContainsString('{{', $withLookup);
+
+        $repository = File::get(app_path('Modules/Sales/Repositories/Eloquent/VehicleRepository.php'));
+        $this->assertStringContainsString('protected function getLookupFilterColumns(): array', $repository);
+
+        $controller = File::get(app_path('Modules/Sales/Http/Controllers/VehicleController.php'));
+        $this->assertStringContainsString('filters[id][eq]', $controller);
+        $this->assertDoesNotMatchRegularExpression('/\{\{[a-z_]+\}\}/', $controller);
     }
 }

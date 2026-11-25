@@ -134,7 +134,7 @@ Todas as listagens, buscas rápidas e exportações compartilham o mesmo contrat
 | Parâmetro | Onde | Observação |
 |---|---|---|
 | `q` | `index`, `lookup`, `export` | Busca textual livre sobre as colunas pesquisáveis do recurso (definidas no repository, não pelo cliente). |
-| `filters[coluna][operador]` | `index`, `export` | `eq`, `ne`, `lt`, `lte`, `gt`, `gte`, `like`. |
+| `filters[coluna][operador]` | `index`, `lookup`, `export` | `eq`, `ne`, `lt`, `lte`, `gt`, `gte`, `like`. No lookup, as colunas aceitas são curadas por recurso via `getLookupFilterColumns()`. |
 | `sorts` | `index`, `lookup`, `export` | CSV com `-` para decrescente, ex. `name,-created_at`. Padrão: `-id`. |
 | `keys[]` | `lookup` | Coluna alvo configurável (`id` por padrão, `code` em tipos de parceiro). |
 | `per_page` / `page` | `index`, `lookup`, `export` | `per_page` padrão 15 (30 no lookup); a exportação não pagina. |
@@ -167,7 +167,7 @@ php artisan make:module-crud Core Vehicle --all
 php artisan make:module-crud Sales Order --all --lookup --export
 ```
 
-**A tabela da entidade precisa existir no banco antes da execução** — o comando lê o schema real da tabela para derivar `$fillable`, regras de validação, DTO, resources, factory e export. O repository gerado recebe os hooks `getListColumnsToFilter()` (e `getLookupColumnsToFilter()` com `--lookup`) com as colunas pesquisáveis; os casos de teste de lookup e exportação só são gerados com as respectivas flags. Ao gerar a policy, o comando também complementa `database/seeders/ACLSeeder.php` com o módulo, o recurso e as permissões da entidade (`viewAny`, `view`, `create`, `update`, `delete` e, com `--export`, `export`), sem duplicar dados já existentes. O grupo `Route::prefix('{módulo}')` existente é reaproveitado mesmo quando escrito como `function() {` (sem espaço), evitando grupos duplicados em `api.php`.
+**A tabela da entidade precisa existir no banco antes da execução** — o comando lê o schema real da tabela para derivar `$fillable`, regras de validação, DTO, resources, factory e export. O repository gerado recebe os hooks `getListColumnsToFilter()` (e `getLookupColumnsToFilter()` e `getLookupFilterColumns()` com `--lookup`) com as colunas pesquisáveis e filtráveis; o lookup gerado também documenta os filtros no OpenAPI e inclui um caso de teste de filtro. Os casos de teste de lookup e exportação só são gerados com as respectivas flags. Ao gerar a policy, o comando também complementa `database/seeders/ACLSeeder.php` com o módulo, o recurso e as permissões da entidade (`viewAny`, `view`, `create`, `update`, `delete` e, com `--export`, `export`), sem duplicar dados já existentes. O grupo `Route::prefix('{módulo}')` existente é reaproveitado mesmo quando escrito como `function() {` (sem espaço), evitando grupos duplicados em `api.php`.
 
 **Derivação de campos:** colunas nullable viram propriedades `?tipo` no DTO com `null` em `fromArray()`; decimais são `string` no DTO, em Requests/Resources e no OpenAPI (`format="decimal"`), com `decimal:0,{escala}` na validação e `decimal:{escala}` em `$casts`. A precisão total/escala são lidas da migration quando o driver não as expõe (SQLite). Enums já existentes são detectados pelo nome da coluna e pelo contexto do módulo/entidade, sendo aplicados em `Rule::enum`, `$casts`, imports, factory e `ref` do OpenAPI — o comando **não cria** enums. Contrato completo em [`docs/spec.md`](docs/spec.md#15-gerador-de-módulos).
 
@@ -187,7 +187,7 @@ app/
     Geography/           # countries, states, cities
   Console/
     Commands/            # make:module-crud
-    Stubs/               # 29 stubs usados pelo gerador
+    Stubs/               # 30 stubs usados pelo gerador
   Policies/              # 11 policies (uma por entidade)
   Providers/             # registro de bindings, morph map e macro de rotas
 bootstrap/providers.php  # providers registrados

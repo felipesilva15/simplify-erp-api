@@ -3,6 +3,7 @@
      *      path="/api/{{lower_module}}/{{route_entity}}/lookup",
      *      tags={"{{entity}}"},
      *      summary="Lookup {{human_entities}}",
+{{lookup_filter_parameters}}
      *      @OA\Parameter(ref="#/components/parameters/qParam"),
      *      @OA\Parameter(name="keys[]", in="query", description="Keys to find", required=false, @OA\Schema(type="{{lookup_key_type}}")),
      *      @OA\Parameter(ref="#/components/parameters/sortsParam"),

@@ -48,6 +48,39 @@ abstract class BaseRepository implements BaseRepositoryInterface
         return 'id';
     }
 
+    /**
+     * Colunas aceitas por `filters` no lookup: campos comuns da listagem mais
+     * os filtros próprios declarados pelo repositório, menos as colunas que a
+     * fachada que chama o lookup decide não expor naquele contexto.
+     */
+    final protected function getLookupFilterableColumns(array $params = []): array
+    {
+        return array_values(array_diff(
+            array_unique(array_merge(
+                ['id', 'created_at', 'updated_at', 'deleted_at'],
+                $this->getLookupFilterColumns(),
+            )),
+            $this->getLookupFilterExcludedColumns($params),
+        ));
+    }
+
+    /**
+     * Filtros próprios de cada lookup. Por padrão reusa as colunas da busca
+     * textual; o repositório pode sobrescrever para curar a lista.
+     */
+    protected function getLookupFilterColumns(): array
+    {
+        return $this->getLookupColumnsToFilter();
+    }
+
+    /**
+     * Colunas removidas da curadoria em um contexto específico do lookup.
+     */
+    protected function getLookupFilterExcludedColumns(array $params): array
+    {
+        return [];
+    }
+
     protected function getMaskedSearchableColumns(): array
     {
         return [];
@@ -148,13 +181,13 @@ abstract class BaseRepository implements BaseRepositoryInterface
         return ModelHelpers::setSearchOnQuery($query, $term, $columnsToSearch, $this->getSearchOptions($columns));
     }
 
-    private function applyFilters(Builder $query, array $filters, ?Collection $columns = null): Builder
+    private function applyFilters(Builder $query, array $filters, ?Collection $columns = null, array $allowedColumns = []): Builder
     {
         if (empty($filters)) {
             return $query;
         }
 
-        return ModelHelpers::setFiltersOnQuery($query, $filters, [], $this->getSearchOptions($columns));
+        return ModelHelpers::setFiltersOnQuery($query, $filters, $allowedColumns, $this->getSearchOptions($columns));
     }
 
     private function applySorts(Builder $query, mixed $sorts, ?Collection $columns = null): Builder
@@ -201,6 +234,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
         $columns = $this->resolveColumns($query, $params);
 
         $query = $this->applySearch($query, $params['q'] ?? null, $this->getLookupColumnsToFilter(), $columns);
+        $query = $this->applyFilters($query, $params['filters'] ?? [], $columns, $this->getLookupFilterableColumns($params));
         $query = $this->applySorts($query, $params['sorts'] ?? null, $columns);
 
         if (isset($params['keys']) && count($params['keys'])) {

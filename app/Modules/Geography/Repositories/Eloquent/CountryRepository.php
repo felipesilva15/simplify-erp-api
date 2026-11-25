@@ -29,6 +29,15 @@ class CountryRepository extends BaseRepository implements CountryRepositoryInter
     }
 
     #[Override]
+    protected function getLookupFilterColumns(): array
+    {
+        return [
+            'iso_code',
+            'name',
+        ];
+    }
+
+    #[Override]
     protected function getModelClass(): string
     {
         return Country::class;

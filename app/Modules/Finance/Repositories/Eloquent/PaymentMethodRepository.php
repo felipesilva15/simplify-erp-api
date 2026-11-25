@@ -34,6 +34,17 @@ class PaymentMethodRepository extends BaseRepository implements PaymentMethodRep
     }
 
     #[Override]
+    protected function getLookupFilterColumns(): array
+    {
+        return [
+            'name',
+            'condition',
+            'applicable_type',
+            'tax_type',
+        ];
+    }
+
+    #[Override]
     protected function getModelClass(): string
     {
         return PaymentMethod::class;

@@ -28,6 +28,14 @@ class ProjectTypeRepository extends BaseRepository implements ProjectTypeReposit
     }
 
     #[Override]
+    protected function getLookupFilterColumns(): array
+    {
+        return [
+            'name',
+        ];
+    }
+
+    #[Override]
     protected function getModelClass(): string
     {
         return ProjectType::class;

@@ -29,6 +29,15 @@ class PartnerTypeRepository extends BaseRepository implements PartnerTypeReposit
     }
 
     #[Override]
+    protected function getLookupFilterColumns(): array
+    {
+        return [
+            'name',
+            'code',
+        ];
+    }
+
+    #[Override]
     protected function getLookupKeyColumn(): string
     {
         return 'code';

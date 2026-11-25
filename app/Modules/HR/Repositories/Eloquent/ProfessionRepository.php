@@ -29,6 +29,15 @@ class ProfessionRepository extends BaseRepository implements ProfessionRepositor
     }
 
     #[Override]
+    protected function getLookupFilterColumns(): array
+    {
+        return [
+            'cbo',
+            'name',
+        ];
+    }
+
+    #[Override]
     protected function getModelClass(): string
     {
         return Profession::class;
