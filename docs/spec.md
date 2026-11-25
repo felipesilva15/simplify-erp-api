@@ -742,7 +742,7 @@ A leitura é feita pelo trait `HasActivityLogs`, que expõe `activityLogs($id, L
 
 ## 15. Gerador de módulos
 
-`php artisan make:module-crud {módulo} {entidade} [opções]` (`app/Console/Commands/MakeModuleCrud.php`) é **não interativo** e lê o **schema real da tabela** no banco (`ModelHelpers::getColumnsFromTable`) para derivar `$fillable`, regras de validação, propriedades de DTO, Resources, factory e colunas de exportação.
+`php artisan make:module-crud {módulo} {entidade} [opções]` (`app/Console/Commands/MakeModuleCrud.php`) é **não interativo** e lê o **schema real da tabela** no banco (`ModelHelpers::getColumnsFromTable`) para derivar `$fillable`, regras de validação, propriedades de DTO, Resources, factory e colunas de exportação. Quando o driver não informa tamanho/precisão (SQLite), `App\Console\Support\MigrationColumnMetadata` completa os metadados a partir das migrations da tabela. `App\Console\Support\EnumResolver` localiza enums já existentes em `app/` e os reaproveita; o comando nunca gera arquivos de enum.
 
 > **Pré-requisito:** a tabela precisa existir antes da execução.
 
@@ -804,7 +804,12 @@ A edição do `ACLSeeder` acontece junto com a geração da policy: se o módulo
 ### 15.5 Regras de derivação
 
 - **Tabela:** `strtolower(Str::snake($entity))` com pluralização própria (`s` → `ses`, `y` → `ies`, senão `s`).
-- **Validação:** `nullable` se a coluna é nullable, senão `required`; tipo vindo do schema; `min:1` e `max:{max_length}` para strings; `email` quando o nome contém `mail`.
+- **Validação:** `nullable` se a coluna é nullable, senão `required`; tipo vindo do schema; `min:1` e `max:{max_length}` para strings; `email` quando o nome contém `mail`. Decimais usam `decimal:0,{precision}`; colunas com enum usam `['nullable|required', Rule::enum(Enum::class)]`.
+- **Campos nullable:** o DTO declara `?tipo` e `fromArray()` usa `?? null` — nunca herda o default do schema (`''`/`0`) para colunas anuláveis.
+- **Decimais:** mapeados como `string` no DTO, em `@OA\Property` (`type="string", format="decimal"`) e em Resources; `$casts` recebe `'decimal:{precision}'`; `minimum`/`maximum` do OpenAPI são strings entre aspas; o factory gera `number_format(..., {precision}, '.', '')`.
+- **Enums existentes:** resolvidos por tokens do nome da coluna mais contexto do módulo/entidade; aplicados em imports, `Rule::enum`, `$casts`, `fake()->randomElement(Enum::cases())` e `ref="#/components/schemas/{Enum}"`. O schema enum precisa já existir.
+- **Indentação OpenAPI:** `renderIndexFilterParameters()` recebe o prefixo do docblock de cada bloco (`index` e `export`), eliminando a linha desalinhada entre `{{index_filter_parameters}}` e `{{export_filter_parameters}}`.
+- **Grupo de rotas do módulo:** a existência de `Route::prefix('{módulo}')` é detectada por regex tolerante a `function()`/`function ()` e a `use (...)`, evitando a criação de um segundo grupo em `routes/api.php`.
 - **Chave do lookup:** coluna `code` quando ela existe e é string; caso contrário, `id`.
 - **Rótulo do lookup:** coluna `name` quando existe; senão a primeira coluna string.
 - **`meta` do lookup:** até cinco propriedades, começando por `id`.
@@ -835,7 +840,8 @@ Cobertura por área:
 | Exportação: formato, extensão, filtros, permissões | `Feature/Security/ExcelExportTest`, `Feature/ThirdParty/PartnerTest`, `Feature/HR/ProfessionTest` |
 | Catálogo somente leitura: listagem, detalhe, lookup e exportação, com ausência das rotas de escrita | `Feature/HR/ProfessionTest` |
 | Auditoria por recurso | `Feature/Security/ActivityLogTest` |
-| Gerador de módulos (incluindo o efeito em `routes/api.php`, `bootstrap/providers.php` e `AppCoreProvider`, com snapshot e restauração) | `Feature/Console/MakeModuleCrudCoreTest`, `MakeModuleCrudExportTest` |
+| Gerador de módulos (incluindo o efeito em `routes/api.php`, `bootstrap/providers.php` e `AppCoreProvider`, com snapshot e restauração) | `Feature/Console/MakeModuleCrudCoreTest`, `MakeModuleCrudExportTest`, `MakeModuleCrudFieldTypesTest` |
+| Resolução de enums existentes por coluna/contexto | `Unit/Console/EnumResolverTest` |
 | Documentação: acessibilidade das UIs, validade do JSON e consistência com as rotas | `Feature/UI/*` |
 | Filtros, ordenação, paginação, detecção de driver e SQL específico de PostgreSQL | `Unit/Core/Helpers/*`, `Unit/Core/Repositories/*`, `Unit/Core/Services/*` |
 | Busca textual (`q`) e ordenação padrão `-id` em `list`, `lookup` e `getExportQuery`, inclusive o *tie-breaker* da exportação | `Unit/Core/Repositories/BaseRepositoryTest`, `BaseRepositorySearchTest`, `BaseRepositoryExportTest`, `Unit/Core/Helpers/ModelHelpersTest` |

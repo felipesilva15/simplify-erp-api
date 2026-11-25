@@ -221,6 +221,8 @@ Os itens abaixo existem como estrutura de dados ou configuração **sem** rota, 
 | RNF-06 | Escritas com itens aninhados devem ser atômicas. | Parceiro e contatos são gravados na mesma transação. |
 | RNF-07 | Exclusões de dados de negócio devem preservar o histórico. | Soft delete nos recursos de negócio; auditoria registra a exclusão. |
 | RNF-08 | A suíte de testes deve rodar sem dependência de serviços externos. | SQLite em memória; nenhum `Http::fake`, `Queue::fake` ou serviço real mockado além do Excel. |
+| RNF-09 | O gerador de módulos deve preservar o contrato de nulabilidade, decimais e enums existentes. | Campos nullable viram `null` no DTO; decimais são `string` no contrato e `decimal:{escala}` no model; enums são reaproveitados, sem criação de novos enums. |
+| RNF-10 | A geração de rotas não deve duplicar grupos de módulo já existentes em `routes/api.php`. | O reaproveitamento aceita variações de espaço em `function()`/`function ()`. |
 
 ---
 

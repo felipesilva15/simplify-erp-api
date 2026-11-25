@@ -428,7 +428,7 @@ class MakeModuleCrud extends Command
 
         return [
             '{{index_filter_parameters}}' => $this->renderIndexFilterParameters(
-                $this->tabs(1).' * '.$this->tabs(1),
+                $this->tabs(1).' *  '.$this->tabs(1),
             ),
             '{{lookup_imports}}' => $this->option('lookup')
                 ? $this->replacePlaceholders($this->readStubBlock('module.controller-lookup-imports.stub'), $base).PHP_EOL
@@ -1048,10 +1048,10 @@ class MakeModuleCrud extends Command
             );
         }
 
-        $prefixOpen = "Route::prefix('{$kebabModule}')->group(function () {";
+        $groupOpenPosition = $this->findModuleRouteGroupPosition($content, $kebabModule);
 
-        if (str_contains($content, $prefixOpen)) {
-            $end = $this->findGroupEnd($content, $prefixOpen);
+        if ($groupOpenPosition !== null) {
+            $end = $this->findGroupEndFromPosition($content, $groupOpenPosition);
 
             if ($end === null) {
                 return;
@@ -1116,6 +1116,22 @@ class MakeModuleCrud extends Command
         return $this->tabs(2)."Route::crudResource('{$routeEntity}', {$this->entity}Controller::class);".PHP_EOL;
     }
 
+    /**
+     * Localiza o grupo `Route::prefix('modulo')` aceitando variações de espaço
+     * em `function()` e `use (...)`, já que o arquivo de rotas pode ser escrito
+     * tanto pelo gerador quanto manualmente.
+     */
+    private function findModuleRouteGroupPosition(string $content, string $kebabModule): ?int
+    {
+        $pattern = '/Route::prefix\(\s*[\'"]'.preg_quote($kebabModule, '/').'[\'"]\s*\)\s*->\s*group\(\s*function\s*\(\)\s*(?:use\s*\([^)]*\)\s*)?\{/';
+
+        if (preg_match($pattern, $content, $matches, PREG_OFFSET_CAPTURE) !== 1) {
+            return null;
+        }
+
+        return $matches[0][1];
+    }
+
     private function findGroupEnd(string $content, string $openNeedle): ?int
     {
         $openPosition = strpos($content, $openNeedle);
@@ -1124,6 +1140,11 @@ class MakeModuleCrud extends Command
             return null;
         }
 
+        return $this->findGroupEndFromPosition($content, $openPosition);
+    }
+
+    private function findGroupEndFromPosition(string $content, int $openPosition): ?int
+    {
         $start = (int) strpos($content, '{', $openPosition);
         $depth = 0;
         $length = strlen($content);

@@ -25,6 +25,6 @@ class {{entity}} extends BaseModel
     ];
 
     protected $casts = [
-{{model_casts}}
+        {{model_casts}}
     ];
 }

@@ -126,6 +126,34 @@ PHP);
         $this->assertDoesNotMatchRegularExpression('/\{\{[a-z_]+\}\}/', $controller);
     }
 
+    public function test_command_reuses_existing_module_route_group_written_without_space_in_function(): void
+    {
+        $this->snapshotFiles();
+
+        $routesPath = base_path('routes/api.php');
+        $originalRoutes = File::get($routesPath);
+        File::put($routesPath, str_replace(
+            "Route::prefix('finance')->group(function () {",
+            "Route::prefix('finance')->group(function() {",
+            $originalRoutes,
+        ));
+
+        $exitCode = Artisan::call('make:module-crud', [
+            'module' => 'Finance',
+            'entity' => 'PaymentIntent',
+            '--all' => true,
+        ]);
+
+        $this->assertSame(0, $exitCode, Artisan::output());
+
+        $routes = File::get($routesPath);
+        $this->assertSame(1, substr_count($routes, "Route::prefix('finance')->group"));
+        $this->assertStringContainsString(
+            "Route::crudResource('payment-intents', PaymentIntentController::class);",
+            $routes,
+        );
+    }
+
     private function snapshotFiles(): void
     {
         if ($this->snapshots !== []) {
