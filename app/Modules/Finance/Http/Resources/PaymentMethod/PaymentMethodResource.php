@@ -31,6 +31,7 @@ class PaymentMethodResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'condition' => $this->condition,
+            'payment_type' => $this->payment_type,
             'applicable_type' => $this->applicable_type,
             'tax_type' => $this->tax_type,
             'tax_aliquot' => $this->tax_aliquot,
