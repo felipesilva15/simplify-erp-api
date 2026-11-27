@@ -23,16 +23,23 @@ use OpenApi\Annotations as OA;
  */
 class WebhookController extends Controller
 {
-    public function __construct(protected ProviderRegistry $registry)
-    {
-    }
+    public function __construct(protected ProviderRegistry $registry) {}
 
     /**
      * @OA\Post(
-     *     path="/webhooks/{provider}/{connection}",
+     *     path="/api/webhooks/{provider}",
      *     tags={"Integration"},
      *     summary="Webhook inbox",
-     *     @OA\Response(response="202", description="Accepted")
+     *
+     *     @OA\Response(response="202", description="Webhook accepted for asynchronous processing")
+     * )
+     *
+     * @OA\Post(
+     *     path="/api/webhooks/{provider}/{connection}",
+     *     tags={"Integration"},
+     *     summary="Webhook inbox for a specific connection",
+     *
+     *     @OA\Response(response="202", description="Webhook accepted for asynchronous processing")
      * )
      */
     public function handle(Request $request, string $provider, ?string $connection = null): JsonResponse
@@ -49,24 +56,24 @@ class WebhookController extends Controller
         }
 
         $providerConfig = $this->registry->get($provider);
-        if (!$providerConfig) {
+        if (! $providerConfig) {
             return response()->json(['message' => 'Not Found'], Response::HTTP_NOT_FOUND);
         }
 
         $handlerClass = $providerConfig['webhook_handler'] ?? null;
-        if (!$handlerClass || !class_exists($handlerClass)) {
+        if (! $handlerClass || ! class_exists($handlerClass)) {
             return response()->json(['message' => 'Not Found'], Response::HTTP_NOT_FOUND);
         }
 
         $handler = app($handlerClass);
-        if (!$handler instanceof IWebhookHandler) {
+        if (! $handler instanceof IWebhookHandler) {
             return response()->json(['message' => 'Not Found'], Response::HTTP_NOT_FOUND);
         }
 
         $rawPayload = $request->getContent();
         $headers = $request->headers->all();
 
-        if (!$handler->validate($headers, $rawPayload, $connectionModel)) {
+        if (! $handler->validate($headers, $rawPayload, $connectionModel)) {
             return response()->json(['message' => 'Invalid signature'], Response::HTTP_UNAUTHORIZED);
         }
 
