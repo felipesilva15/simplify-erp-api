@@ -46,7 +46,7 @@ use Illuminate\Routing\Controller as BaseController;
  *             },
  *             {
  *                 "name"="Finance",
- *                 "tags"={"PaymentMethod"}
+ *                 "tags"={"PaymentMethod", "FinanceCategory"}
  *             }
  *         }
  *     }
