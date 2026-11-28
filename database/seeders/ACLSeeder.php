@@ -871,6 +871,67 @@ class ACLSeeder extends Seeder
                     ],
                 ],
             ],
+            [
+                'slug' => 'inventory',
+                'name' => 'Estoque',
+                'description' => 'Módulo de estoque do sistema',
+                'is_active' => true,
+                'created_at' => $now,
+                'updated_at' => $now,
+                'resources' => [
+                    [
+                        'slug' => 'warehouses',
+                        'name' => 'Armazéns',
+                        'description' => 'Funcionalidades para armazéns',
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                        'permissions' => [
+                            [
+                                'action' => 'viewAny',
+                                'label' => 'Listar',
+                                'description' => 'Permite realizar a consulta de todos os armazéns',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'view',
+                                'label' => 'Visualizar',
+                                'description' => 'Permite visualizar os detalhes de warehouse',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'create',
+                                'label' => 'Criar',
+                                'description' => 'Permite realizar a criação de armazém',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'update',
+                                'label' => 'Editar',
+                                'description' => 'Permite realizar a edição de armazém',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'delete',
+                                'label' => 'Excluir',
+                                'description' => 'Permite realizar a exclusão de armazém',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                            [
+                                'action' => 'export',
+                                'label' => 'Exportar dados',
+                                'description' => 'Permite realizar a exportação de dados dos armazéns',
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         DB::transaction(function () use ($modules) {

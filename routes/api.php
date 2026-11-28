@@ -114,4 +114,10 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('finance-categories/export', [FinanceCategoryController::class, 'export'])->name('financeCategories.export');
         Route::crudResource('finance-categories', FinanceCategoryController::class);
     });
+
+    Route::prefix('inventory')->group(function() {
+        Route::get('warehouses/lookup', [WarehouseController::class, 'lookup'])->name('warehouses.lookup');
+        Route::get('warehouses/export', [WarehouseController::class, 'export'])->name('warehouses.export');
+        Route::crudResource('warehouses', WarehouseController::class);
+    });
 });
