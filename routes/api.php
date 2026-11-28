@@ -21,6 +21,7 @@ use App\Modules\ThirdParty\Http\Controllers\PartnerTypeController;
 use App\Modules\Construction\Http\Controllers\ProjectTypeController;
 use App\Modules\Finance\Http\Controllers\PaymentMethodController;
 use App\Modules\Finance\Http\Controllers\FinanceCategoryController;
+use App\Modules\Inventory\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('security/auth/login', [AuthController::class, 'login'])->name('auth.login');
